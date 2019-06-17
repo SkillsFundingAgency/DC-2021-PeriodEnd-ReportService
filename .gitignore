@@ -328,3 +328,7 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+
+#Service Fabric Local Node Files
+**/Local.1Node.xml
+**/Local.5Node.xml

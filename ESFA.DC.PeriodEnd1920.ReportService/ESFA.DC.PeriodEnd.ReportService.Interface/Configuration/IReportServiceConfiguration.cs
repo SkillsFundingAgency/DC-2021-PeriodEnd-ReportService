@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 {
-    public interface IPeriodEndReportServiceConfiguration
+    public interface IReportServiceConfiguration
     {
         string DasCommitmentsConnectionString { get; set; }
 

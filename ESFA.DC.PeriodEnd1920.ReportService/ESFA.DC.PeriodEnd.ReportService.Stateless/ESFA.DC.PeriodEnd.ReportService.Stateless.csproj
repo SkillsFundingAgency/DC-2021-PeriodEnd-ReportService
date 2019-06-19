@@ -277,6 +277,7 @@
     <Compile Include="Configuration\AzureStorageKeyValuePersistenceConfig.cs" />
     <Compile Include="Configuration\AzureStorageOptions.cs" />
     <Compile Include="Configuration\PeriodEndReportServiceConfiguration.cs" />
+    <Compile Include="Configuration\VersionInfo.cs" />
     <Compile Include="Context\ReportServiceJobContextMessageContext.cs" />
     <Compile Include="DIComposition.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />

@@ -28,6 +28,7 @@ using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using Microsoft.EntityFrameworkCore;
+using VersionInfo = ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration.VersionInfo;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 {
@@ -66,7 +67,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterModule(new StatelessServiceModule(statelessServiceConfiguration));
             containerBuilder.RegisterModule<SerializationModule>();
 
-            var versionInfo = serviceFabricConfigurationService.GetConfigSectionAs<IVersionInfo>("VersionSection");
+            var versionInfo = serviceFabricConfigurationService.GetConfigSectionAs<VersionInfo>("VersionSection");
             containerBuilder.RegisterInstance(versionInfo).As<IVersionInfo>().SingleInstance();
 
             // register message mapper

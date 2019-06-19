@@ -3,6 +3,8 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
+    <Parameter Name="ServiceReleaseDateTime" Value="__ServiceReleaseDateTime__" />
+    <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
     <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionStringServiceFabric__" />
     <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />

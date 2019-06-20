@@ -3,13 +3,95 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" DefaultValue="1" />
     <Parameter Name="ProcessingServicePlacementConstraints" DefaultValue="" />
+    <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
+    <Parameter Name="TopicMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="30" />
+    <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="TopicName" DefaultValue="TopicName" />
+    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
+    <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
+    <Parameter Name="AzureBlobContainerName" DefaultValue="ilr-files" />
+    <Parameter Name="JobStatusConnectionString" DefaultValue="" />
+    <Parameter Name="ILRDataStoreConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
+    <Parameter Name="ILRDataStoreValidConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
+    <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
+    <Parameter Name="ServiceReleaseVersion" DefaultValue="" />
+    <Parameter Name="JobStatusQueueName" DefaultValue="" />
+    <Parameter Name="AsposeLicence" DefaultValue="" />
+    <Parameter Name="ReportingSubscriptionName" DefaultValue="Reports" />
+    <!-- Topic Names -->
+    <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" DefaultValue="GenerateAppsDataMatchMonthEndReport" />
+    <!-- LARS -->
+    <Parameter Name="LarsConnectionString" DefaultValue="" />
+    <!-- FCS -->
+    <Parameter Name="FCSConnectionString" DefaultValue="" />
+    <!-- DASPayments -->
+    <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
+    <!-- DAS Commitments -->
+    <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
+    <!-- EAS -->
+    <Parameter Name="EasConnectionString" DefaultValue="" />
+    <!-- Postcode -->
+    <Parameter Name="PostcodeConnectionString" DefaultValue="" />
+    <!-- Large Employer -->
+    <Parameter Name="LargeEmployerConnectionString" DefaultValue="" />
+    <!-- Org -->
+    <Parameter Name="OrgConnectionString" DefaultValue="" />
+    <!-- Collections Management -->
+    <Parameter Name="CollectionsManagementConnectionString" DefaultValue="" />
+    <!-- ILR Validation Errors -->
+    <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
        ServiceManifest.xml file. -->
   <ServiceManifestImport>
     <ServiceManifestRef ServiceManifestName="ESFA.DC.PeriodEnd1920.ReportService.StatelessPkg" ServiceManifestVersion="1.0.0" />
-    <ConfigOverrides />
+    <ConfigOverrides>
+      <ConfigOverride Name="Config">
+        <Settings>
+          <Section Name="StatelessServiceConfiguration">
+            <Parameter Name="ServiceBusConnectionString" Value="[ServiceBusConnectionString]" />
+            <Parameter Name="TopicName" Value="[TopicName]" />
+            <Parameter Name="SubscriptionName" Value="[ReportingSubscriptionName]" />
+            <Parameter Name="TopicMaxConcurrentCalls" Value="[TopicMaxConcurrentCalls]" />
+            <Parameter Name="TopicMaxCallbackTimeSpanMinutes" Value="[TopicMaxCallbackTimeSpanMinutes]" />
+            <Parameter Name="JobStatusQueueName" Value="[JobStatusQueueName]" />
+            <Parameter Name="JobStatusMaxConcurrentCalls" Value="[JobStatusMaxConcurrentCalls]" />
+            <Parameter Name="AuditQueueName" Value="[AuditQueueName]" />
+            <Parameter Name="AuditMaxConcurrentCalls" Value="[AuditMaxConcurrentCalls]" />
+            <Parameter Name="LoggerConnectionString" Value="[LoggerConnectionstring]" />
+          </Section>
+          <Section Name="ReportServiceConfiguration">
+            <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
+            <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
+            <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
+            <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
+            <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
+            <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
+            <Parameter Name="PostcodeConnectionString" Value="[PostcodeConnectionString]" />
+            <Parameter Name="LargeEmployerConnectionString" Value="[LargeEmployerConnectionString]" />
+            <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
+            <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
+            <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
+          </Section>
+          <Section Name="AzureStorageSection">
+            <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
+            <Parameter Name="AzureBlobContainerName" Value="[AzureBlobContainerName]" />
+          </Section>
+          <!--<Section Name="SoftwareLicenceSection">
+            <Parameter Name="AsposeLicence" Value="[AsposeLicence]" />
+          </Section>-->
+          <Section Name="VersionSection">
+            <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
+          </Section>
+          <Section Name="TopicAndTaskSection">
+            <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" Value="[TopicReports_TaskGenerateAppsDataMatchMonthEndReport]" />
+          </Section>
+        </Settings>
+      </ConfigOverride>
+    </ConfigOverrides>
   </ServiceManifestImport>
   <DefaultServices>
     <!-- The section below creates instances of service types, when an instance of this 

@@ -3,7 +3,12 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
-    <Parameter Name="ServiceReleaseDateTime" Value="__ServiceReleaseDateTime__" />
     <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
+    <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionStringServiceFabric__" />
+    <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
+    <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
+    <Parameter Name="JobStatusConnectionString" Value="__JobStatusConnectionString__" />
+    <!-- Topic Names -->
+    <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" Value="__TopicReports_TaskGenerateAppsDataMatchMonthEndReport__" />
   </Parameters>
 </Application>

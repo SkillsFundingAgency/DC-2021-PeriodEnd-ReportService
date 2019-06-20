@@ -4,4 +4,20 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="ESFA.DC.FileService" Version="0.1.19-beta0001" />
+    <PackageReference Include="ESFA.DC.IO.Interfaces" Version="0.1.18-beta0001" />
+    <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="ESFA.DC.Logging.Interfaces">
+      <HintPath>..\packages\ESFA.DC.Logging.Interfaces.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.Logging.Interfaces.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>

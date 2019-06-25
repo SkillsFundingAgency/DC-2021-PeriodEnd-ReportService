@@ -14,6 +14,9 @@ EndProject
 Project("{A07B5EB6-E848-4116-A8D0-A826331D98C6}") = "ESFA.DC.PeriodEnd.ReportService", "ESFA.DC.PeriodEnd.ReportService\ESFA.DC.PeriodEnd.ReportService.sfproj", "{0C10589B-273B-45C1-980B-BDF7594C5C35}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.PeriodEnd.ReportService.Stateless", "ESFA.DC.PeriodEnd.ReportService.Stateless\ESFA.DC.PeriodEnd.ReportService.Stateless.csproj", "{0A6E9EA4-B519-4037-8B1B-9C1B87E4EF72}"
+	ProjectSection(ProjectDependencies) = postProject
+		{C279BD86-7651-43CF-833E-8437D9158429} = {C279BD86-7651-43CF-833E-8437D9158429}
+	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{69E50D59-B5DB-4FE3-96B1-8B31AFE97E9F}"
 	ProjectSection(SolutionItems) = preProject

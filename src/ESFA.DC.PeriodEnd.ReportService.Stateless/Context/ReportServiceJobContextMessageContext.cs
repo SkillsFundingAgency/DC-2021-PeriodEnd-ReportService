@@ -5,7 +5,7 @@ using System.Text;
 using System.Threading.Tasks;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Context;
+using ESFA.DC.PeriodEnd.ReportService.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 {

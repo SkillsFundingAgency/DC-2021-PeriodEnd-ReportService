@@ -13,6 +13,7 @@
     <Parameter Name="AuditQueueName" Value="" />
     <Parameter Name="AuditMaxConcurrentCalls" Value="" />
     <Parameter Name="LoggerConnectionString" Value="" />
+    <Parameter Name="ReportingSubscriptionName" Value="" />
   </Section>
 
   <Section  Name="AzureStorageSection">
@@ -32,6 +33,7 @@
     <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
     <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
+    <Parameter Name="JobStatusConnectionString" Value="" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">
@@ -43,6 +45,7 @@
   </Section>
 
   <Section Name="TopicAndTaskSection">
-    <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" Value="" />
+    <Parameter Name="TopicReports" Value="" />
+    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="" />
   </Section>
 </Settings>

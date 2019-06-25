@@ -9,6 +9,6 @@
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
     <Parameter Name="JobStatusConnectionString" Value="__JobStatusConnectionString__" />
     <!-- Topic Names -->
-    <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" Value="__TopicReports_TaskGenerateAppsDataMatchMonthEndReport__" />
+    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="__TopicReports_TaskGenerateAppsMonthlyPaymentReport__" />
   </Parameters>
 </Application>

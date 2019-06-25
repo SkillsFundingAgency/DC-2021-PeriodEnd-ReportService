@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Context;
+using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 

@@ -53,7 +53,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
                     var logger = childLifeTimeScope.Resolve<ILogger>();
                     logger.LogDebug("Started Report Service");
                     var entryPoint = childLifeTimeScope.Resolve<EntryPoint>();
-                    var result = await entryPoint.Callback(new ReportServiceJobContextMessageContext(jobContextMessage), cancellationToken);
+                    var result = await entryPoint.Callback(new ReportServiceContext(jobContextMessage), cancellationToken);
                     logger.LogDebug($"Completed Report Service with result-{result}");
                     return result;
                 }

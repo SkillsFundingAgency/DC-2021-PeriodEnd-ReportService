@@ -9,11 +9,11 @@ using ESFA.DC.PeriodEnd.ReportService.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 {
-    public sealed class ReportServiceJobContextMessageContext : IReportServiceContext
+    public sealed class ReportServiceContext : IReportServiceContext
     {
         private readonly JobContextMessage _jobContextMessage;
 
-        public ReportServiceJobContextMessageContext(JobContextMessage jobContextMessage)
+        public ReportServiceContext(JobContextMessage jobContextMessage)
         {
             _jobContextMessage = jobContextMessage;
         }
@@ -27,5 +27,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
         public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs["ReturnPeriod"].ToString());
 
         public long JobId => _jobContextMessage.JobId;
+
+        public DateTime SubmissionDateTimeUtc => _jobContextMessage.SubmissionDateTimeUtc;
     }
 }

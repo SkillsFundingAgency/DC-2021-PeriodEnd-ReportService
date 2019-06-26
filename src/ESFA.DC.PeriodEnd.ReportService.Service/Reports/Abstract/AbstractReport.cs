@@ -44,14 +44,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
 
         public string GetFilename(IReportServiceContext reportServiceContext)
         {
-            //DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(DateTime.Now);
-            return $"{reportServiceContext.Ukprn}_{reportServiceContext.JobId}_{ReportFileName} {DateTime.Now:yyyyMMdd-HHmmss}";
+            DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
+            return $"{reportServiceContext.Ukprn}_{reportServiceContext.JobId}_{ReportFileName} {dateTime:yyyyMMdd-HHmmss}";
         }
 
         public string GetZipFilename(IReportServiceContext reportServiceContext)
         {
-            //DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(DateTime.Now);
-            return $"{ReportFileName} {DateTime.Now:yyyyMMdd-HHmmss}";
+            DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
+            return $"{ReportFileName} {dateTime:yyyyMMdd-HHmmss}";
         }
 
         public abstract Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken);

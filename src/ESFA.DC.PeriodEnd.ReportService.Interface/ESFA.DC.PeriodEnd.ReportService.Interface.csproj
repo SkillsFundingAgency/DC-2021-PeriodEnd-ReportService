@@ -4,4 +4,13 @@
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="CsvHelper" Version="12.1.2" />
+    <PackageReference Include="ESFA.DC.ILR.1819.Model.Interface" Version="0.1.5-beta0001" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Model\ESFA.DC.PeriodEnd.ReportService.Model.csproj" />
+  </ItemGroup>
+
 </Project>

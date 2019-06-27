@@ -5,9 +5,19 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Aspose.Cells" Version="19.6.0" />
+    <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.67" />
+    <PackageReference Include="ESFA.DC.Data.LARS.Model" Version="0.1.4-beta0001" />
+    <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
     <PackageReference Include="ESFA.DC.FileService" Version="0.1.19-beta0001" />
+    <PackageReference Include="ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model" Version="0.1.446" />
+    <PackageReference Include="ESFA.DC.ILR1819.Database.EF" Version="0.1.381" />
     <PackageReference Include="ESFA.DC.IO.Interfaces" Version="0.1.18-beta0001" />
     <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
+    <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="2.2.3" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="2.2.3" />
   </ItemGroup>
 
   <ItemGroup>
@@ -17,6 +27,9 @@
   <ItemGroup>
     <Reference Include="ESFA.DC.Logging.Interfaces">
       <HintPath>..\packages\ESFA.DC.Logging.Interfaces.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.Logging.Interfaces.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.EntityFrameworkCore">
+      <HintPath>..\..\..\..\Users\Gayatri\.nuget\packages\microsoft.entityframeworkcore\2.2.2\lib\netstandard2.0\Microsoft.EntityFrameworkCore.dll</HintPath>
     </Reference>
   </ItemGroup>
 

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Interface.Context
+namespace ESFA.DC.PeriodEnd.ReportService.Interface
 {
     public interface IReportServiceContext
     {
@@ -15,5 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Context
         IEnumerable<string> Tasks { get; }
 
         int ReturnPeriod { get; }
+
+        DateTime SubmissionDateTimeUtc { get; }
     }
 }

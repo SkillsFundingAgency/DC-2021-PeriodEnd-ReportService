@@ -4,24 +4,27 @@
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" DefaultValue="1" />
     <Parameter Name="ProcessingServicePlacementConstraints" DefaultValue="" />
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
+    <Parameter Name="TopicName" DefaultValue="ilr1920submissiontopic" />
+    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
+    <Parameter Name="ILRDataStoreConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
+    <Parameter Name="ILRDataStoreValidConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
+    <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
+    <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
+    <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
+    <Parameter Name="AzureBlobContainerName" DefaultValue="ilr-files" />
+    <Parameter Name="AsposeLicence" DefaultValue="" />
+    <Parameter Name="DataServicePlacementConstraints" DefaultValue="" />
+    <Parameter Name="ServiceReleaseVersion" DefaultValue="" />
+    <Parameter Name="JobStatusQueueName" DefaultValue="" />
+    <Parameter Name="JobStatusConnectionString" DefaultValue="" />
+    <Parameter Name="ReportingSubscriptionName" DefaultValue="Reports" />
     <Parameter Name="TopicMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="30" />
     <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
-    <Parameter Name="TopicName" DefaultValue="TopicName" />
-    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
-    <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
-    <Parameter Name="AzureBlobContainerName" DefaultValue="ilr-files" />
-    <Parameter Name="JobStatusConnectionString" DefaultValue="" />
-    <Parameter Name="ILRDataStoreConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
-    <Parameter Name="ILRDataStoreValidConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
-    <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
-    <Parameter Name="ServiceReleaseVersion" DefaultValue="" />
-    <Parameter Name="JobStatusQueueName" DefaultValue="" />
-    <Parameter Name="AsposeLicence" DefaultValue="" />
-    <Parameter Name="ReportingSubscriptionName" DefaultValue="Reports" />
     <!-- Topic Names -->
-    <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" DefaultValue="GenerateAppsDataMatchMonthEndReport" />
+    <Parameter Name="TopicReports" DefaultValue="Reports" />
+    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" DefaultValue="GenerateAppsMonthlyPaymentReport" />
     <!-- LARS -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
     <!-- FCS -->
@@ -75,19 +78,21 @@
             <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
             <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
+            <Parameter Name="JobStatusConnectionString" Value="[JobStatusConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
             <Parameter Name="AzureBlobContainerName" Value="[AzureBlobContainerName]" />
           </Section>
-          <!--<Section Name="SoftwareLicenceSection">
+          <Section Name="SoftwareLicenceSection">
             <Parameter Name="AsposeLicence" Value="[AsposeLicence]" />
-          </Section>-->
+          </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
           </Section>
           <Section Name="TopicAndTaskSection">
-            <Parameter Name="TopicReports_TaskGenerateAppsDataMatchMonthEndReport" Value="[TopicReports_TaskGenerateAppsDataMatchMonthEndReport]" />
+            <Parameter Name="TopicReports" Value="[TopicReports]" />
+            <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="[TopicReports_TaskGenerateAppsMonthlyPaymentReport]" />
           </Section>
         </Settings>
       </ConfigOverride>

@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.FileService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Context;
+using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using FluentAssertions;

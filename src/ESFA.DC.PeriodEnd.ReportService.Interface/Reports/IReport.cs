@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Compression;
-using System.Text;
+﻿using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Context;
+using ESFA.DC.PeriodEnd.ReportService.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 {

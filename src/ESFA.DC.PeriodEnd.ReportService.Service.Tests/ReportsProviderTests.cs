@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using System.Text;
 using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Context;
+using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using FluentAssertions;

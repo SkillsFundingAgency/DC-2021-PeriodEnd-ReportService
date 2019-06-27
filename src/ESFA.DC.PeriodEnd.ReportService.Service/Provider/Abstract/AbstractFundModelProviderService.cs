@@ -17,6 +17,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract
 
         private readonly IFileService _fileService;
 
+        protected AbstractFundModelProviderService(ISerializationService serializationService, ILogger logger)
+        {
+            _serializationService = serializationService;
+            _logger = logger;
+        }
+
+        protected AbstractFundModelProviderService(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         protected AbstractFundModelProviderService(IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService, ISerializationService serializationService, ILogger logger)
         {
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;

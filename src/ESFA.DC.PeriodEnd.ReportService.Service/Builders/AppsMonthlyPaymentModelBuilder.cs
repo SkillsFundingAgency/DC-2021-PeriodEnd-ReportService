@@ -10,6 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 {
     public class AppsMonthlyPaymentModelBuilder : IAppsMonthlyPaymentModelBuilder
     {
+        private const string ZPROG001 = "ZPROG001";
+
         private readonly string[] _collectionPeriods = {
             "1819-R01",
             "1819-R02",
@@ -69,8 +71,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     var learningDeliveryInfo = learner.LearningDeliveries.SingleOrDefault(x =>
                         x.UKPRN == paymentGroup.First().UkPrn &&
-                        x.LearnRefNumber == paymentGroup.Key.LearnerReferenceNumber &&
-                        x.LearnAimRef == paymentGroup.Key.LearningAimReference &&
+                        x.LearnRefNumber.CaseInsensitiveEquals(paymentGroup.Key.LearnerReferenceNumber) &&
+                        x.LearnAimRef.CaseInsensitiveEquals(paymentGroup.Key.LearningAimReference) &&
                         x.LearnStartDate == paymentGroup.Key.LearningStartDate &&
                         x.ProgType == paymentGroup.Key.LearningAimProgrammeType &&
                         x.StdCode == paymentGroup.Key.LearningAimStandardCode &&
@@ -123,7 +125,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             ?.ProvSpecDelMon,
                         EndPointAssessmentOrganisation = learningDeliveryInfo.EPAOrganisation,
                         SubContractedOrPartnershipUKPRN = learningDeliveryInfo.PartnerUkPrn,
-                        PriceEpisodeStartDate = paymentGroup.Key.LearningAimReference.CaseInsensitiveEquals("ZPROG001") && paymentGroup.Key.PriceEpisodeIdentifier.Length > 10
+                        PriceEpisodeStartDate = paymentGroup.Key.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && paymentGroup.Key.PriceEpisodeIdentifier.Length > 10
                             ? paymentGroup.Key.PriceEpisodeIdentifier.Substring(paymentGroup.Key.PriceEpisodeIdentifier.Length - 10)
                             : string.Empty,
                         PriceEpisodeActualEndDate = aecApprenticeshipPriceEpisode?.PriceEpisodeActualEndDate

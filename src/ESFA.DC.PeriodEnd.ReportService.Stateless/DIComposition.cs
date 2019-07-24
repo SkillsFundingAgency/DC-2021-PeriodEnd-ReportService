@@ -36,6 +36,8 @@ using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using Microsoft.EntityFrameworkCore;
 using VersionInfo = ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration.VersionInfo;
+using ESFA.DC.ReferenceData.LARS.Model.Interface;
+using ESFA.DC.ReferenceData.LARS.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 {
@@ -132,6 +134,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<DASPaymentsContext>>()
                 .SingleInstance();
 
+            containerBuilder.RegisterType<LarsContext>().As<ILARSContext>();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.LarsConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<LarsContext>>()
+                .SingleInstance();
+            
             //containerBuilder.RegisterType<FcsContext>().As<IFcsContext>();
             //containerBuilder.Register(context =>
             //{

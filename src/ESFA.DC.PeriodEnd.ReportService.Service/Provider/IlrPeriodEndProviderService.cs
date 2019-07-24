@@ -6,9 +6,9 @@ using System.Threading.Tasks;
 using ESFA.DC.ILR1819.DataStore.EF.Interface;
 using ESFA.DC.ILR1819.DataStore.EF.Valid;
 using ESFA.DC.ILR1819.DataStore.EF.Valid.Interface;
+using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.Logging.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
@@ -85,7 +85,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             AimSeqNumber = y.AimSeqNumber,
                             LearnDelFAMType = y.LearnDelFAMType,
                             LearnDelFAMCode = y.LearnDelFAMCode
-                        }).ToList()
+                        }).ToList(),
                     }).ToList(),
                     ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x => new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
                     {
@@ -93,7 +93,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         LearnRefNumber = x.LearnRefNumber,
                         ProvSpecLearnMon = x.ProvSpecLearnMon,
                         ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
-                    }).ToList()
+                    }).ToList(),
                 };
 
                 appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);

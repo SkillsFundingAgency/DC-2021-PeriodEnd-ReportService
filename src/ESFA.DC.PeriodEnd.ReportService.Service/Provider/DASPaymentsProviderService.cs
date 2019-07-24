@@ -56,7 +56,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     AcademicYear = payment.AcademicYear,
                     CollectionPeriod = payment.CollectionPeriod,
                     ContractType = payment.ContractType,
-                    DeliveryPeriod = payment.DeliveryPeriod
+                    DeliveryPeriod = payment.DeliveryPeriod,
+                    LearningStartDate = payment.LearningStartDate
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(paymentInfo);

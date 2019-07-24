@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using Autofac;
 using Autofac.Features.AttributeFilters;
+using ESFA.DC.Data.LARS.Model;
+using ESFA.DC.Data.LARS.Model.Interfaces;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
@@ -33,6 +35,8 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
+using ESFA.DC.ReferenceData.LARS.Model;
+using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using Microsoft.EntityFrameworkCore;
 using VersionInfo = ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration.VersionInfo;
@@ -130,6 +134,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 return optionsBuilder.Options;
             })
                 .As<DbContextOptions<DASPaymentsContext>>()
+                .SingleInstance();
+
+            containerBuilder.RegisterType<LarsContext>().As<ILARSContext>();
+            containerBuilder.Register(context =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.LarsConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                    return optionsBuilder.Options;
+                })
+                .As<DbContextOptions<LarsContext>>()
                 .SingleInstance();
 
             //containerBuilder.RegisterType<FcsContext>().As<IFcsContext>();

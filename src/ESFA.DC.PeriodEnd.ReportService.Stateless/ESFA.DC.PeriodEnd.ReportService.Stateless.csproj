@@ -26,7 +26,7 @@
     <DefineConstants>DEBUG;TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ESFA.DC.PeriodEnd.ReportService.Stateless.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x64' ">
     <DebugType>pdbonly</DebugType>
@@ -35,7 +35,7 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <PlatformTarget>x64</PlatformTarget>
-    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRuleSet>ESFA.DC.PeriodEnd.ReportService.Stateless.ruleset</CodeAnalysisRuleSet>
   </PropertyGroup>
   <PropertyGroup>
     <AdditionalFileItemNames>$(AdditionalFileItemNames);None</AdditionalFileItemNames>
@@ -378,10 +378,10 @@
   <ItemGroup>
     <Compile Include="Configuration\AzureStorageKeyValuePersistenceConfig.cs" />
     <Compile Include="Configuration\AzureStorageOptions.cs" />
-    <Compile Include="Configuration\PeriodEndReportServiceConfiguration.cs" />
+    <Compile Include="Configuration\ReportServiceConfiguration.cs" />
     <Compile Include="Configuration\SoftwareLicenceSection.cs" />
     <Compile Include="Configuration\VersionInfo.cs" />
-    <Compile Include="Context\ReportServiceJobContextMessageContext.cs" />
+    <Compile Include="Context\ReportServiceContext.cs" />
     <Compile Include="DIComposition.cs" />
     <Compile Include="Handlers\MessageHandler.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -390,6 +390,7 @@
     <Compile Include="ServiceEventSource.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="ESFA.DC.PeriodEnd.ReportService.Stateless.ruleset" />
     <None Include="PackageRoot\Config\Settings.xml">
       <SubType>Designer</SubType>
     </None>
@@ -410,6 +411,10 @@
       <Project>{8DE95CF2-E438-47E9-8522-0AB52A63DB84}</Project>
       <Name>ESFA.DC.PeriodEnd.ReportService.Service</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
+    <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.1\build\Microsoft.Azure.Services.AppAuthentication.targets" Condition="Exists('..\packages\Microsoft.Azure.Services.AppAuthentication.1.0.1\build\Microsoft.Azure.Services.AppAuthentication.targets')" />

@@ -11,7 +11,11 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.Lars;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.ReferenceData.LARS.Model;
+using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using Microsoft.EntityFrameworkCore;
+using LarsFrameworkAim = ESFA.DC.PeriodEnd.ReportService.Model.Lars.LarsFrameworkAim;
+using LarsLearningDelivery = ESFA.DC.PeriodEnd.ReportService.Model.Lars.LarsLearningDelivery;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
@@ -19,6 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     {
         private readonly ILogger _logger;
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
+        private readonly Func<ILARSContext> _larsContextFactory;
 
         private readonly SemaphoreSlim _getLearningDeliveriesLock;
 
@@ -36,7 +41,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         private string _version;
 
-        public LarsProviderService(ILogger logger, IReportServiceConfiguration reportServiceConfiguration)
+        public LarsProviderService(
+            ILogger logger,
+            IReportServiceConfiguration reportServiceConfiguration,
+            Func<ILARSContext> larsContextFactory)
         {
             _logger = logger;
             _reportServiceConfiguration = reportServiceConfiguration;
@@ -49,6 +57,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _getFrameworkAimsLock = new SemaphoreSlim(1, 1);
             _getVersionLock = new SemaphoreSlim(1, 1);
             _getStandardsLock = new SemaphoreSlim(1, 1);
+
+            _larsContextFactory = larsContextFactory;
         }
 
         public async Task<Dictionary<string, LarsLearningDelivery>> GetLearningDeliveriesAsync(
@@ -66,21 +76,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 if (_loadedLearningDeliveries == null)
                 {
-                    ILARS larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString);
-                    _loadedLearningDeliveries = await larsContext.LARS_LearningDelivery
-                        .Where(
-                            x => validLearnerAimRefs.Contains(x.LearnAimRef))
-                        .ToDictionaryAsync(
-                            k => k.LearnAimRef,
-                            v => new LarsLearningDelivery
-                            {
-                                LearningAimTitle = v.LearnAimRefTitle,
-                                NotionalNvqLevel = v.NotionalNVQLevelv2,
-                                Tier2SectorSubjectArea = v.SectorSubjectAreaTier2,
-                                FrameworkCommonComponent = v.FrameworkCommonComponent
-                            },
-                            StringComparer.InvariantCultureIgnoreCase,
-                            cancellationToken);
+                    //ILARS larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString);
+                    using (var larsContext = _larsContextFactory())
+                    {
+                        _loadedLearningDeliveries = await larsContext.LARS_LearningDeliveries
+                            .Where(
+                                x => validLearnerAimRefs.Contains(x.LearnAimRef))
+                            .ToDictionaryAsync(
+                                k => k.LearnAimRef,
+                                v => new LarsLearningDelivery
+                                {
+                                    LearningAimTitle = v.LearnAimRefTitle,
+                                    NotionalNvqLevel = v.NotionalNvqlevelv2,
+                                    Tier2SectorSubjectArea = v.SectorSubjectAreaTier2,
+                                    FrameworkCommonComponent = v.FrameworkCommonComponent
+                                },
+                                StringComparer.InvariantCultureIgnoreCase,
+                                cancellationToken);
+                    }
                 }
             }
             catch (Exception ex)
@@ -234,10 +247,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             var appsMonthlyPaymentLarsLearningDeliveryInfoList = new List<AppsMonthlyPaymentLarsLearningDeliveryInfo>();
 
             cancellationToken.ThrowIfCancellationRequested();
-
-            using (var larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString))
+            using (var larsContext = _larsContextFactory()) // new LARS(_reportServiceConfiguration.LarsConnectionString))
             {
-                var larsLearningDeliveries = await larsContext.LARS_LearningDelivery.Where(x => learnerAimRefs.Contains(x.LearnAimRef)).ToListAsync(cancellationToken);
+                var larsLearningDeliveries = await larsContext.LARS_LearningDeliveries.Where(x => learnerAimRefs.Contains(x.LearnAimRef)).ToListAsync(cancellationToken);
 
                 foreach (var learningDelivery in larsLearningDeliveries)
                 {

@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.6.0" />
-    <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.67" />
+    <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.77" />
     <PackageReference Include="ESFA.DC.Data.LARS.Model" Version="0.1.4-beta0001" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
     <PackageReference Include="ESFA.DC.FileService" Version="0.1.19-beta0001" />
@@ -22,6 +22,7 @@
     <PackageReference Include="ESFA.DC.ILR1819.Database.EF" Version="0.1.381" />
     <PackageReference Include="ESFA.DC.IO.Interfaces" Version="0.1.18-beta0001" />
     <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
+    <PackageReference Include="ESFA.DC.ReferenceData.LARS.Model" Version="0.2.97" />
     <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="2.2.3" />

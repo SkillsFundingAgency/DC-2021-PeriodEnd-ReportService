@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.ReferenceData.LARS.Model;
-using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.Lars;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
@@ -268,6 +265,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     });
                 }
             }
+
             return appsMonthlyPaymentLarsLearningDeliveryInfoList;
         }
     }

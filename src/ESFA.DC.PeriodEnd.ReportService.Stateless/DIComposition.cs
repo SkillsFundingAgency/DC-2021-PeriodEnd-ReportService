@@ -38,8 +38,6 @@ using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using Microsoft.EntityFrameworkCore;
 using VersionInfo = ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration.VersionInfo;
-using ESFA.DC.ReferenceData.LARS.Model.Interface;
-using ESFA.DC.ReferenceData.LARS.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 {

@@ -11,15 +11,19 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.Lars;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.ReferenceData.LARS.Model;
+using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using Microsoft.EntityFrameworkCore;
-using LarsLearningDelivery = ESFA.DC.PeriodEnd.ReportService.Model.Lars.LarsLearningDelivery;
 using LarsFrameworkAim = ESFA.DC.PeriodEnd.ReportService.Model.Lars.LarsFrameworkAim;
+using LarsLearningDelivery = ESFA.DC.PeriodEnd.ReportService.Model.Lars.LarsLearningDelivery;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public sealed class LarsProviderService : ILarsProviderService
     {
         private readonly ILogger _logger;
+
+        private readonly Func<ILARSContext> _larsContextFactory;
 
         private readonly SemaphoreSlim _getLearningDeliveriesLock;
 

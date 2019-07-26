@@ -100,7 +100,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         AimSeqNumber = learningDeliveryInfo.AimSeqNumber,
                         LearningAimReference = paymentGroup.Key.LearningAimReference,
                         LearningAimTitle = appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x => x.LearnAimRef.CaseInsensitiveEquals(learningDeliveryInfo.LearnAimRef))?.LearningAimTitle,
-                        LearningStartDate = paymentGroup.Key.LearningStartDate.ToString("dd/MM/yyyy"),
+                        LearningStartDate = paymentGroup.Key.LearningStartDate?.ToString("dd/MM/yyyy"),
                         LearningAimProgrammeType = paymentGroup.Key.LearningAimProgrammeType,
                         LearningAimStandardCode = paymentGroup.Key.LearningAimStandardCode,
                         LearningAimFrameworkCode = paymentGroup.Key.LearningAimFrameworkCode,

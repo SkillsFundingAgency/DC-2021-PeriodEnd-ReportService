@@ -134,7 +134,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<DASPaymentsContext>>()
                 .SingleInstance();
 
-            containerBuilder.RegisterType<LarsContext>().As<ILARSContext>();
+            containerBuilder.RegisterType<LarsContext>().As<ILARSContext>().ExternallyOwned();
             containerBuilder.Register(context =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
@@ -146,7 +146,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             })
                 .As<DbContextOptions<LarsContext>>()
                 .SingleInstance();
-            
+
             //containerBuilder.RegisterType<FcsContext>().As<IFcsContext>();
             //containerBuilder.Register(context =>
             //{

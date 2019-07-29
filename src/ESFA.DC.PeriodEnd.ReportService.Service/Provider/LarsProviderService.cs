@@ -3,11 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.Data.LARS.Model;
-using ESFA.DC.Data.LARS.Model.Interfaces;
 using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.Lars;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
@@ -22,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     public sealed class LarsProviderService : ILarsProviderService
     {
         private readonly ILogger _logger;
-        private readonly IReportServiceConfiguration _reportServiceConfiguration;
+
         private readonly Func<ILARSContext> _larsContextFactory;
 
         private readonly SemaphoreSlim _getLearningDeliveriesLock;
@@ -40,14 +37,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         private List<LearnerAndDeliveries> _loadedFrameworkAims;
 
         private string _version;
+        private readonly Func<ILARSContext> _larsContext;
 
-        public LarsProviderService(
-            ILogger logger,
-            IReportServiceConfiguration reportServiceConfiguration,
-            Func<ILARSContext> larsContextFactory)
+        public LarsProviderService(ILogger logger, Func<ILARSContext> larsContext)
         {
             _logger = logger;
-            _reportServiceConfiguration = reportServiceConfiguration;
             _loadedLearningDeliveries = null;
             _loadedFrameworkAims = null;
             _version = null;
@@ -57,8 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _getFrameworkAimsLock = new SemaphoreSlim(1, 1);
             _getVersionLock = new SemaphoreSlim(1, 1);
             _getStandardsLock = new SemaphoreSlim(1, 1);
-
-            _larsContextFactory = larsContextFactory;
+            _larsContext = larsContext;
         }
 
         public async Task<Dictionary<string, LarsLearningDelivery>> GetLearningDeliveriesAsync(
@@ -76,10 +69,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 if (_loadedLearningDeliveries == null)
                 {
-                    //ILARS larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString);
-                    using (var larsContext = _larsContextFactory())
+                    using (var context = _larsContext())
                     {
-                        _loadedLearningDeliveries = await larsContext.LARS_LearningDeliveries
+                        _loadedLearningDeliveries = await context.LARS_LearningDeliveries
                             .Where(
                                 x => validLearnerAimRefs.Contains(x.LearnAimRef))
                             .ToDictionaryAsync(
@@ -123,10 +115,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 if (!_loadedStandards.ContainsKey(learningDeliveryStandardCode))
                 {
-                    ILARS larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString);
-                    LARS_Standard larsStandard = await larsContext.LARS_Standard
-                        .SingleOrDefaultAsync(l => l.StandardCode == learningDeliveryStandardCode, cancellationToken);
-                    _loadedStandards[learningDeliveryStandardCode] = larsStandard?.NotionalEndLevel ?? "NA";
+                    using (var context = _larsContext())
+                    {
+                        LarsStandard larsStandard = await context.LARS_Standards
+                            .SingleOrDefaultAsync(l => l.StandardCode == learningDeliveryStandardCode, cancellationToken);
+                        _loadedStandards[learningDeliveryStandardCode] = larsStandard?.NotionalEndLevel ?? "NA";
+                    }
                 }
             }
             catch (Exception ex)
@@ -169,8 +163,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         _loadedFrameworkAims.Add(new LearnerAndDeliveries(learner.LearnRefNumber, learningDeliveries));
                     }
 
-                    ILARS larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString);
-                    LarsFrameworkAim[] res = await larsContext.LARS_FrameworkAims
+                    using (var context = _larsContext())
+                    {
+                        LarsFrameworkAim[] res = await context.LARS_FrameworkAims
                         .Where(x => learnAimRefs.Contains(x.LearnAimRef))
                         .Select(x =>
                             new LarsFrameworkAim
@@ -186,17 +181,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .OrderByDescending(x => x.EffectiveTo)
                         .ToArrayAsync(cancellationToken);
 
-                    foreach (LearnerAndDeliveries learnerAndDelivery in _loadedFrameworkAims)
-                    {
-                        foreach (LearningDelivery learningDelivery in learnerAndDelivery.LearningDeliveries)
+                        foreach (LearnerAndDeliveries learnerAndDelivery in _loadedFrameworkAims)
                         {
-                            learningDelivery.FrameworkComponentType = res.FirstOrDefault(x =>
-                                (learningDelivery.FworkCode == null || x.FworkCode == learningDelivery.FworkCode) &&
-                                (learningDelivery.ProgType == null || x.ProgType == learningDelivery.ProgType) &&
-                                (learningDelivery.PwayCode == null || x.PwayCode == learningDelivery.PwayCode) &&
-                                string.Equals(x.LearnAimRef, learningDelivery.LearningDeliveryLearnAimRef, StringComparison.OrdinalIgnoreCase) &&
-                                x.EffectiveFrom < learningDelivery.LearningDeliveryLearnStartDate &&
-                                x.EffectiveTo > learningDelivery.LearningDeliveryLearnStartDate)?.FrameworkComponentType;
+                            foreach (LearningDelivery learningDelivery in learnerAndDelivery.LearningDeliveries)
+                            {
+                                learningDelivery.FrameworkComponentType = res.FirstOrDefault(x =>
+                                    (learningDelivery.FworkCode == null || x.FworkCode == learningDelivery.FworkCode) &&
+                                    (learningDelivery.ProgType == null || x.ProgType == learningDelivery.ProgType) &&
+                                    (learningDelivery.PwayCode == null || x.PwayCode == learningDelivery.PwayCode) &&
+                                    string.Equals(x.LearnAimRef, learningDelivery.LearningDeliveryLearnAimRef, StringComparison.OrdinalIgnoreCase) &&
+                                    x.EffectiveFrom < learningDelivery.LearningDeliveryLearnStartDate &&
+                                    x.EffectiveTo > learningDelivery.LearningDeliveryLearnStartDate)?.FrameworkComponentType;
+                            }
                         }
                     }
                 }
@@ -226,8 +222,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 if (string.IsNullOrEmpty(_version))
                 {
-                    ILARS larsContext = new LARS(_reportServiceConfiguration.LarsConnectionString);
-                    _version = (await larsContext.Current_Version.SingleAsync(cancellationToken)).CurrentVersion;
+                    using (var context = _larsContext())
+                    {
+                        var versionInfo = (await context.LARS_Versions.SingleAsync(cancellationToken));
+                        _version = $"{versionInfo.MajorNumber}.{versionInfo.MinorNumber}";
+                    }
                 }
             }
             catch (Exception ex)
@@ -242,14 +241,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return _version;
         }
 
-        public async Task<List<AppsMonthlyPaymentLarsLearningDeliveryInfo>> GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(string[] learnerAimRefs, CancellationToken cancellationToken)
+        public async Task<List<AppsMonthlyPaymentLarsLearningDeliveryInfo>> GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
+            string[] learnerAimRefs,
+            CancellationToken cancellationToken)
         {
             var appsMonthlyPaymentLarsLearningDeliveryInfoList = new List<AppsMonthlyPaymentLarsLearningDeliveryInfo>();
 
             cancellationToken.ThrowIfCancellationRequested();
-            using (var larsContext = _larsContextFactory()) // new LARS(_reportServiceConfiguration.LarsConnectionString))
+
+            using (var context = _larsContext())
             {
-                var larsLearningDeliveries = await larsContext.LARS_LearningDeliveries.Where(x => learnerAimRefs.Contains(x.LearnAimRef)).ToListAsync(cancellationToken);
+                var larsLearningDeliveries = await context
+                    .LARS_LearningDeliveries
+                    .Where(x => learnerAimRefs.Contains(x.LearnAimRef))
+                    .ToListAsync(cancellationToken);
 
                 foreach (var learningDelivery in larsLearningDeliveries)
                 {

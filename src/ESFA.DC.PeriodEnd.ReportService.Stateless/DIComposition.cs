@@ -9,10 +9,10 @@ using ESFA.DC.FileService;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.FileService.Config.Interface;
 using ESFA.DC.FileService.Interface;
-using ESFA.DC.ILR1819.DataStore.EF;
-using ESFA.DC.ILR1819.DataStore.EF.Interface;
-using ESFA.DC.ILR1819.DataStore.EF.Valid;
-using ESFA.DC.ILR1819.DataStore.EF.Valid.Interface;
+using ESFA.DC.ILR1920.DataStore.EF;
+using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.Valid;
+using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 using ESFA.DC.IO.Interfaces;
@@ -95,30 +95,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<ZipService>().As<IZipService>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<ReportsProvider>().As<IReportsProvider>().InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<ILR1819_DataStoreEntitiesValid>().As<IIlr1819ValidContext>();
+            containerBuilder.RegisterType<ILR1920_DataStoreEntitiesValid>().As<IIlr1920ValidContext>();
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1819_DataStoreEntitiesValid>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreValidConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
             })
-                .As<DbContextOptions<ILR1819_DataStoreEntitiesValid>>()
+                .As<DbContextOptions<ILR1920_DataStoreEntitiesValid>>()
                 .SingleInstance();
 
-            containerBuilder.RegisterType<ILR1819_DataStoreEntities>().As<IIlr1819RulebaseContext>();
+            containerBuilder.RegisterType<ILR1920_DataStoreEntities>().As<IIlr1920RulebaseContext>();
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1819_DataStoreEntities>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
             })
-                .As<DbContextOptions<ILR1819_DataStoreEntities>>()
+                .As<DbContextOptions<ILR1920_DataStoreEntities>>()
                 .SingleInstance();
 
             containerBuilder.RegisterType<DASPaymentsContext>().As<IDASPaymentsContext>();

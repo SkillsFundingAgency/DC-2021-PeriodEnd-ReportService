@@ -8,6 +8,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
     {
         long JobId { get; }
 
+        string Filename { get; }
+
         int Ukprn { get; }
 
         string Container { get; }
@@ -17,5 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
         int ReturnPeriod { get; }
 
         DateTime SubmissionDateTimeUtc { get; }
+
+        string CollectionName { get; }
     }
 }

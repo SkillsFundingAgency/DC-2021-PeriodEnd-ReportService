@@ -3,9 +3,9 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.ILR1819.DataStore.EF.Interface;
-using ESFA.DC.ILR1819.DataStore.EF.Valid;
-using ESFA.DC.ILR1819.DataStore.EF.Valid.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.Valid;
+using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
@@ -16,13 +16,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     public sealed class IlrPeriodEndProviderService : IIlrPeriodEndProviderService
     {
         private const int ApprentishipsFundModel = 36;
-        private readonly Func<IIlr1819ValidContext> _ilrValidContextFactory;
-        private readonly Func<IIlr1819RulebaseContext> _ilrContextFactory;
+        private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
+        private readonly Func<IIlr1920RulebaseContext> _ilrContextFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
-            Func<IIlr1819ValidContext> ilrValidContextFactory,
-            Func<IIlr1819RulebaseContext> ilrContextFactory)
+            Func<IIlr1920ValidContext> ilrValidContextFactory,
+            Func<IIlr1920RulebaseContext> ilrContextFactory)
         {
             _ilrValidContextFactory = ilrValidContextFactory;
             _ilrContextFactory = ilrContextFactory;

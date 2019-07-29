@@ -6,21 +6,20 @@ using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-//using Autofac.Features.AttributeFilters;
+using Autofac.Features.AttributeFilters;
 using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.Output;
 using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.ILR1819.ReportService.Model.ReportModels;
-using ESFA.DC.ILR1819.ReportService.Service.Mapper;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Context;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
@@ -38,6 +37,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public AppsAdditionalPaymentsReport(
             ILogger logger,
+            IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             [KeyFilter(PersistenceStorageKeys.Blob)] IKeyValuePersistenceService storage,
             IIlrProviderService ilrProviderService,
             IValidLearnersService validLearnersService,
@@ -45,9 +45,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IStringUtilitiesService stringUtilitiesService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
-            IAppsAdditionalPaymentsModelBuilder modelBuilder,
-            ITopicAndTaskSectionOptions topicAndTaskSectionOptions)
-        : base(dateTimeProvider, valueProvider)
+            IAppsAdditionalPaymentsModelBuilder modelBuilder)
+        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
         {
             _logger = logger;
             _storage = storage;

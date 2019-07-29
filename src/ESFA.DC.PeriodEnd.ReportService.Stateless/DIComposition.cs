@@ -134,16 +134,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<DASPaymentsContext>>()
                 .SingleInstance();
 
-            containerBuilder.RegisterType<LarsContext>().As<ILARSContext>();
+            containerBuilder.RegisterType<LarsContext>().As<ILARSContext>().ExternallyOwned();
             containerBuilder.Register(context =>
-                {
-                    var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
-                    optionsBuilder.UseSqlServer(
-                        reportServiceConfiguration.LarsConnectionString,
-                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.LarsConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                    return optionsBuilder.Options;
-                })
+                return optionsBuilder.Options;
+            })
                 .As<DbContextOptions<LarsContext>>()
                 .SingleInstance();
 

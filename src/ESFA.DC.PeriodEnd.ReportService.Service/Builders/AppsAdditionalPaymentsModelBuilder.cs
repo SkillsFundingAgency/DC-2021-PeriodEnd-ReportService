@@ -183,7 +183,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
 
         private decimal GetMonthlyPayments(DASPaymentInfo paymentInfo, string collectionPeriodName)
         {
-            return paymentInfo.CollectionPeriod.ToCollectionPeriodName(paymentInfo.AcademicYear.ToString()).Equals(collectionPeriodName) ? paymentInfo.Amount : 0;
+            return paymentInfo.CollectionPeriod.ToCollectionPeriodName(paymentInfo.AcademicYear.ToString()).Equals(collectionPeriodName, StringComparison.OrdinalIgnoreCase) ? paymentInfo.Amount : 0;
         }
 
         private decimal GetMonthlyEarnings(DASPaymentInfo paymentInfo, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValuesInfo, int month)

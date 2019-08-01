@@ -225,7 +225,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 }
             }
 
-            return identifier == 0 ? "Not available" : identifier.ToString();
+            return identifier == 0 ? Constants.NotAvailable : identifier.ToString();
         }
     }
 }

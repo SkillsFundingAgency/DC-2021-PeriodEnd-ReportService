@@ -129,6 +129,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
         // Value Provider
         public const string Zero = "0";
         public const string NotApplicable = "n/a";
+        public const string NotAvailable = "Not available";
         public static string DateTimeMin = DateTime.MinValue.ToString("dd/MM/yyyy");
 
         // Dates

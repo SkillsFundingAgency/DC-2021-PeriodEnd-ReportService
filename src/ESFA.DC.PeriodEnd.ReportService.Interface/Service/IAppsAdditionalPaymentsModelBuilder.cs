@@ -1,11 +1,11 @@
-﻿using ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.Output;
-using ESFA.DC.ILR.Model.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+﻿using System.Collections.Generic;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service
+namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd
 {
     public interface IAppsAdditionalPaymentsModelBuilder
     {
-        AppsAdditionalPaymentsModel BuildModel(ILearner learner, FM36Learner learnerData);
+        List<AppsAdditionalPaymentsModel> BuildModel(AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo, AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo, AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo);
     }
 }

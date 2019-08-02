@@ -5,6 +5,7 @@ using System.Linq;
 using CsvHelper.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.Generation;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Service
 {
@@ -20,7 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Service
                 {
                     if (IsNullableMapper(mapper, modelProperty))
                     {
-                        values.Add(Constants.NotApplicable);
+                        values.Add(Generics.NotApplicable);
                         return;
                     }
 
@@ -70,7 +71,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Service
 
             if (value is string str)
             {
-                if (str == Constants.DateTimeMin)
+                if (str == Generics.DateTimeMin)
                 {
                     values.Add(string.Empty);
                     return;
@@ -83,13 +84,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Service
         private bool IsNullableMapper(ClassMap mapper, ModelProperty modelProperty)
         {
             MemberMap memberMap = mapper.MemberMaps.SingleOrDefault(x => x.Data.Names.Names.Intersect(modelProperty.Names).Any());
-            return memberMap?.Data?.TypeConverterOptions?.NullValues?.Contains(Constants.NotApplicable) ?? false;
+            return memberMap?.Data?.TypeConverterOptions?.NullValues?.Contains(Generics.NotApplicable) ?? false;
         }
 
         private bool CanAddZeroInt(ClassMap mapper, ModelProperty modelProperty)
         {
             MemberMap memberMap = mapper.MemberMaps.SingleOrDefault(x => x.Data.Names.Names.Intersect(modelProperty.Names).Any());
-            return !(memberMap?.Data?.TypeConverterOptions?.NullValues?.Contains(Constants.Zero) ?? false);
+            return !(memberMap?.Data?.TypeConverterOptions?.NullValues?.Contains(Generics.Zero) ?? false);
         }
 
         private bool IsOfNullableType<T>(object o)

@@ -6,6 +6,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
@@ -32,13 +33,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                                                                                                                      x.StdCode == paymentInfo.LearningAimStandardCode &&
                                                                                                                      x.FworkCode == paymentInfo.LearningAimFrameworkCode &&
                                                                                                                      x.PwayCode == paymentInfo.LearningAimPathwayCode);
-                    var aecLearningDeliveryInfo = appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x =>
-                        x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo?.UKPRN &&
+                    var aecLearningDeliveryInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
+                        : appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x =>
+                        x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&
                         x.LearnRefNumber == appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber &&
                         x.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo.AimSeqNumber);
 
-                    var aecApprenticeshipPriceEpisodePeriodisedValuesInfo = appsAdditionalPaymentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
-                        x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo?.UKPRN &&
+                    var aecApprenticeshipPriceEpisodePeriodisedValuesInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
+                        : appsAdditionalPaymentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
+                        x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&
                         x.LearnRefNumber == appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber &&
                         x.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo.AimSeqNumber).ToList();
 
@@ -47,40 +50,40 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                         LearnerReferenceNumber = paymentInfo.LearnerReferenceNumber,
                         UniqueLearnerNumber = paymentInfo.LearnerUln,
                         ProviderSpecifiedLearnerMonitoringA = learner.ProviderSpecLearnerMonitorings?.SingleOrDefault(psm =>
-                            string.Equals(psm.ProvSpecLearnMonOccur, "A", StringComparison.OrdinalIgnoreCase))?.ProvSpecLearnMon,
+                            string.Equals(psm.ProvSpecLearnMonOccur, Generics.ProviderSpecifiedLearnerMonitoringA, StringComparison.OrdinalIgnoreCase))?.ProvSpecLearnMon,
                         ProviderSpecifiedLearnerMonitoringB = learner.ProviderSpecLearnerMonitorings?.SingleOrDefault(psm =>
-                            string.Equals(psm.ProvSpecLearnMonOccur, "B", StringComparison.OrdinalIgnoreCase))?.ProvSpecLearnMon,
+                            string.Equals(psm.ProvSpecLearnMonOccur, Generics.ProviderSpecifiedLearnerMonitoringB, StringComparison.OrdinalIgnoreCase))?.ProvSpecLearnMon,
                         LearningStartDate = paymentInfo.LearningStartDate,
                         FundingLineType = paymentInfo.LearningAimFundingLineType,
                         EmployerNameFromApprenticeshipService = paymentInfo.EmployerName,
                         EmployerIdentifierFromILR = GetEmployerIdentifier(aecLearningDeliveryInfo, paymentInfo),
                         TypeOfAdditionalPayment = paymentInfo.TypeOfAdditionalPayment,
-                        AugustEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 0),
-                        SeptemberEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 1),
-                        OctoberEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 2),
-                        NovemberEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 3),
-                        DecemberEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 4),
-                        JanuaryEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 5),
-                        FebruaryEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 6),
-                        MarchEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 7),
-                        AprilEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 8),
-                        MayEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 9),
-                        JuneEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 10),
-                        JulyEarnings = GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, 11),
-                        AugustR01Payments = GetMonthlyPayments(paymentInfo, "1819-R01"),
-                        SeptemberR02Payments = GetMonthlyPayments(paymentInfo, "1819-R02"),
-                        OctoberR03Payments = GetMonthlyPayments(paymentInfo, "1819-R03"),
-                        NovemberR04Payments = GetMonthlyPayments(paymentInfo, "1819-R04"),
-                        DecemberR05Payments = GetMonthlyPayments(paymentInfo, "1819-R05"),
-                        JanuaryR06Payments = GetMonthlyPayments(paymentInfo, "1819-R06"),
-                        FebruaryR07Payments = GetMonthlyPayments(paymentInfo, "1819-R07"),
-                        MarchR08Payments = GetMonthlyPayments(paymentInfo, "1819-R08"),
-                        AprilR09Payments = GetMonthlyPayments(paymentInfo, "1819-R09"),
-                        MayR10Payments = GetMonthlyPayments(paymentInfo, "1819-R10"),
-                        JuneR11Payments = GetMonthlyPayments(paymentInfo, "1819-R11"),
-                        JulyR12Payments = GetMonthlyPayments(paymentInfo, "1819-R12"),
-                        R13Payments = GetMonthlyPayments(paymentInfo, "1819-R13"),
-                        R14Payments = GetMonthlyPayments(paymentInfo, "1819-R14")
+                        AugustEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.August),
+                        SeptemberEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.September),
+                        OctoberEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.October),
+                        NovemberEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.November),
+                        DecemberEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.December),
+                        JanuaryEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.January),
+                        FebruaryEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.February),
+                        MarchEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.March),
+                        AprilEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.April),
+                        MayEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.May),
+                        JuneEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.June),
+                        JulyEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.July),
+                        AugustR01Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.AugustR01),
+                        SeptemberR02Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.SeptemberR02),
+                        OctoberR03Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.OctoberR03),
+                        NovemberR04Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.NovemberR04),
+                        DecemberR05Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.DecemberR05),
+                        JanuaryR06Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.JanuaryR06),
+                        FebruaryR07Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.FebruaryR07),
+                        MarchR08Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.MarchR08),
+                        AprilR09Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.AprilR09),
+                        MayR10Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.MayR10),
+                        JuneR11Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.JuneR11),
+                        JulyR12Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.JulyR12),
+                        R13Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.R13),
+                        R14Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.R14)
                     };
                     model.TotalEarnings = BuildTotalEarnings(model);
                     model.TotalPaymentsYearToDate = BuildTotalPayments(model);
@@ -95,16 +98,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
 
         private List<AppsAdditionalPaymentsModel> BuildAppsAdditionalPaymentsResultModel(List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModels)
         {
-            appsAdditionalPaymentsModels = appsAdditionalPaymentsModels.GroupBy(x => new
+            appsAdditionalPaymentsModels = appsAdditionalPaymentsModels.GroupBy(
+                x => new
             {
-                x.LearnerReferenceNumber,
-                x.UniqueLearnerNumber,
-                x.LearningStartDate,
-                x.FundingLineType,
-                x.TypeOfAdditionalPayment,
-                x.EmployerNameFromApprenticeshipService,
-                x.EmployerIdentifierFromILR
-            }).Select(x => new AppsAdditionalPaymentsModel()
+                    LearnerReferenceNumber = x.LearnerReferenceNumber.ToLower(),
+                    x.UniqueLearnerNumber,
+                    x.LearningStartDate,
+                    FundingLineType = x.FundingLineType.ToLower(),
+                    TypeOfAdditionalPayment = x.TypeOfAdditionalPayment.ToLower(),
+                    EmployerNameFromApprenticeshipService = x.EmployerNameFromApprenticeshipService.ToLower(),
+                    EmployerIdentifierFromILR = x.EmployerIdentifierFromILR.ToLower()
+            })
+            .Select(x => new AppsAdditionalPaymentsModel()
             {
                 LearnerReferenceNumber = x.Key.LearnerReferenceNumber,
                 UniqueLearnerNumber = x.Key.UniqueLearnerNumber,
@@ -186,24 +191,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
             return paymentInfo.CollectionPeriod.ToCollectionPeriodName(paymentInfo.AcademicYear.ToString()).Equals(collectionPeriodName, StringComparison.OrdinalIgnoreCase) ? paymentInfo.Amount : 0;
         }
 
-        private decimal GetMonthlyEarnings(DASPaymentInfo paymentInfo, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValuesInfo, int month)
+        private decimal GetMonthlyEarnings(
+            DASPaymentInfo paymentInfo,
+            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValuesInfo,
+            int month)
         {
             decimal? result = 0;
             if (paymentInfo.TransactionType == 4 || paymentInfo.TransactionType == 6)
             {
-                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Constants.Fm36PriceEpisodeFirstEmp1618PayAttributeName))?.Periods[month] ?? 0 +
-                         aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Constants.Fm36PriceEpisodeSecondEmp1618PayAttributeName))?.Periods[month] ?? 0;
+                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0 +
+                         aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
             if (paymentInfo.TransactionType == 5 || paymentInfo.TransactionType == 7)
             {
-                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Constants.Fm36PriceEpisodeFirstProv1618PayAttributeName))?.Periods[month] ?? 0 +
-                         aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Constants.Fm36PriceEpisodeSecondProv1618PayAttributeName))?.Periods[month] ?? 0;
+                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0 +
+                         aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
             if (paymentInfo.TransactionType == 16)
             {
-                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Constants.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName))?.Periods[month] ?? 0;
+                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
             return result.GetValueOrDefault();
@@ -225,7 +233,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 }
             }
 
-            return identifier == 0 ? Constants.NotAvailable : identifier.ToString();
+            return identifier == 0 ? Generics.NotAvailable : identifier.ToString();
         }
     }
 }

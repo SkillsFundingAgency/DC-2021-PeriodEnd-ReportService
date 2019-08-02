@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public byte TransactionType { get; set; }
 
-        //missing LearningStartDate, LegalEntityName, CommitmentId, CommitVersionId
+        //missing , LegalEntityName, CommitmentId, CommitVersionId
 
         public int LearningAimProgrammeType { get; set; }
 

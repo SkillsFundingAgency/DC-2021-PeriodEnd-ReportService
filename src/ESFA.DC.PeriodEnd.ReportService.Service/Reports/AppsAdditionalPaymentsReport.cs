@@ -63,7 +63,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         }
 
         private async Task<string> GetCsv(
-            List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModel,
+            IEnumerable<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModel,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

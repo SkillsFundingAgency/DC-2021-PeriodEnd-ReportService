@@ -26,6 +26,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
         public int? PwayCode { get; set; }
 
         public int? StdCode { get; set; }
-        
     }
 }

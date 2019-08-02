@@ -13,6 +13,5 @@
         public string AttributeName { get; set; }
 
         public decimal[] Periods { get; set; }
-      
     }
 }

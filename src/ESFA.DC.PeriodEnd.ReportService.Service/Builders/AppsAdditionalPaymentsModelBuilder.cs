@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
 {
     public class AppsAdditionalPaymentsModelBuilder : IAppsAdditionalPaymentsModelBuilder
     {
-        public List<AppsAdditionalPaymentsModel> BuildModel(
+        public IEnumerable<AppsAdditionalPaymentsModel> BuildModel(
             AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo,
             AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo,
             AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
@@ -25,9 +25,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 foreach (var paymentInfo in appsAdditionalPaymentDasPaymentsInfo.Payments)
                 {
                     var appsAdditionalPaymentLearningDeliveryInfo = learner.LearningDeliveries.SingleOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
-                                                                                                                     x.LearnRefNumber ==
-                                                                                                                     paymentInfo.LearnerReferenceNumber &&
-                                                                                                                     x.LearnAimRef == paymentInfo.LearningAimReference &&
+                                                                                                                     x.LearnRefNumber.Equals(
+                                                                                                                     paymentInfo.LearnerReferenceNumber, StringComparison.OrdinalIgnoreCase) &&
+                                                                                                                     x.LearnAimRef.Equals(paymentInfo.LearningAimReference, StringComparison.OrdinalIgnoreCase) &&
                                                                                                                      x.LearnStartDate == paymentInfo.LearningStartDate &&
                                                                                                                      x.ProgType == paymentInfo.LearningAimProgrammeType &&
                                                                                                                      x.StdCode == paymentInfo.LearningAimStandardCode &&

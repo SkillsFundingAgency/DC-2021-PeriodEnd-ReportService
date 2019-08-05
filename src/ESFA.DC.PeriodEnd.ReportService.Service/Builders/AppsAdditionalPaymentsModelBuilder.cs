@@ -96,18 +96,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
             return appsAdditionalPaymentsModels;
         }
 
-        private List<AppsAdditionalPaymentsModel> BuildAppsAdditionalPaymentsResultModel(List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModels)
+        private List<AppsAdditionalPaymentsModel> BuildAppsAdditionalPaymentsResultModel(
+            List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModels)
         {
-            appsAdditionalPaymentsModels = appsAdditionalPaymentsModels.GroupBy(
+            return appsAdditionalPaymentsModels.GroupBy(
                 x => new
             {
-                    LearnerReferenceNumber = x.LearnerReferenceNumber.ToLower(),
+                    LearnerReferenceNumber = x.LearnerReferenceNumber.ToLowerInvariant(),
                     x.UniqueLearnerNumber,
                     x.LearningStartDate,
-                    FundingLineType = x.FundingLineType.ToLower(),
-                    TypeOfAdditionalPayment = x.TypeOfAdditionalPayment.ToLower(),
-                    EmployerNameFromApprenticeshipService = x.EmployerNameFromApprenticeshipService.ToLower(),
-                    EmployerIdentifierFromILR = x.EmployerIdentifierFromILR.ToLower()
+                    FundingLineType = x.FundingLineType.ToLowerInvariant(),
+                    TypeOfAdditionalPayment = x.TypeOfAdditionalPayment.ToLowerInvariant(),
+                    EmployerNameFromApprenticeshipService = x.EmployerNameFromApprenticeshipService.ToLowerInvariant(),
+                    EmployerIdentifierFromILR = x.EmployerIdentifierFromILR.ToLowerInvariant()
             })
             .Select(x => new AppsAdditionalPaymentsModel()
             {
@@ -149,7 +150,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 TotalEarnings = x.Sum(p => p.TotalEarnings),
                 TotalPaymentsYearToDate = x.Sum(p => p.TotalPaymentsYearToDate)
             }).ToList();
-            return appsAdditionalPaymentsModels;
         }
 
         private decimal BuildTotalEarnings(AppsAdditionalPaymentsModel model)

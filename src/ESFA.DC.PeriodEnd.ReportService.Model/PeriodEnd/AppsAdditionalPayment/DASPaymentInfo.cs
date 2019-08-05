@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public byte TransactionType { get; set; }
 
-        //missing , LegalEntityName, CommitmentId, CommitVersionId
+        string LegalEntityName { get; set; }
 
         public int LearningAimProgrammeType { get; set; }
 

@@ -34,11 +34,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             cancellationToken.ThrowIfCancellationRequested();
 
             List<Payment> paymentsList;
+            List<Apprenticeship> apprenticeships;
             using (var context = _dasPaymentsContextFactory())
             {
                 paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
                                                                 x.FundingSource == FundingSource &&
                                                                  AppsAdditionalPaymentsTransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
+
+                apprenticeships = await context.Apprenticeships.Join(
+                    paymentsList,
+                    a => a.Id,
+                    p => p.ApprenticeshipId,
+                    (a, p) => a).ToListAsync(cancellationToken);
             }
 
             foreach (var payment in paymentsList)
@@ -61,7 +68,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     Amount = payment.Amount,
                     LearningAimFundingLineType = payment.LearningAimFundingLineType,
                     TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                    EmployerName = string.Empty
+                    EmployerName = apprenticeships != null ? apprenticeships.SingleOrDefault(a => a.Id == payment.ApprenticeshipId)?.LegalEntityName ?? string.Empty : string.Empty
                 };
 
                 appsAdditionalPaymentDasPaymentsInfo.Payments.Add(paymentInfo);

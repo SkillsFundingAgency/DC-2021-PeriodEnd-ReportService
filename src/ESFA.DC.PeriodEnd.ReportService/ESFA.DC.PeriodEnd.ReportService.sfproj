@@ -30,6 +30,8 @@
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Stateless\ESFA.DC.PeriodEnd.ReportService.Stateless.csproj" />
   </ItemGroup>
   <ItemGroup>
+    <Content Include="ApplicationParameters\Local.1Node.xml" />
+    <Content Include="ApplicationParameters\Local.5Node.xml" />
     <Content Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />

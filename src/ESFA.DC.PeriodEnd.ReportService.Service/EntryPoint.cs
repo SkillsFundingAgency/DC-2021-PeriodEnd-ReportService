@@ -16,24 +16,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
         private readonly ILogger _logger;
 
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
+        private readonly IReportServiceContext _reportServiceContext;
 
         private readonly IList<IReport> _reports;
 
         public EntryPoint(
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
+            IReportServiceContext reportServiceContext,
             IList<IReport> reports)
         {
             _logger = logger;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
+            _reportServiceContext = reportServiceContext;
             _reports = reports;
         }
 
-        public async Task<bool> Callback(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task<bool> Callback(CancellationToken cancellationToken)
         {
             _logger.LogInfo("Reporting callback invoked");
 
-            var reportZipFileKey = $"{reportServiceContext.Ukprn}_{reportServiceContext.JobId}_Reports.zip";
+            var reportZipFileKey = $"{_reportServiceContext.Ukprn}_{_reportServiceContext.JobId}_Reports.zip";
             cancellationToken.ThrowIfCancellationRequested();
 
             MemoryStream memoryStream = new MemoryStream();
@@ -47,7 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
             {
                 using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Update, true))
                 {
-                    await ExecuteTasks(reportServiceContext, archive, cancellationToken);
+                    await ExecuteTasks(_reportServiceContext, archive, cancellationToken);
                 }
 
                 await _streamableKeyValuePersistenceService.SaveAsync(reportZipFileKey, memoryStream, cancellationToken);

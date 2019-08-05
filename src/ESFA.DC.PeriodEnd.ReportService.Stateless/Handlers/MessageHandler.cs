@@ -2,9 +2,9 @@
 using System.Collections.Generic;
 using System.Fabric;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Web.UI.WebControls;
 using Autofac;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 using ESFA.DC.JobContext.Interface;
@@ -12,7 +12,10 @@ using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
+using ESFA.DC.PeriodEnd.ReportService.InternalReports;
 using ESFA.DC.PeriodEnd.ReportService.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Context;
@@ -25,18 +28,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
         private readonly ILifetimeScope _parentLifeTimeScope;
         private readonly StatelessServiceContext _context;
 
-        /// <summary>
-        /// Initializes a new instance of the <see cref="MessageHandler"/> class.
-        /// Simple constructor for use by AutoFac testing, don't want to have to fake a @see StatelessServiceContext
-        /// </summary>
-        /// <param name="parentLifeTimeScope">AutoFac scope</param>
-        public MessageHandler(ILifetimeScope parentLifeTimeScope)
+        public MessageHandler(
+            ILifetimeScope parentLifeTimeScope)
+            : this(parentLifeTimeScope, null)
         {
-            _parentLifeTimeScope = parentLifeTimeScope;
-            _context = null;
         }
 
-        public MessageHandler(ILifetimeScope parentLifeTimeScope, StatelessServiceContext context)
+        public MessageHandler(
+            ILifetimeScope parentLifeTimeScope,
+            StatelessServiceContext context)
         {
             _parentLifeTimeScope = parentLifeTimeScope;
             _context = context;
@@ -48,12 +48,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
             {
                 using (var childLifeTimeScope = GetChildLifeTimeScope(jobContextMessage))
                 {
+                    bool result;
+
                     var executionContext = (ExecutionContext)childLifeTimeScope.Resolve<IExecutionContext>();
                     executionContext.JobId = jobContextMessage.JobId.ToString();
                     var logger = childLifeTimeScope.Resolve<ILogger>();
+
                     logger.LogDebug("Started Report Service");
+
+                    var reportContext = childLifeTimeScope.Resolve<IReportServiceContext>();
+                    var task = reportContext.Tasks.First();
+
+                    if (Constants.InternalReports.Contains(task))
+                    {
+                        var internalEntryPoint = childLifeTimeScope.Resolve<InternalEntryPoint>();
+                        result = await internalEntryPoint.Callback(cancellationToken);
+
+                        return result;
+                    }
+
                     var entryPoint = childLifeTimeScope.Resolve<EntryPoint>();
-                    var result = await entryPoint.Callback(new ReportServiceContext(jobContextMessage), cancellationToken);
+                    result = await entryPoint.Callback(cancellationToken);
+
                     logger.LogDebug($"Completed Report Service with result-{result}");
                     return result;
                 }
@@ -75,6 +91,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
             return _parentLifeTimeScope.BeginLifetimeScope(c =>
             {
                 c.RegisterInstance(jobContextMessage).As<IJobContextMessage>();
+                c.RegisterType<ReportServiceContext>().As<IReportServiceContext>();
+
+                c.RegisterType<EntryPoint>().InstancePerLifetimeScope();
+                c.RegisterType<InternalEntryPoint>().InstancePerLifetimeScope();
 
                 var azureBlobStorageOptions = _parentLifeTimeScope.Resolve<IAzureStorageOptions>();
                 c.RegisterInstance(new AzureStorageKeyValuePersistenceConfig(

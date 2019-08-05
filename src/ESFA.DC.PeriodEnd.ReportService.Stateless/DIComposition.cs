@@ -21,12 +21,14 @@ using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.Mapping.Interface;
+using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
+using ESFA.DC.PeriodEnd.ReportService.DataAccess.Services;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
+using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
@@ -91,7 +93,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<EntryPoint>().WithAttributeFiltering().InstancePerLifetimeScope();
             containerBuilder.RegisterType<ZipService>().As<IZipService>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<ReportsProvider>().As<IReportsProvider>().InstancePerLifetimeScope();
 
@@ -133,6 +134,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             })
                 .As<DbContextOptions<DASPaymentsContext>>()
                 .SingleInstance();
+
+            containerBuilder.Register(c =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<DASPaymentsContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.DASPaymentsConnectionString,
+                        providerOptions => providerOptions.CommandTimeout(60));
+                    return new PaymentsContext(optionsBuilder.Options);
+                })
+                .As<PaymentsContext>().ExternallyOwned();
 
             containerBuilder.RegisterType<LarsContext>().As<ILARSContext>().ExternallyOwned();
             containerBuilder.Register(context =>
@@ -198,6 +209,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<ValueProvider>().As<IValueProvider>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<PaymentsService>().As<IPaymentsService>()
                 .InstancePerLifetimeScope();
         }
 

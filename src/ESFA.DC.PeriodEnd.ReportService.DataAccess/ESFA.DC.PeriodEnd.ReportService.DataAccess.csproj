@@ -1,0 +1,18 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.77" />
+    <PackageReference Include="ESFA.DC.ILR.DataService.Services" Version="0.1.44-beta0001" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Model\ESFA.DC.PeriodEnd.ReportService.Model.csproj" />
+  </ItemGroup>
+
+</Project>

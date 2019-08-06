@@ -13,20 +13,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private const string ZPROG001 = "ZPROG001";
 
         private readonly string[] _collectionPeriods = {
-            "1819-R01",
-            "1819-R02",
-            "1819-R03",
-            "1819-R04",
-            "1819-R05",
-            "1819-R06",
-            "1819-R07",
-            "1819-R08",
-            "1819-R09",
-            "1819-R10",
-            "1819-R11",
-            "1819-R12",
-            "1819-R13",
-            "1819-R14"
+            "1920-R01",
+            "1920-R02",
+            "1920-R03",
+            "1920-R04",
+            "1920-R05",
+            "1920-R06",
+            "1920-R07",
+            "1920-R08",
+            "1920-R09",
+            "1920-R10",
+            "1920-R11",
+            "1920-R12",
+            "1920-R13",
+            "1920-R14"
         };
 
         private readonly int[] _fundingSourceLevyPayments = { 1, 5 };
@@ -49,107 +49,120 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
             IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList)
         {
-            List<AppsMonthlyPaymentModel> appsMonthlyPaymentModels = new List<AppsMonthlyPaymentModel>();
-            foreach (var learner in appsMonthlyPaymentIlrInfo.Learners)
+            List<AppsMonthlyPaymentModel> appsMonthlyPaymentModels = null;
+
+            try
             {
-                var paymentGroups = appsMonthlyPaymentDasInfo.Payments.Where(x => x.LearnerReferenceNumber.CaseInsensitiveEquals(learner.LearnRefNumber))
-                    .GroupBy(x => new
-                    {
-                        x.LearnerReferenceNumber,
-                        x.LearnerUln,
-                        x.LearningAimReference,
-                        x.LearningStartDate,
-                        x.LearningAimProgrammeType,
-                        x.LearningAimStandardCode,
-                        x.LearningAimFrameworkCode,
-                        x.LearningAimPathwayCode,
-                        x.LearningAimFundingLineType,
-                        x.PriceEpisodeIdentifier
-                    });
-
-                foreach (var paymentGroup in paymentGroups)
+                appsMonthlyPaymentModels = new List<AppsMonthlyPaymentModel>();
+                foreach (var learner in appsMonthlyPaymentIlrInfo.Learners)
                 {
-                    var learningDeliveryInfo = learner.LearningDeliveries.SingleOrDefault(x =>
-                        x.UKPRN == paymentGroup.First().UkPrn &&
-                        x.LearnRefNumber.CaseInsensitiveEquals(paymentGroup.Key.LearnerReferenceNumber) &&
-                        x.LearnAimRef.CaseInsensitiveEquals(paymentGroup.Key.LearningAimReference) &&
-                        x.LearnStartDate == paymentGroup.Key.LearningStartDate &&
-                        x.ProgType == paymentGroup.Key.LearningAimProgrammeType &&
-                        x.StdCode == paymentGroup.Key.LearningAimStandardCode &&
-                        x.FworkCode == paymentGroup.Key.LearningAimFrameworkCode &&
-                        x.PwayCode == paymentGroup.Key.LearningAimPathwayCode);
-                    var aecApprenticeshipPriceEpisode =
-                        appsMonthlyPaymentRulebaseInfo.AECApprenticeshipPriceEpisodes.SingleOrDefault(x =>
-                            x.UkPrn == learningDeliveryInfo?.UKPRN &&
-                            x.LearnRefNumber == learningDeliveryInfo.LearnRefNumber &&
-                            x.AimSequenceNumber == learningDeliveryInfo.AimSeqNumber);
+                    var paymentGroups = appsMonthlyPaymentDasInfo.Payments.Where(x => x.LearnerReferenceNumber.CaseInsensitiveEquals(learner.LearnRefNumber))
+                        .GroupBy(x => new
+                        {
+                            x.LearnerReferenceNumber,
+                            x.LearnerUln,
+                            x.LearningAimReference,
+                            x.LearningStartDate,
+                            x.LearningAimProgrammeType,
+                            x.LearningAimStandardCode,
+                            x.LearningAimFrameworkCode,
+                            x.LearningAimPathwayCode,
+                            x.LearningAimFundingLineType,
+                            x.PriceEpisodeIdentifier
+                        });
 
-                    var model = new AppsMonthlyPaymentModel()
+                    foreach (var paymentGroup in paymentGroups)
                     {
-                        LearnerReferenceNumber = paymentGroup.Key.LearnerReferenceNumber,
-                        UniqueLearnerNumber = paymentGroup.Key.LearnerUln,
-                        CampusIdentifier = learner.CampId,
-                        ProviderSpecifiedLearnerMonitoringA = learner.ProviderSpecLearnerMonitorings
-                            ?.SingleOrDefault(x =>
-                                string.Equals(x.ProvSpecLearnMonOccur, "A", StringComparison.OrdinalIgnoreCase))
-                            ?.ProvSpecLearnMon,
-                        ProviderSpecifiedLearnerMonitoringB = learner.ProviderSpecLearnerMonitorings
-                            ?.SingleOrDefault(x =>
-                                string.Equals(x.ProvSpecLearnMonOccur, "B", StringComparison.OrdinalIgnoreCase))
-                            ?.ProvSpecLearnMon,
-                        AimSeqNumber = learningDeliveryInfo.AimSeqNumber,
-                        LearningAimReference = paymentGroup.Key.LearningAimReference,
-                        LearningAimTitle = appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x => x.LearnAimRef.CaseInsensitiveEquals(learningDeliveryInfo.LearnAimRef))?.LearningAimTitle,
-                        LearningStartDate = paymentGroup.Key.LearningStartDate?.ToString("dd/MM/yyyy"),
-                        LearningAimProgrammeType = paymentGroup.Key.LearningAimProgrammeType,
-                        LearningAimStandardCode = paymentGroup.Key.LearningAimStandardCode,
-                        LearningAimFrameworkCode = paymentGroup.Key.LearningAimFrameworkCode,
-                        LearningAimPathwayCode = paymentGroup.Key.LearningAimPathwayCode,
-                        AimType = learningDeliveryInfo.AimType,
-                        SoftwareSupplierAimIdentifier = learningDeliveryInfo.SWSupAimId,
-                        ProviderSpecifiedDeliveryMonitoringA = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-                            ?.SingleOrDefault(x =>
-                                string.Equals(x.ProvSpecDelMonOccur, "A", StringComparison.OrdinalIgnoreCase))
-                            ?.ProvSpecDelMon,
-                        ProviderSpecifiedDeliveryMonitoringB = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-                            ?.SingleOrDefault(x =>
-                                string.Equals(x.ProvSpecDelMonOccur, "B", StringComparison.OrdinalIgnoreCase))
-                            ?.ProvSpecDelMon,
-                        ProviderSpecifiedDeliveryMonitoringC = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-                            ?.SingleOrDefault(x =>
-                                string.Equals(x.ProvSpecDelMonOccur, "C", StringComparison.OrdinalIgnoreCase))
-                            ?.ProvSpecDelMon,
-                        ProviderSpecifiedDeliveryMonitoringD = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-                            ?.SingleOrDefault(x =>
-                                string.Equals(x.ProvSpecDelMonOccur, "D", StringComparison.OrdinalIgnoreCase))
-                            ?.ProvSpecDelMon,
-                        EndPointAssessmentOrganisation = learningDeliveryInfo.EPAOrganisation,
-                        SubContractedOrPartnershipUKPRN = learningDeliveryInfo.PartnerUkPrn,
-                        PriceEpisodeStartDate = paymentGroup.Key.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && paymentGroup.Key.PriceEpisodeIdentifier.Length > 10
-                            ? paymentGroup.Key.PriceEpisodeIdentifier.Substring(paymentGroup.Key.PriceEpisodeIdentifier.Length - 10)
-                            : string.Empty,
-                        PriceEpisodeActualEndDate = aecApprenticeshipPriceEpisode?.PriceEpisodeActualEndDate
-                            .GetValueOrDefault().ToString("dd/MM/yyyy"),
-                        FundingLineType = paymentGroup.Key.LearningAimFundingLineType,
-                        LearningDeliveryFAMTypeApprenticeshipContractType = paymentGroup.First().ContractType,
-                        AgreementIdentifier = aecApprenticeshipPriceEpisode?.PriceEpisodeAgreeId,
-                    };
+                        var learningDeliveryInfo = learner.LearningDeliveries.SingleOrDefault(x =>
+                            x.UKPRN == paymentGroup.First().UkPrn &&
+                            x.LearnRefNumber.CaseInsensitiveEquals(paymentGroup.Key.LearnerReferenceNumber) &&
+                            x.LearnAimRef.CaseInsensitiveEquals(paymentGroup.Key.LearningAimReference) &&
+                            x.LearnStartDate == paymentGroup.Key.LearningStartDate &&
+                            x.ProgType == paymentGroup.Key.LearningAimProgrammeType &&
+                            x.StdCode == paymentGroup.Key.LearningAimStandardCode &&
+                            x.FworkCode == paymentGroup.Key.LearningAimFrameworkCode &&
+                            x.PwayCode == paymentGroup.Key.LearningAimPathwayCode);
 
-                    List<AppsMonthlyPaymentDASPaymentInfo> appsMonthlyPaymentDasPaymentInfos = paymentGroup.ToList();
+                        var aecApprenticeshipPriceEpisode =
+                            appsMonthlyPaymentRulebaseInfo.AECApprenticeshipPriceEpisodes.SingleOrDefault(x =>
+                                x.UkPrn == learningDeliveryInfo?.UKPRN &&
+                                x.LearnRefNumber == learningDeliveryInfo.LearnRefNumber &&
+                                x.AimSequenceNumber == learningDeliveryInfo.AimSeqNumber);
 
-                    PopulatePayments(model, appsMonthlyPaymentDasPaymentInfos);
-                    PopulateMonthlyTotalPayments(model);
-                    model.TotalLevyPayments = model.LevyPayments.Sum();
-                    model.TotalCoInvestmentPayments = model.CoInvestmentPayments.Sum();
-                    model.TotalCoInvestmentDueFromEmployerPayments = model.CoInvestmentDueFromEmployerPayments.Sum();
-                    model.TotalEmployerAdditionalPayments = model.EmployerAdditionalPayments.Sum();
-                    model.TotalProviderAdditionalPayments = model.ProviderAdditionalPayments.Sum();
-                    model.TotalApprenticeAdditionalPayments = model.ApprenticeAdditionalPayments.Sum();
-                    model.TotalEnglishAndMathsPayments = model.EnglishAndMathsPayments.Sum();
-                    model.TotalPaymentsForLearningSupport = model.PaymentsForLearningSupport.Sum();
-                    PopulateTotalPayments(model);
-                    appsMonthlyPaymentModels.Add(model);
+                        //var contractAllocationNumber = null;
+
+                        var model = new AppsMonthlyPaymentModel()
+                        {
+                            LearnerReferenceNumber = paymentGroup.Key.LearnerReferenceNumber,
+                            UniqueLearnerNumber = paymentGroup.Key.LearnerUln,
+                            CampusIdentifier = learner.CampId,
+                            ProviderSpecifiedLearnerMonitoringA = learner.ProviderSpecLearnerMonitorings
+                                ?.SingleOrDefault(x =>
+                                    string.Equals(x.ProvSpecLearnMonOccur, "A", StringComparison.OrdinalIgnoreCase))
+                                ?.ProvSpecLearnMon,
+                            ProviderSpecifiedLearnerMonitoringB = learner.ProviderSpecLearnerMonitorings
+                                ?.SingleOrDefault(x =>
+                                    string.Equals(x.ProvSpecLearnMonOccur, "B", StringComparison.OrdinalIgnoreCase))
+                                ?.ProvSpecLearnMon,
+                            AimSeqNumber = learningDeliveryInfo.AimSeqNumber,
+                            LearningAimReference = paymentGroup.Key.LearningAimReference,
+                            LearningAimTitle = appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x => x.LearnAimRef.CaseInsensitiveEquals(learningDeliveryInfo.LearnAimRef))?.LearningAimTitle,
+                            LearningStartDate = paymentGroup.Key.LearningStartDate?.ToString("dd/MM/yyyy"),
+                            LearningAimProgrammeType = paymentGroup.Key.LearningAimProgrammeType,
+                            LearningAimStandardCode = paymentGroup.Key.LearningAimStandardCode,
+                            LearningAimFrameworkCode = paymentGroup.Key.LearningAimFrameworkCode,
+                            LearningAimPathwayCode = paymentGroup.Key.LearningAimPathwayCode,
+                            AimType = learningDeliveryInfo.AimType,
+                            SoftwareSupplierAimIdentifier = learningDeliveryInfo.SWSupAimId,
+                            ProviderSpecifiedDeliveryMonitoringA = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
+                                ?.SingleOrDefault(x =>
+                                    string.Equals(x.ProvSpecDelMonOccur, "A", StringComparison.OrdinalIgnoreCase))
+                                ?.ProvSpecDelMon,
+                            ProviderSpecifiedDeliveryMonitoringB = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
+                                ?.SingleOrDefault(x =>
+                                    string.Equals(x.ProvSpecDelMonOccur, "B", StringComparison.OrdinalIgnoreCase))
+                                ?.ProvSpecDelMon,
+                            ProviderSpecifiedDeliveryMonitoringC = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
+                                ?.SingleOrDefault(x =>
+                                    string.Equals(x.ProvSpecDelMonOccur, "C", StringComparison.OrdinalIgnoreCase))
+                                ?.ProvSpecDelMon,
+                            ProviderSpecifiedDeliveryMonitoringD = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
+                                ?.SingleOrDefault(x =>
+                                    string.Equals(x.ProvSpecDelMonOccur, "D", StringComparison.OrdinalIgnoreCase))
+                                ?.ProvSpecDelMon,
+                            EndPointAssessmentOrganisation = learningDeliveryInfo.EPAOrganisation,
+                            SubContractedOrPartnershipUKPRN = learningDeliveryInfo.PartnerUkPrn,
+                            PriceEpisodeStartDate = paymentGroup.Key.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && paymentGroup.Key.PriceEpisodeIdentifier.Length > 10
+                                ? paymentGroup.Key.PriceEpisodeIdentifier.Substring(paymentGroup.Key.PriceEpisodeIdentifier.Length - 10)
+                                : string.Empty,
+                            PriceEpisodeActualEndDate = aecApprenticeshipPriceEpisode?.PriceEpisodeActualEndDate
+                                .GetValueOrDefault().ToString("dd/MM/yyyy"),
+                            FundingLineType = paymentGroup.Key.LearningAimFundingLineType,
+                            LearningDeliveryFAMTypeApprenticeshipContractType = paymentGroup.First().ContractType,
+                            AgreementIdentifier = aecApprenticeshipPriceEpisode?.PriceEpisodeAgreeId,
+                        };
+
+                        List<AppsMonthlyPaymentDASPaymentInfo> appsMonthlyPaymentDasPaymentInfos = paymentGroup.ToList();
+
+                        PopulatePayments(model, appsMonthlyPaymentDasPaymentInfos);
+                        PopulateMonthlyTotalPayments(model);
+                        model.TotalLevyPayments = model.LevyPayments.Sum();
+                        model.TotalCoInvestmentPayments = model.CoInvestmentPayments.Sum();
+                        model.TotalCoInvestmentDueFromEmployerPayments = model.CoInvestmentDueFromEmployerPayments.Sum();
+                        model.TotalEmployerAdditionalPayments = model.EmployerAdditionalPayments.Sum();
+                        model.TotalProviderAdditionalPayments = model.ProviderAdditionalPayments.Sum();
+                        model.TotalApprenticeAdditionalPayments = model.ApprenticeAdditionalPayments.Sum();
+                        model.TotalEnglishAndMathsPayments = model.EnglishAndMathsPayments.Sum();
+                        model.TotalPaymentsForLearningSupport = model.PaymentsForLearningSupport.Sum();
+                        PopulateTotalPayments(model);
+                        appsMonthlyPaymentModels.Add(model);
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                var y = ex;
+                //_logger.LogError("Failed to get Rulebase data", ex);
             }
 
             return appsMonthlyPaymentModels;

@@ -33,6 +33,8 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
+using ESFA.DC.ReferenceData.FCS.Model;
+using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using ESFA.DC.ReferenceData.LARS.Model;
 using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using ESFA.DC.ServiceFabric.Common.Modules;
@@ -147,18 +149,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<LarsContext>>()
                 .SingleInstance();
 
-            //containerBuilder.RegisterType<FcsContext>().As<IFcsContext>();
-            //containerBuilder.Register(context =>
-            //{
-            //    var optionsBuilder = new DbContextOptionsBuilder<FcsContext>();
-            //    optionsBuilder.UseSqlServer(
-            //        reportServiceConfiguration.FCSConnectionString,
-            //        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+            containerBuilder.RegisterType<FcsContext>().As<IFcsContext>();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<FcsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.FCSConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-            //    return optionsBuilder.Options;
-            //})
-            //    .As<DbContextOptions<FcsContext>>()
-            //    .SingleInstance();
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<FcsContext>>()
+                .SingleInstance();
 
             containerBuilder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>().InstancePerLifetimeScope();
 
@@ -194,6 +196,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<FM36PeriodEndProviderService>().As<IFM36PeriodEndProviderService>()
+                .WithAttributeFiltering()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<FcsProviderService>().As<IFcsProviderService>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 

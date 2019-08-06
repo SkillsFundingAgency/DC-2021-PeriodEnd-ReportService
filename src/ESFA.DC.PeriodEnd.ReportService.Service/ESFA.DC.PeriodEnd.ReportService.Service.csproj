@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -21,6 +21,7 @@
     <PackageReference Include="ESFA.DC.ILR1819.Database.EF" Version="0.1.381" />
     <PackageReference Include="ESFA.DC.IO.Interfaces" Version="0.1.18-beta0001" />
     <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
+    <PackageReference Include="ESFA.DC.ReferenceData.FCS.Model" Version="0.2.112" />
     <PackageReference Include="ESFA.DC.ReferenceData.LARS.Model" Version="0.2.97" />
     <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.3" />

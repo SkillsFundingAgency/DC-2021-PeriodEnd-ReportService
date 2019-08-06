@@ -47,6 +47,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
+            Mock<IFcsProviderService> fcsProviderServiceMock = new Mock<IFcsProviderService>();
             IValueProvider valueProvider = new ValueProvider();
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>())).Callback<string, string, CancellationToken>((key, value, ct) => csv = value).Returns(Task.CompletedTask);
 
@@ -59,6 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             fm36ProviderServiceMock.Setup(x => x.GetFM36DataForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentRulebaseInfo);
             dasPaymentProviderMock.Setup(x => x.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasInfo);
             larsProviderServiceMock.Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(It.IsAny<string[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
+            fcsProviderServiceMock.Setup(x => x.GetFcsContractAllocationNumber(It.IsAny<int>(), It.IsAny<string>())).Returns("APPS-1742");
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
@@ -71,6 +73,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 fm36ProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
                 larsProviderServiceMock.Object,
+                fcsProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
                 valueProvider,
                 appsMonthlyPaymentModelBuilder);

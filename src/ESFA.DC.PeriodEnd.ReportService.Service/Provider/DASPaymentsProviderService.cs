@@ -68,7 +68,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     Amount = payment.Amount,
                     LearningAimFundingLineType = payment.LearningAimFundingLineType,
                     TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                    EmployerName = apprenticeships != null ? apprenticeships.SingleOrDefault(a => a.Id == payment.ApprenticeshipId)?.LegalEntityName ?? string.Empty : string.Empty
+                    EmployerName = apprenticeships?.SingleOrDefault(a => a.Id == payment.ApprenticeshipId)?.LegalEntityName ?? string.Empty
                 };
 
                 appsAdditionalPaymentDasPaymentsInfo.Payments.Add(paymentInfo);

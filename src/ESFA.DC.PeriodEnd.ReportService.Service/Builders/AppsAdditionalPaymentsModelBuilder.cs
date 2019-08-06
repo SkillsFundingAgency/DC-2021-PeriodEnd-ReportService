@@ -102,13 +102,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
             return appsAdditionalPaymentsModels.GroupBy(
                 x => new
             {
-                    LearnerReferenceNumber = x.LearnerReferenceNumber.ToLowerInvariant(),
+                    LearnerReferenceNumber = (x.LearnerReferenceNumber ?? string.Empty).ToLowerInvariant(),
                     x.UniqueLearnerNumber,
                     x.LearningStartDate,
-                    FundingLineType = x.FundingLineType.ToLowerInvariant(),
-                    TypeOfAdditionalPayment = x.TypeOfAdditionalPayment.ToLowerInvariant(),
-                    EmployerNameFromApprenticeshipService = x.EmployerNameFromApprenticeshipService.ToLowerInvariant(),
-                    EmployerIdentifierFromILR = x.EmployerIdentifierFromILR.ToLowerInvariant()
+                    FundingLineType = (x.FundingLineType ?? string.Empty).ToLowerInvariant(),
+                    TypeOfAdditionalPayment = (x.TypeOfAdditionalPayment ?? string.Empty).ToLowerInvariant(),
+                    EmployerNameFromApprenticeshipService = (x.EmployerNameFromApprenticeshipService ?? string.Empty).ToLowerInvariant(),
+                    EmployerIdentifierFromILR = (x.EmployerIdentifierFromILR ?? string.Empty).ToLowerInvariant()
             })
             .Select(x => new AppsAdditionalPaymentsModel()
             {

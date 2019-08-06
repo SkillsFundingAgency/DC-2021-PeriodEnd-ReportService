@@ -29,8 +29,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 {
     public sealed class TestAppsAdditionalPaymentsReport
     {
-        [Fact]
-        public async Task TestAppsAdditionalPaymentsReportGeneration()
+        [Theory]
+        [InlineData("employer1", "employer1")]
+        [InlineData(null, "")]
+        [InlineData("EMPLOYER2", "employer2")]
+        public async Task TestAppsAdditionalPaymentsReportGeneration(string employerName, string employerNameExpected)
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
@@ -54,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn);
             var appsAdditionalPaymentRulebaseInfo = BuildFm36Model(ukPrn);
-            var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn);
+            var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName);
 
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentIlrInfo);
@@ -101,7 +104,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().TotalEarnings.Should().Be(1560);
             result.First().TotalPaymentsYearToDate.Should().Be(20);
             result.First().UniqueLearnerNumber.Should().Be(12345);
-            result.First().EmployerNameFromApprenticeshipService.ToLower().Should().Be("employer1");
+            result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
         private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn)
@@ -186,7 +189,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             };
         }
 
-        private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn)
+        private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn, string employerName)
         {
             return new AppsAdditionalPaymentDasPaymentsInfo()
             {
@@ -213,7 +216,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
                     TypeOfAdditionalPayment = "Apprentice",
-                    EmployerName = "Employer1"
+                    EmployerName = employerName
                 },
                 new DASPaymentInfo()
                 {
@@ -235,7 +238,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
                     TypeOfAdditionalPayment = "Apprentice",
-                    EmployerName = "Employer1"
+                    EmployerName = employerName
                 }
             }
             };

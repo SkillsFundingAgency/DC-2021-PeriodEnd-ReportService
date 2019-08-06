@@ -18,6 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
             _jobContextMessage = jobContextMessage;
         }
 
+        public string Filename => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString();
+
         public int Ukprn => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.UkPrn].ToString());
 
         public string Container => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Container].ToString();
@@ -29,5 +31,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
         public long JobId => _jobContextMessage.JobId;
 
         public DateTime SubmissionDateTimeUtc => _jobContextMessage.SubmissionDateTimeUtc;
+
+        public string CollectionName => _jobContextMessage.KeyValuePairs["CollectionName"].ToString();
     }
 }

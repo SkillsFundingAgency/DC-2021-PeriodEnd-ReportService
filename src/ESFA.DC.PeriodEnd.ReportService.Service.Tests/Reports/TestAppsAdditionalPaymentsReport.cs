@@ -30,10 +30,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
     public sealed class TestAppsAdditionalPaymentsReport
     {
         [Theory]
-        [InlineData("employer1", "employer1")]
-        [InlineData(null, "")]
-        [InlineData("EMPLOYER2", "employer2")]
-        public async Task TestAppsAdditionalPaymentsReportGeneration(string employerName, string employerNameExpected)
+        [InlineData("employer1", "employer1", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
+        [InlineData(null, "", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
+        [InlineData("EMPLOYER2", "employer2", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
+        [InlineData("EMPLOYER2", "employer2", "A12345", "zprog001", "A12345", "ZPROG001", "T180400007")]
+        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "ZPROG001", "T180400007")]
+        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "a12345", "ZPROG001", "T180400007")]
+        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "zprog001", "T180400007")]
+        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "ZPROG001", "t180400007")]
+        public async Task TestAppsAdditionalPaymentsReportGeneration(
+            string employerName,
+            string employerNameExpected,
+            string ilrLearnRefNumber,
+            string ilrLearnAimRef,
+            string dasLearnRefNumber,
+            string dasLearnAimRef,
+            string provSpecLearnMonOccur)
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
@@ -55,9 +67,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
 
-            var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn);
+            var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn, ilrLearnRefNumber, ilrLearnAimRef, provSpecLearnMonOccur);
             var appsAdditionalPaymentRulebaseInfo = BuildFm36Model(ukPrn);
-            var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName);
+            var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName, dasLearnRefNumber, dasLearnAimRef);
 
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentIlrInfo);
@@ -107,7 +119,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
-        private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn)
+        private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccur)
         {
             return new AppsAdditionalPaymentILRInfo()
             {
@@ -116,15 +128,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             {
                 new AppsAdditionalPaymentLearnerInfo()
                 {
-                    LearnRefNumber = "A12345",
+                    LearnRefNumber = ilrLearnRefNumber,
                     ULN = 12345,
                     LearningDeliveries = new List<AppsAdditionalPaymentLearningDeliveryInfo>()
                     {
                         new AppsAdditionalPaymentLearningDeliveryInfo()
                         {
                             UKPRN = ukPrn,
-                            LearnRefNumber = "A12345",
-                            LearnAimRef = "50117889",
+                            LearnRefNumber = ilrLearnRefNumber,
+                            LearnAimRef = ilrLearnAimRef,
                             AimType = 3,
                             AimSeqNumber = 1,
                             LearnStartDate = new DateTime(2017, 06, 28),
@@ -143,7 +155,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 UKPRN = ukPrn,
                                 LearnRefNumber = "1",
                                 ProvSpecLearnMon = "A",
-                                ProvSpecLearnMonOccur = "T180400007"
+                                ProvSpecLearnMonOccur = provSpecLearnMonOccur
                             },
                             new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
                             {
@@ -189,7 +201,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             };
         }
 
-        private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn, string employerName)
+        private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn, string employerName, string dasLearnRefNumber, string dasLearnAimRef)
         {
             return new AppsAdditionalPaymentDasPaymentsInfo()
             {
@@ -199,8 +211,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 new DASPaymentInfo()
                 {
                     UkPrn = ukPrn,
-                    LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
+                    LearnerReferenceNumber = dasLearnRefNumber,
+                    LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
                     LearningStartDate = new DateTime(2017, 06, 28),
                     LearningAimProgrammeType = 1,
@@ -221,8 +233,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 new DASPaymentInfo()
                 {
                     UkPrn = ukPrn,
-                    LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
+                    LearnerReferenceNumber = dasLearnRefNumber,
+                    LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
                     LearningStartDate = new DateTime(2017, 06, 28),
                     LearningAimProgrammeType = 1,

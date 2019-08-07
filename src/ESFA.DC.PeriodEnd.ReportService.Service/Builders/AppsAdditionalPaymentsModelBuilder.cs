@@ -36,13 +36,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                     var aecLearningDeliveryInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
                         : appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x =>
                         x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&
-                        x.LearnRefNumber == appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber &&
+                        x.LearnRefNumber.Equals(appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber, StringComparison.OrdinalIgnoreCase) &&
                         x.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo.AimSeqNumber);
 
                     var aecApprenticeshipPriceEpisodePeriodisedValuesInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
                         : appsAdditionalPaymentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
                         x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&
-                        x.LearnRefNumber == appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber &&
+                        x.LearnRefNumber.Equals(appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber, StringComparison.OrdinalIgnoreCase) &&
                         x.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo.AimSeqNumber).ToList();
 
                     var model = new AppsAdditionalPaymentsModel()

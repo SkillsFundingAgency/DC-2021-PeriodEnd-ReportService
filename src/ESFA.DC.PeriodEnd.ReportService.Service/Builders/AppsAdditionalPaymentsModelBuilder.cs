@@ -36,13 +36,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                     var aecLearningDeliveryInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
                         : appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x =>
                         x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&
-                        x.LearnRefNumber == appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber &&
+                        x.LearnRefNumber.Equals(appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber, StringComparison.OrdinalIgnoreCase) &&
                         x.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo.AimSeqNumber);
 
                     var aecApprenticeshipPriceEpisodePeriodisedValuesInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
                         : appsAdditionalPaymentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
                         x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&
-                        x.LearnRefNumber == appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber &&
+                        x.LearnRefNumber.Equals(appsAdditionalPaymentLearningDeliveryInfo.LearnRefNumber, StringComparison.OrdinalIgnoreCase) &&
                         x.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo.AimSeqNumber).ToList();
 
                     var model = new AppsAdditionalPaymentsModel()
@@ -102,13 +102,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
             return appsAdditionalPaymentsModels.GroupBy(
                 x => new
             {
-                    LearnerReferenceNumber = x.LearnerReferenceNumber.ToLowerInvariant(),
+                    LearnerReferenceNumber = (x.LearnerReferenceNumber ?? string.Empty).ToLowerInvariant(),
                     x.UniqueLearnerNumber,
                     x.LearningStartDate,
-                    FundingLineType = x.FundingLineType.ToLowerInvariant(),
-                    TypeOfAdditionalPayment = x.TypeOfAdditionalPayment.ToLowerInvariant(),
-                    EmployerNameFromApprenticeshipService = x.EmployerNameFromApprenticeshipService.ToLowerInvariant(),
-                    EmployerIdentifierFromILR = x.EmployerIdentifierFromILR.ToLowerInvariant()
+                    FundingLineType = (x.FundingLineType ?? string.Empty).ToLowerInvariant(),
+                    TypeOfAdditionalPayment = (x.TypeOfAdditionalPayment ?? string.Empty).ToLowerInvariant(),
+                    EmployerNameFromApprenticeshipService = (x.EmployerNameFromApprenticeshipService ?? string.Empty).ToLowerInvariant(),
+                    EmployerIdentifierFromILR = (x.EmployerIdentifierFromILR ?? string.Empty).ToLowerInvariant()
             })
             .Select(x => new AppsAdditionalPaymentsModel()
             {

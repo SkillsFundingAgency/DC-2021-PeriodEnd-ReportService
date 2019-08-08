@@ -99,13 +99,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             TestCsvHelper.CheckCsv(csv, new CsvEntry(new AppsAdditionalPaymentsMapper(), 1));
             IEnumerable<AppsAdditionalPaymentsModel> result;
 
-            using (var reader = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(csv))))
+            using (var csvReader = new CsvReader(new StringReader(csv)))
             {
-                using (var csvReader = new CsvReader(reader))
-                {
-                    csvReader.Configuration.RegisterClassMap<AppsAdditionalPaymentsMapper>();
-                    result = csvReader.GetRecords<AppsAdditionalPaymentsModel>().ToList();
-                }
+                csvReader.Configuration.RegisterClassMap<AppsAdditionalPaymentsMapper>();
+                result = csvReader.GetRecords<AppsAdditionalPaymentsModel>().ToList();
             }
 
             result.Should().NotBeNullOrEmpty();

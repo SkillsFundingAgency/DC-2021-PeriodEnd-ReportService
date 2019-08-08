@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -95,11 +96,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
-            File.WriteAllText($"{filename}.csv", csv);
             TestCsvHelper.CheckCsv(csv, new CsvEntry(new AppsAdditionalPaymentsMapper(), 1));
             IEnumerable<AppsAdditionalPaymentsModel> result;
 
-            using (var reader = new StreamReader($"{filename}.csv"))
+            using (var reader = new StreamReader(new MemoryStream(Encoding.UTF8.GetBytes(csv))))
             {
                 using (var csvReader = new CsvReader(reader))
                 {

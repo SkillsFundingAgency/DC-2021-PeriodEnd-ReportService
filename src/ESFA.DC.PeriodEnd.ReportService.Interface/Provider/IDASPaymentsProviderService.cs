@@ -7,5 +7,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
     public interface IDASPaymentsProviderService
     {
         Task<AppsMonthlyPaymentDASInfo> GetPaymentsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
+
+        Task<AppsMonthlyPaymentDASInfo> Get1920DasPaymentsAsync(int ukPrn, CancellationToken cancellationToken);
     }
 }

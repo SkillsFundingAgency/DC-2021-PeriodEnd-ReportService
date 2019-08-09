@@ -272,7 +272,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to get DAS Payments", ex);
+                _logger.LogError("Failed to get LARS data", ex);
             }
 
             return appsMonthlyPaymentLarsLearningDeliveryInfoList;

@@ -37,7 +37,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public byte DeliveryPeriod { get; set; }
 
         public byte CollectionPeriod { get; set; }
-        public byte CollectionPeriod { get; set; }
 
         public short AcademicYear { get; set; }
 

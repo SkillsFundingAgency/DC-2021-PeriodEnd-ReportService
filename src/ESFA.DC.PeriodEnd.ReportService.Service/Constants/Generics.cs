@@ -1,8 +1,8 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
-    public static class Constants
+    public static class Generics
     {
         public const string EmploymentStatusMonitoringTypeSEM = "SEM";
 
@@ -121,6 +121,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
         public const string Traineeships1924_ExcessLearningSupport = "Excess Learning Support: 19-24 Traineeships";
         public const string Traineeships1924_AuthorisedClaims = "Authorised Claims: 19-24 Traineeships";
 
+        public const string ProviderSpecifiedLearnerMonitoringA = "A";
+        public const string ProviderSpecifiedLearnerMonitoringB = "B";
+
         // Dates
         public const string Year = "2018/19";
 
@@ -129,6 +132,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
         // Value Provider
         public const string Zero = "0";
         public const string NotApplicable = "n/a";
+        public const string NotAvailable = "Not available";
         public static string DateTimeMin = DateTime.MinValue.ToString("dd/MM/yyyy");
 
         // Dates

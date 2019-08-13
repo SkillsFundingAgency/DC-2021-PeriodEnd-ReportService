@@ -5,6 +5,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Folder Include="Configuration\" />
     <Folder Include="ReportModels\" />
     <Folder Include="PeriodEnd\" />
     <Folder Include="Styling\" />
@@ -12,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.6.0" />
-    <PackageReference Include="ESFA.DC.ILR1819.Database.EF" Version="0.1.381" />
+    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.273" />
   </ItemGroup>
 
 </Project>

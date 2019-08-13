@@ -338,3 +338,4 @@ ASALocalRun/
 .mfractor/
 /ESFA.DC.PeriodEnd1920.ReportService/ESFA.DC.PeriodEnd.ReportService/ApplicationParameters/Local.1Node.xml
 /ESFA.DC.PeriodEnd1920.ReportService/ESFA.DC.PeriodEnd.ReportService/ApplicationParameters/Local.5Node.xml
+/src/ESFA.DC.PeriodEnd.ReportService/ApplicationParameters/LocalNode.xml

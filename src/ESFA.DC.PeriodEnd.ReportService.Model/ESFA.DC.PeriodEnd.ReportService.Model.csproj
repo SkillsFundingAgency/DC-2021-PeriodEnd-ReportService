@@ -13,7 +13,7 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.6.0" />
-    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.273" />
+    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.304" />
   </ItemGroup>
 
 </Project>

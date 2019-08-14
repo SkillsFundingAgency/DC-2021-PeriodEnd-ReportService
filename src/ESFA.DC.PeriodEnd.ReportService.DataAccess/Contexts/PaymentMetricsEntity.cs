@@ -2,34 +2,32 @@
 {
     public class PaymentMetricsEntity
     {
-        public int Id { get; set; }
-
         public int TransactionType { get; set; }
 
-        public int EarningsYTD { get; set; }
-
-        public int EarningsACT1 { get; set; }
-
-        public int EarningsACT2 { get; set; }
-
-        public int NegativeEarnings { get; set; }
-
-        public int NegativeEarningsACT1 { get; set; }
-
-        public int NegativeEarningsACT2 { get; set; }
-
-        public int PaymentsYTD { get; set; }
-
-        public int PaymentsACT1 { get; set; }
-
-        public int PaymentsACT2 { get; set; }
-
-        public int DataLockErrors { get; set; }
-
-        public int HeldBackCompletion { get; set; }
-
-        public int HBCPACT1 { get; set; }
-
-        public int HBCPACT2 { get; set; }
+        public decimal? EarningsYTD { get; set; }
+               
+        public decimal? EarningsACT1 { get; set; }
+               
+        public decimal? EarningsACT2 { get; set; }
+               
+        public decimal? NegativeEarnings { get; set; }
+               
+        public decimal? NegativeEarningsACT1 { get; set; }
+               
+        public decimal? NegativeEarningsACT2 { get; set; }
+               
+        public decimal? PaymentsYTD { get; set; }
+               
+        public decimal? PaymentsACT1 { get; set; }
+               
+        public decimal? PaymentsACT2 { get; set; }
+               
+        public decimal? DataLockErrors { get; set; }
+               
+        public decimal? HeldBackCompletion { get; set; }
+               
+        public decimal? HBCPACT1 { get; set; }
+               
+        public decimal? HBCPACT2 { get; set; }
     }
 }

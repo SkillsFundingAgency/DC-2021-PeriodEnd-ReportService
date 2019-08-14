@@ -17,6 +17,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports;
 using ESFA.DC.PeriodEnd.ReportService.Service;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Context;
 using ExecutionContext = ESFA.DC.Logging.ExecutionContext;
@@ -59,7 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
                     var reportContext = childLifeTimeScope.Resolve<IReportServiceContext>();
                     var task = reportContext.Tasks.First();
 
-                    if (Constants.InternalReports.Contains(task))
+                    if (Generics.InternalReports.Contains(task))
                     {
                         var internalEntryPoint = childLifeTimeScope.Resolve<InternalEntryPoint>();
                         result = await internalEntryPoint.Callback(cancellationToken);
@@ -91,10 +92,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
             return _parentLifeTimeScope.BeginLifetimeScope(c =>
             {
                 c.RegisterInstance(jobContextMessage).As<IJobContextMessage>();
-                c.RegisterType<ReportServiceContext>().As<IReportServiceContext>();
-
-                c.RegisterType<EntryPoint>().InstancePerLifetimeScope();
-                c.RegisterType<InternalEntryPoint>().InstancePerLifetimeScope();
 
                 var azureBlobStorageOptions = _parentLifeTimeScope.Resolve<IAzureStorageOptions>();
                 c.RegisterInstance(new AzureStorageKeyValuePersistenceConfig(

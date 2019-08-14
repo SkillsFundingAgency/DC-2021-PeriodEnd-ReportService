@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts
 
             modelBuilder.Entity<PaymentMetricsEntity>(entity =>
             {
-                entity.HasKey(e => e.Id);
+                entity.HasKey(e => e.TransactionType);
                 entity.Property(e => e.TransactionType).HasColumnName("Transaction Type");
                 entity.Property(e => e.EarningsYTD).HasColumnName("Earnings YTD");
                 entity.Property(e => e.EarningsACT1).HasColumnName("Earnings ACT1");

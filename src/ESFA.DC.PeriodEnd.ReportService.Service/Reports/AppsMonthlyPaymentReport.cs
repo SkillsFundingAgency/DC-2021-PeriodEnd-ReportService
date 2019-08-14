@@ -66,16 +66,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             // get the main base DAS payments report data
             var appsMonthlyPaymentDasInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
-            // get
+            // get the ILR data
             var appsMonthlyPaymentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+
+            // Get the AEC data
             var appsMonthlyPaymentRulebaseInfo = await _fm36ProviderService.GetFM36DataForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
+            // Get the Fcs Contract data
+            var appsMonthlyPaymentFcsInfo = await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
             string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries).Select(x => x.LearnAimRef).Distinct().ToArray();
 
             var appsMonthlyPaymentLarsLearningDeliveryInfos = await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(learnAimRefs, cancellationToken);
 
-            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(appsMonthlyPaymentIlrInfo, appsMonthlyPaymentRulebaseInfo, appsMonthlyPaymentDasInfo, appsMonthlyPaymentLarsLearningDeliveryInfos);
+            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(appsMonthlyPaymentIlrInfo, appsMonthlyPaymentRulebaseInfo, appsMonthlyPaymentDasInfo, appsMonthlyPaymentFcsInfo, appsMonthlyPaymentLarsLearningDeliveryInfos);
 
             string csv = await GetCsv(appsAdditionalPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);

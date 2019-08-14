@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Utils;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
@@ -12,7 +13,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     {
         private const string ZPROG001 = "ZPROG001";
 
-        private readonly string[] _collectionPeriods = {
+        private readonly string[] _collectionPeriods =
+        {
             "1920-R01",
             "1920-R02",
             "1920-R03",
@@ -47,6 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
             AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo,
             AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
+            AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo,
             IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList)
         {
             List<AppsMonthlyPaymentModel> appsMonthlyPaymentModels = null;
@@ -54,11 +57,94 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             try
             {
                 appsMonthlyPaymentModels = new List<AppsMonthlyPaymentModel>();
+
+                /*
+                --------------------------------------------------
+                From Apps Monthly Payment Report spec version 3.1
+                --------------------------------------------------
+
+                BR1 – Applicable Records
+
+                This report shows rows of calculated payment data related to funding model 36, and associated ILR data.
+
+                ------------------------------------------------------------------------------------------------------------------------------------------
+                *** There should be a new row on the report where the data is different for any of the following fields in the Payments2.Payment table:***
+                ------------------------------------------------------------------------------------------------------------------------------------------
+                • LearnerReferenceNumber
+                • LearnerUln
+                • LearningAimReference
+                • LearningStartDate
+                • LearningAimProgrammeType
+                • LearningAimStandardCode
+                • LearningAimFrameworkCode
+                • LearningAimPathwayCode
+                • LearningAimFundingLineType
+                • PriceEpisodeIdentifier(note that only programme aims(LearningAimReference = ZPROG001) have PriceEpisodeIdentifiers; maths and English aims do not)
+
+                ----------------------------------------------------------------------------------------------------------------------------------------
+                *** Where these fields are identical, multiple payments should be displayed in the appropriate monthly field and summed as necessary ***
+                ----------------------------------------------------------------------------------------------------------------------------------------
+
+                There may be multiple price episodes for an aim.  Only price episodes with a start date in the current funding year should be included on this report.
+                Note that English and maths aims do not have price episodes, so there should be just one row per aim.
+                */
+
+                //var paymentsGroupedByBR1 = appsMonthlyPaymentDasInfo.Payments
+                //    .Where(f => f.AcademicYear = 1920)
+                //    .GroupBy(r => new
+                //    {
+                //        r.UkPrn,
+                //        r.LearnerReferenceNumber,
+                //        r.LearnerUln,
+                //        r.LearningAimReference,
+                //        r.LearningStartDate,
+                //        r.LearningAimProgrammeType,
+                //        r.LearningAimStandardCode,
+                //        r.LearningAimFrameworkCode,
+                //        r.LearningAimPathwayCode,
+                //        r.LearningAimFundingLineType,
+                //        r.PriceEpisodeIdentifier
+                //    })
+                //    .OrderBy(g => new
+                //    {
+                //        g.Key.UkPrn,
+                //        g.Key.LearnerReferenceNumber,
+                //        g.Key.LearnerUln,
+                //        g.Key.LearningAimReference,
+                //        g.Key.LearningStartDate,
+                //        g.Key.LearningAimProgrammeType,
+                //        g.Key.LearningAimStandardCode,
+                //        g.Key.LearningAimFrameworkCode,
+                //        g.Key.LearningAimPathwayCode,
+                //        g.Key.LearningAimFundingLineType,
+                //        g.Key.PriceEpisodeIdentifier
+                //    })
+
+                    //.Select(g => new {      });
+                //g.UkPrn,
+                        //g.LearnerReferenceNumber,
+                        //g.LearnerUln,
+                        //g.LearningAimReference,
+                        //g.LearningStartDate,
+                        //g.LearningAimProgrammeType,
+                        //g.LearningAimStandardCode,
+                        //g.LearningAimFrameworkCode,
+                        //g.LearningAimPathwayCode,
+                        //g.LearningAimFundingLineType,
+                        //g.PriceEpisodeIdentifier
+
+                //var authorCategoryRecipes =
+                //    db.Recipes
+                //        .GroupBy(r => new { r.Author, r.Category })
+                //        .OrderBy(g => g.Key.Author)
+                //        .Select(g => new { Author = g.Key, RecipeCount = g.Count() });
+
                 foreach (var learner in appsMonthlyPaymentIlrInfo.Learners)
                 {
                     var paymentGroups = appsMonthlyPaymentDasInfo.Payments.Where(x => x.LearnerReferenceNumber.CaseInsensitiveEquals(learner.LearnRefNumber))
                         .GroupBy(x => new
                         {
+                            x.UkPrn,
                             x.LearnerReferenceNumber,
                             x.LearnerUln,
                             x.LearningAimReference,
@@ -89,7 +175,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 x.LearnRefNumber == learningDeliveryInfo.LearnRefNumber &&
                                 x.AimSequenceNumber == learningDeliveryInfo.AimSeqNumber);
 
-                        //var contractAllocationNumber = null;
+                        //var reportLearningAimFundingLineType =
+
+                        string fundingStreamPeriod = Utils.GetFundingStreamPeriodForFundingLineType(paymentGroup.Key.LearningAimFundingLineType);
+
+                       //var contractAllocationNumber = appsMonthlyPaymentFcsInfo.Contracts.SingleOrDefault(x => x.ContractNumber == )
+                            //.FirstOrDefault()
+                            //.ContractAllocations
+                            //.FirstOrDefault(x => x.FundingStreamPeriodCode == fundingStreamPeriod)
+                            //.ContractAllocationNumber.ToString();
 
                         var model = new AppsMonthlyPaymentModel()
                         {
@@ -137,6 +231,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 : string.Empty,
                             PriceEpisodeActualEndDate = aecApprenticeshipPriceEpisode?.PriceEpisodeActualEndDate
                                 .GetValueOrDefault().ToString("dd/MM/yyyy"),
+                            //ContractNo = contractAllocationNumber,
                             FundingLineType = paymentGroup.Key.LearningAimFundingLineType,
                             LearningDeliveryFAMTypeApprenticeshipContractType = paymentGroup.First().ContractType,
                             AgreementIdentifier = aecApprenticeshipPriceEpisode?.PriceEpisodeAgreeId,

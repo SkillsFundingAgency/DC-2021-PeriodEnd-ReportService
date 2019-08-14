@@ -43,24 +43,42 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();
             Mock<IStreamableKeyValuePersistenceService> storage = new Mock<IStreamableKeyValuePersistenceService>();
-            Mock<IIlrPeriodEndProviderService> IlrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
+            Mock<IIlrPeriodEndProviderService> IlrPeriodEndProviderServiceMock =
+                new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
             Mock<IFcsProviderService> fcsProviderServiceMock = new Mock<IFcsProviderService>();
             IValueProvider valueProvider = new ValueProvider();
-            storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>())).Callback<string, string, CancellationToken>((key, value, ct) => csv = value).Returns(Task.CompletedTask);
+            storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
+                .Returns(Task.CompletedTask);
 
             var appsMonthlyPaymentIlrInfo = BuildILRModel(ukPrn);
             var appsMonthlyPaymentRulebaseInfo = BuildFm36Model(ukPrn);
             var appsMonthlyPaymentDasInfo = BuildDasPaymentsModel(ukPrn);
+            var appsMonthlyPaymentFcsInfo = BuildFcsModel(ukPrn);
             var larsDeliveryInfoModel = BuildLarsDeliveryInfoModel();
 
-            IlrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentIlrInfo);
-            fm36ProviderServiceMock.Setup(x => x.GetFM36DataForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentRulebaseInfo);
-            dasPaymentProviderMock.Setup(x => x.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasInfo);
-            larsProviderServiceMock.Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(It.IsAny<string[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
-            fcsProviderServiceMock.Setup(x => x.GetFcsContractAllocationNumber(It.IsAny<int>(), It.IsAny<string>())).Returns("APPS-1742");
+            IlrPeriodEndProviderServiceMock
+                .Setup(
+                    x => x.GetILRInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(appsMonthlyPaymentIlrInfo);
+            fm36ProviderServiceMock
+                .Setup(x => x.GetFM36DataForAppsMonthlyPaymentReportAsync(
+                    It.IsAny<int>(),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentRulebaseInfo);
+            dasPaymentProviderMock
+                .Setup(x => x.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
+                    It.IsAny<int>(),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasInfo);
+            larsProviderServiceMock
+                .Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
+                    It.IsAny<string[]>(),
+                    It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
+            fcsProviderServiceMock.Setup(x => x.GetFcsInfoForAppsMonthlyPaymentReportAsync(
+                It.IsAny<int>(),
+                It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
@@ -100,7 +118,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().CampusIdentifier.Should().Be("camp101");
             result.First().AimSeqNumber.Should().Be(1);
             result.First().LearningAimReference.Should().Be("50117889");
-            result.First().LearningStartDate.Should().Be("28/06/2017");
+            result.First().LearningStartDate.Should().Be("28/08/2019");
             result.First().LearningAimProgrammeType.Should().Be(1);
             result.First().LearningAimStandardCode.Should().Be(1);
             result.First().LearningAimFrameworkCode.Should().Be(1);
@@ -160,7 +178,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 LearnAimRef = "50117889",
                                 AimType = 3,
                                 AimSeqNumber = 1,
-                                LearnStartDate = new DateTime(2017, 06, 28),
+                                LearnStartDate = new DateTime(2019, 08, 28),
                                 ProgType = 1,
                                 StdCode = 1,
                                 FworkCode = 1,
@@ -202,7 +220,42 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     {
                         LearnRefNumber = "A12345",
                         PriceEpisodeAgreeId = "PA101",
-                        PriceEpisodeActualEndDate = new DateTime(2019, 06, 28),
+                        PriceEpisodeActualEndDate = new DateTime(2019, 08, 13),
+                    }
+                }
+            };
+        }
+
+        private AppsMonthlyPaymentFcsInfo BuildFcsModel(int ukPrn)
+        {
+            return new AppsMonthlyPaymentFcsInfo()
+            {
+                UkPrn = ukPrn,
+                Contracts = new List<AppsMonthlyPaymentContractInfo>()
+                {
+                    new AppsMonthlyPaymentContractInfo()
+                    {
+                        ContractNumber = "AA01",
+                        ContractVersionNumber = 2,
+                        StartDate = new DateTime(2019, 08, 13),
+                        EndDate = new DateTime(2020, 7, 31),
+                        Provider = new AppsMonthlyPaymentContractorInfo()
+                        {
+                            UkPrn = ukPrn,
+                            OrganisationIdentifier = "Manchester College",
+                            LegalName = "Manchester College Ltd",
+                        },
+                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocation>()
+                        {
+                            new AppsMonthlyPaymentContractAllocation()
+                            {
+                                ContractAllocationNumber = "CA10",
+                                FundingStreamPeriodCode = "APPS1920",
+                                FundingStreamCode = "APPS1920",
+                                Period = "R01",
+                                PeriodTypeCode = "APPS1920"
+                            }
+                        }
                     }
                 }
             };
@@ -223,19 +276,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 1,
                     TransactionType = 2,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 11,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var coInvestmentPayments = new AppsMonthlyPaymentDASPaymentInfo()
@@ -244,19 +297,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 2,
                     TransactionType = 2,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 12,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDASPaymentInfo()
@@ -265,19 +318,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 3,
                     TransactionType = 2,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 13,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var employerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
@@ -286,19 +339,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 3,
                     TransactionType = 4,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 14,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var providerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
@@ -307,19 +360,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 3,
                     TransactionType = 5,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 15,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var apprenticeAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
@@ -328,19 +381,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 3,
                     TransactionType = 16,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 16,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var englishAndMathsPayments = new AppsMonthlyPaymentDASPaymentInfo()
@@ -349,19 +402,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 3,
                     TransactionType = 13,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 17,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 var paymentsForLearningSupport = new AppsMonthlyPaymentDASPaymentInfo()
@@ -370,19 +423,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
                     LearningAimPathwayCode = 1,
                     FundingSource = 3,
                     TransactionType = 8,
-                    AcademicYear = 1819,
+                    AcademicYear = 1920,
                     Amount = 18,
                     ContractType = 2,
                     CollectionPeriod = i,
                     DeliveryPeriod = 1,
-                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy"
+                    LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);

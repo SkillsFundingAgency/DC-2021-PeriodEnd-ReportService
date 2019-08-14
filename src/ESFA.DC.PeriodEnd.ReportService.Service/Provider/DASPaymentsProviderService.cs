@@ -87,39 +87,62 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<Payment> paymentsList;
+           // List<Payment> paymentsList;
             using (var context = _dasPaymentsContextFactory())
             {
-                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource).ToListAsync(cancellationToken);
+                appsMonthlyPaymentDasInfo.Payments = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource)
+                    .Select(payment => new AppsMonthlyPaymentDASPaymentInfo
+                    {
+                        LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                        LearnerUln = payment.LearnerUln,
+                        LearningAimReference = payment.LearningAimReference,
+                        LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                        LearningAimStandardCode = payment.LearningAimStandardCode,
+                        LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                        LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                        Amount = payment.Amount,
+                        LearningAimFundingLineType = payment.LearningAimFundingLineType,
+                        PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+                        FundingSource = payment.FundingSource,
+                        TransactionType = payment.TransactionType,
+                        AcademicYear = payment.AcademicYear,
+                        CollectionPeriod = payment.CollectionPeriod,
+                        ContractType = payment.ContractType,
+                        DeliveryPeriod = payment.DeliveryPeriod,
+                        LearningStartDate = payment.LearningStartDate
+                    }).ToListAsync(cancellationToken);
+
+                return appsMonthlyPaymentDasInfo;
             }
 
-            foreach (var payment in paymentsList)
-            {
-                var paymentInfo = new AppsMonthlyPaymentDASPaymentInfo
-                {
-                    LearnerReferenceNumber = payment.LearnerReferenceNumber,
-                    LearnerUln = payment.LearnerUln,
-                    LearningAimReference = payment.LearningAimReference,
-                    LearningAimProgrammeType = payment.LearningAimProgrammeType,
-                    LearningAimStandardCode = payment.LearningAimStandardCode,
-                    LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-                    LearningAimPathwayCode = payment.LearningAimPathwayCode,
-                    Amount = payment.Amount,
-                    LearningAimFundingLineType = payment.LearningAimFundingLineType,
-                    PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
-                    FundingSource = payment.FundingSource,
-                    TransactionType = payment.TransactionType,
-                    AcademicYear = payment.AcademicYear,
-                    CollectionPeriod = payment.CollectionPeriod,
-                    ContractType = payment.ContractType,
-                    DeliveryPeriod = payment.DeliveryPeriod,
-                    LearningStartDate = payment.LearningStartDate
-                };
+            // TODO: move this into the above statement with a .Select
+            //foreach (var payment in paymentsList)
+            //{
+            //    var paymentInfo = new AppsMonthlyPaymentDASPaymentInfo
+            //    {
+            //        LearnerReferenceNumber = payment.LearnerReferenceNumber,
+            //        LearnerUln = payment.LearnerUln,
+            //        LearningAimReference = payment.LearningAimReference,
+            //        LearningAimProgrammeType = payment.LearningAimProgrammeType,
+            //        LearningAimStandardCode = payment.LearningAimStandardCode,
+            //        LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+            //        LearningAimPathwayCode = payment.LearningAimPathwayCode,
+            //        Amount = payment.Amount,
+            //        LearningAimFundingLineType = payment.LearningAimFundingLineType,
+            //        PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+            //        FundingSource = payment.FundingSource,
+            //        TransactionType = payment.TransactionType,
+            //        AcademicYear = payment.AcademicYear,
+            //        CollectionPeriod = payment.CollectionPeriod,
+            //        ContractType = payment.ContractType,
+            //        DeliveryPeriod = payment.DeliveryPeriod,
+            //        LearningStartDate = payment.LearningStartDate
+            //    };
 
-                appsMonthlyPaymentDasInfo.Payments.Add(paymentInfo);
-            }
+            //    appsMonthlyPaymentDasInfo.Payments.Add(paymentInfo);
+            //}
 
-            return appsMonthlyPaymentDasInfo;
+            //return appsMonthlyPaymentDasInfo;
         }
 
         private string GetTypeOfAdditionalPayment(byte transactionType)

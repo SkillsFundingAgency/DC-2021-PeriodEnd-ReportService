@@ -60,6 +60,8 @@
 
         public string PriceEpisodeActualEndDate { get; set; }
 
+        public string ContractNo { get; set; }
+
         public string FundingLineType { get; set; }
 
         public byte LearningDeliveryFAMTypeApprenticeshipContractType { get; set; }

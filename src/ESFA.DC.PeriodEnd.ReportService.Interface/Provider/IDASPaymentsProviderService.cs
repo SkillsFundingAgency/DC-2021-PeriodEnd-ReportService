@@ -11,6 +11,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 
         Task<AppsMonthlyPaymentDASInfo> GetPaymentsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 
-        Task<AppsMonthlyPaymentDASInfo> Get1920DasPaymentsAsync(int ukPrn, CancellationToken cancellationToken);
+        //Task<AppsMonthlyPaymentDASInfo> Get1920DasPaymentsAsync(int ukPrn, CancellationToken cancellationToken);
     }
 }

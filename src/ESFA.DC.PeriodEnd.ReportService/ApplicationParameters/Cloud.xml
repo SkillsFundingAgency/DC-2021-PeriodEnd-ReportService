@@ -18,21 +18,11 @@
     <!-- Topic Names -->
     <Parameter Name="TopicReports" Value="__TopicReports__" />
     <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="__TopicReports_TaskGenerateAppsMonthlyPaymentReport__" />
-    <!-- LARS -->
-    <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
-    <!-- Org -->
-    <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
     <!-- DAS Commitments -->
     <Parameter Name="DasCommitmentsConnectionString" Value="__DasCommitmentConnectionStringRO__" />
-    <!-- EAS -->
-    <Parameter Name="EasConnectionString" Value="__EasConnectionString__" />
-    <!-- Postcode -->
-    <Parameter Name="PostcodeConnectionString" Value="__PostcodeConnectionString__" />
-    <!-- Large Employer -->
-    <Parameter Name="LargeEmployerConnectionString" Value="__LargeEmployerConnectionString__" />
-    <!-- Collections Management -->
-    <Parameter Name="CollectionsManagementConnectionString" Value="__CollectionsManagementConnectionString__" />
+    <!-- Lars -->
+    <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
   </Parameters>
 </Application>

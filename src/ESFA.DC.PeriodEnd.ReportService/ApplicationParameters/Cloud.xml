@@ -3,12 +3,36 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
-    <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
-    <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionStringServiceFabric__" />
-    <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
+    <Parameter Name="ILRDataStoreConnectionString" Value="__ILRDataStoreConnectionString__" />
+    <Parameter Name="ILRDataStoreValidConnectionString" Value="__ILRDataStoreValidConnectionString__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
+    <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionString__" />
     <Parameter Name="JobStatusConnectionString" Value="__JobStatusConnectionString__" />
+    <Parameter Name="AuditQueueName" Value="__AuditQueueName__" />
+    <Parameter Name="TopicName" Value="__TopicName__" />
+    <Parameter Name="LoggerConnectionstring" Value="__LoggerConnectionstring__" />
+    <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
+    <Parameter Name="JobStatusQueueName" Value="__JobStatusQueueName__" />
+    <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
+    <Parameter Name="ReportingSubscriptionName" Value="__ReportingSubscriptionName__" />
     <!-- Topic Names -->
+    <Parameter Name="TopicReports" Value="__TopicReports__" />
     <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="__TopicReports_TaskGenerateAppsMonthlyPaymentReport__" />
+    <!-- LARS -->
+    <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
+    <!-- DASPayments -->
+    <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
+    <!-- Org -->
+    <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
+    <!-- DAS Commitments -->
+    <Parameter Name="DasCommitmentsConnectionString" Value="__DasCommitmentConnectionStringRO__" />
+    <!-- EAS -->
+    <Parameter Name="EasConnectionString" Value="__EasConnectionString__" />
+    <!-- Postcode -->
+    <Parameter Name="PostcodeConnectionString" Value="__PostcodeConnectionString__" />
+    <!-- Large Employer -->
+    <Parameter Name="LargeEmployerConnectionString" Value="__LargeEmployerConnectionString__" />
+    <!-- Collections Management -->
+    <Parameter Name="CollectionsManagementConnectionString" Value="__CollectionsManagementConnectionString__" />
   </Parameters>
 </Application>

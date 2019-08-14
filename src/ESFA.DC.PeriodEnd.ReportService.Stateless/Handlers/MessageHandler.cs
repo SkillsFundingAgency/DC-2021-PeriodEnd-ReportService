@@ -92,6 +92,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
             return _parentLifeTimeScope.BeginLifetimeScope(c =>
             {
                 c.RegisterInstance(jobContextMessage).As<IJobContextMessage>();
+                c.RegisterType<ReportServiceContext>().As<IReportServiceContext>();
+
+                c.RegisterType<EntryPoint>().InstancePerLifetimeScope();
+                c.RegisterType<InternalEntryPoint>().InstancePerLifetimeScope();
 
                 var azureBlobStorageOptions = _parentLifeTimeScope.Resolve<IAzureStorageOptions>();
                 c.RegisterInstance(new AzureStorageKeyValuePersistenceConfig(

@@ -9,7 +9,6 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports;
 using Microsoft.EntityFrameworkCore;
 
-
 namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
 {
     public class PaymentsService : IPaymentsService

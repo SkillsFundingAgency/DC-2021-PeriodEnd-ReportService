@@ -1,28 +1,43 @@
-﻿using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports
 {
     public class InternalEntryPoint
     {
-        private readonly IPeriodEndQueryService1920 _ilr1920MetricsService;
-        private readonly IPaymentsService _paymentServices;
+        private readonly ILogger _logger;
+        private readonly IEnumerable<IInternalReport> _internalReports;
 
         public InternalEntryPoint(
-            IPeriodEndQueryService1920 ilr1920MetricsService,
-            IPaymentsService paymentServices)
+            ILogger logger,
+            IEnumerable<IInternalReport> internalReports)
         {
-            _ilr1920MetricsService = ilr1920MetricsService;
-            _paymentServices = paymentServices;
+            _logger = logger;
+            _internalReports = internalReports;
         }
 
         public async Task<bool> Callback(CancellationToken cancellationToken)
         {
-            await _paymentServices.GetPaymentMetrics(1819, 12);
+            _logger.LogInfo("In internal entry point");
 
-            await _ilr1920MetricsService.GetPeriodEndMetrics(70);
+            try
+            {
+                foreach (var report in _internalReports)
+                {
+                    await report.GenerateReport(cancellationToken);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError(e.Message, e);
+                throw;
+            }
 
+            _logger.LogInfo("End of internal entry point");
             return true;
         }
     }

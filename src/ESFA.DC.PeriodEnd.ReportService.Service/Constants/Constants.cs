@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class Constants
     {

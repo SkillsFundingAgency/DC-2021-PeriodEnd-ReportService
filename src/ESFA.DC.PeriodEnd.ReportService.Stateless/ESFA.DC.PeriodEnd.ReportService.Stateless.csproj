@@ -76,7 +76,7 @@
     </Reference>
     <Reference Include="ESFA.DC.Data.LARS.Model, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Users\Gayatri\.nuget\packages\esfa.dc.data.lars.model\0.1.4-beta0001\lib\net461\ESFA.DC.Data.LARS.Model.dll</HintPath>
+      <HintPath>..\packages\esfa.dc.data.lars.model\0.1.4-beta0001\lib\net461\ESFA.DC.Data.LARS.Model.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.DateTimeProvider, Version=0.1.6.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.DateTimeProvider.0.1.6-beta0001\lib\netstandard2.0\ESFA.DC.DateTimeProvider.dll</HintPath>
@@ -102,8 +102,8 @@
     <Reference Include="ESFA.DC.ILR1920.Database.EF, Version=0.0.273.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.273\lib\netstandard2.0\ESFA.DC.ILR1920.Database.EF.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR1920.DataStore.EF, Version=0.0.273.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.273\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR1920.DataStore.EF">
+      <HintPath>..\packages\esfa.dc.ilr1920.database.ef\0.0.273\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.ILR1920.DataStore.EF.Invalid, Version=0.0.273.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.273\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.Invalid.dll</HintPath>

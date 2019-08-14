@@ -168,8 +168,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             RegisterServices(containerBuilder);
             RegisterBuilders(containerBuilder);
             RegisterReports(containerBuilder);
-            //RegisterRules(containerBuilder);
-            //RegisterCommands(containerBuilder);
 
             return containerBuilder;
         }

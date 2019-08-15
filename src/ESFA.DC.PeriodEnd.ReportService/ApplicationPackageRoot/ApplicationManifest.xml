@@ -22,7 +22,6 @@
     <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
     <!-- Topic Names -->
     <Parameter Name="TopicReports" DefaultValue="Reports" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" DefaultValue="GenerateAppsMonthlyPaymentReport" />
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
     <!-- DASPayments -->

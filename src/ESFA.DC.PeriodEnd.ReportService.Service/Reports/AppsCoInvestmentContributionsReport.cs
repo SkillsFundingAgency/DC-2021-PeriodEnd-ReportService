@@ -23,6 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
+        private readonly IAppsCoInvestmentContributionsModelBuilder _modelBuilder;
 
         public AppsCoInvestmentContributionsReport(
             ILogger logger,
@@ -30,11 +31,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
-            IDASPaymentsProviderService dasPaymentsProviderService)
+            IDASPaymentsProviderService dasPaymentsProviderService,
+            IAppsCoInvestmentContributionsModelBuilder modelBuilder)
         : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
+            _modelBuilder = modelBuilder;
         }
 
         public override string ReportFileName => "Apps Co-Investment Contributions Report";
@@ -45,17 +48,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         {
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
+
+            var appsCoInvestmentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsCoInvestmentPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+
+            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo);
+
             string csv = await GetCsv(reportServiceContext, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
         }
 
-        private async Task<string> GetCsv(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        private async Task<string> GetCsv(IEnumerable<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
-
-            List<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels = new List<AppsCoInvestmentContributionsModel>();
-
             using (var ms = new MemoryStream())
             {
                 UTF8Encoding utF8Encoding = new UTF8Encoding(false, true);

@@ -12,20 +12,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 
         string ILRDataStoreConnectionString { get; set; }
 
-        string ILRDataStoreValidConnectionString { get; set; }
-
-        string EasConnectionString { get; set; }
-
         string FCSConnectionString { get; set; }
 
-        string IlrValidationErrorsConnectionString { get; set; }
-
-        string LargeEmployerConnectionString { get; set; }
-
         string LarsConnectionString { get; set; }
-
-        string OrgConnectionString { get; set; }
-
-        string PostcodeConnectionString { get; set; }
     }
 }

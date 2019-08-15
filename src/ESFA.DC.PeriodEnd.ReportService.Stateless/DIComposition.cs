@@ -40,7 +40,6 @@ using ESFA.DC.ReferenceData.LARS.Model;
 using ESFA.DC.ReferenceData.LARS.Model.Interface;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using Microsoft.EntityFrameworkCore;
-using IValueProvider = System.Web.ModelBinding.IValueProvider;
 using VersionInfo = ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration.VersionInfo;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless

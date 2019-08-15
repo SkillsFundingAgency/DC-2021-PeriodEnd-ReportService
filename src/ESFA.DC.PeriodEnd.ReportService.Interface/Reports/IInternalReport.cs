@@ -5,6 +5,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 {
     public interface IInternalReport
     {
-        Task GenerateReport(CancellationToken cancellationToken);
+        Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

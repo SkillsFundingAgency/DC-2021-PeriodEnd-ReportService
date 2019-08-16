@@ -27,6 +27,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
 
         public string LarsConnectionString { get; set; }
 
+        public string SummarisedActualsConnectionString { get; set; }
+
         public string OrgConnectionString { get; set; }
 
         public string PostcodeConnectionString { get; set; }

@@ -8,6 +8,7 @@
     <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
     <Parameter Name="JobStatusConnectionString" Value="__JobStatusConnectionString__" />
+    <Parameter Name="SummarisedActualsConnectionString" Value="__SummarisedActualsConnectionString__" />
     <!-- Topic Names -->
     <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="__TopicReports_TaskGenerateAppsMonthlyPaymentReport__" />
   </Parameters>

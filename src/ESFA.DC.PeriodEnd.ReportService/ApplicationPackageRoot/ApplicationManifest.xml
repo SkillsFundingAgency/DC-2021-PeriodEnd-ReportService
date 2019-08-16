@@ -29,6 +29,8 @@
     <Parameter Name="LarsConnectionString" DefaultValue="" />
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
+    <!-- Summarisation -->
+    <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
     <!-- DAS Commitments -->
@@ -69,6 +71,7 @@
           <Section Name="ReportServiceConfiguration">
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
+            <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
             <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />

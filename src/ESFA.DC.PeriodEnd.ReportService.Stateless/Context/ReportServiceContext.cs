@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 {
@@ -26,12 +27,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 
         public IEnumerable<string> Tasks => _jobContextMessage.Topics[_jobContextMessage.TopicPointer].Tasks.SelectMany(x => x.Tasks);
 
-        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs["ReturnPeriod"].ToString());
+        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[MessageKeys.ReturnPeriod].ToString());
 
         public long JobId => _jobContextMessage.JobId;
 
         public DateTime SubmissionDateTimeUtc => _jobContextMessage.SubmissionDateTimeUtc;
 
-        public string CollectionName => _jobContextMessage.KeyValuePairs["CollectionName"].ToString();
+        public string CollectionName => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionName].ToString();
+
+        public string CollectionReturnCodeDC => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeDC].ToString();
+
+        public string CollectionReturnCodeESF => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeESF].ToString();
+
+        public string CollectionReturnCodeApp => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeApp].ToString();
     }
 }

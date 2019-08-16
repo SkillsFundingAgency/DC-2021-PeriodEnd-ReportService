@@ -141,6 +141,9 @@
     <Reference Include="ESFA.DC.Queueing.Interface, Version=0.1.14.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Queueing.Interface.0.1.14-beta0001\lib\netstandard2.0\ESFA.DC.Queueing.Interface.dll</HintPath>
     </Reference>
+    <Reference Include="ESFA.DC.ReferenceData.FCS.Model, Version=0.2.159.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ReferenceData.FCS.Model.0.2.159\lib\netstandard2.0\ESFA.DC.ReferenceData.FCS.Model.dll</HintPath>
+    </Reference>
     <Reference Include="ESFA.DC.ReferenceData.LARS.Model, Version=0.2.112.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ReferenceData.LARS.Model.0.2.112\lib\netstandard2.0\ESFA.DC.ReferenceData.LARS.Model.dll</HintPath>
     </Reference>
@@ -155,6 +158,9 @@
     </Reference>
     <Reference Include="ESFA.DC.ServiceFabric.Common, Version=0.1.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ServiceFabric.Common.0.1.1-beta0001\lib\netstandard2.0\ESFA.DC.ServiceFabric.Common.dll</HintPath>
+    </Reference>
+    <Reference Include="ESFA.DC.Summarisation.Model, Version=0.0.471.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.Summarisation.Model.0.0.471\lib\netstandard2.0\ESFA.DC.Summarisation.Model.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.Azure.Amqp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.Amqp.2.4.2\lib\net45\Microsoft.Azure.Amqp.dll</HintPath>

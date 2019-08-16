@@ -21,5 +21,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
         DateTime SubmissionDateTimeUtc { get; }
 
         string CollectionName { get; }
+
+        string CollectionReturnCodeDC { get; }
+
+        string CollectionReturnCodeESF { get; }
+
+        string CollectionReturnCodeApp { get; }
     }
 }

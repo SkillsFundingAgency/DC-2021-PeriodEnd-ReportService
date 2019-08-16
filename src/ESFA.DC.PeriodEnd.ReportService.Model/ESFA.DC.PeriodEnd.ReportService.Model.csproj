@@ -6,8 +6,6 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="ReportModels\" />
-    <Folder Include="PeriodEnd\" />
     <Folder Include="Styling\" />
   </ItemGroup>
 

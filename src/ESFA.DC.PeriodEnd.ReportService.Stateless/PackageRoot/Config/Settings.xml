@@ -34,6 +34,7 @@
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
     <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
     <Parameter Name="JobStatusConnectionString" Value="" />
+    <Parameter Name="SummarisedActualsConnectionString" Value="" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">

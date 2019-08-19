@@ -6,6 +6,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
     {
         public string DASPaymentsConnectionString { get; set; }
 
+        public string DasCommitmentsConnectionString { get; set; }
+
+        public string EasConnectionString { get; set; }
+
         public string ILRDataStoreConnectionString { get; set; }
 
         public string ILRDataStoreValidConnectionString { get; set; }

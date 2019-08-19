@@ -8,6 +8,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
     {
         string DASPaymentsConnectionString { get; set; }
 
+        string DasCommitmentsConnectionString { get; set; }
+
+        string EasConnectionString { get; set; }
+
         string ILRDataStoreConnectionString { get; set; }
 
         string ILRDataStoreValidConnectionString { get; set; }

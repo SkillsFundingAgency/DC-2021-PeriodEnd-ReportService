@@ -24,6 +24,8 @@
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
+    <Parameter Name="DasCommitmentsConnectionString" Value="" />
+    <Parameter Name="EasConnectionString" Value="" />
     <Parameter Name="OrgConnectionString" Value=""/>
     <Parameter Name="PostcodeConnectionString" Value="" />
     <Parameter Name="LargeEmployerConnectionString" Value="" />

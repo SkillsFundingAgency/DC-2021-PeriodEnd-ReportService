@@ -14,12 +14,15 @@
     <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
     <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
-    <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
+    <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
+    <!--<Parameter Name="CollectionsManagementConnectionString" DefaultValue="" />-->
+    <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
+    <Parameter Name="EasConnectionString" DefaultValue="" />
+    <Parameter Name="FCSConnectionString" DefaultValue="" />
     <Parameter Name="ILRDataStoreConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
     <Parameter Name="ILRDataStoreValidConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
     <Parameter Name="LarsConnectionString" DefaultValue="" />
-    <Parameter Name="FCSConnectionString" DefaultValue="" />
-    <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
+    <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
     <Parameter Name="OrgConnectionString" DefaultValue="" />
     <Parameter Name="PostcodeConnectionString" DefaultValue="" />
     <Parameter Name="LargeEmployerConnectionString" DefaultValue="" />
@@ -50,8 +53,11 @@
           </Section>
           <Section Name="ReportServiceConfiguration">
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
+            <!--<Parameter Name="CollectionsManagementConnectionString" Value="[CollectionsManagementConnectionString]" />-->
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
+            <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
+            <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
             <Parameter Name="PostcodeConnectionString" Value="[PostcodeConnectionString]" />
             <Parameter Name="LargeEmployerConnectionString" Value="[LargeEmployerConnectionString]" />

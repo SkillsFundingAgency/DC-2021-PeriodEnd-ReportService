@@ -13,6 +13,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 
         string GetFilename(IReportServiceContext reportServiceContext);
 
+        string GetFilenameForInternalReport(IReportServiceContext reportServiceContext);
+
         string GetZipFilename(IReportServiceContext reportServiceContext);
 
         Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken);

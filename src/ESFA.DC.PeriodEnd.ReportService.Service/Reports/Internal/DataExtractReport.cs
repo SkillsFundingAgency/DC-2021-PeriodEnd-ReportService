@@ -48,19 +48,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken)
         {
-            var externalFileName = GetFilename(reportServiceContext);
-            var fileName = GetZipFilename(reportServiceContext);
+            var externalFileName = GetFilenameForInternalReport(reportServiceContext);
+            //var fileName = GetZipFilename(reportServiceContext);
 
             IEnumerable<DataExtractModel> summarisationInfo = (await _summarisationProviderService.GetSummarisedActualsForDataExtractReport(
                 new[] { reportServiceContext.CollectionReturnCodeApp, reportServiceContext.CollectionReturnCodeDC, reportServiceContext.CollectionReturnCodeESF },
                 cancellationToken)).ToList();
-            IEnumerable<string> organisationIds = summarisationInfo?.Select(x => x.OrganisationId);
+            IEnumerable<string> organisationIds = summarisationInfo?.Select(x => x.OrganisationId).Distinct();
             IEnumerable<DataExtractFcsInfo> fcsInfo = await _fcsProviderService.GetFCSForDataExtractReport(organisationIds, cancellationToken);
 
             var dataExtractModel = _modelBuilder.BuildModel(summarisationInfo, fcsInfo);
             string csv = await GetCsv(dataExtractModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
-            await WriteZipEntry(archive, $"{fileName}.csv", csv);
+            //await WriteZipEntry(archive, $"{fileName}.csv", csv);
         }
 
         private async Task<string> GetCsv(

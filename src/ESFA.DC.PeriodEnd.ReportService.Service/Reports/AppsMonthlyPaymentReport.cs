@@ -20,7 +20,7 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 {
-    public class AppsMonthlyPaymentReport : AbstractReport, IReport
+    public class AppsMonthlyPaymentReport : AbstractReport
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
@@ -66,6 +66,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             // get the main base DAS payments report data
             var appsMonthlyPaymentDasInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
+            // get the DAS Earnings Event data
+            var appsMonthlyPaymentDasEarningsInfo = await _dasPaymentsProviderService.GetEarningsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+
             // get the ILR data
             var appsMonthlyPaymentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
@@ -75,18 +78,25 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             // Get the Fcs Contract data
             var appsMonthlyPaymentFcsInfo = await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
+            // Get the name's of the learning aims
             string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries).Select(x => x.LearnAimRef).Distinct().ToArray();
-
             var appsMonthlyPaymentLarsLearningDeliveryInfos = await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(learnAimRefs, cancellationToken);
 
-            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(appsMonthlyPaymentIlrInfo, appsMonthlyPaymentRulebaseInfo, appsMonthlyPaymentDasInfo, appsMonthlyPaymentFcsInfo, appsMonthlyPaymentLarsLearningDeliveryInfos);
+            // Build the actual Apps Monthly Payment Report
+            var appsMonthlyPaymentsModel = _modelBuilder.BuildAppsMonthlyPaymentModelList(
+                appsMonthlyPaymentIlrInfo,
+                appsMonthlyPaymentRulebaseInfo,
+                appsMonthlyPaymentDasInfo,
+                appsMonthlyPaymentDasEarningsInfo,
+                appsMonthlyPaymentFcsInfo,
+                appsMonthlyPaymentLarsLearningDeliveryInfos);
 
-            string csv = await GetCsv(appsAdditionalPaymentsModel, cancellationToken);
+            string csv = await GetCsv(appsMonthlyPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
         }
 
-        private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsAdditionalPaymentsModel, CancellationToken cancellationToken)
+        private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -97,7 +107,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 {
                     using (CsvWriter csvWriter = new CsvWriter(textWriter))
                     {
-                        WriteCsvRecords<AppsMonthlyPaymentMapper, AppsMonthlyPaymentModel>(csvWriter, appsAdditionalPaymentsModel);
+                        WriteCsvRecords<AppsMonthlyPaymentMapper, AppsMonthlyPaymentModel>(csvWriter, appsMonthlyPaymentsModel);
 
                         csvWriter.Flush();
                         textWriter.Flush();

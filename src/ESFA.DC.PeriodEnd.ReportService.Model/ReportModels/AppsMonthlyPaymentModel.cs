@@ -1,46 +1,64 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
+﻿using System;
+
+namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 {
     public class AppsMonthlyPaymentModel
     {
-        public string LearnerReferenceNumber { get; set; }
+        public string Ukprn { get; set; }
 
-        public long UniqueLearnerNumber { get; set; }
+        public string PaymentLearnerReferenceNumber { get; set; }
 
-        public string CampusIdentifier { get; set; }
+        public string PaymentUniqueLearnerNumber { get; set; }
+
+        public string LearnerCampusIdentifier { get; set; }
 
         public string ProviderSpecifiedLearnerMonitoringA { get; set; }
 
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }
 
-        public int AimSeqNumber { get; set; }
+        public int? PaymentEarningEventAimSeqNumber { get; set; }
 
-        public string LearningAimReference { get; set; }
+        public string PaymentLearningAimReference { get; set; }
 
-        public string LearningAimTitle { get; set; }
+        public string LarsLearningDeliveryLearningAimTitle { get; set; }
 
-        public string LearningStartDate { get; set; }
+        public string LearningDeliveryOriginalLearningStartDate { get; set; }
 
-        public int LearningAimProgrammeType { get; set; }
+        public string PaymentLearningStartDate { get; set; }
 
-        public int LearningAimStandardCode { get; set; }
+        public string LearningDeliveryLearningPlannedEndData { get; set; }
 
-        public int LearningAimFrameworkCode { get; set; }
+        public string LearningDeliveryCompletionStatus { get; set; }
 
-        public int LearningAimPathwayCode { get; set; }
+        public string LearningDeliveryLearningActualEndDate { get; set; }
 
-        public int AimType { get; set; }
+        public string LearningDeliveryAchievementDate { get; set; }
 
-        public string SoftwareSupplierAimIdentifier { get; set; }
+        public string LearningDeliveryOutcome { get; set; }
 
-        public string LearningDeliveryFAMTypeLearningDeliveryMonitoringA { get; set; }
+        public string PaymentProgrammeType { get; set; }
 
-        public string LearningDeliveryFAMTypeLearningDeliveryMonitoringB { get; set; }
+        public string PaymentStandardCode { get; set; }
 
-        public string LearningDeliveryFAMTypeLearningDeliveryMonitoringC { get; set; }
+        public string PaymentFrameworkCode { get; set; }
 
-        public string LearningDeliveryFAMTypeLearningDeliveryMonitoringD { get; set; }
+        public string PaymentPathwayCode { get; set; }
 
-        public string LearningDeliveryFAMRestartIndicator { get; set; }
+        public string LearningDeliveryAimType { get; set; }
+
+        public string LearningDeliverySoftwareSupplierAimIdentifier { get; set; }
+
+        public string LearningDeliveryFamTypeLearningDeliveryMonitoringA { get; set; }
+
+        public string LearningDeliveryFamTypeLearningDeliveryMonitoringB { get; set; }
+
+        public string LearningDeliveryFamTypeLearningDeliveryMonitoringC { get; set; }
+
+        public string LearningDeliveryFamTypeLearningDeliveryMonitoringD { get; set; }
+
+        public string LearningDeliveryFamTypeLearningDeliveryMonitoringE { get; set; }
+
+        public string LearningDeliveryFamTypeLearningDeliveryMonitoringF { get; set; }
 
         public string ProviderSpecifiedDeliveryMonitoringA { get; set; }
 
@@ -50,24 +68,33 @@
 
         public string ProviderSpecifiedDeliveryMonitoringD { get; set; }
 
-        public string EndPointAssessmentOrganisation { get; set; }
+        public string LearningDeliveryEndPointAssessmentOrganisation { get; set; }
 
-        public int? SubContractedOrPartnershipUKPRN { get; set; }
+        public string RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim { get; set; }
 
-        public string PriceEpisodeIdentifier { get; set; }
+        public string LearningDeliverySubContractedOrPartnershipUkprn { get; set; }
 
-        public string PriceEpisodeStartDate { get; set; }
+        public string PaymentPriceEpisodeIdentifier { get; set; }
 
-        public string PriceEpisodeActualEndDate { get; set; }
+        public string PaymentPriceEpisodeStartDate { get; set; }
 
-        public string ContractNo { get; set; }
+        public string RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate { get; set; }
 
-        public string FundingLineType { get; set; }
+        public string FcsContractContractAllocationContractAllocationNumber { get; set; }
 
-        public byte LearningDeliveryFAMTypeApprenticeshipContractType { get; set; }
+        public string PaymentFundingLineType { get; set; }
 
-        public string AgreementIdentifier { get; set; }
+        public string PaymentApprenticeshipContractType { get; set; }
 
+        public string LearnerEmploymentStatusEmployerId { get; set; }
+
+        public string RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier { get; set; }
+
+        public string LearnerEmploymentStatus { get; set; }
+
+        public string LearnerEmploymentStatusDate { get; set; }
+
+        // payments arrays to hold period payments
         public decimal[] LevyPayments { get; set; }
 
         public decimal[] CoInvestmentPayments { get; set; }
@@ -82,8 +109,9 @@
 
         public decimal[] EnglishAndMathsPayments { get; set; }
 
-        public decimal[] PaymentsForLearningSupport { get; set; }
+        public decimal[] LearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
+        // Period payments - August (R01)
         public decimal AugustLevyPayments { get; set; }
 
         public decimal AugustCoInvestmentPayments { get; set; }
@@ -98,10 +126,11 @@
 
         public decimal AugustEnglishAndMathsPayments { get; set; }
 
-        public decimal AugustPaymentsForLearningSupport { get; set; }
+        public decimal AugustLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal AugustTotalPayments { get; set; }
 
+        // Period payments - September (R02)
         public decimal SeptemberLevyPayments { get; set; }
 
         public decimal SeptemberCoInvestmentPayments { get; set; }
@@ -116,10 +145,11 @@
 
         public decimal SeptemberEnglishAndMathsPayments { get; set; }
 
-        public decimal SeptemberPaymentsForLearningSupport { get; set; }
+        public decimal SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal SeptemberTotalPayments { get; set; }
 
+        // Period payments - October (R03)
         public decimal OctoberLevyPayments { get; set; }
 
         public decimal OctoberCoInvestmentPayments { get; set; }
@@ -134,10 +164,11 @@
 
         public decimal OctoberEnglishAndMathsPayments { get; set; }
 
-        public decimal OctoberPaymentsForLearningSupport { get; set; }
+        public decimal OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal OctoberTotalPayments { get; set; }
 
+        // Period payments - November (R04)
         public decimal NovemberLevyPayments { get; set; }
 
         public decimal NovemberCoInvestmentPayments { get; set; }
@@ -152,10 +183,11 @@
 
         public decimal NovemberEnglishAndMathsPayments { get; set; }
 
-        public decimal NovemberPaymentsForLearningSupport { get; set; }
+        public decimal NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal NovemberTotalPayments { get; set; }
 
+        // Period payments - December (R05)
         public decimal DecemberLevyPayments { get; set; }
 
         public decimal DecemberCoInvestmentPayments { get; set; }
@@ -170,10 +202,11 @@
 
         public decimal DecemberEnglishAndMathsPayments { get; set; }
 
-        public decimal DecemberPaymentsForLearningSupport { get; set; }
+        public decimal DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal DecemberTotalPayments { get; set; }
 
+        // Period payments - January (R06)
         public decimal JanuaryLevyPayments { get; set; }
 
         public decimal JanuaryCoInvestmentPayments { get; set; }
@@ -188,10 +221,11 @@
 
         public decimal JanuaryEnglishAndMathsPayments { get; set; }
 
-        public decimal JanuaryPaymentsForLearningSupport { get; set; }
+        public decimal JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal JanuaryTotalPayments { get; set; }
 
+        // Period payments - February (R07)
         public decimal FebruaryLevyPayments { get; set; }
 
         public decimal FebruaryCoInvestmentPayments { get; set; }
@@ -206,10 +240,11 @@
 
         public decimal FebruaryEnglishAndMathsPayments { get; set; }
 
-        public decimal FebruaryPaymentsForLearningSupport { get; set; }
+        public decimal FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal FebruaryTotalPayments { get; set; }
 
+        // Period payments - March (R08)
         public decimal MarchLevyPayments { get; set; }
 
         public decimal MarchCoInvestmentPayments { get; set; }
@@ -224,10 +259,11 @@
 
         public decimal MarchEnglishAndMathsPayments { get; set; }
 
-        public decimal MarchPaymentsForLearningSupport { get; set; }
+        public decimal MarchLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal MarchTotalPayments { get; set; }
 
+        // Period payments - April (R09)
         public decimal AprilLevyPayments { get; set; }
 
         public decimal AprilCoInvestmentPayments { get; set; }
@@ -242,10 +278,11 @@
 
         public decimal AprilEnglishAndMathsPayments { get; set; }
 
-        public decimal AprilPaymentsForLearningSupport { get; set; }
+        public decimal AprilLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal AprilTotalPayments { get; set; }
 
+        // Period payments - May (R10)
         public decimal MayLevyPayments { get; set; }
 
         public decimal MayCoInvestmentPayments { get; set; }
@@ -260,10 +297,11 @@
 
         public decimal MayEnglishAndMathsPayments { get; set; }
 
-        public decimal MayPaymentsForLearningSupport { get; set; }
+        public decimal MayLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal MayTotalPayments { get; set; }
 
+        // Period payments - June (R11)
         public decimal JuneLevyPayments { get; set; }
 
         public decimal JuneCoInvestmentPayments { get; set; }
@@ -278,10 +316,11 @@
 
         public decimal JuneEnglishAndMathsPayments { get; set; }
 
-        public decimal JunePaymentsForLearningSupport { get; set; }
+        public decimal JuneLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal JuneTotalPayments { get; set; }
 
+        // Period payments - July (R12)
         public decimal JulyLevyPayments { get; set; }
 
         public decimal JulyCoInvestmentPayments { get; set; }
@@ -296,10 +335,11 @@
 
         public decimal JulyEnglishAndMathsPayments { get; set; }
 
-        public decimal JulyPaymentsForLearningSupport { get; set; }
+        public decimal JulyLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal JulyTotalPayments { get; set; }
 
+        // Period payments - R13
         public decimal R13LevyPayments { get; set; }
 
         public decimal R13CoInvestmentPayments { get; set; }
@@ -314,10 +354,11 @@
 
         public decimal R13EnglishAndMathsPayments { get; set; }
 
-        public decimal R13PaymentsForLearningSupport { get; set; }
+        public decimal R13LearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal R13TotalPayments { get; set; }
 
+        // Period payments - R14
         public decimal R14LevyPayments { get; set; }
 
         public decimal R14CoInvestmentPayments { get; set; }
@@ -332,10 +373,11 @@
 
         public decimal R14EnglishAndMathsPayments { get; set; }
 
-        public decimal R14PaymentsForLearningSupport { get; set; }
+        public decimal R14LearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal R14TotalPayments { get; set; }
 
+        // Payments totals
         public decimal TotalLevyPayments { get; set; }
 
         public decimal TotalCoInvestmentPayments { get; set; }
@@ -350,11 +392,11 @@
 
         public decimal TotalEnglishAndMathsPayments { get; set; }
 
-        public decimal TotalPaymentsForLearningSupport { get; set; }
+        public decimal TotalLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal TotalPayments { get; set; }
 
-        public string OfficialSensitive { get; }
+        public decimal OfficialSensitive { get; }
 
         public decimal[] TotalMonthlyPayments { get; set; }
     }

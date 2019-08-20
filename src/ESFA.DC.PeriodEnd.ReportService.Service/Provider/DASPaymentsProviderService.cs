@@ -87,62 +87,84 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
 
-           // List<Payment> paymentsList;
             using (var context = _dasPaymentsContextFactory())
             {
-                appsMonthlyPaymentDasInfo.Payments = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource)
+                appsMonthlyPaymentDasInfo.Payments = await context.Payments
+                    .Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource)
                     .Select(payment => new AppsMonthlyPaymentDASPaymentInfo
                     {
-                        LearnerReferenceNumber = payment.LearnerReferenceNumber,
-                        LearnerUln = payment.LearnerUln,
-                        LearningAimReference = payment.LearningAimReference,
-                        LearningAimProgrammeType = payment.LearningAimProgrammeType,
-                        LearningAimStandardCode = payment.LearningAimStandardCode,
-                        LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-                        LearningAimPathwayCode = payment.LearningAimPathwayCode,
-                        Amount = payment.Amount,
-                        LearningAimFundingLineType = payment.LearningAimFundingLineType,
+                        // Convert the database null values to a default value so that we don't have to keep checking for null later
+                        // and to stop exceptions where we're not able to check for null e.g. in LINQ statements
+                        // Also give 'not null' columns a default value as the table definition may change at a later date causing our code to break
+                        Ukprn = (payment != null && payment.Ukprn != null) ? payment.Ukprn.ToString() : string.Empty,
+                        LearnerReferenceNumber = (payment != null && payment.LearnerReferenceNumber != null) ? payment.LearnerReferenceNumber : string.Empty,
+                        LearnerUln = (payment != null && payment.LearnerUln != null) ? payment.LearnerUln.ToString() : string.Empty,
+                        LearningAimReference = (payment != null && payment.LearningAimReference != null) ? payment.LearningAimReference : string.Empty,
+                        LearningAimProgrammeType = (payment != null && payment.LearningAimProgrammeType != null) ? payment.LearningAimProgrammeType.ToString() : string.Empty,
+                        LearningAimStandardCode = (payment != null && payment.LearningAimStandardCode != null) ? payment.LearningAimStandardCode.ToString() : string.Empty,
+                        LearningAimFrameworkCode = (payment != null && payment.LearningAimFrameworkCode != null) ? payment.LearningAimFrameworkCode.ToString() : string.Empty,
+                        LearningAimPathwayCode = (payment != null && payment.LearningAimPathwayCode != null) ? payment.LearningAimPathwayCode.ToString() : string.Empty,
+                        Amount = (payment != null && payment.Amount != null) ? payment.Amount : 0m,
+                        LearningAimFundingLineType = (payment != null && payment.LearningAimFundingLineType != null) ? payment.LearningAimFundingLineType : string.Empty,
+                        ReportingAimFundingLineType = (payment != null && payment.ReportingAimFundingLineType != null) ? payment.ReportingAimFundingLineType : string.Empty,
                         PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
-                        FundingSource = payment.FundingSource,
-                        TransactionType = payment.TransactionType,
-                        AcademicYear = payment.AcademicYear,
-                        CollectionPeriod = payment.CollectionPeriod,
-                        ContractType = payment.ContractType,
-                        DeliveryPeriod = payment.DeliveryPeriod,
-                        LearningStartDate = payment.LearningStartDate
-                    }).ToListAsync(cancellationToken);
+                        FundingSource = (payment != null && payment.FundingSource != null) ? payment.FundingSource.ToString() : string.Empty,
+                        TransactionType = (payment != null && payment.TransactionType != null) ? payment.TransactionType.ToString() : string.Empty,
+                        AcademicYear = (payment != null && payment.AcademicYear != null) ? payment.AcademicYear.ToString() : string.Empty,
+                        CollectionPeriod = (payment != null && payment.CollectionPeriod != null) ? payment.CollectionPeriod.ToString() : string.Empty,
+                        ContractType = (payment != null && payment.ContractType != null) ? payment.ContractType.ToString() : string.Empty,
+                        DeliveryPeriod = (payment != null && payment.DeliveryPeriod != null) ? payment.DeliveryPeriod.ToString() : string.Empty,
+                        LearningStartDate = (payment != null && payment.LearningStartDate != null) ? payment.LearningStartDate.ToString() : string.Empty,
+                        EarningEventId = payment.EarningEventId
+                    })
+                    .ToListAsync(cancellationToken);
 
                 return appsMonthlyPaymentDasInfo;
             }
+        }
 
-            // TODO: move this into the above statement with a .Select
-            //foreach (var payment in paymentsList)
-            //{
-            //    var paymentInfo = new AppsMonthlyPaymentDASPaymentInfo
-            //    {
-            //        LearnerReferenceNumber = payment.LearnerReferenceNumber,
-            //        LearnerUln = payment.LearnerUln,
-            //        LearningAimReference = payment.LearningAimReference,
-            //        LearningAimProgrammeType = payment.LearningAimProgrammeType,
-            //        LearningAimStandardCode = payment.LearningAimStandardCode,
-            //        LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-            //        LearningAimPathwayCode = payment.LearningAimPathwayCode,
-            //        Amount = payment.Amount,
-            //        LearningAimFundingLineType = payment.LearningAimFundingLineType,
-            //        PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
-            //        FundingSource = payment.FundingSource,
-            //        TransactionType = payment.TransactionType,
-            //        AcademicYear = payment.AcademicYear,
-            //        CollectionPeriod = payment.CollectionPeriod,
-            //        ContractType = payment.ContractType,
-            //        DeliveryPeriod = payment.DeliveryPeriod,
-            //        LearningStartDate = payment.LearningStartDate
-            //    };
+        public async Task<AppsMonthlyPaymentDasEarningsInfo> GetEarningsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        {
+            var appsMonthlyPaymentDasEarningsInfo = new AppsMonthlyPaymentDasEarningsInfo
+            {
+                UkPrn = ukPrn,
+                Earnings = new List<AppsMonthlyPaymentDasEarningEventInfo>()
+            };
 
-            //    appsMonthlyPaymentDasInfo.Payments.Add(paymentInfo);
-            //}
+            cancellationToken.ThrowIfCancellationRequested();
 
-            //return appsMonthlyPaymentDasInfo;
+            // List<Payment> paymentsList;
+            using (var context = _dasPaymentsContextFactory())
+            {
+                appsMonthlyPaymentDasEarningsInfo.Earnings = await context.EarningEvents
+                    .Where(x => x.Ukprn == ukPrn)
+                    .Select(earning => new AppsMonthlyPaymentDasEarningEventInfo
+                    {
+                        Id = earning.Id,
+                        EventId = earning.EventId,
+                        Ukprn = earning.Ukprn,
+                        ContractType = earning.ContractType,
+                        CollectionPeriod = earning.CollectionPeriod,
+                        AcademicYear = earning.AcademicYear,
+                        LearnerReferenceNumber = earning.LearnerReferenceNumber,
+                        LearnerUln = earning.LearnerUln,
+                        LearningAimReference = earning.LearningAimReference,
+                        LearningAimProgrammeType = earning.LearningAimProgrammeType,
+                        LearningAimStandardCode = earning.LearningAimStandardCode,
+                        LearningAimFrameworkCode = earning.LearningAimFrameworkCode,
+                        LearningAimPathwayCode = earning.LearningAimPathwayCode,
+                        LearningAimFundingLineType = earning.LearningAimFundingLineType,
+                        LearningStartDate = earning.LearningStartDate,
+                        AgreementId = earning.AgreementId,
+                        IlrSubmissionDateTime = earning.IlrSubmissionDateTime,
+                        JobId = earning.JobId,
+                        EventTime = earning.EventTime,
+                        CreationDate = earning.CreationDate,
+                        LearningAimSequenceNumber = earning.LearningAimSequenceNumber
+                    }).ToListAsync(cancellationToken);
+
+                return appsMonthlyPaymentDasEarningsInfo;
+            }
         }
 
         private string GetTypeOfAdditionalPayment(byte transactionType)

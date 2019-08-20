@@ -9,36 +9,71 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
         public AppsMonthlyPaymentMapper()
         {
             int i = 0;
-            Map(m => m.LearnerReferenceNumber).Index(i++).Name("Learner reference number");
-            Map(m => m.UniqueLearnerNumber).Index(i++).Name("Unique learner number");
-            Map(m => m.CampusIdentifier).Index(i++).Name("Campus identifier");
+            Map(m => m.PaymentLearnerReferenceNumber).Index(i++).Name("Learner reference number");
+            Map(m => m.PaymentUniqueLearnerNumber).Index(i++).Name("Unique learner number");
+
+            Map(m => m.LearnerCampusIdentifier).Index(i++).Name("Campus identifier");
+
             Map(m => m.ProviderSpecifiedLearnerMonitoringA).Index(i++).Name("Provider specified learner monitoring (A)");
             Map(m => m.ProviderSpecifiedLearnerMonitoringB).Index(i++).Name("Provider specified learner monitoring (B)");
-            Map(m => m.AimSeqNumber).Index(i++).Name("Aim sequence number");
-            Map(m => m.LearningAimReference).Index(i++).Name("Learning aim reference");
-            Map(m => m.LearningAimTitle).Index(i++).Name("Learning aim title");
-            Map(m => m.LearningStartDate).Index(i++).Name("Learning start date");
-            Map(m => m.LearningAimProgrammeType).Index(i++).Name("Programme type");
-            Map(m => m.LearningAimStandardCode).Index(i++).Name("Standard code");
-            Map(m => m.LearningAimFrameworkCode).Index(i++).Name("Framework code");
-            Map(m => m.LearningAimPathwayCode).Index(i++).Name("Apprenticeship pathway");
-            Map(m => m.AimType).Index(i++).Name("Aim type");
-            Map(m => m.SoftwareSupplierAimIdentifier).Index(i++).Name("Software supplier aim identifier");
-            Map(m => m.LearningDeliveryFAMTypeLearningDeliveryMonitoringA).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (A)");
-            Map(m => m.LearningDeliveryFAMTypeLearningDeliveryMonitoringB).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (B)");
-            Map(m => m.LearningDeliveryFAMTypeLearningDeliveryMonitoringC).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (C)");
-            Map(m => m.LearningDeliveryFAMTypeLearningDeliveryMonitoringD).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (D)");
+
+            Map(m => m.PaymentEarningEventAimSeqNumber).Index(i++).Name("Aim sequence number");
+            Map(m => m.PaymentLearningAimReference).Index(i++).Name("Learning aim reference");
+
+            Map(m => m.LarsLearningDeliveryLearningAimTitle).Index(i++).Name("Learning aim title");
+
+            Map(m => m.LearningDeliveryOriginalLearningStartDate).Index(i++).Name("Original learning start date");
+
+            Map(m => m.PaymentLearningStartDate).Index(i++).Name("Learning start date");
+
+            Map(m => m.LearningDeliveryLearningPlannedEndData).Index(i++).Name("Learning planned end date");
+            Map(m => m.LearningDeliveryCompletionStatus).Index(i++).Name("Completion status");
+            Map(m => m.LearningDeliveryLearningActualEndDate).Index(i++).Name("Learning actual end date");
+            Map(m => m.LearningDeliveryAchievementDate).Index(i++).Name("Achievement date");
+            Map(m => m.LearningDeliveryOutcome).Index(i++).Name("Outcome");
+
+            Map(m => m.PaymentProgrammeType).Index(i++).Name("Programme type");
+            Map(m => m.PaymentStandardCode).Index(i++).Name("Standard code");
+            Map(m => m.PaymentFrameworkCode).Index(i++).Name("Framework code");
+            Map(m => m.PaymentPathwayCode).Index(i++).Name("Apprenticeship pathway");
+
+            Map(m => m.LearningDeliveryAimType).Index(i++).Name("Aim type");
+            Map(m => m.LearningDeliverySoftwareSupplierAimIdentifier).Index(i++).Name("Software supplier aim identifier");
+
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringA).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (A)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringB).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (B)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringC).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (C)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringD).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (D)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringE).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (E)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringF).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (F)");
+
             Map(m => m.ProviderSpecifiedDeliveryMonitoringA).Index(i++).Name("Provider specified delivery monitoring (A)");
             Map(m => m.ProviderSpecifiedDeliveryMonitoringB).Index(i++).Name("Provider specified delivery monitoring (B)");
             Map(m => m.ProviderSpecifiedDeliveryMonitoringC).Index(i++).Name("Provider specified delivery monitoring (C)");
             Map(m => m.ProviderSpecifiedDeliveryMonitoringD).Index(i++).Name("Provider specified delivery monitoring (D)");
-            Map(m => m.EndPointAssessmentOrganisation).Index(i++).Name("End point assessment organisation");
-            Map(m => m.SubContractedOrPartnershipUKPRN).Index(i++).Name("Sub contracted or partnership UKPRN");
-            Map(m => m.PriceEpisodeStartDate).Index(i++).Name("Price episode start date");
-            Map(m => m.PriceEpisodeActualEndDate).Index(i++).Name("Price episode actual end date");
-            Map(m => m.FundingLineType).Index(i++).Name("Funding line type");
-            Map(m => m.LearningDeliveryFAMTypeApprenticeshipContractType).Index(i++).Name("Learning delivery funding and monitoring type – apprenticeship contract type");
-            Map(m => m.AgreementIdentifier).Index(i++).Name("Agreement identifier");
+
+            Map(m => m.LearningDeliveryEndPointAssessmentOrganisation).Index(i++).Name("End point assessment organisation");
+
+            Map(m => m.RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim).Index(i++).Name("Planned number of on programme installments for aim");
+
+            Map(m => m.LearningDeliverySubContractedOrPartnershipUkprn).Index(i++).Name("Sub contracted or partnership UKPRN");
+
+            Map(m => m.PaymentPriceEpisodeStartDate).Index(i++).Name("Price episode start date");
+
+            Map(m => m.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate).Index(i++).Name("Price episode actual end date");
+
+            Map(m => m.FcsContractContractAllocationContractAllocationNumber).Index(i++).Name("Contract no");
+
+            Map(m => m.PaymentFundingLineType).Index(i++).Name("Funding line type");
+
+            Map(m => m.PaymentApprenticeshipContractType).Index(i++).Name("Learning delivery funding and monitoring type – apprenticeship contract type");
+
+            Map(m => m.LearnerEmploymentStatusEmployerId).Index(i++).Name("Employer identifier on employment status date");
+
+            Map(m => m.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier).Index(i++).Name("Agreement identifier");
+
+            Map(m => m.LearnerEmploymentStatus).Index(i++).Name("Employment status");
+            Map(m => m.LearnerEmploymentStatusDate).Index(i++).Name("Employment status date");
 
             Map(m => m.AugustLevyPayments).ConvertUsing(model => model.LevyPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) levy payments");
             Map(m => m.AugustCoInvestmentPayments).ConvertUsing(model => model.CoInvestmentPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) co-investment payments");
@@ -47,7 +82,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.AugustProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) provider additional payments");
             Map(m => m.AugustApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) apprentice additional payments");
             Map(m => m.AugustEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) English and maths payments");
-            Map(m => m.AugustPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.AugustLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.AugustTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[0].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("August (R01) total payments");
 
             Map(m => m.SeptemberLevyPayments).ConvertUsing(model => model.LevyPayments[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) levy payments");
@@ -57,7 +92,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.SeptemberProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) provider additional payments");
             Map(m => m.SeptemberApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) apprentice additional payments");
             Map(m => m.SeptemberEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) English and maths payments");
-            Map(m => m.SeptemberPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.SeptemberTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[1].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("September (R02) total payments");
 
             Map(m => m.OctoberLevyPayments).ConvertUsing(model => model.LevyPayments[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) levy payments");
@@ -67,7 +102,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.OctoberProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) provider additional payments");
             Map(m => m.OctoberApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) apprentice additional payments");
             Map(m => m.OctoberEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) English and maths payments");
-            Map(m => m.OctoberPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.OctoberTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[2].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("October (R03) total payments");
 
             Map(m => m.NovemberLevyPayments).ConvertUsing(model => model.LevyPayments[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) levy payments");
@@ -77,7 +112,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.NovemberProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) provider additional payments");
             Map(m => m.NovemberApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) apprentice additional payments");
             Map(m => m.NovemberEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) English and maths payments");
-            Map(m => m.NovemberPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.NovemberTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[3].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("November (R04) total payments");
 
             Map(m => m.DecemberLevyPayments).ConvertUsing(model => model.LevyPayments[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) levy payments");
@@ -87,7 +122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.DecemberProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) provider additional payments");
             Map(m => m.DecemberApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) apprentice additional payments");
             Map(m => m.DecemberEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) English and maths payments");
-            Map(m => m.DecemberPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.DecemberTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[4].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("December (R05) total payments");
 
             Map(m => m.JanuaryLevyPayments).ConvertUsing(model => model.LevyPayments[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) levy payments");
@@ -97,7 +132,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.JanuaryProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) provider additional payments");
             Map(m => m.JanuaryApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) apprentice additional payments");
             Map(m => m.JanuaryEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) English and maths payments");
-            Map(m => m.JanuaryPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.JanuaryTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[5].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("January (R06) total payments");
 
             Map(m => m.FebruaryLevyPayments).ConvertUsing(model => model.LevyPayments[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) levy payments");
@@ -107,7 +142,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.FebruaryProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) provider additional payments");
             Map(m => m.FebruaryApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) apprentice additional payments");
             Map(m => m.FebruaryEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) English and maths payments");
-            Map(m => m.FebruaryPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.FebruaryTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[6].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("February (R07) total payments");
 
             Map(m => m.MarchLevyPayments).ConvertUsing(model => model.LevyPayments[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) levy payments");
@@ -117,7 +152,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.MarchProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) provider additional payments");
             Map(m => m.MarchApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) apprentice additional payments");
             Map(m => m.MarchEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) English and maths payments");
-            Map(m => m.MarchPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.MarchLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.MarchTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[7].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("March (R08) total payments");
 
             Map(m => m.AprilLevyPayments).ConvertUsing(model => model.LevyPayments[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) levy payments");
@@ -127,7 +162,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.AprilProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) provider additional payments");
             Map(m => m.AprilApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) apprentice additional payments");
             Map(m => m.AprilEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) English and maths payments");
-            Map(m => m.AprilPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.AprilLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.AprilTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[8].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("April (R09) total payments");
 
             Map(m => m.MayLevyPayments).ConvertUsing(model => model.LevyPayments[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) levy payments");
@@ -137,7 +172,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.MayProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) provider additional payments");
             Map(m => m.MayApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) apprentice additional payments");
             Map(m => m.MayEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) English and maths payments");
-            Map(m => m.MayPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.MayLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.MayTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[9].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("May (R10) total payments");
 
             Map(m => m.JuneLevyPayments).ConvertUsing(model => model.LevyPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) levy payments");
@@ -146,8 +181,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.JuneEmployerAdditionalPayments).ConvertUsing(model => model.EmployerAdditionalPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) employer additional payments");
             Map(m => m.JuneProviderAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) provider additional payments");
             Map(m => m.JuneApprenticeAdditionalPayments).ConvertUsing(model => model.EnglishAndMathsPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) apprentice additional payments");
-            Map(m => m.JuneEnglishAndMathsPayments).ConvertUsing(model => model.PaymentsForLearningSupport[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) English and maths payments");
-            Map(m => m.JunePaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.JuneEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) English and maths payments");
+            Map(m => m.JuneLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.JuneTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[10].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("June (R11) total payments");
 
             Map(m => m.JulyLevyPayments).ConvertUsing(model => model.LevyPayments[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) levy payments");
@@ -157,7 +192,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.JulyProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) provider additional payments");
             Map(m => m.JulyApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) apprentice additional payments");
             Map(m => m.JulyEnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) English and maths payments");
-            Map(m => m.JulyPaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.JulyLearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) payments for learning support, disadvantage and framework uplifts");
             Map(m => m.JulyTotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[11].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("July (R12) total payments");
 
             Map(m => m.R13LevyPayments).ConvertUsing(model => model.LevyPayments[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 levy payments");
@@ -167,7 +202,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.R13ProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 provider additional payments");
             Map(m => m.R13ApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 apprentice additional payments");
             Map(m => m.R13EnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 English and maths payments");
-            Map(m => m.R13PaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.R13LearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 payments for learning support, disadvantage and framework uplifts");
             Map(m => m.R13TotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[12].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R13 total payments");
 
             Map(m => m.R14LevyPayments).ConvertUsing(model => model.LevyPayments[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 levy payments");
@@ -177,7 +212,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.R14ProviderAdditionalPayments).ConvertUsing(model => model.ProviderAdditionalPayments[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 provider additional payments");
             Map(m => m.R14ApprenticeAdditionalPayments).ConvertUsing(model => model.ApprenticeAdditionalPayments[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 apprentice additional payments");
             Map(m => m.R14EnglishAndMathsPayments).ConvertUsing(model => model.EnglishAndMathsPayments[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 English and maths payments");
-            Map(m => m.R14PaymentsForLearningSupport).ConvertUsing(model => model.PaymentsForLearningSupport[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.R14LearningSupportDisadvantageAndFrameworkUpliftPayments).ConvertUsing(model => model.LearningSupportDisadvantageAndFrameworkUpliftPayments[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 payments for learning support, disadvantage and framework uplifts");
             Map(m => m.R14TotalPayments).ConvertUsing(model => model.TotalMonthlyPayments[13].ToString(CultureInfo.InvariantCulture)).Index(i++).Name("R14 total payments");
 
             Map(m => m.TotalLevyPayments).Index(i++).Name("Total levy payments");
@@ -187,7 +222,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.TotalProviderAdditionalPayments).Index(i++).Name("Total provider additional payments");
             Map(m => m.TotalApprenticeAdditionalPayments).Index(i++).Name("Total apprentice additional payments");
             Map(m => m.TotalEnglishAndMathsPayments).Index(i++).Name("Total English and maths payments");
-            Map(m => m.TotalPaymentsForLearningSupport).Index(i++).Name("Total payments for learning support, disadvantage and framework uplifts");
+            Map(m => m.TotalLearningSupportDisadvantageAndFrameworkUpliftPayments).Index(i++).Name("Total payments for learning support, disadvantage and framework uplifts");
             Map(m => m.TotalPayments).Index(i++).Name("Total payments");
             Map(m => m.OfficialSensitive).Index(i++).Name("OFFICIAL - SENSITIVE");
         }

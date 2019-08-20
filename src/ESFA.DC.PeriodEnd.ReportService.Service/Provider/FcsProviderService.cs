@@ -52,28 +52,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     {
                         var appsMonthlyPaymentContractInfo = new AppsMonthlyPaymentContractInfo()
                         {
-                            ContractNumber = fcsContract.ContractNumber,
-                            ContractVersionNumber = fcsContract.ContractVersionNumber,
-                            StartDate = fcsContract.StartDate,
-                            EndDate = fcsContract.EndDate,
-                            ContractAllocations = fcsContract.ContractAllocations.Select(x =>
-                                new AppsMonthlyPaymentContractAllocation()
-                                {
-                                    ContractAllocationNumber = x.ContractAllocationNumber,
-                                    Period = x.Period,
-                                    PeriodTypeCode = x.PeriodTypeCode,
-                                    FundingStreamCode = x.FundingStreamCode,
-                                    FundingStreamPeriodCode = x.FundingStreamPeriodCode,
-                                    StartDate = x.StartDate,
-                                    EndDate = x.EndDate
-                                }).ToList(),
+                            ContractNumber = fcsContract?.ContractNumber ?? string.Empty,
+                            ContractVersionNumber = fcsContract?.ContractVersionNumber.ToString() ?? string.Empty,
+                            StartDate = fcsContract?.StartDate.ToString() ?? string.Empty,
+                            EndDate = fcsContract?.EndDate.ToString() ?? string.Empty,
+                            ContractAllocations = fcsContract?.ContractAllocations.Select(x => new AppsMonthlyPaymentContractAllocation
+                            {
+                                ContractAllocationNumber = x?.ContractAllocationNumber ?? string.Empty,
+                                Period = x?.Period ?? string.Empty,
+                                PeriodTypeCode = x?.PeriodTypeCode ?? string.Empty,
+                                FundingStreamCode = x?.FundingStreamCode ?? string.Empty,
+                                FundingStreamPeriodCode = x?.FundingStreamPeriodCode ?? string.Empty,
+                                StartDate = x?.StartDate.ToString() ?? string.Empty,
+                                EndDate = x?.EndDate.ToString() ?? string.Empty
+                            }).ToList() ?? new List<AppsMonthlyPaymentContractAllocation>(),
                             Provider = new AppsMonthlyPaymentContractorInfo()
                             {
-                                UkPrn = fcsContract.Contractor.Ukprn,
-                                OrganisationIdentifier = fcsContract.Contractor.OrganisationIdentifier,
-                                LegalName = fcsContract.Contractor.LegalName
+                                UkPrn = fcsContract?.Contractor?.Ukprn.ToString() ?? string.Empty,
+                                OrganisationIdentifier = fcsContract?.Contractor?.OrganisationIdentifier ?? string.Empty,
+                                LegalName = fcsContract?.Contractor?.LegalName ?? string.Empty
                             }
                         };
+
+                        appsMonthlyPaymentFcsInfo.Contracts.Add(appsMonthlyPaymentContractInfo);
                     }
                 }
             }

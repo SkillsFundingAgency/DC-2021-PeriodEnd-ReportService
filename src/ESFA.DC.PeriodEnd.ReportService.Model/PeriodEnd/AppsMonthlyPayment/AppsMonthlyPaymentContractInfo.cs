@@ -7,11 +7,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
     {
         public string ContractNumber { get; set; }
 
-        public int? ContractVersionNumber { get; set; }
+        public string ContractVersionNumber { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public string StartDate { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public string EndDate { get; set; }
 
         public IList<AppsMonthlyPaymentContractAllocation> ContractAllocations { get; set; }
 
@@ -20,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
     public class AppsMonthlyPaymentContractorInfo
     {
-        public int? UkPrn { get; set; }
+        public string UkPrn { get; set; }
 
         public string OrganisationIdentifier { get; set; }
    
@@ -39,8 +39,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string FundingStreamPeriodCode { get; set; }
 
-        public DateTime? StartDate { get; set; }
+        public string StartDate { get; set; }
 
-        public DateTime? EndDate { get; set; }
+        public string EndDate { get; set; }
     }
 }

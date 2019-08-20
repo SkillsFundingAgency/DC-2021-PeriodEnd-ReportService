@@ -21,16 +21,14 @@
   </Section>
 
   <Section Name="ReportServiceConfiguration">
-    <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="DasCommitmentsConnectionString" Value="" />
-    <Parameter Name="EasConnectionString" Value="" />
-    <Parameter Name="OrgConnectionString" Value=""/>
-    <Parameter Name="PostcodeConnectionString" Value="" />
-    <Parameter Name="LargeEmployerConnectionString" Value="" />
+    <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
     <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
+    <Parameter Name="JobStatusConnectionString" Value="" />
+    <Parameter Name="LarsConnectionString" Value="" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">
@@ -39,5 +37,10 @@
 
   <Section Name="VersionSection">
     <Parameter Name="ServiceReleaseVersion" Value="" />
+  </Section>
+
+  <Section Name="TopicAndTaskSection">
+    <Parameter Name="TopicReports" Value="" />
+    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="" />
   </Section>
 </Settings>

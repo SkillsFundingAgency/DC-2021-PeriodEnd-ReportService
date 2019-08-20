@@ -3,33 +3,36 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" DefaultValue="1" />
     <Parameter Name="ProcessingServicePlacementConstraints" DefaultValue="" />
-    <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
-    <Parameter Name="DataServicePlacementConstraints" DefaultValue="" />
-    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
-    <Parameter Name="TopicName" DefaultValue="ilr1920submissiontopic" />
-    <Parameter Name="SubscriptionName" DefaultValue="Reports" />
-    <Parameter Name="TopicMaxConcurrentCalls" DefaultValue="1" />
-    <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="30" />
-    <Parameter Name="JobStatusQueueName" DefaultValue="" />
-    <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
-    <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
-    <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
-    <!--<Parameter Name="CollectionsManagementConnectionString" DefaultValue="" />-->
-    <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
-    <Parameter Name="EasConnectionString" DefaultValue="" />
-    <Parameter Name="FCSConnectionString" DefaultValue="" />
+    <Parameter Name="TopicName" DefaultValue="ilr1920submissiontopic" />
+    <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
     <Parameter Name="ILRDataStoreConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
     <Parameter Name="ILRDataStoreValidConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
-    <Parameter Name="LarsConnectionString" DefaultValue="" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
-    <Parameter Name="OrgConnectionString" DefaultValue="" />
-    <Parameter Name="PostcodeConnectionString" DefaultValue="" />
-    <Parameter Name="LargeEmployerConnectionString" DefaultValue="" />
+    <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
     <Parameter Name="AzureBlobContainerName" DefaultValue="ilr-files" />
     <Parameter Name="AsposeLicence" DefaultValue="" />
+    <Parameter Name="DataServicePlacementConstraints" DefaultValue="" />
     <Parameter Name="ServiceReleaseVersion" DefaultValue="" />
+    <Parameter Name="JobStatusQueueName" DefaultValue="" />
+    <Parameter Name="SubscriptionName" DefaultValue="Reports" />
+    <Parameter Name="TopicMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="30" />
+    <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
+    <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
+    <!-- Topic Names -->
+    <Parameter Name="TopicReports" DefaultValue="Reports" />
+    <!-- FCS -->
+    <Parameter Name="FCSConnectionString" DefaultValue="" />
+    <!-- DASPayments -->
+    <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
+    <!-- DAS Commitments -->
+    <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
+    <!-- ILR Validation Errors -->
+    <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
+    <!-- ILR Validation Errors -->
+    <Parameter Name="LarsConnectionString" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -52,17 +55,13 @@
             <Parameter Name="LoggerConnectionString" Value="[LoggerConnectionstring]" />
           </Section>
           <Section Name="ReportServiceConfiguration">
-            <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
-            <!--<Parameter Name="CollectionsManagementConnectionString" Value="[CollectionsManagementConnectionString]" />-->
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
             <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
-            <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
-            <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
-            <Parameter Name="PostcodeConnectionString" Value="[PostcodeConnectionString]" />
-            <Parameter Name="LargeEmployerConnectionString" Value="[LargeEmployerConnectionString]" />
+            <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
             <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
+            <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />
@@ -73,6 +72,9 @@
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
+          </Section>
+          <Section Name="TopicAndTaskSection">
+            <Parameter Name="TopicReports" Value="[TopicReports]" />
           </Section>
         </Settings>
       </ConfigOverride>

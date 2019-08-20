@@ -4,11 +4,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
 {
     public class ReportServiceConfiguration : IReportServiceConfiguration
     {
-        public string DASPaymentsConnectionString { get; set; }
-
         public string DasCommitmentsConnectionString { get; set; }
 
-        public string EasConnectionString { get; set; }
+        public string DASPaymentsConnectionString { get; set; }
 
         public string ILRDataStoreConnectionString { get; set; }
 
@@ -16,12 +14,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
 
         public string FCSConnectionString { get; set; }
 
-        public string LargeEmployerConnectionString { get; set; }
-
         public string LarsConnectionString { get; set; }
-
-        public string OrgConnectionString { get; set; }
-
-        public string PostcodeConnectionString { get; set; }
     }
 }

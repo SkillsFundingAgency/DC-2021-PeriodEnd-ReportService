@@ -1,4 +1,6 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
+﻿using System;
+
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
     public class PaymentInfo
     {
@@ -7,8 +9,6 @@
         public string LearningAimReference { get; set; }
 
         public long LearnerUln { get; set; }
-
-        //missing LearningStartDate, LegalEntityName
 
         public int LearningAimProgrammeType { get; set; }
 
@@ -29,5 +29,11 @@
         public byte TransactionType { get; set; }
 
         public byte FundingSource { get; set; }
+
+        public DateTime? LearningStartDate { get; set; }
+
+        public string LegalEntityName { get; set; }
+
+        public long UkPrn { get; set; }
     }
 }

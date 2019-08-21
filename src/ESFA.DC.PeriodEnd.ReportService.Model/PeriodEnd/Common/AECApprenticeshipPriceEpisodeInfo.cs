@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
 {
     public class AECApprenticeshipPriceEpisodeInfo
     {
@@ -13,6 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public DateTime? PriceEpisodeActualEndDate { get; set; }
 
         public string PriceEpisodeAgreeId { get; set; }
-        
+
+        public DateTime? AppAdjLearnStartDate { get; set; }
     }
 }

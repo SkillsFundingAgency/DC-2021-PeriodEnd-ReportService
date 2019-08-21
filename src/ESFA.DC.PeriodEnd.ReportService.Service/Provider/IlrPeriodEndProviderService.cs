@@ -9,7 +9,9 @@ using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
@@ -153,6 +155,70 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsAdditionalPaymentIlrInfo;
+        }
+
+        public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        {
+            var appsCoInvestmentIlrInfo = new AppsCoInvestmentILRInfo
+            {
+                UkPrn = ukPrn,
+                Learners = new List<LearnerInfo>()
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            List<Learner> learnersList;
+            using (var ilrContext = _ilrValidContextFactory())
+            {
+                learnersList = await ilrContext.Learners
+                                                .Include(x => x.LearningDeliveries).ThenInclude(y => y.AppFinRecords)
+                                                .Include(x => x.LearnerEmploymentStatuses)
+                                                .Where(x => x.UKPRN == ukPrn &&
+                                                            x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel)) //&&
+                                                            //x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.CaseInsensitiveEquals("PMR") &&
+                                                            //                                                       z.LearnRefNumber.CaseInsensitiveEquals(x.LearnRefNumber))))
+                                                .ToListAsync(cancellationToken);
+            }
+
+            foreach (var learner in learnersList)
+            {
+                var learnerInfo = new LearnerInfo
+                {
+                    LearnRefNumber = learner.LearnRefNumber,
+                    LearningDeliveries = learner.LearningDeliveries.Select(x => new LearningDeliveryInfo()
+                    {
+                        UKPRN = ukPrn,
+                        LearnRefNumber = x.LearnRefNumber,
+                        LearnAimRef = x.LearnAimRef,
+                        AimType = x.AimType,
+                        AimSeqNumber = x.AimSeqNumber,
+                        LearnStartDate = x.LearnStartDate,
+                        ProgType = x.ProgType,
+                        StdCode = x.StdCode,
+                        FworkCode = x.FworkCode,
+                        PwayCode = x.PwayCode,
+                        SWSupAimId = x.SWSupAimId,
+                        AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
+                        {
+                            LearnRefNumber = y.LearnRefNumber,
+                            AimSeqNumber = y.AimSeqNumber,
+                            AFinType = y.AFinType,
+                            AFinCode = y.AFinCode,
+                            AFinDate = y.AFinDate,
+                            AFinAmount = y.AFinAmount
+                        }).ToList()
+                    }).ToList(),
+                    LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
+                    {
+                        LearnRefNumber = x.LearnRefNumber,
+                        DateEmpStatApp = x.DateEmpStatApp,
+                        EmpId = x.EmpId
+                    }).ToList()
+                };
+                appsCoInvestmentIlrInfo.Learners.Add(learnerInfo);
+            }
+
+            return appsCoInvestmentIlrInfo;
         }
     }
 }

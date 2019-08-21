@@ -22,7 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public string SoftwareSupplierAimIdentifier { get; set; }
 
-        public string LearningDeliveryFAMTypeApprenticeshipContractType { get; set; }
+        public byte LearningDeliveryFAMTypeApprenticeshipContractType { get; set; }
 
         public int? EmployerIdentifierAtStartOfLearning { get; set; }
 
@@ -76,6 +76,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public decimal EmployerCoInvestmentPercentage { get; set; }
 
-        public DateTime EmployerProgrammeStartDate { get; set; }
+        public DateTime? ApplicableProgrammeStartDate { get; set; }
     }
 }

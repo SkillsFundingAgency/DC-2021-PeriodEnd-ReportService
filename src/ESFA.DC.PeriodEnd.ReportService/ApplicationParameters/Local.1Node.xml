@@ -2,12 +2,9 @@
 <Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ESFA.DC.PeriodEnd1920.ReportService" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
-    <Parameter Name="ProcessingServicePlacementConstraints" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=ILR1819DataStore;User Id=ILR1819DataStore_RO_User;Password=UfIqzc0g3yl8@RJkpijSEYoAn9muPdW15rXVZG26eHMT4sLtDNOwCbv-Q7haxKBFY1trnaVq0@R;MultipleActiveResultSets=true;Encrypt=True;" />
-    <Parameter Name="ILRDataStoreValidConnectionString" Value="data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=ILR1819DataStore;User Id=ILR1819DataStore_RO_User;Password=UfIqzc0g3yl8@RJkpijSEYoAn9muPdW15rXVZG26eHMT4sLtDNOwCbv-Q7haxKBFY1trnaVq0@R;MultipleActiveResultSets=true;Encrypt=True;" />
     <Parameter Name="AzureBlobConnectionString" Value="DefaultEndpointsProtocol=https;AccountName=gpesfatest;AccountKey=pYzDxY828keLHs1EOGeQUQG0HNXsEA/eYI3ML/0DD0Awaw7g3TeGzuk5SghgCP5N/gr/9QEvq9uBVsL5QPlZNQ==;EndpointSuffix=core.windows.net" />
     <Parameter Name="ServiceBusConnectionString" Value="Endpoint=sb://xx-gp-servicebus-weu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3DFcj0h7tDAM/FBiHrtFihQsSWwW+B4+gU3iUyitxT0=" />
-    <Parameter Name="JobStatusConnectionString" Value="Endpoint=sb://xx-gp-servicebus-weu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=3DFcj0h7tDAM/FBiHrtFihQsSWwW+B4+gU3iUyitxT0=" />
     <Parameter Name="AuditQueueName" Value="auditingqueue" />
     <Parameter Name="TopicName" Value="ilr1920submissiontopic" />
     <Parameter Name="LoggerConnectionstring" Value="data source=(local);initial catalog=logging;Connect Timeout=90" />
@@ -17,26 +14,13 @@
     <Parameter Name="ReportingSubscriptionName" Value="Reports" />
     <!-- Topic Names -->
     <Parameter Name="TopicReports" Value="Reports" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="TaskGenerateAppsMonthlyPaymentReport" />
     <!-- LARS -->
     <Parameter Name="LarsConnectionString" Value="metadata=res://*/LARS.csdl|res://*/LARS.ssdl|res://*/LARS.msl;provider=System.Data.SqlClient;provider connection string='data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=Lars;User Id=Lars_RO_User;Password=o@W5F0dA1gZIVCUPbk28hTiazSnwER3pfy6-JLXm7OtDreuB9sMjQqYl4vKxcHGNzLyREN12YQc;MultipleActiveResultSets=True;Encrypt=True;App=EntityFramework'" />
     <!-- DASPayments -->
     <!--<Parameter Name="DASPaymentsConnectionString" Value="data source=(local);initial catalog=DASPayments;user id=sa;password=zyxel123$;Connect Timeout=90" />-->
     <Parameter Name="DASPaymentsConnectionString" Value="Data Source=DCOL-SIT-SqlServer-WEU.database.windows.net;Initial Catalog=DASPayments;User ID=DASPaymentRWUser;Password=vWZh1EyKGNamc8sV0@9L36JkqjxDCAtlwfgBM7uFIzoUn5eP2OHYXSrpdQib-4TRjnB1Fa@NOVS;Encrypt=True;" />
-    <!--<Parameter Name="OrgConnectionString" Value="data source=(local);initial catalog=Org;Connect Timeout=90" />-->
-    <!-- Org -->
-    <Parameter Name="OrgConnectionString" Value="data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=Org;User Id=Org_RW_User;Password=X6DwuPhp8ykCJVM@Q09IqSdlrsKgWn-UbLvz4Y1GF5At3RfxBZ2OcjNHomTE7eaikfiDQTE4ryB;MultipleActiveResultSets=true;Encrypt=True;" />
     <!-- DAS Commitments -->
     <Parameter Name="DasCommitmentsConnectionString" Value="__DasCommitmentConnectionStringRO__" />
-    <!--<Parameter Name="EasConnectionString" Value="data source=(local);initial catalog=Easdb;Connect Timeout=90" />-->
-    <!-- EAS -->
-    <Parameter Name="EasConnectionString" Value="Server=DCOL-DEV-SqlServer-WEU.database.windows.net;Database=EAS1819;User Id=EAS1819_RO_User;Password=vqsY9rVoQPN2Mh1kKAwuZFfUx6m@gLHIzSERDtCp5e30ndijTWX-OBcJ8laGyb746OVBd7iTL38;MultipleActiveResultSets=true;Encrypt=True;" />
-    <!-- Postcode -->
-    <Parameter Name="PostcodeConnectionString" Value="metadata=res://*/Postcodes.csdl|res://*/Postcodes.ssdl|res://*/Postcodes.msl;provider=System.Data.SqlClient;provider connection string='data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=PostCodes;User Id=PostCode_RO_User;Password=yecJmlTfBi@n0Czqo6bsQ23x8DMGZvW4VXKhrIgwRu7HU1dYN95EFLtjkP-apAOSr0Wuien7R2Y;MultipleActiveResultSets=True;App=EntityFramework;Encrypt=True;'" />
-    <!-- Large Employer -->
-    <Parameter Name="LargeEmployerConnectionString" Value="metadata=res://*/LargeEmployer.csdl|res://*/LargeEmployer.ssdl|res://*/LargeEmployer.msl;provider=System.Data.SqlClient;provider connection string='data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=LargeEmployers;User Id=LargeEmployer_RO_User;Password=8xn1XvaPVrBIzfh@mF2ZesNHKCES6Ty95QLYuUOW-pjgiMDcARqdt7JwlG34bok06arBfgApdim;MultipleActiveResultSets=True;App=EntityFramework;Encrypt=True;'" />
-    <!-- Collections Management -->
-    <Parameter Name="CollectionsManagementConnectionString" Value="data source=(local);initial catalog=JobManagement;Connect Timeout=90" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="" />
   </Parameters>
 </Application>

@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
 {
     public class AECApprenticeshipPriceEpisodePeriodisedValuesInfo
     {

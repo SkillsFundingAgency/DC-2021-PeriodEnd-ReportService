@@ -1,6 +1,5 @@
 ﻿using CsvHelper.Configuration;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestmentContributions;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 {

@@ -1,8 +1,5 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestmentContributions;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
 {
@@ -10,6 +7,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
     {
         IEnumerable<AppsCoInvestmentContributionsModel> BuildModel(
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
+            AppsCoInvestmentRulebaseInfo appsCoInvestmentRulebaseInfo,
             AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo);
     }
 }

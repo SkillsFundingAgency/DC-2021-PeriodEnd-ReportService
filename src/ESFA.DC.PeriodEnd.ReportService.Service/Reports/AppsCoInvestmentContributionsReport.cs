@@ -24,6 +24,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
+        private readonly IFM36PeriodEndProviderService _fm36PeriodEndProviderService;
         private readonly IAppsCoInvestmentContributionsModelBuilder _modelBuilder;
 
         public AppsCoInvestmentContributionsReport(
@@ -33,11 +34,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IValueProvider valueProvider,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
+            IFM36PeriodEndProviderService fm36PeriodEndProviderService,
             IAppsCoInvestmentContributionsModelBuilder modelBuilder)
         : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
+            _fm36PeriodEndProviderService = fm36PeriodEndProviderService;
             _modelBuilder = modelBuilder;
         }
 
@@ -51,9 +54,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var fileName = GetZipFilename(reportServiceContext);
 
             var appsCoInvestmentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsCoInvestmentRulebaseInfo = await _fm36PeriodEndProviderService.GetFM36DataForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var appsCoInvestmentPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
-            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo);
+            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo);
 
             string csv = await GetCsv(appsCoInvestmentContributionsModels, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);

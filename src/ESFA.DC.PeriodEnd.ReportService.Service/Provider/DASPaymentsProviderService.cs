@@ -7,6 +7,7 @@ using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using Microsoft.EntityFrameworkCore;
 
@@ -16,6 +17,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     {
         private const int FundingSource = 3;
         private int[] AppsAdditionalPaymentsTransactionTypes = { 4, 5, 6, 7, 16 };
+        private int[] TransactionTypes = { 1, 2, 3 };
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
 
         public DASPaymentsProviderService(Func<IDASPaymentsContext> dasPaymentsContextFactory)
@@ -120,6 +122,51 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsMonthlyPaymentDasInfo;
+        }
+
+        public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        {
+            var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo
+            {
+                UkPrn = ukPrn,
+                Payments = new List<PaymentInfo>()
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+            List<Payment> paymentsList;
+
+            using (IDASPaymentsContext context = _dasPaymentsContextFactory())
+            {
+                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
+                                                                x.FundingSource == FundingSource &&
+                                                                TransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
+            }
+
+            foreach (var payment in paymentsList)
+            {
+                var paymentInfo = new PaymentInfo
+                {
+                    FundingSource = payment.FundingSource,
+                    TransactionType = payment.TransactionType,
+                    AcademicYear = payment.AcademicYear,
+                    CollectionPeriod = payment.CollectionPeriod,
+                    ContractType = payment.ContractType,
+                    DeliveryPeriod = payment.DeliveryPeriod,
+                    LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                    LearnerUln = payment.LearnerUln,
+                    LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                    LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                    LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                    LearningAimReference = payment.LearningAimReference,
+                    LearningAimStandardCode = payment.LearningAimStandardCode,
+                    LearningStartDate = payment.LearningStartDate,
+                    UkPrn = payment.Ukprn
+                };
+
+                appsCoInvestmentPaymentsInfo.Payments.Add(paymentInfo);
+            }
+
+            return appsCoInvestmentPaymentsInfo;
         }
 
         private string GetTypeOfAdditionalPayment(byte transactionType)

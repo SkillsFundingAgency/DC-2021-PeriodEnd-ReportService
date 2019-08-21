@@ -14,15 +14,15 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.DataExtractReport;
+using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
+namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {
-    public class DataExtractReport : AbstractReport, IReport
+    public class DataExtractReport : AbstractInternalReport, IInternalReport
     {
+        private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
         private readonly ISummarisationProviderService _summarisationProviderService;
         private readonly IFCSProviderService _fcsProviderService;
         private readonly IDataExtractModelBuilder _modelBuilder;
@@ -35,21 +35,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             IDataExtractModelBuilder modelBuilder)
-        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
+        : base(valueProvider, dateTimeProvider)
         {
+            _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
             _summarisationProviderService = summarisationProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
         }
 
-        public override string ReportFileName => "Data Extract Report";
+        public override string ReportFileName { get; set; } = "Data Extract Report";
 
-        public override string ReportTaskName => ReportTaskNameConstants.DataExtractReport;
-
-        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken)
+        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
-            var externalFileName = GetFilenameForInternalReport(reportServiceContext);
-            //var fileName = GetZipFilename(reportServiceContext);
+            var externalFileName = GetFilename(reportServiceContext);
 
             IEnumerable<DataExtractModel> summarisationInfo = (await _summarisationProviderService.GetSummarisedActualsForDataExtractReport(
                 new[] { reportServiceContext.CollectionReturnCodeApp, reportServiceContext.CollectionReturnCodeDC, reportServiceContext.CollectionReturnCodeESF },
@@ -60,7 +58,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var dataExtractModel = _modelBuilder.BuildModel(summarisationInfo, fcsInfo);
             string csv = await GetCsv(dataExtractModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
-            //await WriteZipEntry(archive, $"{fileName}.csv", csv);
         }
 
         private async Task<string> GetCsv(

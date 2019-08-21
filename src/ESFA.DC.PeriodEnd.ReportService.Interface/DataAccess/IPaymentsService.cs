@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 using System.Threading.Tasks;
-using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess
 {

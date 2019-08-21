@@ -5,7 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
-using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services

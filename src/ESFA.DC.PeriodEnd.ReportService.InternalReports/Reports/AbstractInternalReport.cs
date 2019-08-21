@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Reflection;
 using Aspose.Cells;
+using CsvHelper;
 using CsvHelper.Configuration;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -116,6 +117,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         protected void SetCurrentRow(Worksheet worksheet, int currentRow)
         {
             _currentRow[worksheet] = currentRow;
+        }
+
+        protected void WriteCsvRecords<TMapper, TModel>(CsvWriter csvWriter, IEnumerable<TModel> records)
+            where TMapper : ClassMap
+            where TModel : class
+        {
+            csvWriter.Configuration.RegisterClassMap<TMapper>();
+
+            csvWriter.WriteHeader<TModel>();
+            csvWriter.NextRecord();
+
+            csvWriter.WriteRecords(records);
+
+            csvWriter.Configuration.UnregisterClassMap();
         }
     }
 }

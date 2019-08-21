@@ -1,5 +1,5 @@
 ﻿using System.Collections.Generic;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.DataExtractReport;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd

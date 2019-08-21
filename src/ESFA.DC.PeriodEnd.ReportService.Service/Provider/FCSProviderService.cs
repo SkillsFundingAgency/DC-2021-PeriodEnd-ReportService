@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.DataExtractReport;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using Microsoft.EntityFrameworkCore;
 

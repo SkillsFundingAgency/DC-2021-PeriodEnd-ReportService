@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
-using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services

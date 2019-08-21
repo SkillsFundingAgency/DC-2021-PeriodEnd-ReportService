@@ -211,14 +211,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<DataExtractReport>().As<IReport>()
-                .WithAttributeFiltering()
-                .InstancePerLifetimeScope();
-
             containerBuilder.Register(c => new List<IReport>(c.Resolve<IEnumerable<IReport>>()))
                 .As<IList<IReport>>();
 
             containerBuilder.RegisterType<PeriodEndMetricsReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<DataExtractReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)

@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.DataExtractReport;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {

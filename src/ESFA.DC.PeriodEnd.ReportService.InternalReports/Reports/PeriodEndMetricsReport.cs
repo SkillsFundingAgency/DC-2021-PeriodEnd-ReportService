@@ -11,7 +11,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
-using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {

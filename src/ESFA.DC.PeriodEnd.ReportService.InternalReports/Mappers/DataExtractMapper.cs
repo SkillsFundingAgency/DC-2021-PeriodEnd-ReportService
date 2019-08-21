@@ -1,7 +1,7 @@
 ﻿using CsvHelper.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
+namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers
 {
     public class DataExtractMapper : ClassMap<DataExtractModel>
     {

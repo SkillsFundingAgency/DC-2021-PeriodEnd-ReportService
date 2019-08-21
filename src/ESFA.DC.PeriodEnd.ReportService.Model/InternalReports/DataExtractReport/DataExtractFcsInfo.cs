@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.DataExtractReport
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport
 {
     public sealed class DataExtractFcsInfo
     {

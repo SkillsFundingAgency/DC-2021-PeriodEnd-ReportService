@@ -1,7 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.PeriodEnd.ReportService.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 {

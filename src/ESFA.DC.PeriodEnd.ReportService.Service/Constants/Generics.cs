@@ -4,6 +4,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class Generics
     {
+        public const string InternalReports = "PeriodEndMetrics";
+
         public const string EmploymentStatusMonitoringTypeSEM = "SEM";
 
         // LearningDelivery FAM Codes

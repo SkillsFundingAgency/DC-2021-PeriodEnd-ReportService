@@ -2,7 +2,7 @@
 using System;
 using System.ComponentModel;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestmentContributions
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
     public class AppsCoInvestmentContributionsModel
     {

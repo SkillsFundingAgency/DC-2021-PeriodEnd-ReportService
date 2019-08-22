@@ -7,6 +7,7 @@
     <Parameter Name="TopicName" DefaultValue="periodendtopic" />
     <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
     <Parameter Name="ILRDataStoreConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
+    <Parameter Name="ILRDataStoreValidConnectionString" DefaultValue="data source=(local);initial catalog=ILR1819_DataStore;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="data source=(local);initial catalog=logs;integrated security=True;multipleactiveresultsets=True;Connect Timeout=90;" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -55,10 +56,11 @@
           </Section>
           <Section Name="ReportServiceConfiguration">
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
-            <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
             <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
+            <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
             <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
+            <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">

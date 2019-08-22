@@ -16,6 +16,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
 
         IEnumerable<string> Tasks { get; }
 
+        int CollectionYear { get; }
+
         int ReturnPeriod { get; }
 
         DateTime SubmissionDateTimeUtc { get; }

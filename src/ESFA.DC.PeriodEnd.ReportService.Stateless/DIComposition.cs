@@ -142,6 +142,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
                 return optionsBuilder.Options;
             }).As<DbContextOptions<ILR1920_DataStoreEntitiesValid>>()
+                .SingleInstance();
+
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.ILRDataStoreValidConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
+            }).As<ILR1920_DataStoreEntitiesValid>()
                 .ExternallyOwned();
 
             // DAS Payments
@@ -156,7 +167,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 return optionsBuilder.Options;
             })
                 .As<DbContextOptions<DASPaymentsContext>>()
-                .ExternallyOwned();
+                .SingleInstance();
+
+            containerBuilder.Register(c =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<DASPaymentsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.DASPaymentsConnectionString,
+                    providerOptions => providerOptions.CommandTimeout(60));
+                return new PaymentsContext(optionsBuilder.Options);
+            })
+                .As<PaymentsContext>().ExternallyOwned();
 
             // LARS
             containerBuilder.RegisterType<LarsContext>().As<ILARSContext>().ExternallyOwned();

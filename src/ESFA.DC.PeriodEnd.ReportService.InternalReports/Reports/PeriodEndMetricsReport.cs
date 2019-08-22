@@ -41,13 +41,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             _persistenceService = persistenceService;
         }
 
-        public override string ReportFileName { get; set; } = "Period End Metrics R";
+        public override string ReportFileName { get; set; } = "Period End Metrics";
 
-        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public override string ReportTaskName => ReportTaskNameConstants.InternalReports.PeriodEndMetricsReport;
+
+        public override async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             _logger.LogInfo($"In {ReportFileName} report.");
 
-            ReportFileName += reportServiceContext.ReturnPeriod.ToString().PadLeft(2, '0');
+            ReportFileName = $"{ReportFileName} R{reportServiceContext.ReturnPeriod.ToString().PadLeft(2, '0')}";
 
             var externalFileName = GetFilename(reportServiceContext);
 

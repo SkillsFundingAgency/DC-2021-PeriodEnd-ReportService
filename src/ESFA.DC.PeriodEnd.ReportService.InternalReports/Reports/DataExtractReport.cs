@@ -45,7 +45,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
         public override string ReportFileName { get; set; } = "Data Extract Report";
 
-        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public override string ReportTaskName => ReportTaskNameConstants.InternalReports.DataExtractReport;
+
+        public override async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
 

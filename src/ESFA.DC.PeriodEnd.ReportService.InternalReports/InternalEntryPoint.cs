@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
@@ -30,9 +31,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports
 
             try
             {
-                foreach (var report in _internalReports)
+                foreach (string taskItem in _reportServiceContext.Tasks)
                 {
-                    await report.GenerateReport(_reportServiceContext, cancellationToken);
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        break;
+                    }
+
+                    await GenerateReportAsync(taskItem, _reportServiceContext, cancellationToken);
                 }
             }
             catch (Exception e)
@@ -43,6 +49,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports
 
             _logger.LogInfo("End of internal entry point");
             return true;
+        }
+
+        private async Task GenerateReportAsync(string task, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        {
+            var foundReport = false;
+            foreach (var report in _internalReports)
+            {
+                if (!report.IsMatch(task))
+                {
+                    continue;
+                }
+
+                var stopWatch = new Stopwatch();
+                stopWatch.Start();
+                _logger.LogDebug($"Attempting to generate internal report {report.GetType().Name}");
+                await report.GenerateReport(reportServiceContext, cancellationToken);
+                stopWatch.Stop();
+                _logger.LogDebug($"Persisted {report.GetType().Name} to csv/json/xlsx in: {stopWatch.ElapsedMilliseconds}");
+
+                foundReport = true;
+                break;
+            }
+
+            if (!foundReport)
+            {
+                _logger.LogDebug($"Unable to find report '{task}'");
+            }
         }
     }
 }

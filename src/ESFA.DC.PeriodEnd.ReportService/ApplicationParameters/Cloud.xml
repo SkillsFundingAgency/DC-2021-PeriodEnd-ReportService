@@ -17,8 +17,6 @@
     <Parameter Name="TopicReports" Value="__TopicReports__" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
-    <!-- DAS Commitments -->
-    <Parameter Name="DasCommitmentsConnectionString" Value="__DasCommitmentConnectionStringRO__" />
     <!-- Lars -->
     <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
   </Parameters>

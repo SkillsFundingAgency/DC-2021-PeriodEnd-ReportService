@@ -6,8 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 {
     public interface IReportServiceConfiguration
     {
-        string DasCommitmentsConnectionString { get; set; }
-
         string DASPaymentsConnectionString { get; set; }
 
         string ILR1920DataStoreConnectionString { get; set; }

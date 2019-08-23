@@ -26,11 +26,7 @@
     <Parameter Name="FCSConnectionString" DefaultValue="" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
-    <!-- DAS Commitments -->
-    <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
-    <!-- ILR Validation Errors -->
-    <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
-    <!-- ILR Validation Errors -->
+    <!-- Lars -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
@@ -55,9 +51,7 @@
           </Section>
           <Section Name="ReportServiceConfiguration">
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
-            <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
-            <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
             <Parameter Name="ILR1920DataStoreConnectionString" Value="[ILR1920DataStoreConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
           </Section>

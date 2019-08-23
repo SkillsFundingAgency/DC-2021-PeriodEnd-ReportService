@@ -13,8 +13,6 @@
     <Parameter Name="JobStatusQueueName" Value="__JobStatusQueueName__" />
     <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
     <Parameter Name="SubscriptionName" Value="__PE1920ReportingSubscriptionName__" />
-    <!-- Topic Names -->
-    <Parameter Name="TopicReports" Value="__TopicReports__" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
     <!-- Lars -->

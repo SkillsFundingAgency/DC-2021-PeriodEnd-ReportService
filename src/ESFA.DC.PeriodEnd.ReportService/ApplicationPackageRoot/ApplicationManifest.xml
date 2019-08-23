@@ -20,8 +20,6 @@
     <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="30" />
     <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
-    <!-- Topic Names -->
-    <Parameter Name="TopicReports" DefaultValue="Reports" />
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
     <!-- DASPayments -->
@@ -64,9 +62,6 @@
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
-          </Section>
-          <Section Name="TopicAndTaskSection">
-            <Parameter Name="TopicReports" Value="[TopicReports]" />
           </Section>
         </Settings>
       </ConfigOverride>

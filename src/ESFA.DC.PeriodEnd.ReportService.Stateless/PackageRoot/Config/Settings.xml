@@ -24,7 +24,6 @@
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="ILR1920DataStoreConnectionString" Value="" />
-    <Parameter Name="JobStatusConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
   </Section>
 
@@ -34,10 +33,5 @@
 
   <Section Name="VersionSection">
     <Parameter Name="ServiceReleaseVersion" Value="" />
-  </Section>
-
-  <Section Name="TopicAndTaskSection">
-    <Parameter Name="TopicReports" Value="" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="" />
   </Section>
 </Settings>

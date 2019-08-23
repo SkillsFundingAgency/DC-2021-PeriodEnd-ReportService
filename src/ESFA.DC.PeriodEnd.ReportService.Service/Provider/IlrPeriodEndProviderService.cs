@@ -174,9 +174,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                 .Include(x => x.LearningDeliveries).ThenInclude(y => y.AppFinRecords)
                                                 .Include(x => x.LearnerEmploymentStatuses)
                                                 .Where(x => x.UKPRN == ukPrn &&
-                                                            x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel)) //&&
-                                                            //x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.CaseInsensitiveEquals("PMR") &&
-                                                            //                                                       z.LearnRefNumber.CaseInsensitiveEquals(x.LearnRefNumber))))
+                                                            x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel) &&
+                                                            x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.CaseInsensitiveEquals("PMR") &&
+                                                                                                                   z.LearnRefNumber.CaseInsensitiveEquals(x.LearnRefNumber))))
                                                 .ToListAsync(cancellationToken);
             }
 

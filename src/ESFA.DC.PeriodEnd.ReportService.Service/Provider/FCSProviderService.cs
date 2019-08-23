@@ -25,7 +25,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 return await fcsContext.Contractors
                     .Include(x => x.Contracts)
-                    .Where(x => OrganisationIds.Contains(x.OrganisationIdentifier))
+                    .Where(x => OrganisationIds.Contains(x.OrganisationIdentifier, StringComparer.OrdinalIgnoreCase))
                     .GroupBy(x => new { x.OrganisationIdentifier, x.Ukprn })
                     .Select(x => new DataExtractFcsInfo
                     {

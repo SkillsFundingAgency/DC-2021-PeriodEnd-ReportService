@@ -25,7 +25,7 @@
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="DasCommitmentsConnectionString" Value="" />
     <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
-    <Parameter Name="ILRDataStoreConnectionString" Value="" />
+    <Parameter Name="ILR1920DataStoreConnectionString" Value="" />
     <Parameter Name="JobStatusConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
   </Section>

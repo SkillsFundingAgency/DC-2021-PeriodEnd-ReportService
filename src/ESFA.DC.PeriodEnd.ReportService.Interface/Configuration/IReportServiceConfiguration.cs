@@ -10,7 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 
         string DASPaymentsConnectionString { get; set; }
 
-        string ILRDataStoreConnectionString { get; set; }
+        string ILR1920DataStoreConnectionString { get; set; }
 
         string FCSConnectionString { get; set; }
 

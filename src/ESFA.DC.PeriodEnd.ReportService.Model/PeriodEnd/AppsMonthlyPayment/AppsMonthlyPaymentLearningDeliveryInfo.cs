@@ -6,7 +6,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 {
     public class AppsMonthlyPaymentLearningDeliveryInfo
     {
-        public string UKPRN { get; set; }
+        public string Ukprn { get; set; }
 
         public string LearnRefNumber { get; set; }
 
@@ -16,9 +16,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string AimSeqNumber { get; set; }
 
-        public string SWSupAimId { get; set; }
-
         public string LearnStartDate { get; set; }
+
+        public string OrigLearnStartDate { get; set; }
+
+        public string LearnPlanEndDate { get; set; }
+
+        public string FundModel { get; set; }
 
         public string ProgType { get; set; }
 
@@ -28,10 +32,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string StdCode { get; set; }
 
+        public string PartnerUkprn { get; set; }
+
+        public string ConRefNumber { get; set; }
+
+        public string EpaOrgId { get; set; }
+
+        public string SwSupAimId { get; set; }
+
+        public string CompStatus { get; set; }
+
+        public string LearnActEndDate { get; set; }
+
+        public string Outcome { get; set; }
+
+        public string AchDate { get; set; }
+
         public ICollection<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo> ProviderSpecDeliveryMonitorings { get; set; }
 
         public ICollection<AppsMonthlyPaymentLearningDeliveryFAMInfo> LearningDeliveryFams { get; set; }
-        public string EPAOrganisation { get; set; }
-        public string PartnerUkPrn { get; set; }
     }
 }

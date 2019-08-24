@@ -56,7 +56,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 
             Map(m => m.RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim).Index(i++).Name("Planned number of on programme installments for aim");
 
-            Map(m => m.LearningDeliverySubContractedOrPartnershipUkprn).Index(i++).Name("Sub contracted or partnership UKPRN");
+            Map(m => m.LearningDeliverySubContractedOrPartnershipUkprn).Index(i++).Name("Sub contracted or partnership Ukprn");
 
             Map(m => m.PaymentPriceEpisodeStartDate).Index(i++).Name("Price episode start date");
 

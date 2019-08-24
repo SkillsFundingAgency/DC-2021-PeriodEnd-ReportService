@@ -53,8 +53,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             // Convert the database null values to a default value so that we don't have to keep checking for null later
-            // and to stop exceptions where we're not able to check for null e.g. in LINQ statements
-            // Also give 'not null' columns a default value as the table definition may change at a later date causing our code to break
+            // Also give 'not null' columns a default value as the table definition may change to nullable at a later date causing our code to break
             foreach (var learner in learnersList)
             {
                 var learnerInfo = new AppsMonthlyPaymentLearnerInfo
@@ -65,22 +64,31 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     CampId = learner?.CampId ?? string.Empty,
                     LearningDeliveries = learner?.LearningDeliveries.Select(x => new AppsMonthlyPaymentLearningDeliveryInfo
                     {
-                        UKPRN = ukPrn.ToString(),
+                        Ukprn = x.UKPRN.ToString() ?? string.Empty,
                         LearnRefNumber = x?.LearnRefNumber ?? string.Empty,
                         LearnAimRef = x?.LearnAimRef ?? string.Empty,
                         AimType = x?.AimType.ToString() ?? string.Empty,
-                        SWSupAimId = x?.SWSupAimId ?? string.Empty,
-                        LearnStartDate = x?.LearnStartDate.ToString("yyyy-mm-dd") ?? string.Empty,
+                        AimSeqNumber = x?.AimSeqNumber.ToString() ?? string.Empty,
+                        LearnStartDate = x?.LearnStartDate.ToString("dd/mm/yyyy") ?? string.Empty,
+                        OrigLearnStartDate = x?.LearnStartDate.ToString("dd/mm/yyyy") ?? string.Empty,
+                        LearnPlanEndDate = x?.LearnPlanEndDate.ToString("dd/mm/yyyy") ?? string.Empty,
+                        FundModel = x?.FundModel.ToString() ?? string.Empty,
                         ProgType = x?.ProgType.ToString() ?? string.Empty,
                         StdCode = x?.StdCode.ToString() ?? string.Empty,
                         FworkCode = x?.FworkCode.ToString() ?? string.Empty,
                         PwayCode = x?.PwayCode.ToString() ?? string.Empty,
-                        AimSeqNumber = x.AimSeqNumber.ToString() ?? string.Empty,
-                        EPAOrganisation = x.EPAOrgID ?? string.Empty,
-                        PartnerUkPrn = x?.PartnerUKPRN.ToString() ?? string.Empty,
+                        PartnerUkprn = x?.PartnerUKPRN.ToString() ?? string.Empty,
+                        ConRefNumber = x?.ConRefNumber ?? string.Empty,
+                        EpaOrgId = x.EPAOrgID ?? string.Empty,
+                        SwSupAimId = x?.SWSupAimId ?? string.Empty,
+                        CompStatus = x?.CompStatus.ToString() ?? string.Empty,
+                        LearnActEndDate = x?.LearnActEndDate.ToString() ?? string.Empty,
+                        Outcome = x?.Outcome.ToString() ?? string.Empty,
+                        AchDate = x?.AchDate?.ToString("dd/mm/yyyy") ?? string.Empty,
+
                         ProviderSpecDeliveryMonitorings = x?.ProviderSpecDeliveryMonitorings.Select(y => new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
                         {
-                            UKPRN = y.UKPRN,
+                            Ukprn = y.UKPRN.ToString(),
                             LearnRefNumber = y?.LearnRefNumber ?? string.Empty,
                             AimSeqNumber = y.AimSeqNumber,
                             ProvSpecDelMon = y?.ProvSpecDelMon ?? string.Empty,
@@ -98,7 +106,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     ProviderSpecLearnerMonitorings = learner?.ProviderSpecLearnerMonitorings.Select(x =>
                     new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
                     {
-                        UKPRN = x.UKPRN,
+                        Ukprn = x.UKPRN.ToString(),
                         LearnRefNumber = x?.LearnRefNumber ?? string.Empty,
                         ProvSpecLearnMon = x?.ProvSpecLearnMon ?? string.Empty,
                         ProvSpecLearnMonOccur = x?.ProvSpecLearnMonOccur ?? string.Empty

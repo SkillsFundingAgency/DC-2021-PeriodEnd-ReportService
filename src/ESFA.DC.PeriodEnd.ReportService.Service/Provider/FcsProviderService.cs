@@ -41,7 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 using (var fcsContext = _fcsContext())
                 {
-                    // Get a list of fcs contracts by UKPRN (need to link to the Contractor table for the UKPRN)
+                    // Get a list of fcs contracts by Ukprn (need to link to the Contractor table for the Ukprn)
                     var fcsContracts = await fcsContext.Contracts
                         .Include(x => x.Contractor)
                         .Where(x => x.Contractor.Ukprn == ukPrn)

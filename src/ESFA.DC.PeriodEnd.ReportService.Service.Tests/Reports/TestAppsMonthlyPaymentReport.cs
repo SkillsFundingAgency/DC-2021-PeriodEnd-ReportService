@@ -160,7 +160,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             //result.First().LearnerEmploymentStatusDate.Should().Be(1);
 
             // Levy payments array
-            result.First().LevyPayments[0].Should().Be(1);
+            result.First().LevyPayments[0].Should().Be(45);
             result.First().LevyPayments[1].Should().Be(1);
             result.First().LevyPayments[2].Should().Be(1);
             result.First().LevyPayments[3].Should().Be(1);
@@ -176,7 +176,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().LevyPayments[13].Should().Be(1);
 
             // CoInvestment payments array
-            result.First().CoInvestmentPayments[0].Should().Be(1);
+            result.First().CoInvestmentPayments[0].Should().Be(36);
             result.First().CoInvestmentPayments[1].Should().Be(1);
             result.First().CoInvestmentPayments[2].Should().Be(1);
             result.First().CoInvestmentPayments[3].Should().Be(1);
@@ -192,7 +192,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().CoInvestmentPayments[13].Should().Be(1);
 
             // CoInvestment due from employer array
-            result.First().CoInvestmentDueFromEmployerPayments[0].Should().Be(1);
+            result.First().CoInvestmentDueFromEmployerPayments[0].Should().Be(39);
             result.First().CoInvestmentDueFromEmployerPayments[1].Should().Be(1);
             result.First().CoInvestmentDueFromEmployerPayments[2].Should().Be(1);
             result.First().CoInvestmentDueFromEmployerPayments[3].Should().Be(1);
@@ -208,7 +208,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().CoInvestmentDueFromEmployerPayments[13].Should().Be(1);
 
             // Employer additional payments array
-            result.First().EmployerAdditionalPayments[0].Should().Be(1);
+            result.First().EmployerAdditionalPayments[0].Should().Be(42);
             result.First().EmployerAdditionalPayments[1].Should().Be(1);
             result.First().EmployerAdditionalPayments[2].Should().Be(1);
             result.First().EmployerAdditionalPayments[3].Should().Be(1);
@@ -224,7 +224,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().EmployerAdditionalPayments[13].Should().Be(1);
 
             // Provider additional payments array
-            result.First().ProviderAdditionalPayments[0].Should().Be(1);
+            result.First().ProviderAdditionalPayments[0].Should().Be(45);
             result.First().ProviderAdditionalPayments[1].Should().Be(1);
             result.First().ProviderAdditionalPayments[2].Should().Be(1);
             result.First().ProviderAdditionalPayments[3].Should().Be(1);
@@ -240,7 +240,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().ProviderAdditionalPayments[13].Should().Be(1);
 
             // Apprenticeship additional payments array
-            result.First().ApprenticeAdditionalPayments[0].Should().Be(1);
+            result.First().ApprenticeAdditionalPayments[0].Should().Be(48);
             result.First().ApprenticeAdditionalPayments[1].Should().Be(1);
             result.First().ApprenticeAdditionalPayments[2].Should().Be(1);
             result.First().ApprenticeAdditionalPayments[3].Should().Be(1);
@@ -256,7 +256,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().ApprenticeAdditionalPayments[13].Should().Be(1);
 
             // English and Maths payments array
-            result.First().EnglishAndMathsPayments[0].Should().Be(1);
+            result.First().EnglishAndMathsPayments[0].Should().Be(51);
             result.First().EnglishAndMathsPayments[1].Should().Be(1);
             result.First().EnglishAndMathsPayments[2].Should().Be(1);
             result.First().EnglishAndMathsPayments[3].Should().Be(1);
@@ -272,7 +272,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().EnglishAndMathsPayments[13].Should().Be(1);
 
             // Learning support, disadvantage and framework uplift payments array
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[0].Should().Be(1);
+            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[0].Should().Be(54);
             result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[1].Should().Be(1);
             result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[2].Should().Be(1);
             result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[3].Should().Be(1);
@@ -287,14 +287,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[12].Should().Be(1);
             result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[13].Should().Be(1);
 
-            result.First().AugustLevyPayments.Should().Be(1);
-            result.First().AugustCoInvestmentPayments.Should().Be(1);
-            result.First().AugustCoInvestmentDueFromEmployerPayments.Should().Be(1);
-            result.First().AugustEmployerAdditionalPayments.Should().Be(1);
-            result.First().AugustProviderAdditionalPayments.Should().Be(1);
-            result.First().AugustApprenticeAdditionalPayments.Should().Be(1);
-            result.First().AugustEnglishAndMathsPayments.Should().Be(1);
-            result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(1);
+            result.First().AugustLevyPayments.Should().Be(45);
+            result.First().AugustCoInvestmentPayments.Should().Be(36);
+            result.First().AugustCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().AugustEmployerAdditionalPayments.Should().Be(42);
+            result.First().AugustProviderAdditionalPayments.Should().Be(45);
+            result.First().AugustApprenticeAdditionalPayments.Should().Be(48);
+            result.First().AugustEnglishAndMathsPayments.Should().Be(51);
+            result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
             result.First().AugustTotalPayments.Should().Be(1);
 
             result.First().SeptemberLevyPayments.Should().Be(1);
@@ -493,16 +493,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         {
                             new AppsMonthlyPaymentLearningDeliveryInfo()
                             {
-                                UKPRN = ukPrn.ToString(),
+                                Ukprn = ukPrn.ToString(),
                                 LearnRefNumber = "A12345",
                                 LearnAimRef = "50117889",
                                 AimType = "3",
                                 AimSeqNumber = "1",
                                 LearnStartDate = "2019-08-28", // new DateTime(2019, 08, 28),
+                                OrigLearnStartDate = null,
+                                LearnPlanEndDate = "2019-07-31",
+                                FundModel = "36",
                                 ProgType = "1",
                                 StdCode = "1",
                                 FworkCode = "1",
-                                PwayCode = "1"
+                                PwayCode = "1",
+                                PartnerUkprn = null,
+                                ConRefNumber = "NLAP-1503",
+                                EpaOrgId = "9876543210",
+                                SwSupAimId = "SwSup50117889",
+                                CompStatus = "2",
+                                LearnActEndDate = "2019-07-31",
+                                Outcome = "4",
+                                AchDate = "2019-07-30"
                             }
                         },
                         ProviderSpecLearnerMonitorings =
@@ -510,14 +521,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             {
                                 new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
                                 {
-                                    UKPRN = ukPrn,
+                                    Ukprn = ukPrn.ToString(),
                                     LearnRefNumber = "1",
                                     ProvSpecLearnMon = "A",
                                     ProvSpecLearnMonOccur = "T180400007"
                                 },
                                 new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
                                 {
-                                    UKPRN = ukPrn,
+                                    Ukprn = ukPrn.ToString(),
                                     LearnRefNumber = "1",
                                     ProvSpecLearnMon = "B",
                                     ProvSpecLearnMonOccur = "150563"
@@ -588,185 +599,217 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 UkPrn = ukPrn
             };
 
-            appsMonthlyPaymentDasInfo.Payments = new List<AppsMonthlyPaymentDASPaymentInfo>();
+            appsMonthlyPaymentDasInfo.Payments = new List<AppsMonthlyPaymentDasPayments2Payment>();
 
             // learner 1, first payments
             for (byte i = 1; i < 14; i++)
             {
-                var levyPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "1",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 11m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 2,
+                    FundingSource = 1,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 11m
                 };
 
-                var coInvestmentPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
                     LearningAimReference = "50117889",
                     LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "2",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 12m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 2,
+                    FundingSource = 2,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 12m
                 };
 
-                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 13m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 2,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 13m
                 };
 
-                var employerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var employerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "4",
-                    AcademicYear = "1920",
-                    Amount = 14m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 4,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 14m
                 };
 
-                var providerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var providerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "5",
-                    AcademicYear = "1920",
-                    Amount = 15m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 5,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 15m
                 };
 
-                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "16",
-                    AcademicYear = "1920",
-                    Amount = 16m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 16,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 16m
                 };
 
-                var englishAndMathsPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var englishAndMathsPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "13",
-                    AcademicYear = "1920",
-                    Amount = 17m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 13,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 17m
                 };
 
-                var paymentsForLearningSupport = new AppsMonthlyPaymentDASPaymentInfo()
+                var paymentsForLearningSupport = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "8",
-                    AcademicYear = "1920",
-                    Amount = 18m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 8,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 18m
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
@@ -782,180 +825,212 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             // learner 1, second payments
             for (byte i = 1; i < 14; i++)
             {
-                var levyPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "1",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 22m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 2,
+                    FundingSource = 1,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 22m
                 };
 
-                var coInvestmentPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "2",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 24m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 2,
+                    FundingSource = 2,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 24m
                 };
 
-                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 26m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 2,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 26m
                 };
 
-                var employerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var employerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "4",
-                    AcademicYear = "1920",
-                    Amount = 28m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 4,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 28m
                 };
 
-                var providerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var providerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "5",
-                    AcademicYear = "1920",
-                    Amount = 30m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 5,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 30m
                 };
 
-                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "16",
-                    AcademicYear = "1920",
-                    Amount = 32m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 16,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 32m
                 };
 
-                var englishAndMathsPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var englishAndMathsPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "13",
-                    AcademicYear = "1920",
-                    Amount = 34m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 13,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 34m
                 };
 
-                var paymentsForLearningSupport = new AppsMonthlyPaymentDASPaymentInfo()
+                var paymentsForLearningSupport = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "A12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "8",
-                    AcademicYear = "1920",
-                    Amount = 36m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 8,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 36m
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
@@ -971,180 +1046,212 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             // Learner 2, first payments
             for (byte i = 1; i < 14; i++)
             {
-                var levyPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "1",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 11m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 2,
+                    FundingSource = 1,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 11m
                 };
 
-                var coInvestmentPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
+                    LearnerUln = "54321",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "2",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 12m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 2,
+                    FundingSource = 1,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 12m
                 };
 
-                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 13m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 2,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 13m
                 };
 
-                var employerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var employerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "4",
-                    AcademicYear = "1920",
-                    Amount = 14m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+                    ContractType = "2",
+
+                    TransactionType = 4,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 14m
                 };
 
-                var providerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var providerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "5",
-                    AcademicYear = "1920",
-                    Amount = 15m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 5,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 15m
                 };
 
-                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
-                    LearnerReferenceNumber = "B12345",
+                    LearnerReferenceNumber = "A12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "16",
-                    AcademicYear = "1920",
-                    Amount = 16m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 16,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 16m
                 };
 
-                var englishAndMathsPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var englishAndMathsPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "13",
-                    AcademicYear = "1920",
-                    Amount = 17m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 13,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 17m
                 };
 
-                var paymentsForLearningSupport = new AppsMonthlyPaymentDASPaymentInfo()
+                var paymentsForLearningSupport = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
+                    LearnerUln = "54321",
                     LearningAimReference = "50117889",
-                    LearnerUln = "12345",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "8",
-                    AcademicYear = "1920",
-                    Amount = 18m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 8,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 18m
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
@@ -1160,180 +1267,212 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             // learner 2, second payments
             for (byte i = 1; i < 14; i++)
             {
-                var levyPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "1",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 22m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 2,
+                    FundingSource = 1,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 22m
                 };
 
-                var coInvestmentPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "2",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 24m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 2,
+                    FundingSource = 2,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 24m
                 };
 
-                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "2",
-                    AcademicYear = "1920",
-                    Amount = 26m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 2,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 26m
                 };
 
-                var employerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var employerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "4",
-                    AcademicYear = "1920",
-                    Amount = 28m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 4,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 28m
                 };
 
-                var providerAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var providerAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "5",
-                    AcademicYear = "1920",
-                    Amount = 30m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 5,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 30m
                 };
 
-                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "16",
-                    AcademicYear = "1920",
-                    Amount = 32m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 16,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 32m
                 };
 
-                var englishAndMathsPayments = new AppsMonthlyPaymentDASPaymentInfo()
+                var englishAndMathsPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "13",
-                    AcademicYear = "1920",
-                    Amount = 34m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 13,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 34m
                 };
 
-                var paymentsForLearningSupport = new AppsMonthlyPaymentDASPaymentInfo()
+                var paymentsForLearningSupport = new AppsMonthlyPaymentDasPayments2Payment()
                 {
+                    AcademicYear = 1920,
                     Ukprn = ukPrn.ToString(),
                     LearnerReferenceNumber = "B12345",
-                    LearningAimReference = "50117889",
                     LearnerUln = "12345",
+                    LearningAimReference = "50117889",
                     LearningStartDate = "2019-08-28",  // new DateTime(2019, 08, 28),
+                    EarningEventId = Guid.NewGuid(),
                     LearningAimProgrammeType = "1",
                     LearningAimStandardCode = "1",
                     LearningAimFrameworkCode = "1",
                     LearningAimPathwayCode = "1",
-                    FundingSource = "3",
-                    TransactionType = "8",
-                    AcademicYear = "1920",
-                    Amount = 36m,
-                    ContractType = "2",
-                    CollectionPeriod = i.ToString(),
-                    DeliveryPeriod = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)"
+                    ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
+                    PriceEpisodeIdentifier = "12342019-08-28",
+
+                    ContractType = "2",
+                    TransactionType = 8,
+                    FundingSource = 3,
+                    DeliveryPeriod = "1",
+                    CollectionPeriod = i,
+
+                    Amount = 36m
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);

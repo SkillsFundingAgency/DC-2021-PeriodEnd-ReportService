@@ -111,16 +111,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 {
                     var aecApprenticeshipPriceEpisodeInfos = await ilrContext.AEC_ApprenticeshipPriceEpisodes
                         .Where(x => x.UKPRN == ukPrn)
-                        .Select(pe => new AECApprenticeshipPriceEpisodeInfo
+                        .Select(ape => new AECApprenticeshipPriceEpisodeInfo
                         {
-                            UkPrn = pe.UKPRN,
-                            AimSequenceNumber = (int)pe.PriceEpisodeAimSeqNumber,
-                            LearnRefNumber = pe.LearnRefNumber,
-                            PriceEpisodeActualEndDate = pe.PriceEpisodeActualEndDate,
-                            PriceEpisodeAgreeId = pe.PriceEpisodeAgreeId
+                            Ukprn = ape.UKPRN.ToString() ?? string.Empty,
+                            LearnRefNumber = ape.LearnRefNumber ?? string.Empty,
+                            PriceEpisodeIdentifier = ape.PriceEpisodeIdentifier ?? string.Empty,
+                            AimSequenceNumber = ape.PriceEpisodeAimSeqNumber,
+                            EpisodeStartDate = ape.EpisodeStartDate,
+                            PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
+                            PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
+                            PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
                         }).ToListAsync(cancellationToken);
 
                     appsMonthlyPaymentRulebaseInfo.AECApprenticeshipPriceEpisodes.AddRange(aecApprenticeshipPriceEpisodeInfos);
+
+                    var aecLearningDeliveries = ilrContext.AEC_LearningDeliveries
+                        .Where(x => x.UKPRN == ukPrn);
                 }
             }
             catch (Exception ex)

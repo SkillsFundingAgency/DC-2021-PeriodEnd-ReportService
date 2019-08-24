@@ -82,7 +82,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             var appsMonthlyPaymentDasInfo = new AppsMonthlyPaymentDASInfo
             {
                 UkPrn = ukPrn,
-                Payments = new List<AppsMonthlyPaymentDASPaymentInfo>()
+                Payments = new List<AppsMonthlyPaymentDasPayments2Payment>()
             };
 
             cancellationToken.ThrowIfCancellationRequested();
@@ -91,7 +91,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 appsMonthlyPaymentDasInfo.Payments = await context.Payments
                     .Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource)
-                    .Select(payment => new AppsMonthlyPaymentDASPaymentInfo
+                    .Select(payment => new AppsMonthlyPaymentDasPayments2Payment
                     {
                         // Convert the database null values to a default value so that we don't have to keep checking for null later
                         // and to stop exceptions where we're not able to check for null e.g. in LINQ statements
@@ -100,22 +100,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         LearnerReferenceNumber = (payment != null && payment.LearnerReferenceNumber != null) ? payment.LearnerReferenceNumber : string.Empty,
                         LearnerUln = (payment != null && payment.LearnerUln != null) ? payment.LearnerUln.ToString() : string.Empty,
                         LearningAimReference = (payment != null && payment.LearningAimReference != null) ? payment.LearningAimReference : string.Empty,
-                        LearningAimProgrammeType = (payment != null && payment.LearningAimProgrammeType != null) ? payment.LearningAimProgrammeType.ToString() : string.Empty,
+                        LearningStartDate = (payment != null && payment.LearningStartDate != null) ? payment.LearningStartDate.ToString() : string.Empty,
+                        LearningAimProgrammeType = (payment != null && payment.LearningAimProgrammeType != null) ? payment.LearningAimProgrammeType.ToString() : "25", // for FM36 ProgType should be 25
                         LearningAimStandardCode = (payment != null && payment.LearningAimStandardCode != null) ? payment.LearningAimStandardCode.ToString() : string.Empty,
                         LearningAimFrameworkCode = (payment != null && payment.LearningAimFrameworkCode != null) ? payment.LearningAimFrameworkCode.ToString() : string.Empty,
                         LearningAimPathwayCode = (payment != null && payment.LearningAimPathwayCode != null) ? payment.LearningAimPathwayCode.ToString() : string.Empty,
-                        Amount = (payment != null && payment.Amount != null) ? payment.Amount : 0m,
                         LearningAimFundingLineType = (payment != null && payment.LearningAimFundingLineType != null) ? payment.LearningAimFundingLineType : string.Empty,
                         ReportingAimFundingLineType = (payment != null && payment.ReportingAimFundingLineType != null) ? payment.ReportingAimFundingLineType : string.Empty,
                         PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
-                        FundingSource = (payment != null && payment.FundingSource != null) ? payment.FundingSource.ToString() : string.Empty,
-                        TransactionType = (payment != null && payment.TransactionType != null) ? payment.TransactionType.ToString() : string.Empty,
-                        AcademicYear = (payment != null && payment.AcademicYear != null) ? payment.AcademicYear.ToString() : string.Empty,
-                        CollectionPeriod = (payment != null && payment.CollectionPeriod != null) ? payment.CollectionPeriod.ToString() : string.Empty,
+                        FundingSource = payment.FundingSource,
+                        TransactionType = payment.TransactionType,
+                        AcademicYear = payment.AcademicYear,
+                        CollectionPeriod = payment.CollectionPeriod,
                         ContractType = (payment != null && payment.ContractType != null) ? payment.ContractType.ToString() : string.Empty,
                         DeliveryPeriod = (payment != null && payment.DeliveryPeriod != null) ? payment.DeliveryPeriod.ToString() : string.Empty,
-                        LearningStartDate = (payment != null && payment.LearningStartDate != null) ? payment.LearningStartDate.ToString() : string.Empty,
-                        EarningEventId = payment.EarningEventId
+                        EarningEventId = payment.EarningEventId,
+                        Amount = (payment != null && payment.Amount != null) ? payment.Amount : 0m
                     })
                     .ToListAsync(cancellationToken);
 

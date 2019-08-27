@@ -25,6 +25,8 @@
     <Parameter Name="TopicReports" DefaultValue="Reports" />
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
+    <!-- Summarisation -->
+    <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
     <!-- DAS Commitments -->
@@ -56,6 +58,7 @@
           </Section>
           <Section Name="ReportServiceConfiguration">
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
+            <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
             <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
             <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />

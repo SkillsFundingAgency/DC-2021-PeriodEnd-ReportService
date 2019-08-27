@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics
 {
     public class PaymentMetrics
     {

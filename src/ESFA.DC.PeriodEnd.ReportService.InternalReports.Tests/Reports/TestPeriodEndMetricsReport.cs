@@ -12,7 +12,7 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.DateTimeProvider.Interface;
 using System.Threading;
 using System.Collections.Generic;
-using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 using FluentAssertions;
 using System.Linq;
 using CsvHelper;

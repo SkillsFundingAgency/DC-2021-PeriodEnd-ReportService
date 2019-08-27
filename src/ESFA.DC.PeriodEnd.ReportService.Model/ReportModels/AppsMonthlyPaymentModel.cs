@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 {
     public class AppsMonthlyPaymentModel
     {

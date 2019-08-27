@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string AimSeqNumber { get; set; }
 
-        public string LearnStartDate { get; set; }
+        public DateTime LearnStartDate { get; set; }
 
         public string OrigLearnStartDate { get; set; }
 

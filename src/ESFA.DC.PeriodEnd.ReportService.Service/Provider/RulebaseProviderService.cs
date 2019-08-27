@@ -14,11 +14,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
-    public class FM36PeriodEndProviderService : AbstractFundModelProviderService, IFM36PeriodEndProviderService
+    public class RulebaseProviderService : AbstractFundModelProviderService, Interface.Provider.IRulebaseProviderService
     {
         private readonly Func<IIlr1920RulebaseContext> _ilrRulebaseContextFactory;
 
-        public FM36PeriodEndProviderService(
+        public RulebaseProviderService(
             ILogger logger,
             Func<IIlr1920RulebaseContext> ilrRulebaseContextFactory)
         : base(logger)
@@ -94,7 +94,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsAdditionalPaymentRulebaseInfo;
         }
 
-        public async Task<AppsMonthlyPaymentRulebaseInfo> GetFM36DataForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        public async Task<AppsMonthlyPaymentRulebaseInfo> GetRulebaseDataForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo = null;
             try
@@ -109,29 +109,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 using (var ilrContext = _ilrRulebaseContextFactory())
                 {
-                    var aecApprenticeshipPriceEpisodeInfos = await ilrContext.AEC_ApprenticeshipPriceEpisodes
+                    appsMonthlyPaymentRulebaseInfo.AECApprenticeshipPriceEpisodes = await ilrContext.AEC_ApprenticeshipPriceEpisodes
                         .Where(x => x.UKPRN == ukPrn)
                         .Select(ape => new AECApprenticeshipPriceEpisodeInfo
                         {
-                            Ukprn = ape.UKPRN.ToString() ?? string.Empty,
-                            LearnRefNumber = ape.LearnRefNumber ?? string.Empty,
-                            PriceEpisodeIdentifier = ape.PriceEpisodeIdentifier ?? string.Empty,
-                            AimSequenceNumber = ape.PriceEpisodeAimSeqNumber,
+                            Ukprn = (ape != null && ape.UKPRN != null) ? ape.UKPRN.ToString() : string.Empty,
+                            LearnRefNumber = (ape != null && ape.LearnRefNumber != null) ? ape.LearnRefNumber : string.Empty,
+                            PriceEpisodeIdentifier = (ape != null && ape.PriceEpisodeIdentifier != null) ? ape.PriceEpisodeIdentifier : string.Empty,
+                            AimSequenceNumber = ape.PriceEpisodeAimSeqNumber.ToString() ?? string.Empty,
                             EpisodeStartDate = ape.EpisodeStartDate,
                             PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
                             PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
-                            PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
+                            PriceEpisodeAgreeId = (ape != null && ape.PriceEpisodeAgreeId != null) ? ape.PriceEpisodeAgreeId : string.Empty
                         }).ToListAsync(cancellationToken);
-
-                    appsMonthlyPaymentRulebaseInfo.AECApprenticeshipPriceEpisodes.AddRange(aecApprenticeshipPriceEpisodeInfos);
-
-                    var aecLearningDeliveries = ilrContext.AEC_LearningDeliveries
-                        .Where(x => x.UKPRN == ukPrn);
                 }
             }
-            catch (Exception ex)
+            catch (Exception e)
             {
-                _logger.LogError("Failed to get Rulebase data", ex);
+                _logger.LogError("Failed to get Rulebase data", e);
             }
 
             return appsMonthlyPaymentRulebaseInfo;

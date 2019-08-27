@@ -31,7 +31,7 @@
 //            ILogger logger,
 //            IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
 //            IIlrPeriodEndProviderService ilrPeriodEndProviderService,
-//            IFM36PeriodEndProviderService fm36ProviderService,
+//            IRulebaseProviderService fm36ProviderService,
 //            IDASPaymentsProviderService dasPaymentsProviderService,
 //            ILarsProviderService larsProviderService,
 //            IFcsProviderService fcsProviderService,
@@ -63,7 +63,7 @@
 //            var appsMonthlyPaymentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
 //            // Get the AEC data
-//            var appsMonthlyPaymentRulebaseInfo = await _fm36ProviderService.GetFM36DataForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+//            var appsMonthlyPaymentRulebaseInfo = await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
 //            // Get the Fcs Contract data
 //            var appsMonthlyPaymentFcsInfo = await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);

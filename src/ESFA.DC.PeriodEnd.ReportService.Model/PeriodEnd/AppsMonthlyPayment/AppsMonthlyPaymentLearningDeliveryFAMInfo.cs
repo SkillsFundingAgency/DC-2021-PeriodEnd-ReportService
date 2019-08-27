@@ -2,11 +2,11 @@
 {
     public class AppsMonthlyPaymentLearningDeliveryFAMInfo
     {
-        public int UKPRN { get; set; }
+        public string Ukprn { get; set; }
 
         public string LearnRefNumber { get; set; }
 
-        public int AimSeqNumber { get; set; }
+        public string AimSeqNumber { get; set; }
 
         public string LearnDelFAMType { get; set; }
 

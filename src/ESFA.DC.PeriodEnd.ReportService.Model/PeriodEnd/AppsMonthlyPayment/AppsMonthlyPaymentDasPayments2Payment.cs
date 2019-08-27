@@ -14,7 +14,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string LearningAimReference { get; set; }
 
-        public string LearningStartDate { get; set; }
+        public DateTime? LearningStartDate { get; set; }
 
         public Guid EarningEventId { get; set; }
 
@@ -31,19 +31,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public string ReportingAimFundingLineType { get; set; }
 
         public string PriceEpisodeIdentifier { get; set; }
-
-        private string _priceEpisodeStartDate = string.Empty;
-        public string PriceEpisodeStartDate
-        {
-            get
-            {
-                if (!string.IsNullOrEmpty(PriceEpisodeIdentifier))
-                {
-                    string _priceEpisodeStartDate = PriceEpisodeIdentifier.Substring((PriceEpisodeIdentifier.Length - 10), 10); ;
-                }
-                return _priceEpisodeStartDate;
-            }
-        }
 
         public string ContractType { get; set; }
 

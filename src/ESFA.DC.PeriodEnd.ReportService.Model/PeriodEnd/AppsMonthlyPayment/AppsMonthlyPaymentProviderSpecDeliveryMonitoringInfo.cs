@@ -7,7 +7,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string LearnRefNumber { get; set; }
 
-        public int AimSeqNumber { get; set; }
+        public string AimSeqNumber { get; set; }
 
         public string ProvSpecDelMonOccur { get; set; }
 

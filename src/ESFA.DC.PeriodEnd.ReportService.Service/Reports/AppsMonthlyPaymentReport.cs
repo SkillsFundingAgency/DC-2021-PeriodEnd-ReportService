@@ -23,8 +23,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
     public class AppsMonthlyPaymentReport : AbstractReport
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
-        private readonly IFM36PeriodEndProviderService _fm36ProviderService;
+        private readonly IRulebaseProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
+        private readonly IDASPaymentsProviderService _dasEarningsProviderService;
         private readonly ILarsProviderService _larsProviderService;
         private readonly IFcsProviderService _fcsProviderService;
         private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
@@ -33,8 +34,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
-            IFM36PeriodEndProviderService fm36ProviderService,
+            IRulebaseProviderService fm36ProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
+//            IDASPaymentsProviderService dasEarningsProviderService,
             ILarsProviderService larsProviderService,
             IFcsProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
@@ -45,6 +47,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
+//            _dasEarningsProviderService = dasEarningsProviderService;
             _larsProviderService = larsProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
@@ -73,7 +76,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var appsMonthlyPaymentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
             // Get the AEC data
-            var appsMonthlyPaymentRulebaseInfo = await _fm36ProviderService.GetFM36DataForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsMonthlyPaymentRulebaseInfo = await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
             // Get the Fcs Contract data
             var appsMonthlyPaymentFcsInfo = await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);

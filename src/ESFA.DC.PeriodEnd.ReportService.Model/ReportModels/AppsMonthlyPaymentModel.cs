@@ -16,7 +16,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }
 
-        public int? PaymentEarningEventAimSeqNumber { get; set; }
+        public Guid PaymentEarningEventId { get; set; }
+
+        public string PaymentEarningEventAimSeqNumber { get; set; }
 
         public string PaymentLearningAimReference { get; set; }
 
@@ -24,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 
         public string LearningDeliveryOriginalLearningStartDate { get; set; }
 
-        public string PaymentLearningStartDate { get; set; }
+        public DateTime? PaymentLearningStartDate { get; set; }
 
         public string LearningDeliveryLearningPlannedEndData { get; set; }
 
@@ -78,7 +80,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 
         public string PaymentPriceEpisodeStartDate { get; set; }
 
-        public string RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate { get; set; }
+        public DateTime? RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate { get; set; }
 
         public string FcsContractContractAllocationContractAllocationNumber { get; set; }
 

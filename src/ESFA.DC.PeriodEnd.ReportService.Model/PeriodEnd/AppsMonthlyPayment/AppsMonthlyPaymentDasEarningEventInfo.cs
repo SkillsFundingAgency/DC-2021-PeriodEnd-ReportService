@@ -9,13 +9,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public Guid EventId { get; set; }
 
-        public long Ukprn { get; set; }
+        public string Ukprn { get; set; }
 
-        public int ContractType { get; set; }
+        public string ContractType { get; set; }
 
-        public int CollectionPeriod { get; set; }
+        public short CollectionPeriod { get; set; }
 
-        public int AcademicYear { get; set; }
+        public short AcademicYear { get; set; }
 
         public string LearnerReferenceNumber { get; set; }
 
@@ -45,6 +45,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public DateTimeOffset CreationDate { get; set; }
 
-        public long? LearningAimSequenceNumber { get; set; }
+        public string LearningAimSequenceNumber { get; set; }
     }
 }

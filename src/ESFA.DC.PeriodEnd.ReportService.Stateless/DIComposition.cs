@@ -195,7 +195,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<LarsProviderService>().As<ILarsProviderService>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<FM36PeriodEndProviderService>().As<IFM36PeriodEndProviderService>()
+            containerBuilder.RegisterType<Service.Provider.RulebaseProviderService>().As<IRulebaseProviderService>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 

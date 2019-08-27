@@ -69,7 +69,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         LearnAimRef = x?.LearnAimRef ?? string.Empty,
                         AimType = x?.AimType.ToString() ?? string.Empty,
                         AimSeqNumber = x?.AimSeqNumber.ToString() ?? string.Empty,
-                        LearnStartDate = x?.LearnStartDate.ToString("dd/mm/yyyy") ?? string.Empty,
+                        LearnStartDate = x.LearnStartDate,
                         OrigLearnStartDate = x?.LearnStartDate.ToString("dd/mm/yyyy") ?? string.Empty,
                         LearnPlanEndDate = x?.LearnPlanEndDate.ToString("dd/mm/yyyy") ?? string.Empty,
                         FundModel = x?.FundModel.ToString() ?? string.Empty,
@@ -90,15 +90,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         {
                             Ukprn = y.UKPRN.ToString(),
                             LearnRefNumber = y?.LearnRefNumber ?? string.Empty,
-                            AimSeqNumber = y.AimSeqNumber,
+                            AimSeqNumber = y.AimSeqNumber.ToString(),
                             ProvSpecDelMon = y?.ProvSpecDelMon ?? string.Empty,
                             ProvSpecDelMonOccur = y?.ProvSpecDelMonOccur ?? string.Empty
                         }).ToList(),
                         LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y => new AppsMonthlyPaymentLearningDeliveryFAMInfo
                         {
-                            UKPRN = y.UKPRN,
+                            Ukprn = y?.UKPRN.ToString() ?? string.Empty,
                             LearnRefNumber = y?.LearnRefNumber ?? string.Empty,
-                            AimSeqNumber = y.AimSeqNumber,
+                            AimSeqNumber = y.AimSeqNumber.ToString() ?? string.Empty,
                             LearnDelFAMType = y?.LearnDelFAMType ?? string.Empty,
                             LearnDelFAMCode = y?.LearnDelFAMCode ?? string.Empty
                         }).ToList(),

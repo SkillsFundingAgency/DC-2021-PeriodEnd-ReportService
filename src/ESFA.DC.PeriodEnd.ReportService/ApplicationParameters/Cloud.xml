@@ -3,11 +3,11 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
-    <Parameter Name="ILRDataStoreConnectionString" Value="__ILRDataStoreConnectionString__" />
+    <Parameter Name="ILR1920DataStoreConnectionString" Value="__ILR1920DataStoreConnectionString__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
     <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionString__" />
     <Parameter Name="AuditQueueName" Value="__AuditQueueName__" />
-    <Parameter Name="TopicName" Value="__TopicName__" />
+    <Parameter Name="TopicName" Value="__PE1920ReportingTopicName__" />
     <Parameter Name="LoggerConnectionstring" Value="__LoggerConnectionstring__" />
     <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
     <Parameter Name="JobStatusQueueName" Value="__JobStatusQueueName__" />
@@ -16,8 +16,6 @@
     <Parameter Name="SubscriptionName" Value="__PE1920ReportingSubscriptionName__" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
-    <!-- DAS Commitments -->
-    <Parameter Name="DasCommitmentsConnectionString" Value="__DasCommitmentConnectionStringRO__" />
     <!-- Lars -->
     <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
     <!-- Summarised Actuals -->

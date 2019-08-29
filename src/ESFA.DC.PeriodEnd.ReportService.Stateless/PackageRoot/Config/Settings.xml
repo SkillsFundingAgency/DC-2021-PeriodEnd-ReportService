@@ -23,11 +23,7 @@
   <Section Name="ReportServiceConfiguration">
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
-    <Parameter Name="DasCommitmentsConnectionString" Value="" />
-    <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
-    <Parameter Name="ILRDataStoreConnectionString" Value="" />
-    <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
-    <Parameter Name="JobStatusConnectionString" Value="" />
+    <Parameter Name="ILR1920DataStoreConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="SummarisedActualsConnectionString" Value="" />
   </Section>
@@ -38,10 +34,5 @@
 
   <Section Name="VersionSection">
     <Parameter Name="ServiceReleaseVersion" Value="" />
-  </Section>
-
-  <Section Name="TopicAndTaskSection">
-    <Parameter Name="TopicReports" Value="" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="" />
   </Section>
 </Settings>

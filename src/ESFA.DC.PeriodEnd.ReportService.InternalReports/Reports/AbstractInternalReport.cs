@@ -3,7 +3,10 @@ using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Threading;
+using System.Threading.Tasks;
 using Aspose.Cells;
+using CsvHelper;
 using CsvHelper.Configuration;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -30,10 +33,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
         public abstract string ReportFileName { get; set; }
 
+        public abstract string ReportTaskName { get; }
+
         public string GetFilename(IReportServiceContext reportServiceContext)
         {
             DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
             return $"{reportServiceContext.ReturnPeriod.ToString().PadLeft(2, '0')}_{ReportFileName} {dateTime:yyyyMMdd-HHmmss}";
+        }
+
+        public abstract Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
+
+        public bool IsMatch(string reportTaskName)
+        {
+            return string.Equals(reportTaskName, ReportTaskName, StringComparison.OrdinalIgnoreCase);
         }
 
         protected Workbook GetWorkbookFromTemplate(string templateFileName)
@@ -116,6 +128,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         protected void SetCurrentRow(Worksheet worksheet, int currentRow)
         {
             _currentRow[worksheet] = currentRow;
+        }
+
+        protected void WriteCsvRecords<TMapper, TModel>(CsvWriter csvWriter, IEnumerable<TModel> records)
+            where TMapper : ClassMap
+            where TModel : class
+        {
+            csvWriter.Configuration.RegisterClassMap<TMapper>();
+
+            csvWriter.WriteHeader<TModel>();
+            csvWriter.NextRecord();
+
+            csvWriter.WriteRecords(records);
+
+            csvWriter.Configuration.UnregisterClassMap();
         }
     }
 }

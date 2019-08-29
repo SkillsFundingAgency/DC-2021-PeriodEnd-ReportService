@@ -13,5 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
         string FCSConnectionString { get; set; }
 
         string LarsConnectionString { get; set; }
+
+        string SummarisedActualsConnectionString { get; set; }
     }
 }

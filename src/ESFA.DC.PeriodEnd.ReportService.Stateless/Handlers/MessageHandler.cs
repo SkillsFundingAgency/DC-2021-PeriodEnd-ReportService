@@ -60,7 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
                     var reportContext = childLifeTimeScope.Resolve<IReportServiceContext>();
                     var task = reportContext.Tasks.First();
 
-                    if (Generics.InternalReports.Contains(task))
+                    if (ReportTaskNameConstants.InternalReports.TasksList.Contains(task))
                     {
                         var internalEntryPoint = childLifeTimeScope.Resolve<InternalEntryPoint>();
                         result = await internalEntryPoint.Callback(cancellationToken);

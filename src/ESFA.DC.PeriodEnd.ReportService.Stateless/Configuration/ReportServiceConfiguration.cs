@@ -11,5 +11,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
         public string FCSConnectionString { get; set; }
 
         public string LarsConnectionString { get; set; }
+
+        public string SummarisedActualsConnectionString { get; set; }
     }
 }

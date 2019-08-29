@@ -25,6 +25,7 @@
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="ILR1920DataStoreConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
+    <Parameter Name="SummarisedActualsConnectionString" Value="" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">

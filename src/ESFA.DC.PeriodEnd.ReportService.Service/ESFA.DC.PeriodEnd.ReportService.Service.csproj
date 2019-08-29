@@ -26,7 +26,9 @@
     <PackageReference Include="ESFA.DC.JobContext.Interface" Version="0.2.8-beta0001" />
     <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
     <PackageReference Include="ESFA.DC.ReferenceData.LARS.Model" Version="0.2.159" />
+    <PackageReference Include="ESFA.DC.ReferenceData.FCS.Model" Version="0.2.159" />
     <PackageReference Include="ESFA.DC.Serialization.Interfaces" Version="0.1.6-beta0001" />
+    <PackageReference Include="ESFA.DC.Summarisation.Model" Version="0.0.471" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Abstractions" Version="2.2.4" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Analyzers" Version="2.2.4" />

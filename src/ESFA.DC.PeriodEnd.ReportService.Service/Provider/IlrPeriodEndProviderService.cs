@@ -206,7 +206,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             AFinCode = y.AFinCode,
                             AFinDate = y.AFinDate,
                             AFinAmount = y.AFinAmount
-                        }).ToList()
+                        }).ToList(),
+                        LearningDeliveryFAMs = x.LearningDeliveryFAMs.Select(y => new LearningDeliveryFAM()
+                        {
+                            UKPRN = y.UKPRN,
+                            LearnRefNumber = y.LearnRefNumber,
+                            AimSeqNumber = y.AimSeqNumber,
+                            LearnDelFAMType = y.LearnDelFAMType,
+                            LearnDelFAMCode = y.LearnDelFAMCode
+                        }).ToList(),
                     }).ToList(),
                     LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
                     {

@@ -10,10 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
     {
         public int UkPrn { get; set; }
 
-        public string LearnRefNumber { get; set; }
+        public List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> AECApprenticeshipPriceEpisodePeriodisedValues { get; set; }
 
         public List<AECLearningDeliveryInfo> AECLearningDeliveries { get; set; }
-
-        public List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> AECApprenticeshipPriceEpisodePeriodisedValues { get; set; }
     }
 }

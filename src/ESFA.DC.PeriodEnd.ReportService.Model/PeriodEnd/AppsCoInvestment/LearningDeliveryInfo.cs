@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using ESFA.DC.ILR1920.DataStore.EF.Valid;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
@@ -28,5 +29,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public string SWSupAimId { get; set; }
 
         public ICollection<AppFinRecordInfo> AppFinRecords { get; set; }
+
+        public ICollection<LearningDeliveryFAM> LearningDeliveryFAMs { get; set; }
     }
 }

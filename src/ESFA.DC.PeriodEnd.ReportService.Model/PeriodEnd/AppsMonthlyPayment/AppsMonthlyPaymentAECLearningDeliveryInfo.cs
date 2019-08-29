@@ -8,10 +8,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public string LearnRefNumber { get; set; }
 
-        public int? AimSequenceNumber { get; set; }
+        public string AimSequenceNumber { get; set; }
 
         public string LearnAimRef { get; set; }
 
-        public int PlannedNumOnProgInstalm { get; set; }
+        public string PlannedNumOnProgInstalm { get; set; }
     }
 }

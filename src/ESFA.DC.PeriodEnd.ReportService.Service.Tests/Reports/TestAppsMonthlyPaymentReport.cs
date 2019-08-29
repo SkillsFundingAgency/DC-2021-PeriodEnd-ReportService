@@ -12,6 +12,7 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
@@ -47,7 +48,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IIlrPeriodEndProviderService> IlrPeriodEndProviderServiceMock =
                 new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
-//            Mock<IDASPaymentsProviderService> dasEarningsProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IRulebaseProviderService> fm36ProviderServiceMock = new Mock<IRulebaseProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
             Mock<IFcsProviderService> fcsProviderServiceMock = new Mock<IFcsProviderService>();
@@ -81,11 +81,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     It.IsAny<int>(),
                     It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasEarningsInfo);
 
-            //dasEarningsProviderMock
-            //    .Setup(x => x.GetEarningsInfoForAppsMonthlyPaymentReportAsync(
-            //        It.IsAny<int>(),
-            //        It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasEarningsInfo);
-
             larsProviderServiceMock
                 .Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
                     It.IsAny<string[]>(),
@@ -104,7 +99,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 IlrPeriodEndProviderServiceMock.Object,
                 fm36ProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
-//                dasEarningsProviderMock.Object,
                 larsProviderServiceMock.Object,
                 fcsProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
@@ -127,355 +121,218 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             }
 
             result.Should().NotBeNullOrEmpty();
-            result.Count().Should().Be(1);
+            result.Count().Should().Be(2);
+
             result.First().PaymentLearnerReferenceNumber.Should().Be("A12345");
             result.First().PaymentUniqueLearnerNumber.Should().Be("12345");
             result.First().LearnerCampusIdentifier.Should().Be("camp101");
+            result.First().ProviderSpecifiedLearnerMonitoringA.Should().Be("T180400007");
+            result.First().ProviderSpecifiedLearnerMonitoringB.Should().Be("150563");
+            result.First().PaymentEarningEventAimSeqNumber.Should().Be("1");
+            result.First().PaymentLearningAimReference.Should().Be("50117889");
+            result.First().LarsLearningDeliveryLearningAimTitle.Should().Be("Maths & English");
+            result.First().LearningDeliveryOriginalLearningStartDate.Should().Be("28/08/2019");
+            result.First().PaymentLearningStartDate.ToString().Should().Be("28/08/2019 00:00:00");
+            result.First().LearningDeliveryLearningPlannedEndData.Should().Be("31/07/2020 00:00:00");
+            result.First().LearningDeliveryCompletionStatus.Should().Be("2");
+            result.First().LearningDeliveryLearningActualEndDate.Should().Be("31/07/2020 00:00:00");
+            result.First().LearningDeliveryAchievementDate.Should().Be("30/07/2020 00:00:00");
+            result.First().LearningDeliveryOutcome.Should().Be("4");
+            result.First().PaymentProgrammeType.Should().Be("1");
+            result.First().PaymentStandardCode.Should().Be("1");
+            result.First().PaymentFrameworkCode.Should().Be("1");
+            result.First().PaymentPathwayCode.Should().Be("1");
+            result.First().LearningDeliveryAimType.Should().Be("3");
+            result.First().LearningDeliverySoftwareSupplierAimIdentifier.Should().Be("SwSup50117889");
+            result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringA.Should().Be("001");
+            result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringB.Should().Be("002");
+            result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringC.Should().Be("003");
+            result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringD.Should().Be("004");
+            result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringE.Should().Be("005");
+            result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringF.Should().Be("006");
+            result.First().ProviderSpecifiedDeliveryMonitoringA.Should().Be("A000406");
+            result.First().ProviderSpecifiedDeliveryMonitoringB.Should().Be("B002902");
+            result.First().ProviderSpecifiedDeliveryMonitoringC.Should().Be("C004402");
+            result.First().ProviderSpecifiedDeliveryMonitoringD.Should().Be("D006801");
+            result.First().LearningDeliveryEndPointAssessmentOrganisation.Should().Be("9876543210");
+            result.First().RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim.Should().Be("2");
+            result.First().LearningDeliverySubContractedOrPartnershipUkprn.Should().Be("0000000000");
+            result.First().PaymentPriceEpisodeStartDate.Should().Be("28/08/2019");
+            result.First().RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate.ToString().Should()
+                .Be("02/08/2019 00:00:00");
+            result.First().FcsContractContractAllocationContractAllocationNumber.Should().Be("YNLP-1503");
+            result.First().PaymentFundingLineType.Should().Be("16-18 Apprenticeship Non-Levy Contract (procured)");
+            result.First().PaymentApprenticeshipContractType.Should().Be("2");
+            result.First().LearnerEmploymentStatusEmployerId.Should().Be("56789");
+            result.First().RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier.Should().Be("PA102");
+            result.First().LearnerEmploymentStatus.Should().Be("10");
+            result.First().LearnerEmploymentStatusDate.Should().Be("27/08/2019 00:00:00");
 
-            // TODO: setup test data and add expected result values here
-            //result.First().ProviderSpecifiedLearnerMonitoringA.Should().Be(1);
-            //result.First().ProviderSpecifiedLearnerMonitoringB.Should().Be(1);
-            //result.First().PaymentEarningEventAimSeqNumber.Should().Be(1);
-            //result.First().PaymentLearningAimReference.Should().Be(1);
-            //result.First().LarsLearningDeliveryLearningAimTitle.Should().Be(1);
-            //result.First().LearningDeliveryOriginalLearningStartDate.Should().Be(1);
-            //result.First().PaymentLearningStartDate.Should().Be(1);
-            //result.First().LearningDeliveryLearningPlannedEndData.Should().Be(1);
-            //result.First().LearningDeliveryCompletionStatus.Should().Be(1);
-            //result.First().LearningDeliveryLearningActualEndDate.Should().Be(1);
-            //result.First().LearningDeliveryAchievementDate.Should().Be(1);
-            //result.First().LearningDeliveryOutcome.Should().Be(1);
-            //result.First().PaymentProgrammeType.Should().Be(1);
-            //result.First().PaymentStandardCode.Should().Be(1);
-            //result.First().PaymentFrameworkCode.Should().Be(1);
-            //result.First().PaymentPathwayCode.Should().Be(1);
-            //result.First().LearningDeliveryAimType.Should().Be(1);
-            //result.First().LearningDeliverySoftwareSupplierAimIdentifier.Should().Be(1);
-            //result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringA.Should().Be(1);
-            //result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringB.Should().Be(1);
-            //result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringC.Should().Be(1);
-            //result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringD.Should().Be(1);
-            //result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringE.Should().Be(1);
-            //result.First().LearningDeliveryFamTypeLearningDeliveryMonitoringF.Should().Be(1);
-            //result.First().ProviderSpecifiedDeliveryMonitoringA.Should().Be(1);
-            //result.First().ProviderSpecifiedDeliveryMonitoringB.Should().Be(1);
-            //result.First().ProviderSpecifiedDeliveryMonitoringC.Should().Be(1);
-            //result.First().ProviderSpecifiedDeliveryMonitoringD.Should().Be(1);
-            //result.First().LearningDeliveryEndPointAssessmentOrganisation.Should().Be(1);
-            //result.First().RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim.Should().Be(1);
-            //result.First().LearningDeliverySubContractedOrPartnershipUkprn.Should().Be(1);
-            //result.First().PaymentPriceEpisodeStartDate.Should().Be(1);
-            //result.First().RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate.Should().Be(1);
-            //result.First().FcsContractContractAllocationContractAllocationNumber.Should().Be(1);
-            //result.First().PaymentFundingLineType.Should().Be(1);
-            //result.First().PaymentApprenticeshipContractType.Should().Be(1);
-            //result.First().LearnerEmploymentStatusEmployerId.Should().Be(1);
-            //result.First().RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier.Should().Be(1);
-            //result.First().LearnerEmploymentStatus.Should().Be(1);
-            //result.First().LearnerEmploymentStatusDate.Should().Be(1);
+            // payments
 
-            // Levy payments array
-            result.First().LevyPayments[0].Should().Be(45);
-            result.First().LevyPayments[1].Should().Be(45);
-            result.First().LevyPayments[2].Should().Be(45);
-            result.First().LevyPayments[3].Should().Be(45);
-            result.First().LevyPayments[4].Should().Be(45);
-            result.First().LevyPayments[5].Should().Be(45);
-            result.First().LevyPayments[6].Should().Be(45);
-            result.First().LevyPayments[7].Should().Be(45);
-            result.First().LevyPayments[8].Should().Be(45);
-            result.First().LevyPayments[9].Should().Be(45);
-            result.First().LevyPayments[10].Should().Be(45);
-            result.First().LevyPayments[11].Should().Be(45);
-            result.First().LevyPayments[12].Should().Be(45);
-            result.First().LevyPayments[13].Should().Be(45);
-
-            // CoInvestment payments array
-            result.First().CoInvestmentPayments[0].Should().Be(36);
-            result.First().CoInvestmentPayments[1].Should().Be(36);
-            result.First().CoInvestmentPayments[2].Should().Be(36);
-            result.First().CoInvestmentPayments[3].Should().Be(36);
-            result.First().CoInvestmentPayments[4].Should().Be(36);
-            result.First().CoInvestmentPayments[5].Should().Be(36);
-            result.First().CoInvestmentPayments[6].Should().Be(36);
-            result.First().CoInvestmentPayments[7].Should().Be(36);
-            result.First().CoInvestmentPayments[8].Should().Be(36);
-            result.First().CoInvestmentPayments[9].Should().Be(36);
-            result.First().CoInvestmentPayments[10].Should().Be(36);
-            result.First().CoInvestmentPayments[11].Should().Be(36);
-            result.First().CoInvestmentPayments[12].Should().Be(36);
-            result.First().CoInvestmentPayments[13].Should().Be(36);
-
-            // CoInvestment due from employer array
-            result.First().CoInvestmentDueFromEmployerPayments[0].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[1].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[2].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[3].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[4].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[5].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[6].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[7].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[8].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[9].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[10].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[11].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[12].Should().Be(39);
-            result.First().CoInvestmentDueFromEmployerPayments[13].Should().Be(39);
-
-            // Employer additional payments array
-            result.First().EmployerAdditionalPayments[0].Should().Be(42);
-            result.First().EmployerAdditionalPayments[1].Should().Be(42);
-            result.First().EmployerAdditionalPayments[2].Should().Be(42);
-            result.First().EmployerAdditionalPayments[3].Should().Be(42);
-            result.First().EmployerAdditionalPayments[4].Should().Be(42);
-            result.First().EmployerAdditionalPayments[5].Should().Be(42);
-            result.First().EmployerAdditionalPayments[6].Should().Be(42);
-            result.First().EmployerAdditionalPayments[7].Should().Be(42);
-            result.First().EmployerAdditionalPayments[8].Should().Be(42);
-            result.First().EmployerAdditionalPayments[9].Should().Be(42);
-            result.First().EmployerAdditionalPayments[10].Should().Be(42);
-            result.First().EmployerAdditionalPayments[11].Should().Be(42);
-            result.First().EmployerAdditionalPayments[12].Should().Be(42);
-            result.First().EmployerAdditionalPayments[13].Should().Be(42);
-
-            // Provider additional payments array
-            result.First().ProviderAdditionalPayments[0].Should().Be(45);
-            result.First().ProviderAdditionalPayments[1].Should().Be(45);
-            result.First().ProviderAdditionalPayments[2].Should().Be(45);
-            result.First().ProviderAdditionalPayments[3].Should().Be(45);
-            result.First().ProviderAdditionalPayments[4].Should().Be(45);
-            result.First().ProviderAdditionalPayments[5].Should().Be(45);
-            result.First().ProviderAdditionalPayments[6].Should().Be(45);
-            result.First().ProviderAdditionalPayments[7].Should().Be(45);
-            result.First().ProviderAdditionalPayments[8].Should().Be(45);
-            result.First().ProviderAdditionalPayments[9].Should().Be(45);
-            result.First().ProviderAdditionalPayments[10].Should().Be(45);
-            result.First().ProviderAdditionalPayments[11].Should().Be(45);
-            result.First().ProviderAdditionalPayments[12].Should().Be(45);
-            result.First().ProviderAdditionalPayments[13].Should().Be(45);
-
-            // Apprenticeship additional payments array
-            result.First().ApprenticeAdditionalPayments[0].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[1].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[2].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[3].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[4].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[5].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[6].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[7].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[8].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[9].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[10].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[11].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[12].Should().Be(48);
-            result.First().ApprenticeAdditionalPayments[13].Should().Be(48);
-
-            // English and Maths payments array
-            result.First().EnglishAndMathsPayments[0].Should().Be(551);
-            result.First().EnglishAndMathsPayments[1].Should().Be(51);
-            result.First().EnglishAndMathsPayments[2].Should().Be(51);
-            result.First().EnglishAndMathsPayments[3].Should().Be(51);
-            result.First().EnglishAndMathsPayments[4].Should().Be(51);
-            result.First().EnglishAndMathsPayments[5].Should().Be(51);
-            result.First().EnglishAndMathsPayments[6].Should().Be(51);
-            result.First().EnglishAndMathsPayments[7].Should().Be(51);
-            result.First().EnglishAndMathsPayments[8].Should().Be(51);
-            result.First().EnglishAndMathsPayments[9].Should().Be(51);
-            result.First().EnglishAndMathsPayments[10].Should().Be(51);
-            result.First().EnglishAndMathsPayments[11].Should().Be(51);
-            result.First().EnglishAndMathsPayments[12].Should().Be(51);
-            result.First().EnglishAndMathsPayments[13].Should().Be(51);
-
-            // Learning support, disadvantage and framework uplift payments array
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[0].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[1].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[2].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[3].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[4].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[5].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[6].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[7].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[8].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[9].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[10].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[11].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[12].Should().Be(54);
-            result.First().LearningSupportDisadvantageAndFrameworkUpliftPayments[13].Should().Be(54);
-
-            result.First().AugustLevyPayments.Should().Be(45);
-            result.First().AugustCoInvestmentPayments.Should().Be(36);
-            result.First().AugustCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().AugustEmployerAdditionalPayments.Should().Be(42);
-            result.First().AugustProviderAdditionalPayments.Should().Be(45);
-            result.First().AugustApprenticeAdditionalPayments.Should().Be(48);
-            result.First().AugustEnglishAndMathsPayments.Should().Be(51);
-            result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().AugustTotalPayments.Should().Be(1);
-
-            result.First().SeptemberLevyPayments.Should().Be(45);
-            result.First().SeptemberCoInvestmentPayments.Should().Be(36);
-            result.First().SeptemberCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().SeptemberEmployerAdditionalPayments.Should().Be(42);
-            result.First().SeptemberProviderAdditionalPayments.Should().Be(45);
-            result.First().SeptemberApprenticeAdditionalPayments.Should().Be(48);
-            result.First().SeptemberEnglishAndMathsPayments.Should().Be(51);
-            result.First().SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().SeptemberTotalPayments.Should().Be(1);
-
-            result.First().OctoberLevyPayments.Should().Be(45);
-            result.First().OctoberCoInvestmentPayments.Should().Be(36);
-            result.First().OctoberCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().OctoberEmployerAdditionalPayments.Should().Be(42);
-            result.First().OctoberProviderAdditionalPayments.Should().Be(45);
-            result.First().OctoberApprenticeAdditionalPayments.Should().Be(48);
-            result.First().OctoberEnglishAndMathsPayments.Should().Be(51);
-            result.First().OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().OctoberTotalPayments.Should().Be(1);
-
-            result.First().NovemberLevyPayments.Should().Be(45);
-            result.First().NovemberCoInvestmentPayments.Should().Be(36);
-            result.First().NovemberCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().NovemberEmployerAdditionalPayments.Should().Be(42);
-            result.First().NovemberProviderAdditionalPayments.Should().Be(45);
-            result.First().NovemberApprenticeAdditionalPayments.Should().Be(48);
-            result.First().NovemberEnglishAndMathsPayments.Should().Be(51);
-            result.First().NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().NovemberTotalPayments.Should().Be(1);
-
-            result.First().DecemberLevyPayments.Should().Be(45);
-            result.First().DecemberCoInvestmentPayments.Should().Be(36);
-            result.First().DecemberCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().DecemberEmployerAdditionalPayments.Should().Be(42);
-            result.First().DecemberProviderAdditionalPayments.Should().Be(45);
-            result.First().DecemberApprenticeAdditionalPayments.Should().Be(48);
-            result.First().DecemberEnglishAndMathsPayments.Should().Be(51);
-            result.First().DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().DecemberTotalPayments.Should().Be(1);
-
-            result.First().JanuaryLevyPayments.Should().Be(45);
-            result.First().JanuaryCoInvestmentPayments.Should().Be(36);
-            result.First().JanuaryCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().JanuaryEmployerAdditionalPayments.Should().Be(42);
-            result.First().JanuaryProviderAdditionalPayments.Should().Be(45);
-            result.First().JanuaryApprenticeAdditionalPayments.Should().Be(48);
-            result.First().JanuaryEnglishAndMathsPayments.Should().Be(51);
-            result.First().JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().JanuaryTotalPayments.Should().Be(1);
-
-            result.First().FebruaryLevyPayments.Should().Be(45);
-            result.First().FebruaryCoInvestmentPayments.Should().Be(36);
-            result.First().FebruaryCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().FebruaryEmployerAdditionalPayments.Should().Be(42);
-            result.First().FebruaryProviderAdditionalPayments.Should().Be(45);
-            result.First().FebruaryApprenticeAdditionalPayments.Should().Be(48);
-            result.First().FebruaryEnglishAndMathsPayments.Should().Be(51);
-            result.First().FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().FebruaryTotalPayments.Should().Be(1);
-
-            result.First().MarchLevyPayments.Should().Be(45);
-            result.First().MarchCoInvestmentPayments.Should().Be(36);
-            result.First().MarchCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().MarchEmployerAdditionalPayments.Should().Be(42);
-            result.First().MarchProviderAdditionalPayments.Should().Be(45);
-            result.First().MarchApprenticeAdditionalPayments.Should().Be(48);
-            result.First().MarchEnglishAndMathsPayments.Should().Be(51);
-            result.First().MarchLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().MarchTotalPayments.Should().Be(1);
-
-            result.First().AprilLevyPayments.Should().Be(45);
-            result.First().AprilCoInvestmentPayments.Should().Be(36);
-            result.First().AprilCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().AprilEmployerAdditionalPayments.Should().Be(42);
-            result.First().AprilProviderAdditionalPayments.Should().Be(45);
-            result.First().AprilApprenticeAdditionalPayments.Should().Be(48);
-            result.First().AprilEnglishAndMathsPayments.Should().Be(51);
-            result.First().AprilLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().AprilTotalPayments.Should().Be(1);
-
-            result.First().MayLevyPayments.Should().Be(45);
-            result.First().MayCoInvestmentPayments.Should().Be(36);
-            result.First().MayCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().MayEmployerAdditionalPayments.Should().Be(42);
-            result.First().MayProviderAdditionalPayments.Should().Be(45);
-            result.First().MayApprenticeAdditionalPayments.Should().Be(48);
-            result.First().MayEnglishAndMathsPayments.Should().Be(51);
-            result.First().MayLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().MayTotalPayments.Should().Be(1);
-
-            result.First().JuneLevyPayments.Should().Be(45);
-            result.First().JuneCoInvestmentPayments.Should().Be(36);
-            result.First().JuneCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().JuneEmployerAdditionalPayments.Should().Be(42);
-            result.First().JuneProviderAdditionalPayments.Should().Be(45);
-            result.First().JuneApprenticeAdditionalPayments.Should().Be(48);
-            result.First().JuneEnglishAndMathsPayments.Should().Be(51);
-            result.First().JuneLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().JuneTotalPayments.Should().Be(1);
-
-            result.First().JulyLevyPayments.Should().Be(45);
-            result.First().JulyCoInvestmentPayments.Should().Be(36);
-            result.First().JulyCoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().JulyEmployerAdditionalPayments.Should().Be(42);
-            result.First().JulyProviderAdditionalPayments.Should().Be(45);
-            result.First().JulyApprenticeAdditionalPayments.Should().Be(48);
-            result.First().JulyEnglishAndMathsPayments.Should().Be(51);
-            result.First().JulyLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().JulyTotalPayments.Should().Be(1);
-
-            result.First().R13LevyPayments.Should().Be(45);
-            result.First().R13CoInvestmentPayments.Should().Be(36);
-            result.First().R13CoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().R13EmployerAdditionalPayments.Should().Be(42);
-            result.First().R13ProviderAdditionalPayments.Should().Be(45);
-            result.First().R13ApprenticeAdditionalPayments.Should().Be(48);
-            result.First().R13EnglishAndMathsPayments.Should().Be(51);
-            result.First().R13LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().R13TotalPayments.Should().Be(1);
-
-            result.First().R14LevyPayments.Should().Be(45);
-            result.First().R14CoInvestmentPayments.Should().Be(36);
-            result.First().R14CoInvestmentDueFromEmployerPayments.Should().Be(39);
-            result.First().R14EmployerAdditionalPayments.Should().Be(42);
-            result.First().R14ProviderAdditionalPayments.Should().Be(45);
-            result.First().R14ApprenticeAdditionalPayments.Should().Be(48);
-            result.First().R14EnglishAndMathsPayments.Should().Be(51);
-            result.First().R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().R14TotalPayments.Should().Be(1);
-
-            result.First().TotalLevyPayments.Should().Be(1);
-            result.First().TotalCoInvestmentPayments.Should().Be(1);
-            result.First().TotalCoInvestmentDueFromEmployerPayments.Should().Be(1);
-            result.First().TotalEmployerAdditionalPayments.Should().Be(1);
-            result.First().TotalProviderAdditionalPayments.Should().Be(1);
-            result.First().TotalApprenticeAdditionalPayments.Should().Be(1);
-            result.First().TotalEnglishAndMathsPayments.Should().Be(1);
-            result.First().TotalLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(1);
-            result.First().TotalPayments.Should().Be(1);
-            result.First().OfficialSensitive.Should().Be(1);
-/*
-            result.First().LearningAimReference.Should().Be("50117889");
-            result.First().LearningStartDate.Should().Be("28/08/2019");
-            result.First().LearningAimProgrammeType.Should().Be(1);
-            result.First().LearningAimStandardCode.Should().Be(1);
-            result.First().LearningAimFrameworkCode.Should().Be(1);
-            result.First().LearningAimPathwayCode.Should().Be(1);
-            result.First().AimType.Should().Be(3);
-            result.First().FundingLineType.Should().Be("16-18 Apprenticeship Non-Levy");
-            result.First().PaymentApprenticeshipContractType.Should().Be(2);
+            // August
             result.First().AugustLevyPayments.Should().Be(11);
             result.First().AugustCoInvestmentPayments.Should().Be(12);
+            result.First().AugustCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().AugustEmployerAdditionalPayments.Should().Be(14);
+            result.First().AugustProviderAdditionalPayments.Should().Be(15);
+            result.First().AugustApprenticeAdditionalPayments.Should().Be(16);
+            result.First().AugustEnglishAndMathsPayments.Should().Be(17);
+            result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
             result.First().AugustTotalPayments.Should().Be(116);
-            result.First().TotalLevyPayments.Should().Be(143);
-            result.First().TotalCoInvestmentPayments.Should().Be(156);
-            result.First().TotalCoInvestmentDueFromEmployerPayments.Should().Be(169);
-            result.First().TotalEmployerAdditionalPayments.Should().Be(182);
-            result.First().TotalProviderAdditionalPayments.Should().Be(195);
-            result.First().TotalApprenticeAdditionalPayments.Should().Be(208);
-            result.First().TotalEnglishAndMathsPayments.Should().Be(221);
-            result.First().TotalPaymentsForLearningSupportDisadvantageAndFrameworkUplifts.Should().Be(234);
-            result.First().TotalPayments.Should().Be(1508);
-            result.First().LearningAimTitle.Should().Be("Maths & English");
-*/
+
+            // September
+            result.First().SeptemberLevyPayments.Should().Be(11);
+            result.First().SeptemberCoInvestmentPayments.Should().Be(12);
+            result.First().SeptemberCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().SeptemberEmployerAdditionalPayments.Should().Be(14);
+            result.First().SeptemberProviderAdditionalPayments.Should().Be(15);
+            result.First().SeptemberApprenticeAdditionalPayments.Should().Be(16);
+            result.First().SeptemberEnglishAndMathsPayments.Should().Be(17);
+            result.First().SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().SeptemberTotalPayments.Should().Be(116);
+
+            // October
+            result.First().OctoberLevyPayments.Should().Be(11);
+            result.First().OctoberCoInvestmentPayments.Should().Be(12);
+            result.First().OctoberCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().OctoberEmployerAdditionalPayments.Should().Be(14);
+            result.First().OctoberProviderAdditionalPayments.Should().Be(15);
+            result.First().OctoberApprenticeAdditionalPayments.Should().Be(16);
+            result.First().OctoberEnglishAndMathsPayments.Should().Be(17);
+            result.First().OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().OctoberTotalPayments.Should().Be(116);
+
+            // November
+            result.First().NovemberLevyPayments.Should().Be(11);
+            result.First().NovemberCoInvestmentPayments.Should().Be(12);
+            result.First().NovemberCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().NovemberEmployerAdditionalPayments.Should().Be(14);
+            result.First().NovemberProviderAdditionalPayments.Should().Be(15);
+            result.First().NovemberApprenticeAdditionalPayments.Should().Be(16);
+            result.First().NovemberEnglishAndMathsPayments.Should().Be(17);
+            result.First().NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().NovemberTotalPayments.Should().Be(116);
+
+            // December
+            result.First().DecemberLevyPayments.Should().Be(11);
+            result.First().DecemberCoInvestmentPayments.Should().Be(12);
+            result.First().DecemberCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().DecemberEmployerAdditionalPayments.Should().Be(14);
+            result.First().DecemberProviderAdditionalPayments.Should().Be(15);
+            result.First().DecemberApprenticeAdditionalPayments.Should().Be(16);
+            result.First().DecemberEnglishAndMathsPayments.Should().Be(17);
+            result.First().DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().DecemberTotalPayments.Should().Be(116);
+
+            // January
+            result.First().JanuaryLevyPayments.Should().Be(11);
+            result.First().JanuaryCoInvestmentPayments.Should().Be(12);
+            result.First().JanuaryCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().JanuaryEmployerAdditionalPayments.Should().Be(14);
+            result.First().JanuaryProviderAdditionalPayments.Should().Be(15);
+            result.First().JanuaryApprenticeAdditionalPayments.Should().Be(16);
+            result.First().JanuaryEnglishAndMathsPayments.Should().Be(17);
+            result.First().JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().JanuaryTotalPayments.Should().Be(116);
+
+            // February
+            result.First().FebruaryLevyPayments.Should().Be(11);
+            result.First().FebruaryCoInvestmentPayments.Should().Be(12);
+            result.First().FebruaryCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().FebruaryEmployerAdditionalPayments.Should().Be(14);
+            result.First().FebruaryProviderAdditionalPayments.Should().Be(15);
+            result.First().FebruaryApprenticeAdditionalPayments.Should().Be(16);
+            result.First().FebruaryEnglishAndMathsPayments.Should().Be(17);
+            result.First().FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().FebruaryTotalPayments.Should().Be(116);
+
+            // March
+            result.First().MarchLevyPayments.Should().Be(11);
+            result.First().MarchCoInvestmentPayments.Should().Be(12);
+            result.First().MarchCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().MarchEmployerAdditionalPayments.Should().Be(14);
+            result.First().MarchProviderAdditionalPayments.Should().Be(15);
+            result.First().MarchApprenticeAdditionalPayments.Should().Be(16);
+            result.First().MarchEnglishAndMathsPayments.Should().Be(17);
+            result.First().MarchLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().MarchTotalPayments.Should().Be(116);
+
+            // April
+            result.First().AprilLevyPayments.Should().Be(11);
+            result.First().AprilCoInvestmentPayments.Should().Be(12);
+            result.First().AprilCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().AprilEmployerAdditionalPayments.Should().Be(14);
+            result.First().AprilProviderAdditionalPayments.Should().Be(15);
+            result.First().AprilApprenticeAdditionalPayments.Should().Be(16);
+            result.First().AprilEnglishAndMathsPayments.Should().Be(17);
+            result.First().AprilLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().AprilTotalPayments.Should().Be(116);
+
+            // May
+            result.First().MayLevyPayments.Should().Be(11);
+            result.First().MayCoInvestmentPayments.Should().Be(12);
+            result.First().MayCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().MayEmployerAdditionalPayments.Should().Be(14);
+            result.First().MayProviderAdditionalPayments.Should().Be(15);
+            result.First().MayApprenticeAdditionalPayments.Should().Be(16);
+            result.First().MayEnglishAndMathsPayments.Should().Be(17);
+            result.First().MayLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().MayTotalPayments.Should().Be(116);
+
+            // June
+            result.First().JuneLevyPayments.Should().Be(11);
+            result.First().JuneCoInvestmentPayments.Should().Be(12);
+            result.First().JuneCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().JuneEmployerAdditionalPayments.Should().Be(14);
+            result.First().JuneProviderAdditionalPayments.Should().Be(15);
+            result.First().JuneApprenticeAdditionalPayments.Should().Be(16);
+            result.First().JuneEnglishAndMathsPayments.Should().Be(17);
+            result.First().JuneLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().JuneTotalPayments.Should().Be(116);
+
+            // July
+            result.First().JulyLevyPayments.Should().Be(11);
+            result.First().JulyCoInvestmentPayments.Should().Be(12);
+            result.First().JulyCoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().JulyEmployerAdditionalPayments.Should().Be(14);
+            result.First().JulyProviderAdditionalPayments.Should().Be(15);
+            result.First().JulyApprenticeAdditionalPayments.Should().Be(16);
+            result.First().JulyEnglishAndMathsPayments.Should().Be(17);
+            result.First().JulyLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().JulyTotalPayments.Should().Be(116);
+
+            // R13
+            result.First().R13LevyPayments.Should().Be(11);
+            result.First().R13CoInvestmentPayments.Should().Be(12);
+            result.First().R13CoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().R13EmployerAdditionalPayments.Should().Be(14);
+            result.First().R13ProviderAdditionalPayments.Should().Be(15);
+            result.First().R13ApprenticeAdditionalPayments.Should().Be(16);
+            result.First().R13EnglishAndMathsPayments.Should().Be(17);
+            result.First().R13LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().R13TotalPayments.Should().Be(116);
+
+            // R14
+            result.First().R14LevyPayments.Should().Be(11);
+            result.First().R14CoInvestmentPayments.Should().Be(12);
+            result.First().R14CoInvestmentDueFromEmployerPayments.Should().Be(13);
+            result.First().R14EmployerAdditionalPayments.Should().Be(14);
+            result.First().R14ProviderAdditionalPayments.Should().Be(15);
+            result.First().R14ApprenticeAdditionalPayments.Should().Be(16);
+            result.First().R14EnglishAndMathsPayments.Should().Be(17);
+            result.First().R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
+            result.First().R14TotalPayments.Should().Be(116);
+
+            result.First().TotalLevyPayments.Should().Be(154);
+            result.First().TotalCoInvestmentPayments.Should().Be(168);
+            result.First().TotalCoInvestmentDueFromEmployerPayments.Should().Be(182);
+            result.First().TotalEmployerAdditionalPayments.Should().Be(196);
+            result.First().TotalProviderAdditionalPayments.Should().Be(210);
+            result.First().TotalApprenticeAdditionalPayments.Should().Be(224);
+            result.First().TotalEnglishAndMathsPayments.Should().Be(238);
+            result.First().TotalLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(252);
+            result.First().TotalPayments.Should().Be(1624);
         }
 
         private List<AppsMonthlyPaymentLarsLearningDeliveryInfo> BuildLarsDeliveryInfoModel()
@@ -514,16 +371,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
                             {
                                 Ukprn = ukPrn.ToString(),
-                                LearnRefNumber = "1",
-                                ProvSpecLearnMon = "A",
-                                ProvSpecLearnMonOccur = "T180400007"
+                                LearnRefNumber = "A12345",
+                                ProvSpecLearnMonOccur = "A",
+                                ProvSpecLearnMon = "T180400007"
                             },
                             new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
                             {
                                 Ukprn = ukPrn.ToString(),
-                                LearnRefNumber = "1",
-                                ProvSpecLearnMon = "B",
-                                ProvSpecLearnMonOccur = "150563"
+                                LearnRefNumber = "A12345",
+                                ProvSpecLearnMonOccur = "B",
+                                ProvSpecLearnMon = "150563"
                             }
                         },
 
@@ -535,7 +392,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 LearnRefNumber = "A12345",
                                 // DateEmpStatApp is after the LearnStartDate so this record should not be assigned
                                 DateEmpStatApp = new DateTime(2019, 09, 26),
-                                EmpStat = "10",         // 10 In paid employment
+                                EmpStat = "10", // 10 In paid employment
                                 EmpdId = "56789",
                                 AgreeId = "9876"
                             },
@@ -547,7 +404,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 LearnRefNumber = "A12345",
                                 // DateEmpStatApp must precede the LearningStartDate
                                 DateEmpStatApp = new DateTime(2019, 08, 27),
-                                EmpStat = "10",         // 10 In paid employment
+                                EmpStat = "10", // 10 In paid employment
                                 EmpdId = "56789",
                                 AgreeId = "7755"
                             },
@@ -556,21 +413,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 Ukprn = ukPrn.ToString(),
                                 LearnRefNumber = "A12345",
                                 DateEmpStatApp = new DateTime(2019, 08, 26),
-                                EmpStat = "11",          // 11 Not in paid employment, looking for work and available to start work
+                                EmpStat =
+                                    "11", // 11 Not in paid employment, looking for work and available to start work
                             },
                             new AppsMonthlyPaymentLearnerEmploymentStatusInfo()
                             {
                                 Ukprn = ukPrn.ToString(),
                                 LearnRefNumber = "A12345",
                                 DateEmpStatApp = new DateTime(2019, 08, 25),
-                                EmpStat = "12",         // 12 Not in paid employment, not looking for work and/ or not available to start work
+                                EmpStat =
+                                    "12", // 12 Not in paid employment, not looking for work and/ or not available to start work
                             },
                             new AppsMonthlyPaymentLearnerEmploymentStatusInfo()
                             {
                                 Ukprn = ukPrn.ToString(),
                                 LearnRefNumber = "A12345",
                                 DateEmpStatApp = new DateTime(2019, 08, 24),
-                                EmpStat = "98",         // /98 Not known / not provided
+                                EmpStat = "98", // /98 Not known / not provided
                             }
                         },
 
@@ -584,56 +443,57 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 AimType = "3",
                                 AimSeqNumber = "1",
                                 LearnStartDate = new DateTime(2019, 08, 28),
-                                OrigLearnStartDate = null,
-                                LearnPlanEndDate = "2019-07-31",
+                                OrigLearnStartDate = "28/08/2019",
+                                LearnPlanEndDate = "31/07/2020 00:00:00",
                                 FundModel = "36",
                                 ProgType = "1",
                                 StdCode = "1",
                                 FworkCode = "1",
                                 PwayCode = "1",
-                                PartnerUkprn = null,
+                                PartnerUkprn = "0000000000",
                                 ConRefNumber = "NLAP-1503",
                                 EpaOrgId = "9876543210",
                                 SwSupAimId = "SwSup50117889",
                                 CompStatus = "2",
-                                LearnActEndDate = "2019-07-31",
+                                LearnActEndDate = "31/07/2020 00:00:00",
                                 Outcome = "4",
-                                AchDate = "2019-07-30",
-                                ProviderSpecDeliveryMonitorings = new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
-                                {
-                                    new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                AchDate = "30/07/2020 00:00:00",
+                                ProviderSpecDeliveryMonitorings =
+                                    new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
                                     {
-                                        Ukprn = ukPrn.ToString(),
-                                        LearnRefNumber = "A12345",
-                                        AimSeqNumber = "1",
-                                        ProvSpecDelMonOccur = "A",
-                                        ProvSpecDelMon = "A000406"
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn.ToString(),
+                                            LearnRefNumber = "A12345",
+                                            AimSeqNumber = "1",
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "A000406"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn.ToString(),
+                                            LearnRefNumber = "A12345",
+                                            AimSeqNumber = "1",
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "B002902"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn.ToString(),
+                                            LearnRefNumber = "A12345",
+                                            AimSeqNumber = "1",
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "C004402"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn.ToString(),
+                                            LearnRefNumber = "A12345",
+                                            AimSeqNumber = "1",
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        }
                                     },
-                                    new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
-                                    {
-                                        Ukprn = ukPrn.ToString(),
-                                        LearnRefNumber = "A12345",
-                                        AimSeqNumber = "1",
-                                        ProvSpecDelMonOccur = "B",
-                                        ProvSpecDelMon = "B002902"
-                                    },
-                                    new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
-                                    {
-                                        Ukprn = ukPrn.ToString(),
-                                        LearnRefNumber = "A12345",
-                                        AimSeqNumber = "1",
-                                        ProvSpecDelMonOccur = "C",
-                                        ProvSpecDelMon = "C004402"
-                                    },
-                                    new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
-                                    {
-                                        Ukprn = ukPrn.ToString(),
-                                        LearnRefNumber = "A12345",
-                                        AimSeqNumber = "1",
-                                        ProvSpecDelMonOccur = "D",
-                                        ProvSpecDelMon = "D006801"
-                                    }
-                                },
                                 LearningDeliveryFams = new List<AppsMonthlyPaymentLearningDeliveryFAMInfo>()
                                 {
                                     new AppsMonthlyPaymentLearningDeliveryFAMInfo()
@@ -698,26 +558,49 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             {
                 UkPrn = ukPrn,
                 LearnRefNumber = "A12345",
-                AECApprenticeshipPriceEpisodes = new List<AECApprenticeshipPriceEpisodeInfo>()
+                AecApprenticeshipPriceEpisodeInfoList = new List<AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo>()
                 {
-                    new AECApprenticeshipPriceEpisodeInfo()
+                    new AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo()
                     {
+                        // This is the one that should be selected
                         Ukprn = ukPrn.ToString(),
                         LearnRefNumber = "A12345",
                         AimSequenceNumber = "1",
-                        EpisodeStartDate = new DateTime(2019, 08,  27),
+                        PriceEpisodeIdentifier = "123428/08/2019",
+                        EpisodeStartDate = new DateTime(2019, 08, 27),
                         PriceEpisodeAgreeId = "PA102",
                         PriceEpisodeActualEndDate = new DateTime(2019, 08, 01),
-                        PriceEpisodeActualEndDateIncEPA = new DateTime(2019, 08, 02),
-                    },                    new AECApprenticeshipPriceEpisodeInfo()
+                        PriceEpisodeActualEndDateIncEPA = new DateTime(2019, 08, 02)
+                    },
+                    new AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo()
                     {
                         Ukprn = ukPrn.ToString(),
                         LearnRefNumber = "A12345",
                         AimSequenceNumber = "1",
-                        EpisodeStartDate = new DateTime(2019, 08,  01),
+                        PriceEpisodeIdentifier = "123428/08/2019",
+                        EpisodeStartDate = new DateTime(2019, 08, 01),
                         PriceEpisodeAgreeId = "PA101",
                         PriceEpisodeActualEndDate = new DateTime(2019, 08, 13),
                         PriceEpisodeActualEndDateIncEPA = new DateTime(2019, 08, 02),
+                    },
+                },
+                AecLearningDeliveryInfoList = new List<AppsMonthlyPaymentAECLearningDeliveryInfo>()
+                {
+                    new AppsMonthlyPaymentAECLearningDeliveryInfo()
+                    {
+                        Ukprn = ukPrn.ToString(),
+                        LearnRefNumber = "A12345",
+                        AimSequenceNumber = "1",
+                        LearnAimRef = "50117889",
+                        PlannedNumOnProgInstalm = "2"
+                    },
+                    new AppsMonthlyPaymentAECLearningDeliveryInfo()
+                    {
+                        Ukprn = ukPrn.ToString(),
+                        LearnRefNumber = "A12345",
+                        AimSequenceNumber = "2",
+                        LearnAimRef = "50117889",
+                        PlannedNumOnProgInstalm = "3"
                     }
                 }
             };
@@ -793,7 +676,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             return appsMonthlyPaymentDasEarningsInfo;
         }
 
-    private AppsMonthlyPaymentDASInfo BuildDasPaymentsModel(int ukPrn)
+        private AppsMonthlyPaymentDASInfo BuildDasPaymentsModel(int ukPrn)
         {
             var appsMonthlyPaymentDasInfo = new AppsMonthlyPaymentDASInfo()
             {
@@ -819,7 +702,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             */
 
             // learner 1, first payments
-            for (byte i = 1; i < 14; i++)
+            for (byte i = 1; i < 15; i++)
             {
                 var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
@@ -836,7 +719,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -862,7 +745,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
                     ContractType = "2",
 
                     TransactionType = 2,
@@ -888,7 +771,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
                     ContractType = "2",
 
                     TransactionType = 2,
@@ -914,7 +797,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
                     ContractType = "2",
 
                     TransactionType = 4,
@@ -940,7 +823,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 5,
@@ -966,7 +849,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 16,
@@ -992,7 +875,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 13,
@@ -1018,7 +901,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 8,
@@ -1040,7 +923,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             }
 
             // learner 1, second payments
-            for (byte i = 1; i < 14; i++)
+            for (byte i = 1; i < 15; i++)
             {
                 var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
@@ -1057,7 +940,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1083,7 +966,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1109,7 +992,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1135,7 +1018,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 4,
@@ -1161,7 +1044,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 5,
@@ -1187,7 +1070,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 16,
@@ -1213,7 +1096,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 13,
@@ -1239,7 +1122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 8,
@@ -1261,7 +1144,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             }
 
             // Learner 2, first payments
-            for (byte i = 1; i < 14; i++)
+            for (byte i = 1; i < 15; i++)
             {
                 var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
@@ -1278,7 +1161,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1304,7 +1187,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1330,7 +1213,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
                     ContractType = "2",
 
                     TransactionType = 2,
@@ -1356,7 +1239,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 4,
@@ -1382,7 +1265,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 5,
@@ -1408,7 +1291,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 16,
@@ -1434,7 +1317,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 13,
@@ -1460,7 +1343,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 8,
@@ -1482,7 +1365,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             }
 
             // learner 2, second payments
-            for (byte i = 1; i < 14; i++)
+            for (byte i = 1; i < 15; i++)
             {
                 var levyPayments = new AppsMonthlyPaymentDasPayments2Payment()
                 {
@@ -1499,7 +1382,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1525,7 +1408,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1551,7 +1434,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 2,
@@ -1577,7 +1460,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 4,
@@ -1603,7 +1486,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 5,
@@ -1629,7 +1512,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 16,
@@ -1655,7 +1538,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 13,
@@ -1681,7 +1564,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimPathwayCode = "1",
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
                     ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-                    PriceEpisodeIdentifier = "12342019-08-28",
+                    PriceEpisodeIdentifier = "123428/08/2019",
 
                     ContractType = "2",
                     TransactionType = 8,

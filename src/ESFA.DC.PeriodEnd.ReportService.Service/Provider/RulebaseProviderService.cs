@@ -102,16 +102,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 appsMonthlyPaymentRulebaseInfo = new AppsMonthlyPaymentRulebaseInfo()
                 {
                     UkPrn = ukPrn,
-                    AECApprenticeshipPriceEpisodes = new List<AECApprenticeshipPriceEpisodeInfo>()
+                    AecApprenticeshipPriceEpisodeInfoList = new List<AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo>(),
+                    AecLearningDeliveryInfoList = new List<AppsMonthlyPaymentAECLearningDeliveryInfo>()
                 };
 
                 cancellationToken.ThrowIfCancellationRequested();
 
                 using (var ilrContext = _ilrRulebaseContextFactory())
                 {
-                    appsMonthlyPaymentRulebaseInfo.AECApprenticeshipPriceEpisodes = await ilrContext.AEC_ApprenticeshipPriceEpisodes
+                    appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList = await ilrContext?.AEC_ApprenticeshipPriceEpisodes
                         .Where(x => x.UKPRN == ukPrn)
-                        .Select(ape => new AECApprenticeshipPriceEpisodeInfo
+                        .Select(ape => new AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo
                         {
                             Ukprn = (ape != null && ape.UKPRN != null) ? ape.UKPRN.ToString() : string.Empty,
                             LearnRefNumber = (ape != null && ape.LearnRefNumber != null) ? ape.LearnRefNumber : string.Empty,
@@ -121,6 +122,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
                             PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
                             PriceEpisodeAgreeId = (ape != null && ape.PriceEpisodeAgreeId != null) ? ape.PriceEpisodeAgreeId : string.Empty
+                        }).ToListAsync(cancellationToken);
+
+                    appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList = await ilrContext?.AEC_LearningDeliveries
+                        .Where(x => x.UKPRN == ukPrn)
+                        .Select(ald => new AppsMonthlyPaymentAECLearningDeliveryInfo
+                        {
+                            Ukprn = (ald != null && ald.UKPRN != null) ? ald.UKPRN.ToString() : string.Empty,
+                            LearnRefNumber = (ald != null && ald.LearnRefNumber != null) ? ald.LearnRefNumber : string.Empty,
+                            PlannedNumOnProgInstalm = (ald != null && ald.PlannedNumOnProgInstalm != null) ? ald.PlannedNumOnProgInstalm.ToString() : string.Empty,
                         }).ToListAsync(cancellationToken);
                 }
             }

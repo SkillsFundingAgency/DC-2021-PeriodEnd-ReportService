@@ -171,26 +171,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             // payments
 
             // August
-            result.First().AugustLevyPayments.Should().Be(11);
-            result.First().AugustCoInvestmentPayments.Should().Be(12);
-            result.First().AugustCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().AugustEmployerAdditionalPayments.Should().Be(14);
-            result.First().AugustProviderAdditionalPayments.Should().Be(15);
-            result.First().AugustApprenticeAdditionalPayments.Should().Be(16);
-            result.First().AugustEnglishAndMathsPayments.Should().Be(17);
-            result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().AugustTotalPayments.Should().Be(116);
+            result.First().AugustLevyPayments.Should().Be(33);
+            result.First().AugustCoInvestmentPayments.Should().Be(36);
+            result.First().AugustCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().AugustEmployerAdditionalPayments.Should().Be(42);
+            result.First().AugustProviderAdditionalPayments.Should().Be(45);
+            result.First().AugustApprenticeAdditionalPayments.Should().Be(48);
+            result.First().AugustEnglishAndMathsPayments.Should().Be(51);
+            result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().AugustTotalPayments.Should().Be(346);
 
             // September
-            result.First().SeptemberLevyPayments.Should().Be(11);
-            result.First().SeptemberCoInvestmentPayments.Should().Be(12);
-            result.First().SeptemberCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().SeptemberEmployerAdditionalPayments.Should().Be(14);
-            result.First().SeptemberProviderAdditionalPayments.Should().Be(15);
-            result.First().SeptemberApprenticeAdditionalPayments.Should().Be(16);
-            result.First().SeptemberEnglishAndMathsPayments.Should().Be(17);
-            result.First().SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().SeptemberTotalPayments.Should().Be(116);
+            result.First().SeptemberLevyPayments.Should().Be(33);
+            result.First().SeptemberCoInvestmentPayments.Should().Be(36);
+            result.First().SeptemberCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().SeptemberEmployerAdditionalPayments.Should().Be(42);
+            result.First().SeptemberProviderAdditionalPayments.Should().Be(45);
+            result.First().SeptemberApprenticeAdditionalPayments.Should().Be(48);
+            result.First().SeptemberEnglishAndMathsPayments.Should().Be(51);
+            result.First().SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().SeptemberTotalPayments.Should().Be(346);
 
             // October
             result.First().OctoberLevyPayments.Should().Be(11);

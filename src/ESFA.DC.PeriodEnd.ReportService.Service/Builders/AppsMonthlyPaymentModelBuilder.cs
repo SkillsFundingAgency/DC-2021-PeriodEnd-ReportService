@@ -430,31 +430,40 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     foreach (var appsMonthlyPaymentModel in appsMonthlyPaymentModelList)
                     {
+                        // Aim Sequence Number processing
                         // Get the Earning Event Id for the latest payment in the group of payments
                         // (there may be multiple payment rows that were rolled up into a single row as part of the grouping)
-                        var paymentEarningEventId = _appsMonthlyPaymentDasInfo.Payments
-                            .Where(x => x.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                        var paymentEarningEventId = _appsMonthlyPaymentDasInfo?.Payments
+                            .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
                                         x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
                                             .PaymentLearnerReferenceNumber) &&
-                                        x.LearnerUln == appsMonthlyPaymentModel.PaymentUniqueLearnerNumber &&
+                                        x?.LearnerUln == appsMonthlyPaymentModel?.PaymentUniqueLearnerNumber &&
                                         x.LearningAimReference.CaseInsensitiveEquals(appsMonthlyPaymentModel
                                             .PaymentLearningAimReference) &&
-                                        x.LearningStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
-                                        (x.LearningAimProgrammeType == null || x.LearningAimProgrammeType ==
-                                         appsMonthlyPaymentModel.PaymentProgrammeType) &&
-                                        (x.LearningAimStandardCode == null || x.LearningAimStandardCode ==
-                                         appsMonthlyPaymentModel.PaymentStandardCode) &&
-                                        (x.LearningAimFrameworkCode == null || x.LearningAimFrameworkCode ==
-                                         appsMonthlyPaymentModel.PaymentFrameworkCode) &&
-                                        (x.LearningAimPathwayCode == null || x.LearningAimPathwayCode ==
+                                        x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate &&
+                                        (x?.LearningAimProgrammeType == null || x?.LearningAimProgrammeType ==
+                                         appsMonthlyPaymentModel?.PaymentProgrammeType) &&
+                                        (x?.LearningAimStandardCode == null || x?.LearningAimStandardCode ==
+                                         appsMonthlyPaymentModel?.PaymentStandardCode) &&
+                                        (x?.LearningAimFrameworkCode == null || x?.LearningAimFrameworkCode ==
+                                         appsMonthlyPaymentModel?.PaymentFrameworkCode) &&
+                                        (x?.LearningAimPathwayCode == null || x?.LearningAimPathwayCode ==
                                          appsMonthlyPaymentModel.PaymentPathwayCode) &&
                                         x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel
                                             .PaymentFundingLineType) &&
-                                        x.PriceEpisodeIdentifier ==
-                                        appsMonthlyPaymentModel.PaymentPriceEpisodeIdentifier)
+                                        x?.PriceEpisodeIdentifier ==
+                                        appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier)
                             .OrderByDescending(x => x.AcademicYear)
-                            .ThenByDescending(x => x.CollectionPeriod);
-                            //g.Select(e => e.EarningEventId).DefaultIfEmpty().First(),
+                            .ThenByDescending(x => x.CollectionPeriod)
+                            .ThenByDescending(x => x.DeliveryPeriod)
+                            .FirstOrDefault().EarningEventId;
+
+                        if (paymentEarningEventId != null)
+                        {
+                            // get the matching sequence number for this earning event id from the Earning Event table
+                             appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = _appsMonthlyPaymentDasEarningsInfo?.Earnings
+                                ?.FirstOrDefault(x => x.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
+                        }
 
                         //--------------------------------------------------------------------------------------------------
                         // process the LARS fields
@@ -559,10 +568,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             //--------------------------------------------------------------------------------------------------
                             // Note: This code has a dependency on the Payment.EarningEvent.LearningAimSequenceNumber
                             //       which should have been populated prior to reaching this point in the code.
-                            //
-                            //       If the LearningAimSequenceNumber has not been populate then we hen we fall back to matching
-                            //       the LearningDelivery record to the Payment on the ProgrammeType, StandardCode, FrameworkCode, PathwayCode and LearningStartDate
-                            //       which is not necessarily a unique match.
                             AppsMonthlyPaymentLearningDeliveryInfo learningDeliveryInfo = null;
                             if (!string.IsNullOrEmpty(appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber))
                             {
@@ -572,24 +577,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                                      .PaymentLearnerReferenceNumber) &&
                                                  ld.AimSeqNumber == appsMonthlyPaymentModel
                                                      .PaymentEarningEventAimSeqNumber
-                                                     .ToString()).SingleOrDefault();
-                            }
-                            else
-                            {
-                                learningDeliveryInfo = ilrLearner?.LearningDeliveries?
-                                    .Where(ld => ld.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                                 ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                     .PaymentLearnerReferenceNumber) &&
-                                                 ld.LearnStartDate ==
-                                                 appsMonthlyPaymentModel.PaymentLearningStartDate &&
-                                                 ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType &&
-                                                 (ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode ||
-                                                  appsMonthlyPaymentModel.PaymentStandardCode == null) &&
-                                                 (ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode ||
-                                                  appsMonthlyPaymentModel.PaymentFrameworkCode == null) &&
-                                                 (ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode ||
-                                                  appsMonthlyPaymentModel.PaymentPathwayCode == null))
-                                    .FirstOrDefault();
+                                                     .ToString()).FirstOrDefault();
                             }
 
                             if (learningDeliveryInfo != null)

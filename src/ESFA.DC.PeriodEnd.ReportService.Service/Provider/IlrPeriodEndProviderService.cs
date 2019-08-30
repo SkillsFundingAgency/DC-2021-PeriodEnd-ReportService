@@ -221,5 +221,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             return returningProviders;
         }
+
+        public async Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            List<RuleViolationsInfo> top20RuleViolationsList;
+            using (var ilrContext = _ilrContextFactory())
+            {
+                top20RuleViolationsList = await ilrContext.ValidationErrors
+                    .Where(x => x.Severity == "E")
+                    .GroupBy(x => new { x.RuleName, x.ErrorMessage })
+                    .Select(x => new RuleViolationsInfo
+                    {
+                        RuleName = x.Key.RuleName,
+                        ErrorMessage = x.Key.ErrorMessage,
+                        Providers = x.Select(y => y.UKPRN).Distinct().Count(),
+                        Learners = x.Select(y => y.LearnRefNumber).Distinct().Count(),
+                        NoOfErrors = x.Select(y => y.ErrorMessage).Count()
+                    })
+                    .OrderByDescending(x => x.NoOfErrors)
+                    .ThenBy(x => x.RuleName)
+                    .ThenByDescending(x => x.Providers)
+                    .Take(20)
+                    .ToListAsync(cancellationToken);
+            }
+
+            return top20RuleViolationsList;
+        }
     }
 }

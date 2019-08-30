@@ -70,7 +70,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 returnPeriods,
                 CancellationToken.None);
 
-            IEnumerable<RuleViolationsInfo> ruleViolations = null; // await GetTop20RuleViolationsAsync(CancellationToken.None);
+            IEnumerable<RuleViolationsInfo> ruleViolations = await _ilrPeriodEndProviderService.GetTop20RuleViolationsAsync(CancellationToken.None);
 
             IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = null; //await ProvidersWithoutValidLearners(CancellationToken.None);
 
@@ -109,9 +109,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             };
 
             designer.SetDataSource("ReturningProvidersInfo", returningProviderModels);
-            //designer.SetDataSource("RuleViolationsInfo", ruleViolationsInfoModels);
-            //designer.SetDataSource("ProviderWithoutValidLearnerInfo", providersWithoutValidLearners);
-            //designer.SetDataSource("Top10ProvidersWithInvalidLearners", top10ProvidersWithInvalidLearners);
+            designer.SetDataSource("RuleViolationsInfo", ruleViolationsInfoModels);
+            designer.SetDataSource("ProviderWithoutValidLearnerInfo", providersWithoutValidLearners);
+            designer.SetDataSource("Top10ProvidersWithInvalidLearners", top10ProvidersWithInvalidLearners);
             designer.Process();
 
             return workbook;

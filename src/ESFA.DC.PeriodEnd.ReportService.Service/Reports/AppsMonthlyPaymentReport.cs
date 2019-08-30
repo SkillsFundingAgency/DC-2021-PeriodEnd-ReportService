@@ -67,23 +67,39 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var fileName = GetZipFilename(reportServiceContext);
 
             // get the main base DAS payments report data
-            var appsMonthlyPaymentDasInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsMonthlyPaymentDasInfo =
+                await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
+                    reportServiceContext.Ukprn, cancellationToken);
 
             // get the DAS Earnings Event data
-            var appsMonthlyPaymentDasEarningsInfo = await _dasPaymentsProviderService.GetEarningsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsMonthlyPaymentDasEarningsInfo =
+                await _dasPaymentsProviderService.GetEarningsInfoForAppsMonthlyPaymentReportAsync(
+                    reportServiceContext.Ukprn, cancellationToken);
 
             // get the ILR data
-            var appsMonthlyPaymentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsMonthlyPaymentIlrInfo =
+                await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(
+                    reportServiceContext.Ukprn, cancellationToken);
 
             // Get the AEC data
-            var appsMonthlyPaymentRulebaseInfo = await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsMonthlyPaymentRulebaseInfo =
+                await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(
+                    reportServiceContext.Ukprn,
+                    cancellationToken);
 
             // Get the Fcs Contract data
-            var appsMonthlyPaymentFcsInfo = await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsMonthlyPaymentFcsInfo =
+                await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(
+                    reportServiceContext.Ukprn,
+                    cancellationToken);
 
             // Get the name's of the learning aims
-            string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries).Select(x => x.LearnAimRef).Distinct().ToArray();
-            var appsMonthlyPaymentLarsLearningDeliveryInfos = await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(learnAimRefs, cancellationToken);
+            string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)
+                .Select(x => x.LearnAimRef).Distinct().ToArray();
+            var appsMonthlyPaymentLarsLearningDeliveryInfos =
+                await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
+                    learnAimRefs,
+                    cancellationToken);
 
             // Build the actual Apps Monthly Payment Report
             var appsMonthlyPaymentsModel = _modelBuilder.BuildAppsMonthlyPaymentModelList(

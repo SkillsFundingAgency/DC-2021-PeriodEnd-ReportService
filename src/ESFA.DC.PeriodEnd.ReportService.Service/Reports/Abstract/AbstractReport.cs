@@ -85,7 +85,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             csvWriter.WriteHeader<TModel>();
             csvWriter.NextRecord();
 
-            csvWriter.WriteRecords(records);
+            if (records != null)
+            {
+                csvWriter.WriteRecords(records);
+            }
 
             csvWriter.Configuration.UnregisterClassMap();
         }

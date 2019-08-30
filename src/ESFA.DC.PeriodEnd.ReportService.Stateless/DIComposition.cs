@@ -115,7 +115,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
                     optionsBuilder.UseSqlServer(
-                        reportServiceConfiguration.ILRDataStoreValidConnectionString,
+                        reportServiceConfiguration.ILRDataStoreConnectionString,
                         options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                     return optionsBuilder.Options;

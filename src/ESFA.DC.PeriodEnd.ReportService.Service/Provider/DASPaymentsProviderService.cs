@@ -105,7 +105,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 using (var context = _dasPaymentsContextFactory())
                 {
                     appsMonthlyPaymentDasInfo.Payments = await context.Payments
-                        .Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource)
+                        .Where(x => x.Ukprn == ukPrn && x.AcademicYear == 1920)
                         .Select(payment => new AppsMonthlyPaymentDasPayments2Payment
                         {
                             // Convert the database null values to a default value so that we don't have to keep checking for null later

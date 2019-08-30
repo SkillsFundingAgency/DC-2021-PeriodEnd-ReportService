@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -6,14 +6,12 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="ReportModels\" />
-    <Folder Include="PeriodEnd\" />
     <Folder Include="Styling\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Cells" Version="19.6.0" />
-    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.273" />
+    <PackageReference Include="Aspose.Cells" Version="19.7.0" />
+    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.304" />
   </ItemGroup>
 
 </Project>

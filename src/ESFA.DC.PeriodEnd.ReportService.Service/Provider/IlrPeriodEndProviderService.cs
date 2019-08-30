@@ -3,11 +3,14 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
+using ESFA.DC.JobQueueManager.Data.Entities;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using Microsoft.EntityFrameworkCore;
@@ -153,6 +156,70 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsAdditionalPaymentIlrInfo;
+        }
+
+        public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
+            int collectionYear,
+            List<ReturnPeriod> returnPeriods,
+            CancellationToken cancellationToken)
+        {
+            List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
+            List<FileDetail> fd;
+
+            using (var ilrContext = _ilrContextFactory())
+            {
+                fd = await ilrContext.FileDetails.Where(x => x.Success == true).ToListAsync(cancellationToken);
+            }
+
+            var fds = fd.GroupBy(x => x.UKPRN)
+                .Select(x => new
+                {
+                    Ukrpn = x.Key,
+                    Files = x.Select(y => y.Filename).Count()
+                });
+
+            returningProviders.Add(new DataQualityReturningProviders
+            {
+                Description = "Total Returning Providers",
+                NoOfProviders = fds.Count(),
+                NoOfValidFilesSubmitted = fd.Count,
+                EarliestValidSubmission = null,
+                LastValidSubmission = null
+            });
+
+            foreach (FileDetail fileDetail in fd)
+            {
+                fileDetail.ID = returnPeriods.SingleOrDefault(x =>
+                                        x.StartDateTimeUtc < fileDetail.SubmittedTime &&
+                                        x.EndDateTimeUtc > fileDetail.SubmittedTime)
+                                    ?.PeriodNumber ?? 99;
+            }
+
+            var fdCs = fd
+                .GroupBy(x => new { x.ID })
+                .Select(x => new
+                {
+                    Collection = $"R{x.Key.ID.ToString().PadLeft(2, '0')}",
+                    Files = x.Select(y => y.Filename).Count(),
+                    Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
+                    Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
+                })
+                .OrderByDescending(x => x.Latest);
+
+            foreach (var f in fdCs)
+            {
+                returningProviders.Add(new DataQualityReturningProviders
+                {
+                    Description = "Returning Providers per Period",
+                    Collection = f.Collection,
+                    NoOfProviders = fds.Count(),
+                    NoOfValidFilesSubmitted = fd.Count,
+                    EarliestValidSubmission = f.Earliest,
+                    LastValidSubmission = f.Latest
+                });
+            }
+
+            return returningProviders;
         }
     }
 }

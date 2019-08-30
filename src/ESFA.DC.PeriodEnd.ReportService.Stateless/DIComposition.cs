@@ -20,6 +20,7 @@ using ESFA.DC.JobContextManager;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
+using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Services;
@@ -45,6 +46,8 @@ using ESFA.DC.ReferenceData.FCS.Model;
 using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using ESFA.DC.ReferenceData.LARS.Model;
 using ESFA.DC.ReferenceData.LARS.Model.Interface;
+using ESFA.DC.ReferenceData.Organisations.Model;
+using ESFA.DC.ReferenceData.Organisations.Model.Interface;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using ESFA.DC.Summarisation.Model;
 using ESFA.DC.Summarisation.Model.Interface;
@@ -220,6 +223,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             })
                 .As<DbContextOptions<SummarisationContext>>()
                 .SingleInstance();
+
+            // JobQueueManager
+            containerBuilder.RegisterType<JobQueueDataContext>().As<IJobQueueDataContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<JobQueueDataContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.JobQueueManagerConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<JobQueueDataContext>>()
+                .SingleInstance();
+
+            // Organisation
+            containerBuilder.RegisterType<OrganisationsContext>().As<IOrganisationsContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<OrganisationsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.OrgConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<OrganisationsContext>>()
+                .SingleInstance();
         }
 
         private static void RegisterReports(ContainerBuilder containerBuilder)
@@ -238,6 +269,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<PeriodEndMetricsReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<DataExtractReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<DataQualityReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)
@@ -272,6 +305,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<PeriodEndQueryService1920>().As<IPeriodEndQueryService1920>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<JobQueueDataProviderService>().As<IJobQueueDataProviderService>()
                 .InstancePerLifetimeScope();
         }
 

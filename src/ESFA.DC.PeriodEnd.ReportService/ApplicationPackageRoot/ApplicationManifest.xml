@@ -25,16 +25,20 @@
     <Parameter Name="TopicReports" DefaultValue="Reports" />
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
-    <!-- Summarisation -->
-    <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
     <!-- DAS Commitments -->
     <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
     <!-- ILR Validation Errors -->
     <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
-    <!-- ILR Validation Errors -->
+    <!-- Job Queue Manager -->
+    <Parameter Name="JobQueueManagerConnectionString" DefaultValue="" />
+    <!-- Lars -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
+    <!-- Organsiation -->
+    <Parameter Name="OrgConnectionString" DefaultValue="" />
+    <!-- Summarised Actuals -->
+    <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -65,6 +69,8 @@
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
             <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
+            <Parameter Name="JobQueueManagerConnectionString" Value="[JobQueueManagerConnectionString]" />
+            <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />

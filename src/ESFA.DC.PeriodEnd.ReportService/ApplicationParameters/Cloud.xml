@@ -22,5 +22,9 @@
     <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
     <!-- Summarised Actuals -->
     <Parameter Name="SummarisedActualsConnectionString" Value="__SummarisedActualsConnectionString__" />
+    <!-- JobQueueManager -->
+    <Parameter Name="JobQueueManagerConnectionString" Value="__JobQueueManagerConnectionString__" />
+    <!-- OrgConnectionString -->
+    <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
   </Parameters>
 </Application>

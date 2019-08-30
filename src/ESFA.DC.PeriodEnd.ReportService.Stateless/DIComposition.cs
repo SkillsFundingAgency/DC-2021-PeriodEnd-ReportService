@@ -309,6 +309,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
             containerBuilder.RegisterType<JobQueueDataProviderService>().As<IJobQueueDataProviderService>()
                 .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<OrgProviderService>().As<IOrgProviderService>()
+                .InstancePerLifetimeScope();
         }
 
         private static void RegisterBuilders(ContainerBuilder containerBuilder)

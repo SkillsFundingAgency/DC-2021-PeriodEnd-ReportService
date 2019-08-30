@@ -249,5 +249,37 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             return top20RuleViolationsList;
         }
+
+        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            List<int> validLearnerUkprns;
+            using (var ilrValidContext = _ilrValidContextFactory())
+            {
+                validLearnerUkprns = await ilrValidContext
+                    .Learners
+                    .Select(x => x.UKPRN)
+                    .Distinct()
+                    .ToListAsync(cancellationToken);
+            }
+
+            List<ProviderWithoutValidLearners> providersWithoutValidLearnersList;
+            using (var ilrContext = _ilrContextFactory())
+            {
+                providersWithoutValidLearnersList = await ilrContext.FileDetails
+                    .Where(x => !validLearnerUkprns.Contains(x.UKPRN))
+                    .GroupBy(x => x.UKPRN)
+                    .Select(x => new ProviderWithoutValidLearners
+                    {
+                        Ukprn = x.Key,
+                        LatestFileSubmitted = x.Select(y => y.SubmittedTime ?? DateTime.MinValue).Max()
+                    })
+                     .OrderBy(x => x.Ukprn)
+                    .ToListAsync(cancellationToken);
+            }
+
+            return providersWithoutValidLearnersList;
+        }
     }
 }

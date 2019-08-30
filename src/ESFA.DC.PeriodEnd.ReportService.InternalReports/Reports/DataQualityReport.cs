@@ -21,6 +21,7 @@ using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.ReferenceData.Organisations.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {
@@ -31,6 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
         private readonly ILogger _logger;
         private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IOrgProviderService _orgProviderService;
         private readonly IReportServiceContext _reportServiceContext;
         private readonly IJobQueueDataProviderService _jobQueueDataProviderService;
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
@@ -39,6 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         public DataQualityReport(
             ILogger logger,
             IDateTimeProvider dateTimeProvider,
+            IOrgProviderService orgProviderService,
             IReportServiceContext reportServiceContext,
             IJobQueueDataProviderService jobQueueDataProviderService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
@@ -48,6 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         {
             _logger = logger;
             _dateTimeProvider = dateTimeProvider;
+            _orgProviderService = orgProviderService;
             _reportServiceContext = reportServiceContext;
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _jobQueueDataProviderService = jobQueueDataProviderService;
@@ -72,7 +76,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             IEnumerable<RuleViolationsInfo> ruleViolations = await _ilrPeriodEndProviderService.GetTop20RuleViolationsAsync(CancellationToken.None);
 
-            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = null; //await ProvidersWithoutValidLearners(CancellationToken.None);
+            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = await _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(CancellationToken.None);
+            IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(providersWithoutValidLearners.Select(x => (long)x.Ukprn).Distinct().ToList(), CancellationToken.None);
+            foreach (var org in orgDetails)
+            {
+                providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Name = org.Name;
+            }
 
             IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = null; // await ProvidersWithInvalidLearners(_reportServiceContext.CollectionYear, CancellationToken.None);
 

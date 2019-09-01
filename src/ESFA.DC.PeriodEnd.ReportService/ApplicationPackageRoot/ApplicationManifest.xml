@@ -52,7 +52,6 @@
           <Section Name="ReportServiceConfiguration">
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
             <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
-            <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
             <Parameter Name="ILR1920DataStoreConnectionString" Value="[ILR1920DataStoreConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />

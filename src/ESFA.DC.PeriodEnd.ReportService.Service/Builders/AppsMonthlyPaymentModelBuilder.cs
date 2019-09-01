@@ -140,8 +140,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         // The PriceEpisodeStartDate isn't part of the Br3 grouping but is the last 10 characters of the PriceEpisodeIdentifier
                         // so will only have the one group row
-                        PaymentPriceEpisodeStartDate =
-                            g.Key.PriceEpisodeIdentifier.Substring(g.Key.PriceEpisodeIdentifier.Length - 10, 10),
+                        PaymentPriceEpisodeStartDate = (!string.IsNullOrEmpty(g.Key?.PriceEpisodeIdentifier) && g.Key?.PriceEpisodeIdentifier.Length > 10) ? g.Key?.PriceEpisodeIdentifier.Substring(g.Key.PriceEpisodeIdentifier.Length - 10, 10) : string.Empty,
 
                         // Official Sensitive is always empty so can be set as part of the grouping.
                         OfficialSensitive = string.Empty,
@@ -1146,7 +1145,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             }
             catch (Exception ex)
             {
+                // TODO: Log exception
                 var y = ex;
+                throw;
                 //_logger.LogError("Failed to get Rulebase data", ex);
             }
 

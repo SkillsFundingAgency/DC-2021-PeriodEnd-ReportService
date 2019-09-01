@@ -36,7 +36,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IRulebaseProviderService fm36ProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
-//            IDASPaymentsProviderService dasEarningsProviderService,
             ILarsProviderService larsProviderService,
             IFcsProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
@@ -47,7 +46,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
-//            _dasEarningsProviderService = dasEarningsProviderService;
             _larsProviderService = larsProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;

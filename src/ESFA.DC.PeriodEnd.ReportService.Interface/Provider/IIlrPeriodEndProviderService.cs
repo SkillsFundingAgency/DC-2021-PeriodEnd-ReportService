@@ -19,5 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(CancellationToken cancellationToken);
 
         Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(CancellationToken cancellationToken);
+
+        Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(int collectionYear, List<ReturnPeriod> returnPeriods, CancellationToken cancellationToken);
     }
 }

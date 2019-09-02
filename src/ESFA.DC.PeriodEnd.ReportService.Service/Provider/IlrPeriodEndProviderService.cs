@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.JobQueueManager.Data.Entities;
@@ -20,16 +21,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     public sealed class IlrPeriodEndProviderService : IIlrPeriodEndProviderService
     {
         private const int ApprentishipsFundModel = 36;
-        private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
         private readonly Func<IIlr1920RulebaseContext> _ilrContextFactory;
+        private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
+        private readonly Func<IIlr1920InvalidContext> _ilrInValidContextFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
+            Func<IIlr1920RulebaseContext> ilrContextFactory,
             Func<IIlr1920ValidContext> ilrValidContextFactory,
-            Func<IIlr1920RulebaseContext> ilrContextFactory)
+            Func<IIlr1920InvalidContext> ilrInValidContextFactory)
         {
-            _ilrValidContextFactory = ilrValidContextFactory;
             _ilrContextFactory = ilrContextFactory;
+            _ilrValidContextFactory = ilrValidContextFactory;
+            _ilrInValidContextFactory = ilrInValidContextFactory;
         }
 
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
@@ -168,7 +172,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             using (var ilrContext = _ilrContextFactory())
             {
-                fd = await ilrContext.FileDetails.Where(x => x.Success == true).ToListAsync(cancellationToken);
+                fd = await ilrContext
+                    .FileDetails.Where(x => x.Success == true)
+                    .ToListAsync(cancellationToken);
+            }
+
+            if ((fd?.Count ?? 0) != 0)
+            {
+                fd.ForEach(f => f.ID = GetPeriodReturn(f.SubmittedTime, returnPeriods));
             }
 
             var fds = fd.GroupBy(x => x.UKPRN)
@@ -186,14 +197,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 EarliestValidSubmission = null,
                 LastValidSubmission = null
             });
-
-            foreach (FileDetail fileDetail in fd)
-            {
-                fileDetail.ID = returnPeriods.SingleOrDefault(x =>
-                                        x.StartDateTimeUtc < fileDetail.SubmittedTime &&
-                                        x.EndDateTimeUtc > fileDetail.SubmittedTime)
-                                    ?.PeriodNumber ?? 99;
-            }
 
             var fdCs = fd
                 .GroupBy(x => new { x.ID })
@@ -280,6 +283,89 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return providersWithoutValidLearnersList;
+        }
+
+        public async Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
+            int collectionYear,
+            List<ReturnPeriod> returnPeriods,
+            CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            List<Top10ProvidersWithInvalidLearnersInvalidLearners> top10ProvidersWithInvalidLearnersInvalid;
+            using (var ilrContext = _ilrInValidContextFactory())
+            {
+                top10ProvidersWithInvalidLearnersInvalid = (await ilrContext.Learners
+                    .GroupBy(x => x.UKPRN)
+                    .ToListAsync(cancellationToken))
+                    .OrderByDescending(x => x.Count())
+                    .Take(10)
+                    .Select(x => new Top10ProvidersWithInvalidLearnersInvalidLearners
+                    {
+                        Ukprn = x.Key,
+                        NoOfInvalidLearners = x.Count()
+                    })
+                    .ToList();
+            }
+
+            List<Top10ProvidersWithInvalidLearnersValidLearners> top10ProvidersWithInvalidLearnersValid;
+            using (var ilrContext = _ilrValidContextFactory())
+            {
+                top10ProvidersWithInvalidLearnersValid = (await ilrContext.Learners
+                    .Join(top10ProvidersWithInvalidLearnersInvalid, l => l.UKPRN, t => t.Ukprn, (lrn, top) => top)
+                    .GroupBy(x => x.Ukprn)
+                    .ToListAsync(cancellationToken))
+                    .Select(x => new Top10ProvidersWithInvalidLearnersValidLearners
+                    {
+                        Ukprn = x.Key,
+                        NoOfValidLearners = x.Count()
+                    })
+                    .ToList();
+            }
+
+            List<Top10ProvidersWithInvalidLearners> top10ProvidersWithInvalidLearners;
+            using (var ilrContext = _ilrContextFactory())
+            {
+                top10ProvidersWithInvalidLearners = (await ilrContext.FileDetails
+                    .Join(top10ProvidersWithInvalidLearnersInvalid, f => f.UKPRN, t => t.Ukprn, (file, top) => file)
+                    .ToListAsync(cancellationToken))
+                    .Select(x => new Top10ProvidersWithInvalidLearners
+                    {
+                        Ukprn = x.UKPRN,
+                        SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
+                        LatestFileName = x.Filename,
+                        LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods).ToString().PadLeft(2, '0')}",
+                    })
+                    .ToList();
+            }
+
+            foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in top10ProvidersWithInvalidLearners)
+            {
+                top10ProvidersWithInvalidLearner.NoOfInvalidLearners =
+                    top10ProvidersWithInvalidLearnersInvalid.SingleOrDefault(x => x.Ukprn == top10ProvidersWithInvalidLearner.Ukprn)?.NoOfInvalidLearners ?? 0;
+                top10ProvidersWithInvalidLearner.NoOfValidLearners =
+                    top10ProvidersWithInvalidLearnersValid.SingleOrDefault(x => x.Ukprn == top10ProvidersWithInvalidLearner.Ukprn)?.NoOfValidLearners ?? 0;
+            }
+
+            return top10ProvidersWithInvalidLearners;
+        }
+
+        private int GetPeriodReturn(DateTime? submittedDateTime, List<ReturnPeriod> returnPeriods)
+        {
+            return !submittedDateTime.HasValue ? 0 : returnPeriods
+                    .SingleOrDefault(x =>
+                        x.StartDateTimeUtc < submittedDateTime &&
+                        x.EndDateTimeUtc > submittedDateTime)
+                    ?.PeriodNumber ?? 99;
+        }
+
+        private int GetLatestPeriodReturn(DateTime? submittedDateTime, List<ReturnPeriod> returnPeriods)
+        {
+            return !submittedDateTime.HasValue ? 0 : returnPeriods
+                    .SingleOrDefault(x =>
+                    x.StartDateTimeUtc >= submittedDateTime
+                    && x.EndDateTimeUtc <= submittedDateTime)
+                        ?.PeriodNumber ?? 0;
         }
     }
 }

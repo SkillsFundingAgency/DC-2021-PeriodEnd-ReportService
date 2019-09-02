@@ -11,6 +11,8 @@ using ESFA.DC.FileService.Config.Interface;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.Invalid;
+using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
@@ -157,6 +159,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
             }).As<ILR1920_DataStoreEntitiesValid>()
                 .ExternallyOwned();
+
+            // ILR 1920 DataStore InValid Learners
+            containerBuilder.RegisterType<ILR1920_DataStoreEntitiesInvalid>().As<IIlr1920InvalidContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesInvalid>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.ILRDataStoreConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<ILR1920_DataStoreEntitiesInvalid>>()
+                .SingleInstance();
 
             // DAS Payments
             containerBuilder.RegisterType<DASPaymentsContext>().As<IDASPaymentsContext>();

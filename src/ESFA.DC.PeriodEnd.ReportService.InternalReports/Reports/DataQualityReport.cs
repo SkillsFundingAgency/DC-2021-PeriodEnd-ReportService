@@ -65,6 +65,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         public override async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             _logger.LogInfo($"In {ReportFileName} report.");
+            List<long> ukprns = new List<long>();
 
             var externalFileName = GetFilename(reportServiceContext);
 
@@ -76,14 +77,31 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             IEnumerable<RuleViolationsInfo> ruleViolations = await _ilrPeriodEndProviderService.GetTop20RuleViolationsAsync(CancellationToken.None);
 
-            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = await _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(CancellationToken.None);
-            IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(providersWithoutValidLearners.Select(x => (long)x.Ukprn).Distinct().ToList(), CancellationToken.None);
+            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = await
+                _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(CancellationToken.None);
+            ukprns.AddRange(providersWithoutValidLearners.Select(x => (long)x.Ukprn));
+
+            IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = await
+                _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
+                _reportServiceContext.CollectionYear,
+                returnPeriods,
+                CancellationToken.None);
+            ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
+
+            IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);
             foreach (var org in orgDetails)
             {
-                providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Name = org.Name;
-            }
+                if (providersWithoutValidLearners.Any(p => p.Ukprn == org.Ukprn))
+                {
+                    providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Name = org.Name;
+                }
 
-            IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = null; // await ProvidersWithInvalidLearners(_reportServiceContext.CollectionYear, CancellationToken.None);
+                if (providersWithInvalidLearners.Any(p => p.Ukprn == org.Ukprn))
+                {
+                    providersWithInvalidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Name = org.Name;
+                    providersWithInvalidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Status = org.Status;
+                }
+            }
 
             Workbook dataQualityWorkbook = GenerateWorkbook(
                 _reportServiceContext.ReturnPeriod,
@@ -124,17 +142,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             designer.Process();
 
             return workbook;
-        }
-
-        private string GetLatestReturn(DateTime submittedDateTime, List<ReturnPeriod> returnPeriods)
-        {
-            int returnPeriod = returnPeriods
-                                   .SingleOrDefault(x =>
-                                   x.StartDateTimeUtc >= submittedDateTime
-                                   && x.EndDateTimeUtc <= submittedDateTime)
-                                        ?.PeriodNumber ?? 0;
-
-            return $"R{returnPeriod.ToString().PadLeft(2, '0')}";
         }
     }
 }

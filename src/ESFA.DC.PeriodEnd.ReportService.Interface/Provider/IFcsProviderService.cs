@@ -1,19 +1,15 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
-    public interface IFcsProviderService
+    public interface IFCSProviderService
     {
-        Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
+        Task<List<DataExtractFcsInfo>> GetFCSForDataExtractReport(IEnumerable<string> OrganisationIds, CancellationToken cancellationToken);
 
-        ///// <summary>
-        ///// Returns the ContractAllocationNumber for the given Ukprn and FundingStreamPeriodCode.
-        ///// </summary>
-        ///// <param name="ukPrn">The Ukprn of the required Contractor. </param>
-        ///// <param name="fundingStreamPeriodCode">The FunsingStreamPeriodCode of the required ContractAllocation. </param>
-        ///// <returns>A <see cref="string"/> contractAllocationNumber. </returns>
-        ////string GetFcsContractAllocationNumber(int ukPrn, string fundingStreamPeriodCode);
+        Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
     }
 }

@@ -33,7 +33,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         private readonly ILogger _logger;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IOrgProviderService _orgProviderService;
-        private readonly IReportServiceContext _reportServiceContext;
         private readonly IJobQueueDataProviderService _jobQueueDataProviderService;
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
@@ -42,7 +41,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             ILogger logger,
             IDateTimeProvider dateTimeProvider,
             IOrgProviderService orgProviderService,
-            IReportServiceContext reportServiceContext,
             IJobQueueDataProviderService jobQueueDataProviderService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
@@ -52,7 +50,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             _logger = logger;
             _dateTimeProvider = dateTimeProvider;
             _orgProviderService = orgProviderService;
-            _reportServiceContext = reportServiceContext;
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _jobQueueDataProviderService = jobQueueDataProviderService;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
@@ -69,9 +66,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             var externalFileName = GetFilename(reportServiceContext);
 
-            List<ReturnPeriod> returnPeriods = (await _jobQueueDataProviderService.GetReturnPeriodsAsync(_reportServiceContext.CollectionYear, cancellationToken)).ToList();
+            List<ReturnPeriod> returnPeriods = (await _jobQueueDataProviderService.GetReturnPeriodsAsync(reportServiceContext.CollectionYear, cancellationToken)).ToList();
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
-                _reportServiceContext.CollectionYear,
+                reportServiceContext.CollectionYear,
                 returnPeriods,
                 CancellationToken.None);
 
@@ -83,7 +80,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = await
                 _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
-                _reportServiceContext.CollectionYear,
+                reportServiceContext.CollectionYear,
                 returnPeriods,
                 CancellationToken.None);
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
@@ -104,7 +101,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             }
 
             Workbook dataQualityWorkbook = GenerateWorkbook(
-                _reportServiceContext.ReturnPeriod,
+                reportServiceContext.ReturnPeriod,
                 dataQualityModels,
                 ruleViolations,
                 providersWithoutValidLearners,

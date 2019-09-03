@@ -7,6 +7,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Utils;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 using ESFA.DC.ReferenceData.FCS.Model;
 using Microsoft.EntityFrameworkCore.Internal;
@@ -45,12 +46,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         };
 
         private readonly HashSet<int> _fundingSourceLevyPayments = new HashSet<int>() { 1, 5 };
-        private readonly HashSet<int> _transactionTypesLevyPayments = new HashSet<int>() { 1, 2, 3 };
         private readonly HashSet<int> _fundingSourceCoInvestmentPayments = new HashSet<int>() { 2 };
-        private readonly HashSet<int> _transactionTypesCoInvestmentPayments = new HashSet<int>() { 1, 2, 3 };
         private readonly HashSet<int> _fundingSourceCoInvestmentDueFromEmployer = new HashSet<int>() { 3 };
+
+        private readonly HashSet<int> _transactionTypesLevyPayments = new HashSet<int>() { 1, 2, 3 };
+
+        private readonly HashSet<int> _transactionTypesCoInvestmentPayments = new HashSet<int>() { 1, 2, 3 };
         private readonly HashSet<int> _transactionTypesCoInvestmentDueFromEmployer = new HashSet<int>() { 1, 2, 3 };
+
+        private readonly HashSet<int> _transactionTypesEmployerAdditionalPayments = new HashSet<int>() { 4, 6 };
         private readonly HashSet<int> _transactionTypesProviderAdditionalPayments = new HashSet<int>() { 5, 7 };
+        private readonly HashSet<int> _transactionTypesApprenticeshipAdditionalPayments = new HashSet<int>() { 16 };
+
+        private readonly HashSet<int> _transactionTypesEnglishAndMathsPayments = new HashSet<int>() { 13, 14 };
+
+        private readonly HashSet<int> _transactionTypesLearningSupportPayments = new HashSet<int>() { 8, 9, 10, 11, 12 };
 
         public IReadOnlyList<AppsMonthlyPaymentModel> BuildAppsMonthlyPaymentModelList(
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
@@ -1128,8 +1138,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             appsMonthlyPaymentModel.SeptemberTotalPayments +
                             appsMonthlyPaymentModel.OctoberTotalPayments +
                             appsMonthlyPaymentModel.NovemberTotalPayments +
-                            appsMonthlyPaymentModel.OctoberTotalPayments +
-                            appsMonthlyPaymentModel.NovemberTotalPayments +
                             appsMonthlyPaymentModel.DecemberTotalPayments +
                             appsMonthlyPaymentModel.JanuaryTotalPayments +
                             appsMonthlyPaymentModel.FebruaryTotalPayments +
@@ -1154,80 +1162,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return appsMonthlyPaymentModelList;
         }
 
-        //private void PopulateTheRemainingUnassignedAppsMonthlyPaymentModelFields(AppsMonthlyPaymentModel paymentGroup)
-        //{
-        //    // allocate storage for the payment arrays
-        //    paymentGroup.LevyPayments = new decimal[14];
-        //    paymentGroup.CoInvestmentPayments = new decimal[14];
-        //    paymentGroup.CoInvestmentDueFromEmployerPayments = new decimal[14];
-        //    paymentGroup.EmployerAdditionalPayments = new decimal[14];
-        //    paymentGroup.ProviderAdditionalPayments = new decimal[14];
-        //    paymentGroup.ApprenticeAdditionalPayments = new decimal[14];
-        //    paymentGroup.EnglishAndMathsPayments = new decimal[14];
-        //    paymentGroup.LearningSupportDisadvantageAndFrameworkUpliftPayments = new decimal[14];
-
-        //    // Get the Earnings Event data relating to this payment
-        //    paymentGroup.PaymentEarningEventAimSeqNumber = GetTheAimSequenceNumberRelatingToThisPayment(paymentGroup);
-
-        //    // Get the LARS data relating to this payment
-        //    paymentGroup.LarsLearningDeliveryLearningAimTitle = GetTheLarsLearningAimTitleRelatingToThisPayment(paymentGroup);
-
-        //    // Get the Contract data relating to this payment
-        //    paymentGroup.FcsContractContractAllocationContractAllocationNumber = paymentGroup.FcsContractContractAllocationContractAllocationNumber;
-
-        //    // Get the Ilr data relating to the payment
-
-        //    // Learner data
-        //    paymentGroup.LearnerCampusIdentifier = GetTheCampusIdentifierRelatingToThisPayment(paymentGroup);
-        //    paymentGroup.ProviderSpecifiedLearnerMonitoringA = GetTheProviderSpecifiedLearnerMonitoringARelatingToThisPayment(paymentGroup);
-        //    paymentGroup.ProviderSpecifiedLearnerMonitoringB = GetTheProviderSpecifiedLearnerMonitoringBRelatingToThisPayment(paymentGroup);
-        //    paymentGroup.LearnerEmploymentStatus = paymentGroup.LearnerEmploymentStatus;
-        //    paymentGroup.LearnerEmploymentStatusDate = paymentGroup.LearnerEmploymentStatusDate;
-        //    paymentGroup.LearnerEmploymentStatusEmployerId = paymentGroup.LearnerEmploymentStatusEmployerId;
-
-        //    // Learning Delivery data
-        //    paymentGroup.LearningDeliveryOriginalLearningStartDate = paymentGroup.LearningDeliveryOriginalLearningStartDate;
-        //    paymentGroup.LearningDeliveryLearningPlannedEndData = paymentGroup.LearningDeliveryLearningPlannedEndData;
-        //    paymentGroup.LearningDeliveryCompletionStatus = paymentGroup.LearningDeliveryCompletionStatus;
-        //    paymentGroup.LearningDeliveryLearningActualEndDate = paymentGroup.LearningDeliveryLearningActualEndDate;
-        //    paymentGroup.LearningDeliveryAchievementDate = paymentGroup.LearningDeliveryAchievementDate;
-        //    paymentGroup.LearningDeliveryOutcome = paymentGroup.LearningDeliveryOutcome;
-        //    paymentGroup.LearningDeliveryAimType = paymentGroup.LearningDeliveryAimType;
-        //    paymentGroup.LearningDeliverySoftwareSupplierAimIdentifier = paymentGroup.LearningDeliverySoftwareSupplierAimIdentifier;
-        //    paymentGroup.LearningDeliveryEndPointAssessmentOrganisation =
-        //        paymentGroup.LearningDeliveryEndPointAssessmentOrganisation;
-
-        //    paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringA =
-        //        paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringA;
-        //    paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringB =
-        //        paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringB;
-        //    paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringC =
-        //        paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringC;
-        //    paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringD =
-        //        paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringD;
-        //    paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringE =
-        //        paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringE;
-        //    paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringF =
-        //        paymentGroup.LearningDeliveryFamTypeLearningDeliveryMonitoringF;
-
-        //    paymentGroup.ProviderSpecifiedDeliveryMonitoringA = paymentGroup.ProviderSpecifiedDeliveryMonitoringA;
-        //    paymentGroup.ProviderSpecifiedDeliveryMonitoringB = paymentGroup.ProviderSpecifiedDeliveryMonitoringB;
-        //    paymentGroup.ProviderSpecifiedDeliveryMonitoringC = paymentGroup.ProviderSpecifiedDeliveryMonitoringC;
-        //    paymentGroup.ProviderSpecifiedDeliveryMonitoringD = paymentGroup.ProviderSpecifiedDeliveryMonitoringD;
-
-        //    paymentGroup.LearningDeliverySubContractedOrPartnershipUkprn =
-        //        paymentGroup.LearningDeliverySubContractedOrPartnershipUkprn;
-
-        //    paymentGroup.RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim = paymentGroup
-        //        .RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim;
-
-        //    paymentGroup.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate =
-        //        paymentGroup.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate;
-
-        //    paymentGroup.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier =
-        //        paymentGroup.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier;
-        //}
-
         //------------------------------------------------------------------------------------------------------
         // Levy Payments Type Predicates
         //------------------------------------------------------------------------------------------------------
@@ -1240,15 +1174,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <returns>true if a Levy payment, otherwise false.</returns>
         private bool PeriodLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalLevyPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalLevyPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            return _fundingSourceLevyPayments.Contains(payment.FundingSource) &&
+            bool result = payment.AcademicYear == 1920 &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                   _fundingSourceLevyPayments.Contains(payment.FundingSource) &&
                    _transactionTypesLevyPayments.Contains(payment.TransactionType);
+
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1263,15 +1202,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <returns>true if a CoInvestment payment, otherwise false.</returns>
         private bool PeriodCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalCoInvestmentPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalCoInvestmentPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            return _fundingSourceCoInvestmentPayments.Contains(payment.FundingSource) &&
-                   _transactionTypesCoInvestmentPayments.Contains(payment.TransactionType);
+            bool result = payment.AcademicYear == 1920 &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                          _fundingSourceCoInvestmentPayments.Contains(payment.FundingSource) &&
+                          _transactionTypesCoInvestmentPayments.Contains(payment.TransactionType);
+
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1287,15 +1231,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            return _fundingSourceCoInvestmentDueFromEmployer.Contains(payment.FundingSource) &&
-                   _transactionTypesCoInvestmentDueFromEmployer.Contains(payment.TransactionType);
+            bool result = payment.AcademicYear == 1920 &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                          _fundingSourceCoInvestmentDueFromEmployer.Contains(payment.FundingSource) &&
+                         _transactionTypesCoInvestmentDueFromEmployer.Contains(payment.TransactionType);
+
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1311,16 +1260,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodEmployerAdditionalPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalEmployerAdditionalPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalEmployerAdditionalPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            HashSet<int> transactionTypesEmployerAdditionalPayments = new HashSet<int>() { 4, 6 };
+            bool result = payment.AcademicYear == 1920 &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                          _transactionTypesEmployerAdditionalPayments.Contains(payment.TransactionType);
 
-            return transactionTypesEmployerAdditionalPayments.Contains(payment.TransactionType);
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1336,14 +1288,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodProviderAdditionalPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalProviderAdditionalPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalProviderAdditionalPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalProviderAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            return _transactionTypesProviderAdditionalPayments.Contains(payment.TransactionType);
+            bool result = payment.AcademicYear == 1920 &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                          _transactionTypesProviderAdditionalPayments.Contains(payment.TransactionType);
+
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1359,17 +1316,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodApprenticeAdditionalPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            HashSet<int> transactionTypesApprenticeshipAdditionalPayments = new HashSet<int>() { 16 };
+            bool result = payment.AcademicYear == 1920 &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                   _transactionTypesApprenticeshipAdditionalPayments.Contains(payment.TransactionType);
 
-            return transactionTypesApprenticeshipAdditionalPayments.Contains(payment.TransactionType);
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1385,16 +1345,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodEnglishAndMathsPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalEnglishAndMathsPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                          TotalEnglishAndMathsPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            HashSet<int> transactionTypesEnglishAndMathsPayments = new HashSet<int>() { 13, 14 };
+            bool result = payment.AcademicYear == 1920 &&
+                          !payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                          _transactionTypesEnglishAndMathsPayments.Contains(payment.TransactionType);
 
-            return transactionTypesEnglishAndMathsPayments.Contains(payment.TransactionType);
+            return result;
         }
 
         //------------------------------------------------------------------------------------------------------
@@ -1410,384 +1373,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment, int period)
         {
-            return payment.AcademicYear == 1920 &&
-                   payment.CollectionPeriod == period
-                   && TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
+            bool result = payment.CollectionPeriod == period &&
+                   TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
+
+            return result;
         }
 
         private bool TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
             AppsMonthlyPaymentDasPayments2Payment payment)
         {
-            HashSet<int> transactionTypesLearningSupportPayments = new HashSet<int>() { 8, 9, 10, 11, 12, 15 };
+            bool result = payment.AcademicYear == 1920 &&
+                   (payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                   _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) &&
+                   // English and Maths payment
+                   (!payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && payment.TransactionType == 15);
 
-            return transactionTypesLearningSupportPayments.Contains(payment.TransactionType);
+            return result;
         }
     }
 }
-
-// get the matching payment for this payment group in order to populate
-// the monthly payment report model
-//var paymentInfo = appsMonthlyPaymentDasInfo.Payments.FirstOrDefault(p =>
-//    p.LearnerReferenceNumber.CaseInsensitiveEquals(paymentGroup.PaymentLearnerReferenceNumber) &&
-//    p.LearnerUln == paymentGroup.PaymentUniqueLearnerNumber &&
-//    p.LearningAimReference.CaseInsensitiveEquals(paymentGroup.PaymentLearningAimReference) &&
-//    p.LearningStartDate == paymentGroup.PaymentLearningStartDate &&
-//    p.LearningAimProgrammeType == paymentGroup.PaymentProgrammeType &&
-//    p.LearningAimStandardCode == paymentGroup.PaymentStandardCode &&
-//    p.LearningAimFrameworkCode == paymentGroup.PaymentFrameworkCode &&
-//    p.LearningAimPathwayCode == paymentGroup.PaymentPathwayCode &&
-//    p.PriceEpisodeIdentifier.CaseInsensitiveEquals(paymentGroup.PaymentPriceEpisodeIdentifier));
-
-// get the matching DAS EarningEvents for this payment
-//var earningsEvents = appsMonthlyPaymentDasEarningsInfo.Earnings
-//    .Where(x => x.Id = paymentGroup.learningst)
-
-
-// calculate payments
-//List<AppsMonthlyPaymentDasPayments2Payment> appsMonthlyPaymentDasPaymentInfos = paymentGroup.ToList();
-
-//PopulatePayments(appsMonthlyPaymentModel, paymentGroup);
-//            PopulateMonthlyTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModel.TotalLevyPayments = appsMonthlyPaymentModel.LevyPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentPayments = appsMonthlyPaymentModel.CoInvestmentPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentDueFromEmployerPayments = appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEmployerAdditionalPayments = appsMonthlyPaymentModel.EmployerAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalProviderAdditionalPayments = appsMonthlyPaymentModel.ProviderAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalApprenticeAdditionalPayments = appsMonthlyPaymentModel.ApprenticeAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEnglishAndMathsPayments = appsMonthlyPaymentModel.EnglishAndMathsPayments.Sum();
-//            appsMonthlyPaymentModel.TotalPaymentsForLearningSupportDisadvantageAndFrameworkUplifts = appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments.Sum();
-//            PopulateTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModelList.Add(appsMonthlyPaymentModel);
-//TotalPayments = paymentGroup.LevyPayments.Sum(),
-//TotalCoInvestmentPayments = paymentGroup.CoInvestmentPayments.Sum(),
-//TotalCoInvestmentDueFromEmployerPayments = paymentGroup.CoInvestmentDueFromEmployerPayments.Sum(),
-//TotalEmployerAdditionalPayments = paymentGroup.EmployerAdditionalPayments.Sum(),
-//TotalProviderAdditionalPayments = paymentGroup.ProviderAdditionalPayments.Sum(),
-//TotalEnglishAndMathsPayments = paymentGroup.EnglishAndMathsPayments.Sum(),
-//TotalLearningSupportDisadvantageAndFrameworkUpliftPayments = paymentGroup.LearningSupportDisadvantageAndFrameworkUpliftPayments.Sum()
-
-//            List<AppsMonthlyPaymentDasPayments2Payment> appsMonthlyPaymentDasPaymentInfos = paymentGroup.ToList();
-
-//            PopulatePayments(appsMonthlyPaymentModel, appsMonthlyPaymentDasPaymentInfos);
-//            PopulateMonthlyTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModel.TotalLevyPayments = appsMonthlyPaymentModel.LevyPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentPayments = appsMonthlyPaymentModel.CoInvestmentPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentDueFromEmployerPayments = appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEmployerAdditionalPayments = appsMonthlyPaymentModel.EmployerAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalProviderAdditionalPayments = appsMonthlyPaymentModel.ProviderAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalApprenticeAdditionalPayments = appsMonthlyPaymentModel.ApprenticeAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEnglishAndMathsPayments = appsMonthlyPaymentModel.EnglishAndMathsPayments.Sum();
-//            appsMonthlyPaymentModel.TotalPaymentsForLearningSupportDisadvantageAndFrameworkUplifts = appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments.Sum();
-//            PopulateTotalPayments(appsMonthlyPaymentModel);
-//List<AppsMonthlyPaymentDasPayments2Payment> appsMonthlyPaymentDasPaymentInfos = paymentGroup.ToList();
-
-//            PopulatePayments(appsMonthlyPaymentModel, appsMonthlyPaymentDasPaymentInfos);
-//            PopulateMonthlyTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModel.TotalLevyPayments = appsMonthlyPaymentModel.LevyPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentPayments = appsMonthlyPaymentModel.CoInvestmentPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentDueFromEmployerPayments = appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEmployerAdditionalPayments = appsMonthlyPaymentModel.EmployerAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalProviderAdditionalPayments = appsMonthlyPaymentModel.ProviderAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalApprenticeAdditionalPayments = appsMonthlyPaymentModel.ApprenticeAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEnglishAndMathsPayments = appsMonthlyPaymentModel.EnglishAndMathsPayments.Sum();
-//            appsMonthlyPaymentModel.TotalPaymentsForLearningSupportDisadvantageAndFrameworkUplifts = appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments.Sum();
-//            PopulateTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModelList.Add(appsMonthlyPaymentModel);
-
-
-//    foreach (var learner in appsMonthlyPaymentIlrInfo.Learners)
-//    {
-//        var paymentGroups = appsMonthlyPaymentDasInfo.Payments.Where(x => x.LearnerReferenceNumber.CaseInsensitiveEquals(learner.LearnRefNumber))
-//            .GroupBy(x => new
-//            {
-//                x.UkPrn,
-//                x.LearnerReferenceNumber,
-//                x.LearnerUln,
-//                x.LearningAimReference,
-//                x.LearningStartDate,
-//                x.LearningAimProgrammeType,
-//                x.LearningAimStandardCode,
-//                x.LearningAimFrameworkCode,
-//                x.LearningAimPathwayCode,
-//                x.ReportingAimFundingLineType,
-//                x.PriceEpisodeIdentifier
-//            });
-
-//        foreach (var paymentGroup in paymentGroups)
-//        {
-//            var learningDeliveryInfo = learner.LearningDeliveries.SingleOrDefault(x =>
-//                x.Ukprn == paymentGroup.First().UkPrn &&
-//                x.LearnRefNumber.CaseInsensitiveEquals(paymentGroup.Key.LearnerReferenceNumber) &&
-//                x.LearnAimRef.CaseInsensitiveEquals(paymentGroup.Key.LearningAimReference) &&
-//                x.LearnStartDate == paymentGroup.Key.LearningStartDate &&
-//                x.ProgType == paymentGroup.Key.LearningAimProgrammeType &&
-//                x.StdCode == paymentGroup.Key.LearningAimStandardCode &&
-//                x.FworkCode == paymentGroup.Key.LearningAimFrameworkCode &&
-//                x.PwayCode == paymentGroup.Key.LearningAimPathwayCode);
-
-//            var aecApprenticeshipPriceEpisode =
-//                appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList.SingleOrDefault(x =>
-//                    x.UkPrn == learningDeliveryInfo?.Ukprn &&
-//                    x.LearnRefNumber == learningDeliveryInfo.LearnRefNumber &&
-//                    x.AimSequenceNumber == learningDeliveryInfo.AimSeqNumber);
-
-//            string fundingStreamPeriod = Utils.GetFundingStreamPeriodForFundingLineType(paymentGroup.Key.ReportingAimFundingLineType);
-
-//            var contractAllocationNumber = appsMonthlyPaymentFcsInfo.Contracts
-//                .SelectMany(x => x.ContractAllocations)
-//                .Where(y => y.FundingStreamPeriodCode == fundingStreamPeriod)
-//                .Select(x => x.ContractAllocationNumber)
-//                .DefaultIfEmpty("Contract Not Found!")
-//                .FirstOrDefault();
-
-//            var appsMonthlyPaymentModel = new AppsMonthlyPaymentModel()
-//            {
-//                PaymentLearnerReferenceNumber = paymentGroup.Key.LearnerReferenceNumber,
-//                PaymentUniqueLearnerNumber = paymentGroup.Key.LearnerUln,
-
-//                LearnerCampusIdentifier = learner.CampId,
-
-//                ProviderSpecifiedLearnerMonitoringA = learner.ProviderSpecLearnerMonitorings
-//                    ?.SingleOrDefault(x =>
-//                        string.Equals(x.ProvSpecLearnMonOccur, "A", StringComparison.OrdinalIgnoreCase))
-//                    ?.ProvSpecLearnMon,
-//                ProviderSpecifiedLearnerMonitoringB = learner.ProviderSpecLearnerMonitorings
-//                    ?.SingleOrDefault(x =>
-//                        string.Equals(x.ProvSpecLearnMonOccur, "B", StringComparison.OrdinalIgnoreCase))
-//                    ?.ProvSpecLearnMon,
-
-//                // ---------------------------------------------------------------------
-//                // TODO: Get AimSeqNumber from the Payments2.EarningEvent table
-//                // ---------------------------------------------------------------------
-//                // PaymentsEarningEventAimSeqNumber = learningDeliveryInfo.AimSeqNumber,
-//                // ---------------------------------------------------------------------
-
-//                PaymentLearningAimReference = paymentGroup.Key.LearningAimReference,
-
-//                LarsLearningDeliveryLearningAimTitle = appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x => x.LearnAimRef.CaseInsensitiveEquals(learningDeliveryInfo.LearnAimRef))?.LearningAimTitle,
-
-//                PaymentLearningStartDate = paymentGroup.Key.LearningStartDate?.ToString("dd/MM/yyyy"),
-//                PaymentProgrammeType = paymentGroup.Key.LearningAimProgrammeType,
-//                PaymentStandardCode = paymentGroup.Key.LearningAimStandardCode,
-//                PaymentFrameworkCode = paymentGroup.Key.LearningAimFrameworkCode,
-//                PaymentPathwayCode = paymentGroup.Key.LearningAimPathwayCode,
-
-//                LearningDeliveryAimType = learningDeliveryInfo.AimType,
-//                LearningDeliverySoftwareSupplierAimIdentifier = learningDeliveryInfo.SwSupAimId,
-
-//                ProviderSpecifiedDeliveryMonitoringA = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-//                    ?.SingleOrDefault(x =>
-//                        string.Equals(x.ProvSpecDelMonOccur, "A", StringComparison.OrdinalIgnoreCase))
-//                    ?.ProvSpecDelMon,
-//                ProviderSpecifiedDeliveryMonitoringB = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-//                    ?.SingleOrDefault(x =>
-//                        string.Equals(x.ProvSpecDelMonOccur, "B", StringComparison.OrdinalIgnoreCase))
-//                    ?.ProvSpecDelMon,
-//                ProviderSpecifiedDeliveryMonitoringC = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-//                    ?.SingleOrDefault(x =>
-//                        string.Equals(x.ProvSpecDelMonOccur, "C", StringComparison.OrdinalIgnoreCase))
-//                    ?.ProvSpecDelMon,
-//                ProviderSpecifiedDeliveryMonitoringD = learningDeliveryInfo.ProviderSpecDeliveryMonitorings
-//                    ?.SingleOrDefault(x =>
-//                        string.Equals(x.ProvSpecDelMonOccur, "D", StringComparison.OrdinalIgnoreCase))
-//                    ?.ProvSpecDelMon,
-
-//                LearningDeliveryEndPointAssessmentOrganisation = learningDeliveryInfo.EPAOrganisation,
-//                LearningDeliverySubContractedOrPartnershipUkprn = learningDeliveryInfo.PartnerUkPrn.ToString(),
-
-//                PaymentPriceEpisodeStartDate = paymentGroup.Key.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && paymentGroup.Key.PriceEpisodeIdentifier.Length > 10
-//                    ? paymentGroup.Key.PriceEpisodeIdentifier.Substring(paymentGroup.Key.PriceEpisodeIdentifier.Length - 10)
-//                    : string.Empty,
-
-//                RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate = aecApprenticeshipPriceEpisode?.PriceEpisodeActualEndDate
-//                    .GetValueOrDefault().ToString("dd/MM/yyyy"),
-
-//                FcsContractContractAllocationContractAllocationNumber = contractAllocationNumber,
-
-//                PaymentFundingLineType = paymentGroup.Key.ReportingAimFundingLineType,
-
-//                PaymentApprenticeshipContractType = paymentGroup.First().ContractType.ToString(),
-
-//                RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier = aecApprenticeshipPriceEpisode?.PriceEpisodeAgreeId,
-//            };
-
-//            List<AppsMonthlyPaymentDasPayments2Payment> appsMonthlyPaymentDasPaymentInfos = paymentGroup.ToList();
-
-//            PopulatePayments(appsMonthlyPaymentModel, appsMonthlyPaymentDasPaymentInfos);
-//            PopulateMonthlyTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModel.TotalLevyPayments = appsMonthlyPaymentModel.LevyPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentPayments = appsMonthlyPaymentModel.CoInvestmentPayments.Sum();
-//            appsMonthlyPaymentModel.TotalCoInvestmentDueFromEmployerPayments = appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEmployerAdditionalPayments = appsMonthlyPaymentModel.EmployerAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalProviderAdditionalPayments = appsMonthlyPaymentModel.ProviderAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalApprenticeAdditionalPayments = appsMonthlyPaymentModel.ApprenticeAdditionalPayments.Sum();
-//            appsMonthlyPaymentModel.TotalEnglishAndMathsPayments = appsMonthlyPaymentModel.EnglishAndMathsPayments.Sum();
-//            appsMonthlyPaymentModel.TotalPaymentsForLearningSupportDisadvantageAndFrameworkUplifts = appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments.Sum();
-//            PopulateTotalPayments(appsMonthlyPaymentModel);
-//            appsMonthlyPaymentModelList.Add(appsMonthlyPaymentModel);
-//        }
-//    }
-
-//private void PopulatePayments(AppsMonthlyPaymentModel appsMonthlyPaymentModel, List<AppsMonthlyPaymentDasPayments2Payment> appsMonthlyPaymentDasPaymentInfo)
-//{
-//    appsMonthlyPaymentModel.LevyPayments = new decimal[14];
-//    appsMonthlyPaymentModel.CoInvestmentPayments = new decimal[14];
-//    appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments = new decimal[14];
-//    appsMonthlyPaymentModel.EmployerAdditionalPayments = new decimal[14];
-//    appsMonthlyPaymentModel.ProviderAdditionalPayments = new decimal[14];
-//    appsMonthlyPaymentModel.ApprenticeAdditionalPayments = new decimal[14];
-//    appsMonthlyPaymentModel.EnglishAndMathsPayments = new decimal[14];
-//    appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments = new decimal[14];
-//    for (int i = 0; i <= 13; i++)
-//    {
-//        appsMonthlyPaymentModel.LevyPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceLevyPayments, _transactionTypesLevyPayments);
-//        appsMonthlyPaymentModel.CoInvestmentPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceCoInvestmentPayments, _transactionTypesCoInvestmentPayments);
-//        appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceCoInvestmentDueFromEmployer, _transactionTypesCoInvestmentDueFromEmployer);
-//        appsMonthlyPaymentModel.EmployerAdditionalPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceEmpty, _transactionTypesEmployerAdditionalPayments);
-//        appsMonthlyPaymentModel.ProviderAdditionalPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceEmpty, _transactionTypesProviderAdditionalPayments);
-//        appsMonthlyPaymentModel.ApprenticeAdditionalPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceEmpty, _transactionTypesApprenticeshipAdditionalPayments);
-//        appsMonthlyPaymentModel.EnglishAndMathsPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceEmpty, _transactionTypesEnglishAndMathsPayments);
-//        appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments[i] = GetPayments(appsMonthlyPaymentDasPaymentInfo, _collectionPeriods[i], _fundingSourceEmpty, _transactionTypesLearningSupportPayments);
-//    }
-//}
-
-//private void PopulateMonthlyTotalPayments(AppsMonthlyPaymentModel appsMonthlyPaymentModel)
-//{
-//    appsMonthlyPaymentModel.TotalMonthlyPayments = new decimal[14];
-//    for (int i = 0; i <= 13; i++)
-//    {
-//        appsMonthlyPaymentModel.TotalMonthlyPayments[i] = appsMonthlyPaymentModel.LevyPayments[i] + appsMonthlyPaymentModel.CoInvestmentPayments[i] + appsMonthlyPaymentModel.CoInvestmentDueFromEmployerPayments[i] +
-//                                        appsMonthlyPaymentModel.EmployerAdditionalPayments[i] + appsMonthlyPaymentModel.ProviderAdditionalPayments[i] + appsMonthlyPaymentModel.ApprenticeAdditionalPayments[i] +
-//                                        appsMonthlyPaymentModel.EnglishAndMathsPayments[i] + appsMonthlyPaymentModel.LearningSupportDisadvantageAndFrameworkUpliftPayments[i];
-//    }
-//}
-
-//private void PopulateTotalPayments(AppsMonthlyPaymentModel appsMonthlyPaymentModel)
-//{
-//    appsMonthlyPaymentModel.TotalPayments = appsMonthlyPaymentModel.TotalLevyPayments +
-//                          appsMonthlyPaymentModel.TotalCoInvestmentPayments +
-//                          appsMonthlyPaymentModel.TotalCoInvestmentDueFromEmployerPayments +
-//                          appsMonthlyPaymentModel.TotalEmployerAdditionalPayments +
-//                          appsMonthlyPaymentModel.TotalProviderAdditionalPayments +
-//                          appsMonthlyPaymentModel.TotalApprenticeAdditionalPayments +
-//                          appsMonthlyPaymentModel.TotalEnglishAndMathsPayments +
-//                          appsMonthlyPaymentModel.TotalLearningSupportDisadvantageAndFrameworkUpliftPayments;
-//}
-
-//private decimal GetPayments(
-//    List<AppsMonthlyPaymentDasPayments2Payment> appsMonthlyPaymentDasPaymentInfos,
-//    string collectionPeriodName,
-//    int[] fundingSource,
-//    int[] transactionTypes)
-//{
-//    decimal payment = 0;
-//    foreach (var paymentInfo in appsMonthlyPaymentDasPaymentInfos)
-//    {
-//        if (fundingSource.Length > 0)
-//        {
-//            //if (paymentInfo.CollectionPeriod.ToCollectionPeriodName(paymentInfo.AcademicYear.ToString()).CaseInsensitiveEquals(collectionPeriodName) &&
-//            //    transactionTypes.Contains(paymentInfo.TransactionType) &&
-//            //    fundingSource.Contains(paymentInfo.FundingSource))
-//            {
-//                payment += paymentInfo.Amount;
-//            }
-//        }
-
-//        //else if (paymentInfo.CollectionPeriod.ToCollectionPeriodName(paymentInfo.AcademicYear.ToString()).CaseInsensitiveEquals(collectionPeriodName) &&
-//        ////         transactionTypes.Contains(paymentInfo.TransactionType))
-//        //{
-//        //    payment += paymentInfo.Amount;
-//        //}
-//    }
-
-//    return payment;
-//}
-
-
-//var ilrInfo = _appsMonthlyPaymentIlrInfo?.Learners?
-//    .Where(l => l.Ukprn == appsMonthlyPaymentModel.Ukprn)
-//    .SelectMany(x => x.LearningDeliveries)
-//    .Where(y => y.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-//                y.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
-//                y.LearnStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
-//                y.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType &&
-//                (y.StdCode == appsMonthlyPaymentModel.PaymentStandardCode || appsMonthlyPaymentModel.PaymentStandardCode == null) &&
-//                (y.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode || appsMonthlyPaymentModel.PaymentFrameworkCode == null) &&
-//                (y.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode || appsMonthlyPaymentModel.PaymentPathwayCode == null))
-//    .FirstOrDefault();
-
-//.SelectMany(pslm => pslm.ProviderSpecLearnerMonitorings)
-//.SelectMany(x => x.LearningDeliveries)
-//.SelectMany(y => y.ProviderSpecDeliveryMonitorings).FirstOrDefault();
-
-//        var query =
-//petOwners
-//.SelectMany(petOwner => petOwner.Pets, (petOwner, petName) => new { petOwner, petName })
-//.Where(ownerAndPet => ownerAndPet.petName.StartsWith("S"))
-//.Select(ownerAndPet =>
-//        new
-//        {
-//            Owner = ownerAndPet.petOwner.Name,
-//            Pet = ownerAndPet.petName
-//        }
-//);
-
-//.Where(l => l.Ukprn == appsMonthlyPaymentModel.Ukprn)
-
-//.SelectMany(x => x.LearningDeliveries)
-//.Where(y => y.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-//            y.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
-//            y.LearnStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
-//            y.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType &&
-//            (y.StdCode == appsMonthlyPaymentModel.PaymentStandardCode || appsMonthlyPaymentModel.PaymentStandardCode == null) &&
-//            (y.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode || appsMonthlyPaymentModel.PaymentFrameworkCode == null) &&
-//            (y.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode || appsMonthlyPaymentModel.PaymentPathwayCode == null))
-//.FirstOrDefault();
-
-//   ON ILR_LD.Ukprn = ThisYearsPayments.Ukprn
-//   AND ILR_LD.LearnRefNumber = ThisYearsPayments.LearnRefNumber
-//   AND ILR_LD.LearnStartDate = ThisYearsPayments.LearningStartDate
-//   AND ILR_LD.ProgType = ThisYearsPayments.ProgrammeType
-//   AND((ILR_LD.StdCode = ThisYearsPayments.StandardCode)  OR((ILR_LD.StdCode   IS NULL OR ILR_LD.FworkCode = -1) AND  ILR_LD.FworkCode IS NOT NULL AND ILR_LD.PwayCode        IS NOT NULL))
-//   AND((ILR_LD.FworkCode = ThisYearsPayments.FrameworkCode) OR((ILR_LD.FworkCode IS NULL OR ILR_LD.PwayCode = -1) AND(ILR_LD.PwayCode  IS NULL     OR  ILR_LD.PwayCode = -1) AND ILR_LD.StdCode  IS NOT NULL))
-//   AND((ILR_LD.PwayCode = ThisYearsPayments.PathwayCode)   OR((ILR_LD.PwayCode  IS NULL OR ILR_LD.FworkCode = -1) AND(ILR_LD.FworkCode IS NULL     OR  ILR_LD.FworkCode = -1) AND ILR_LD.StdCode  IS NOT NULL))
-
-// populate the appsMonthlyPaymentModel fields
-//appsMonthlyPaymentModel.LearnerCampusIdentifier = ilrInfo.le .CampId;
-
-//appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringA = ilrInfo?.ProviderSpecLearnerMonitorings?
-//    .FirstOrDefault(x => x.ProvSpecLearnMonOccur.CaseInsensitiveEquals("A"))?
-//    .ProvSpecLearnMon ?? string.Empty;
-//appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringB = ilrInfo?.ProviderSpecLearnerMonitorings?
-//    .FirstOrDefault(x => x.ProvSpecLearnMonOccur.CaseInsensitiveEquals("B"))?
-//    .ProvSpecLearnMon ?? string.Empty;
-
-//appsMonthlyPaymentModel.LearningDeliveryOriginalLearningStartDate = ilrInfo
-//    .LearningDeliveries?.FirstOrDefault()?.OrigLearnStartDate;
-
-//appsMonthlyPaymentModel.LearningDeliveryLearningPlannedEndData = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.LearnPlanEndDate;
-
-//appsMonthlyPaymentModel.LearningDeliveryCompletionStatus = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.CompStatus;
-
-//appsMonthlyPaymentModel.LearningDeliveryLearningActualEndDate = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.LearnActEndDate;
-
-//appsMonthlyPaymentModel.LearningDeliveryAchievementDate = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.AchDate;
-
-//appsMonthlyPaymentModel.LearningDeliveryOutcome = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.Outcome;
-
-//appsMonthlyPaymentModel.LearningDeliveryAimType = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.AimType;
-
-//appsMonthlyPaymentModel.LearningDeliverySoftwareSupplierAimIdentifier = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.SwSupAimId;
-
-//appsMonthlyPaymentModel.LearningDeliveryEndPointAssessmentOrganisation = ilrInfo
-//    .LearningDeliveries.FirstOrDefault()?.EpaOrgId;
-
-//appsMonthlyPaymentModel.LearningDeliverySubContractedOrPartnershipUkprn = appsMonthlyPaymentLearnerInfo
-//    .LearningDeliveries.FirstOrDefault()?.PartnerUkprn;

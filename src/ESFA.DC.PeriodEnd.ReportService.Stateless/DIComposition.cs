@@ -34,10 +34,12 @@ using ESFA.DC.PeriodEnd.ReportService.InternalReports;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
+using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
+using ESFA.DC.PeriodEnd.ReportService.Stateless.Context;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
 using ESFA.DC.ReferenceData.FCS.Model;
 using ESFA.DC.ReferenceData.FCS.Model.Interface;
@@ -53,23 +55,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 {
     public static class DIComposition
     {
-        public static ContainerBuilder BuildContainer(ServiceFabric.Common.Config.Interface.IServiceFabricConfigurationService serviceFabricConfigurationService)
+        public static ContainerBuilder BuildContainer(
+            ServiceFabric.Common.Config.Interface.IServiceFabricConfigurationService serviceFabricConfigurationService)
         {
             var containerBuilder = new ContainerBuilder();
 
-            var statelessServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
+            var statelessServiceConfiguration =
+                serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
 
-            var reportServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<ReportServiceConfiguration>("ReportServiceConfiguration");
+            var reportServiceConfiguration =
+                serviceFabricConfigurationService.GetConfigSectionAs<ReportServiceConfiguration>(
+                    "ReportServiceConfiguration");
             containerBuilder.RegisterInstance(reportServiceConfiguration).As<IReportServiceConfiguration>();
 
             // register azure blob storage service
-            var azureBlobStorageOptions = serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageOptions>("AzureStorageSection");
+            var azureBlobStorageOptions =
+                serviceFabricConfigurationService.GetConfigSectionAs<AzureStorageOptions>("AzureStorageSection");
             containerBuilder.RegisterInstance(azureBlobStorageOptions).As<IAzureStorageOptions>();
-            containerBuilder.Register(c =>
-                    new AzureStorageKeyValuePersistenceConfig(
-                        azureBlobStorageOptions.AzureBlobConnectionString,
-                        azureBlobStorageOptions.AzureBlobContainerName))
-                .As<IAzureStorageKeyValuePersistenceServiceConfig>().SingleInstance();
 
             containerBuilder.RegisterType<AzureStorageKeyValuePersistenceService>()
                 .As<IStreamableKeyValuePersistenceService>()
@@ -80,7 +82,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 ConnectionString = azureBlobStorageOptions.AzureBlobConnectionString,
             };
 
-            containerBuilder.RegisterInstance(azureStorageFileServiceConfiguration).As<IAzureStorageFileServiceConfiguration>();
+            containerBuilder.RegisterInstance(azureStorageFileServiceConfiguration)
+                .As<IAzureStorageFileServiceConfiguration>();
             containerBuilder.RegisterType<AzureStorageFileService>().As<IFileService>();
 
             containerBuilder.RegisterModule(new StatelessServiceModule(statelessServiceConfiguration));
@@ -90,12 +93,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterInstance(versionInfo).As<IVersionInfo>().SingleInstance();
 
             // register message mapper
-            containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>().As<IMapper<JobContextMessage, JobContextMessage>>();
+            containerBuilder.RegisterType<DefaultJobContextMessageMapper<JobContextMessage>>()
+                .As<IMapper<JobContextMessage, JobContextMessage>>();
 
             // register MessageHandler
-            containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<MessageHandler>().As<IMessageHandler<JobContextMessage>>()
+                .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<JobContextManager<JobContextMessage>>().As<IJobContextManager<JobContextMessage>>()
+            containerBuilder.RegisterType<JobContextManager<JobContextMessage>>()
+                .As<IJobContextManager<JobContextMessage>>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<JobContextMessage>().As<IJobContextMessage>()
@@ -113,20 +119,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             return containerBuilder;
         }
 
-        private static void RegisterContexts(ContainerBuilder containerBuilder, ReportServiceConfiguration reportServiceConfiguration)
+        private static void RegisterContexts(
+            ContainerBuilder containerBuilder,
+            ReportServiceConfiguration reportServiceConfiguration)
         {
             // ILR 1920 DataStore
             containerBuilder.RegisterType<ILR1920_DataStoreEntities>().As<IIlr1920RulebaseContext>();
             containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.ILR1920DataStoreConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
                     optionsBuilder.UseSqlServer(
-                        reportServiceConfiguration.ILRDataStoreConnectionString,
+                        reportServiceConfiguration.ILR1920DataStoreConnectionString,
                         options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                     return optionsBuilder.Options;
@@ -140,7 +143,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
                     optionsBuilder.UseSqlServer(
-                        reportServiceConfiguration.ILRDataStoreConnectionString,
+                        reportServiceConfiguration.ILR1920DataStoreConnectionString,
                         options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                     return optionsBuilder.Options;
@@ -155,74 +158,75 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                         reportServiceConfiguration.ILR1920DataStoreConnectionString,
                         options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
-            }).As<ILR1920_DataStoreEntitiesValid>()
+                    return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
+                }).As<ILR1920_DataStoreEntitiesValid>()
                 .ExternallyOwned();
 
             // DAS Payments
             containerBuilder.RegisterType<DASPaymentsContext>().As<IDASPaymentsContext>();
             containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<DASPaymentsContext>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.DASPaymentsConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<DASPaymentsContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.DASPaymentsConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return optionsBuilder.Options;
-            })
+                    return optionsBuilder.Options;
+                })
                 .As<DbContextOptions<DASPaymentsContext>>()
                 .SingleInstance();
 
             containerBuilder.Register(c =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<DASPaymentsContext>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.DASPaymentsConnectionString,
-                    providerOptions => providerOptions.CommandTimeout(60));
-                return new PaymentsContext(optionsBuilder.Options);
-            })
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<DASPaymentsContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.DASPaymentsConnectionString,
+                        providerOptions => providerOptions.CommandTimeout(60));
+                    return new PaymentsContext(optionsBuilder.Options);
+                })
                 .As<PaymentsContext>().ExternallyOwned();
 
             // LARS
             containerBuilder.RegisterType<LarsContext>().As<ILARSContext>().ExternallyOwned();
             containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.LarsConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<LarsContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.LarsConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return optionsBuilder.Options;
-            })
+                    return optionsBuilder.Options;
+                })
                 .As<DbContextOptions<LarsContext>>()
                 .SingleInstance();
 
             containerBuilder.RegisterType<FcsContext>().As<IFcsContext>();
             containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<FcsContext>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.FCSConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<FcsContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.FCSConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return optionsBuilder.Options;
-            })
+                    return optionsBuilder.Options;
+                })
                 .As<DbContextOptions<FcsContext>>()
                 .SingleInstance();
 
-            containerBuilder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>()
+                .InstancePerLifetimeScope();
 
             // Summarisation
             containerBuilder.RegisterType<SummarisationContext>().As<ISummarisationContext>();
             containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<SummarisationContext>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.SummarisedActualsConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<SummarisationContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.SummarisedActualsConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return optionsBuilder.Options;
-            })
+                    return optionsBuilder.Options;
+                })
                 .As<DbContextOptions<SummarisationContext>>()
                 .SingleInstance();
         }
@@ -230,6 +234,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
         private static void RegisterReports(ContainerBuilder containerBuilder)
         {
             containerBuilder.RegisterType<AppsMonthlyPaymentReport>().As<IReport>()
+                .WithAttributeFiltering()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<AppsAdditionalPaymentsReport>().As<IReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
@@ -257,7 +265,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<FcsProviderService>().As<IFcsProviderService>()
+            containerBuilder.RegisterType<FCSProviderService>().As<IFCSProviderService>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
@@ -279,8 +287,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<AppsMonthlyPaymentModelBuilder>().As<IAppsMonthlyPaymentModelBuilder>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<AppsAdditionalPaymentsModelBuilder>().As<IAppsAdditionalPaymentsModelBuilder>()
-                .InstancePerLifetimeScope();
+            containerBuilder.RegisterType<AppsAdditionalPaymentsModelBuilder>()
+                .As<IAppsAdditionalPaymentsModelBuilder>().InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<DataExtractModelBuilder>().As<IDataExtractModelBuilder>()
                 .InstancePerLifetimeScope();
@@ -288,6 +296,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterUtilities(ContainerBuilder containerBuilder)
         {
+            containerBuilder.RegisterType<ValueProvider>().As<IValueProvider>().InstancePerLifetimeScope();
+
             containerBuilder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>()
                 .InstancePerLifetimeScope();
         }

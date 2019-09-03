@@ -6,7 +6,7 @@
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
     <Parameter Name="TopicName" DefaultValue="periodendtopic" />
     <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
-    <Parameter Name="ILRDataStoreConnectionString" DefaultValue="" />
+    <Parameter Name="ILR1920DataStoreConnectionString" DefaultValue="" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -20,10 +20,6 @@
     <Parameter Name="TopicMaxCallbackTimeSpanMinutes" DefaultValue="30" />
     <Parameter Name="JobStatusMaxConcurrentCalls" DefaultValue="1" />
     <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
-    <!-- Topic Names -->
-    <Parameter Name="TopicReports" DefaultValue="Reports" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" DefaultValue="GenerateAppsMonthlyPaymentReport" />
-
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
     <!-- Summarisation -->
@@ -57,15 +53,8 @@
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
             <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
-            <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
-            <Parameter Name="DasCommitmentsConnectionString" Value="[DasCommitmentsConnectionString]" />
-            <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
-            <Parameter Name="PostcodeConnectionString" Value="[PostcodeConnectionString]" />
-            <Parameter Name="LargeEmployerConnectionString" Value="[LargeEmployerConnectionString]" />
-            <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
-            <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
-            <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
-            <Parameter Name="JobStatusConnectionString" Value="[JobStatusConnectionString]" />
+            <Parameter Name="ILR1920DataStoreConnectionString" Value="[ILR1920DataStoreConnectionString]" />
+            <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />

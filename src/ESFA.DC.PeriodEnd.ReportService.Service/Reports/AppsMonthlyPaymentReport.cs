@@ -15,6 +15,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
@@ -27,7 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
         private readonly IDASPaymentsProviderService _dasEarningsProviderService;
         private readonly ILarsProviderService _larsProviderService;
-        private readonly IFcsProviderService _fcsProviderService;
+        private readonly IFCSProviderService _fcsProviderService;
         private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
 
         public AppsMonthlyPaymentReport(
@@ -37,7 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IRulebaseProviderService fm36ProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
             ILarsProviderService larsProviderService,
-            IFcsProviderService fcsProviderService,
+            IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             IAppsMonthlyPaymentModelBuilder modelBuilder)

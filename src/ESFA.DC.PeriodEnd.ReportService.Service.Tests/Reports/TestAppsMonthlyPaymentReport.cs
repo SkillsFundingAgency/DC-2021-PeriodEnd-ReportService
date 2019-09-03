@@ -50,7 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IRulebaseProviderService> fm36ProviderServiceMock = new Mock<IRulebaseProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
-            Mock<IFcsProviderService> fcsProviderServiceMock = new Mock<IFcsProviderService>();
+            Mock<IFCSProviderService> fcsProviderServiceMock = new Mock<IFCSProviderService>();
             IValueProvider valueProvider = new ValueProvider();
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
@@ -179,7 +179,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().AugustApprenticeAdditionalPayments.Should().Be(48);
             result.First().AugustEnglishAndMathsPayments.Should().Be(51);
             result.First().AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().AugustTotalPayments.Should().Be(346);
+            result.First().AugustTotalPayments.Should().Be(348);
 
             // September
             result.First().SeptemberLevyPayments.Should().Be(33);
@@ -190,149 +190,149 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().SeptemberApprenticeAdditionalPayments.Should().Be(48);
             result.First().SeptemberEnglishAndMathsPayments.Should().Be(51);
             result.First().SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
-            result.First().SeptemberTotalPayments.Should().Be(346);
+            result.First().SeptemberTotalPayments.Should().Be(348);
 
             // October
-            result.First().OctoberLevyPayments.Should().Be(11);
-            result.First().OctoberCoInvestmentPayments.Should().Be(12);
-            result.First().OctoberCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().OctoberEmployerAdditionalPayments.Should().Be(14);
-            result.First().OctoberProviderAdditionalPayments.Should().Be(15);
-            result.First().OctoberApprenticeAdditionalPayments.Should().Be(16);
-            result.First().OctoberEnglishAndMathsPayments.Should().Be(17);
-            result.First().OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().OctoberTotalPayments.Should().Be(116);
+            result.First().OctoberLevyPayments.Should().Be(33);
+            result.First().OctoberCoInvestmentPayments.Should().Be(36);
+            result.First().OctoberCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().OctoberEmployerAdditionalPayments.Should().Be(42);
+            result.First().OctoberProviderAdditionalPayments.Should().Be(45);
+            result.First().OctoberApprenticeAdditionalPayments.Should().Be(48);
+            result.First().OctoberEnglishAndMathsPayments.Should().Be(51);
+            result.First().OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().OctoberTotalPayments.Should().Be(348);
 
             // November
-            result.First().NovemberLevyPayments.Should().Be(11);
-            result.First().NovemberCoInvestmentPayments.Should().Be(12);
-            result.First().NovemberCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().NovemberEmployerAdditionalPayments.Should().Be(14);
-            result.First().NovemberProviderAdditionalPayments.Should().Be(15);
-            result.First().NovemberApprenticeAdditionalPayments.Should().Be(16);
-            result.First().NovemberEnglishAndMathsPayments.Should().Be(17);
-            result.First().NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().NovemberTotalPayments.Should().Be(116);
+            result.First().NovemberLevyPayments.Should().Be(33);
+            result.First().NovemberCoInvestmentPayments.Should().Be(36);
+            result.First().NovemberCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().NovemberEmployerAdditionalPayments.Should().Be(42);
+            result.First().NovemberProviderAdditionalPayments.Should().Be(45);
+            result.First().NovemberApprenticeAdditionalPayments.Should().Be(48);
+            result.First().NovemberEnglishAndMathsPayments.Should().Be(51);
+            result.First().NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().NovemberTotalPayments.Should().Be(348);
 
             // December
-            result.First().DecemberLevyPayments.Should().Be(11);
-            result.First().DecemberCoInvestmentPayments.Should().Be(12);
-            result.First().DecemberCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().DecemberEmployerAdditionalPayments.Should().Be(14);
-            result.First().DecemberProviderAdditionalPayments.Should().Be(15);
-            result.First().DecemberApprenticeAdditionalPayments.Should().Be(16);
-            result.First().DecemberEnglishAndMathsPayments.Should().Be(17);
-            result.First().DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().DecemberTotalPayments.Should().Be(116);
+            result.First().DecemberLevyPayments.Should().Be(33);
+            result.First().DecemberCoInvestmentPayments.Should().Be(36);
+            result.First().DecemberCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().DecemberEmployerAdditionalPayments.Should().Be(42);
+            result.First().DecemberProviderAdditionalPayments.Should().Be(45);
+            result.First().DecemberApprenticeAdditionalPayments.Should().Be(48);
+            result.First().DecemberEnglishAndMathsPayments.Should().Be(51);
+            result.First().DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().DecemberTotalPayments.Should().Be(348);
 
             // January
-            result.First().JanuaryLevyPayments.Should().Be(11);
-            result.First().JanuaryCoInvestmentPayments.Should().Be(12);
-            result.First().JanuaryCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().JanuaryEmployerAdditionalPayments.Should().Be(14);
-            result.First().JanuaryProviderAdditionalPayments.Should().Be(15);
-            result.First().JanuaryApprenticeAdditionalPayments.Should().Be(16);
-            result.First().JanuaryEnglishAndMathsPayments.Should().Be(17);
-            result.First().JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().JanuaryTotalPayments.Should().Be(116);
+            result.First().JanuaryLevyPayments.Should().Be(33);
+            result.First().JanuaryCoInvestmentPayments.Should().Be(36);
+            result.First().JanuaryCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().JanuaryEmployerAdditionalPayments.Should().Be(42);
+            result.First().JanuaryProviderAdditionalPayments.Should().Be(45);
+            result.First().JanuaryApprenticeAdditionalPayments.Should().Be(48);
+            result.First().JanuaryEnglishAndMathsPayments.Should().Be(51);
+            result.First().JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().JanuaryTotalPayments.Should().Be(348);
 
             // February
-            result.First().FebruaryLevyPayments.Should().Be(11);
-            result.First().FebruaryCoInvestmentPayments.Should().Be(12);
-            result.First().FebruaryCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().FebruaryEmployerAdditionalPayments.Should().Be(14);
-            result.First().FebruaryProviderAdditionalPayments.Should().Be(15);
-            result.First().FebruaryApprenticeAdditionalPayments.Should().Be(16);
-            result.First().FebruaryEnglishAndMathsPayments.Should().Be(17);
-            result.First().FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().FebruaryTotalPayments.Should().Be(116);
+            result.First().FebruaryLevyPayments.Should().Be(33);
+            result.First().FebruaryCoInvestmentPayments.Should().Be(36);
+            result.First().FebruaryCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().FebruaryEmployerAdditionalPayments.Should().Be(42);
+            result.First().FebruaryProviderAdditionalPayments.Should().Be(45);
+            result.First().FebruaryApprenticeAdditionalPayments.Should().Be(48);
+            result.First().FebruaryEnglishAndMathsPayments.Should().Be(51);
+            result.First().FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().FebruaryTotalPayments.Should().Be(348);
 
             // March
-            result.First().MarchLevyPayments.Should().Be(11);
-            result.First().MarchCoInvestmentPayments.Should().Be(12);
-            result.First().MarchCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().MarchEmployerAdditionalPayments.Should().Be(14);
-            result.First().MarchProviderAdditionalPayments.Should().Be(15);
-            result.First().MarchApprenticeAdditionalPayments.Should().Be(16);
-            result.First().MarchEnglishAndMathsPayments.Should().Be(17);
-            result.First().MarchLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().MarchTotalPayments.Should().Be(116);
+            result.First().MarchLevyPayments.Should().Be(33);
+            result.First().MarchCoInvestmentPayments.Should().Be(36);
+            result.First().MarchCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().MarchEmployerAdditionalPayments.Should().Be(42);
+            result.First().MarchProviderAdditionalPayments.Should().Be(45);
+            result.First().MarchApprenticeAdditionalPayments.Should().Be(48);
+            result.First().MarchEnglishAndMathsPayments.Should().Be(51);
+            result.First().MarchLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().MarchTotalPayments.Should().Be(348);
 
             // April
-            result.First().AprilLevyPayments.Should().Be(11);
-            result.First().AprilCoInvestmentPayments.Should().Be(12);
-            result.First().AprilCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().AprilEmployerAdditionalPayments.Should().Be(14);
-            result.First().AprilProviderAdditionalPayments.Should().Be(15);
-            result.First().AprilApprenticeAdditionalPayments.Should().Be(16);
-            result.First().AprilEnglishAndMathsPayments.Should().Be(17);
-            result.First().AprilLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().AprilTotalPayments.Should().Be(116);
+            result.First().AprilLevyPayments.Should().Be(33);
+            result.First().AprilCoInvestmentPayments.Should().Be(36);
+            result.First().AprilCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().AprilEmployerAdditionalPayments.Should().Be(42);
+            result.First().AprilProviderAdditionalPayments.Should().Be(45);
+            result.First().AprilApprenticeAdditionalPayments.Should().Be(48);
+            result.First().AprilEnglishAndMathsPayments.Should().Be(51);
+            result.First().AprilLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().AprilTotalPayments.Should().Be(348);
 
             // May
-            result.First().MayLevyPayments.Should().Be(11);
-            result.First().MayCoInvestmentPayments.Should().Be(12);
-            result.First().MayCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().MayEmployerAdditionalPayments.Should().Be(14);
-            result.First().MayProviderAdditionalPayments.Should().Be(15);
-            result.First().MayApprenticeAdditionalPayments.Should().Be(16);
-            result.First().MayEnglishAndMathsPayments.Should().Be(17);
-            result.First().MayLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().MayTotalPayments.Should().Be(116);
+            result.First().MayLevyPayments.Should().Be(33);
+            result.First().MayCoInvestmentPayments.Should().Be(36);
+            result.First().MayCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().MayEmployerAdditionalPayments.Should().Be(42);
+            result.First().MayProviderAdditionalPayments.Should().Be(45);
+            result.First().MayApprenticeAdditionalPayments.Should().Be(48);
+            result.First().MayEnglishAndMathsPayments.Should().Be(51);
+            result.First().MayLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().MayTotalPayments.Should().Be(348);
 
             // June
-            result.First().JuneLevyPayments.Should().Be(11);
-            result.First().JuneCoInvestmentPayments.Should().Be(12);
-            result.First().JuneCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().JuneEmployerAdditionalPayments.Should().Be(14);
-            result.First().JuneProviderAdditionalPayments.Should().Be(15);
-            result.First().JuneApprenticeAdditionalPayments.Should().Be(16);
-            result.First().JuneEnglishAndMathsPayments.Should().Be(17);
-            result.First().JuneLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().JuneTotalPayments.Should().Be(116);
+            result.First().JuneLevyPayments.Should().Be(33);
+            result.First().JuneCoInvestmentPayments.Should().Be(36);
+            result.First().JuneCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().JuneEmployerAdditionalPayments.Should().Be(42);
+            result.First().JuneProviderAdditionalPayments.Should().Be(45);
+            result.First().JuneApprenticeAdditionalPayments.Should().Be(48);
+            result.First().JuneEnglishAndMathsPayments.Should().Be(51);
+            result.First().JuneLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().JuneTotalPayments.Should().Be(348);
 
             // July
-            result.First().JulyLevyPayments.Should().Be(11);
-            result.First().JulyCoInvestmentPayments.Should().Be(12);
-            result.First().JulyCoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().JulyEmployerAdditionalPayments.Should().Be(14);
-            result.First().JulyProviderAdditionalPayments.Should().Be(15);
-            result.First().JulyApprenticeAdditionalPayments.Should().Be(16);
-            result.First().JulyEnglishAndMathsPayments.Should().Be(17);
-            result.First().JulyLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().JulyTotalPayments.Should().Be(116);
+            result.First().JulyLevyPayments.Should().Be(33);
+            result.First().JulyCoInvestmentPayments.Should().Be(36);
+            result.First().JulyCoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().JulyEmployerAdditionalPayments.Should().Be(42);
+            result.First().JulyProviderAdditionalPayments.Should().Be(45);
+            result.First().JulyApprenticeAdditionalPayments.Should().Be(48);
+            result.First().JulyEnglishAndMathsPayments.Should().Be(51);
+            result.First().JulyLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().JulyTotalPayments.Should().Be(348);
 
             // R13
-            result.First().R13LevyPayments.Should().Be(11);
-            result.First().R13CoInvestmentPayments.Should().Be(12);
-            result.First().R13CoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().R13EmployerAdditionalPayments.Should().Be(14);
-            result.First().R13ProviderAdditionalPayments.Should().Be(15);
-            result.First().R13ApprenticeAdditionalPayments.Should().Be(16);
-            result.First().R13EnglishAndMathsPayments.Should().Be(17);
-            result.First().R13LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().R13TotalPayments.Should().Be(116);
+            result.First().R13LevyPayments.Should().Be(33);
+            result.First().R13CoInvestmentPayments.Should().Be(36);
+            result.First().R13CoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().R13EmployerAdditionalPayments.Should().Be(42);
+            result.First().R13ProviderAdditionalPayments.Should().Be(45);
+            result.First().R13ApprenticeAdditionalPayments.Should().Be(48);
+            result.First().R13EnglishAndMathsPayments.Should().Be(51);
+            result.First().R13LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().R13TotalPayments.Should().Be(348);
 
             // R14
-            result.First().R14LevyPayments.Should().Be(11);
-            result.First().R14CoInvestmentPayments.Should().Be(12);
-            result.First().R14CoInvestmentDueFromEmployerPayments.Should().Be(13);
-            result.First().R14EmployerAdditionalPayments.Should().Be(14);
-            result.First().R14ProviderAdditionalPayments.Should().Be(15);
-            result.First().R14ApprenticeAdditionalPayments.Should().Be(16);
-            result.First().R14EnglishAndMathsPayments.Should().Be(17);
-            result.First().R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(18);
-            result.First().R14TotalPayments.Should().Be(116);
+            result.First().R14LevyPayments.Should().Be(33);
+            result.First().R14CoInvestmentPayments.Should().Be(36);
+            result.First().R14CoInvestmentDueFromEmployerPayments.Should().Be(39);
+            result.First().R14EmployerAdditionalPayments.Should().Be(42);
+            result.First().R14ProviderAdditionalPayments.Should().Be(45);
+            result.First().R14ApprenticeAdditionalPayments.Should().Be(48);
+            result.First().R14EnglishAndMathsPayments.Should().Be(51);
+            result.First().R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(54);
+            result.First().R14TotalPayments.Should().Be(348);
 
-            result.First().TotalLevyPayments.Should().Be(154);
-            result.First().TotalCoInvestmentPayments.Should().Be(168);
-            result.First().TotalCoInvestmentDueFromEmployerPayments.Should().Be(182);
-            result.First().TotalEmployerAdditionalPayments.Should().Be(196);
-            result.First().TotalProviderAdditionalPayments.Should().Be(210);
-            result.First().TotalApprenticeAdditionalPayments.Should().Be(224);
-            result.First().TotalEnglishAndMathsPayments.Should().Be(238);
-            result.First().TotalLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(252);
-            result.First().TotalPayments.Should().Be(1624);
+            result.First().TotalLevyPayments.Should().Be(462);
+            result.First().TotalCoInvestmentPayments.Should().Be(504);
+            result.First().TotalCoInvestmentDueFromEmployerPayments.Should().Be(546);
+            result.First().TotalEmployerAdditionalPayments.Should().Be(588);
+            result.First().TotalProviderAdditionalPayments.Should().Be(630);
+            result.First().TotalApprenticeAdditionalPayments.Should().Be(672);
+            result.First().TotalEnglishAndMathsPayments.Should().Be(714);
+            result.First().TotalLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(756);
+            result.First().TotalPayments.Should().Be(4872);
         }
 
         private List<AppsMonthlyPaymentLarsLearningDeliveryInfo> BuildLarsDeliveryInfoModel()

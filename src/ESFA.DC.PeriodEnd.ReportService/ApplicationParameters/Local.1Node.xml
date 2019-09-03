@@ -9,39 +9,21 @@
     <Parameter Name="AzureBlobContainerName" Value="ilr-files" />
     <Parameter Name="JobStatusQueueName" Value="jobstatusqueue" />
     <Parameter Name="ServiceReleaseVersion" Value="1.2.3.4" />
-    <Parameter Name="ReportingSubscriptionName" Value="Reports" />
     <Parameter Name="ServiceBusConnectionString" Value="Endpoint=sb://xx-gg-servicebus-weu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=LNO5Sw9r1uPzuyH6qd9Ig8zfeGem8ETDdkqfCh9nvNg=" />
-    <Parameter Name="JobStatusConnectionString" Value="Endpoint=sb://xx-gg-servicebus-weu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=LNO5Sw9r1uPzuyH6qd9Ig8zfeGem8ETDdkqfCh9nvNg=" />
-    <!-- Topic Names -->
-    <Parameter Name="TopicReports" Value="Reports" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="TaskGenerateAppsMonthlyPaymentReport" />
-    <!-- Connection Strings -->
     <!-- Logger -->
+    <!-- Connection Strings -->
+    <!-- Topic Names -->
     <Parameter Name="LoggerConnectionstring" Value="data source=DEV-DSS;initial catalog=logging;Id=SA;Password=Password1;Connect Timeout=90" />
     <!-- ILR -->
-    <Parameter Name="ILRDataStoreConnectionString" Value="data source=DCOL-DST-SqlServer-WEU.database.windows.net;initial catalog=ILR1920DataStore;User Id=ILR1920DataStore_RO_User;Password=39@tUqBLEcmol1kv82K6jAGsX7P0phMIN5zFSQCyurdTwngJYfOZiVWDaxHRe4b-RjGxmZqvlAS;MultipleActiveResultSets=true;Encrypt=True;" />
+    <Parameter Name="ILR1920DataStoreConnectionString" Value="data source=DCOL-TST-SqlServer-WEU.database.windows.net;initial catalog=ILR1920DataStore;User Id=ILR1920DataStore_RO_User;Password=B42k7A@Hjp1lZodbahuDVtiKnRxrGLy-FEIX6OsSqTUz59w8PWYgQN03ecCMmfJverE-xdtNwIB;MultipleActiveResultSets=true;Encrypt=True;" />
     <Parameter Name="AzureBlobConnectionString" Value="DefaultEndpointsProtocol=https;AccountName=gpesfatest;AccountKey=pYzDxY828keLHs1EOGeQUQG0HNXsEA/eYI3ML/0DD0Awaw7g3TeGzuk5SghgCP5N/gr/9QEvq9uBVsL5QPlZNQ==;EndpointSuffix=core.windows.net" />
     <!-- FCS -->
-    <Parameter Name="FCSConnectionString" Value="Data Source=DCOL-DST-SqlServer-WEU.database.windows.net;Initial Catalog=FCS;User ID=FCS_RO_User;Password= bamfeFwvz7N3KU1i@nj2Yh6BuxXqET8oCgSZ4RVJHlQd9WGp-LkMOcs0ty5rIDPAeMY9th6sJAE;Encrypt=True;" />
+    <Parameter Name="FCSConnectionString" Value="Data Source=DCOL-TST-SqlServer-WEU.database.windows.net;Initial Catalog=FCS;User ID=FCS_RO_User;Password=Pw-9cdVZQmATKbEWp0Ono6ifNYLGj5UruMylhzJtqsx3I2g@akBSR48X71FDeCHvDa5d2yQb3OS;Encrypt=True;" />
     <!-- LARS -->
-    <Parameter Name="LarsConnectionString" Value="data source=DCOL-DST-SqlServer-WEU.database.windows.net;initial catalog=Lars;User Id=Lars_RO_User;Password= yGBrMukjz985evplsTix-6oCDb0KhUEHAfVSLPQ7d3FZYgIRa2@tqcNmXwOJW1n4Rgc7ISjUXPQ;MultipleActiveResultSets=true;Encrypt=True;" />
+    <Parameter Name="LarsConnectionString" Value="data source=DCOL-TST-SqlServer-WEU.database.windows.net;initial catalog=Lars;User Id=Lars_RO_User;Password=qysSYaBPhDb2lHd0EZzkvGtXQ8pJAi3KLeo1Fg6mU9jM7TxcurC5W4NVwOIfnR-@rNMX42EvK76;MultipleActiveResultSets=true;Encrypt=True;" />
     <!-- DASPayments -->
-    <!--<Parameter Name="DASPaymentsConnectionString" Value="data source=(local);initial catalog=DASPayments;user id=sa;password=zyxel123$;Connect Timeout=90" />-->
-    <Parameter Name="DASPaymentsConnectionString" Value="Data Source=DCOL-DST-SqlServer-WEU.database.windows.net;Initial Catalog=DASPayments;User ID=DASPaymentROUser;Password= oA6@ifUcRlVzsNrb945JYC0ja7Opvu2WIqGXe3kMPwB1thmgTx-d8ZEKSQFHynLDY8ltBwzTr7s;Encrypt=True;" />
-    <!--<Parameter Name="OrgConnectionString" Value="data source=(local);initial catalog=Org;Connect Timeout=90" />-->
+    <Parameter Name="DASPaymentsConnectionString" Value="Data Source=DCOL-TST-SqlServer-WEU.database.windows.net;Initial Catalog=DASPayments;User ID=DASPaymentROUser;Password=X2Bk1WjYqCuHsley83Z@JfUcxRPItModLagz6mKE9DvVApSO04F-G5Q7rnihTwNb2Ejc56hOigx;Encrypt=True;" />
     <!-- Org -->
-    <Parameter Name="OrgConnectionString" Value="data source=DCOL-DST-SqlServer-WEU.database.windows.net;initial catalog=Org;User Id=Org_RO_User;Password=zNoMpBQkse4iP79wIY6DnUy-dvSE80KuFqcJZ2tW1aOgx@HmGCVTXhb3AjfLrRl5WGvJdxrPC2@;MultipleActiveResultSets=true;Encrypt=True;" />
-    <!-- DAS Commitments -->
-    <Parameter Name="DasCommitmentsConnectionString" Value="__DasCommitmentConnectionStringRO__" />
-    <!--<Parameter Name="EasConnectionString" Value="data source=(local);initial catalog=Easdb;Connect Timeout=90" />-->
-    <!-- EAS -->
-    <Parameter Name="EasConnectionString" Value="Server=DCOL-DST-SqlServer-WEU.database.windows.net;Database=EAS1920;User Id=EAS1920_RO_User;Password=vqsY9rVoQPN2Mh1kKAwuZFfUx6m@gLHIzSERDtCp5e30ndijTWX-OBcJ8laGyb746OVBd7iTL38;MultipleActiveResultSets=true;Encrypt=True;" />
-    <!-- Postcode -->
-    <Parameter Name="PostcodeConnectionString" Value="metadata=res://*/Postcodes.csdl|res://*/Postcodes.ssdl|res://*/Postcodes.msl;provider=System.Data.SqlClient;provider connection string='data source=DCOL-DST-SqlServer-WEU.database.windows.net;initial catalog=PostCodes;User Id=PostCode_RO_User;Password=yecJmlTfBi@n0Czqo6bsQ23x8DMGZvW4VXKhrIgwRu7HU1dYN95EFLtjkP-apAOSr0Wuien7R2Y;MultipleActiveResultSets=True;App=EntityFramework;Encrypt=True;'" />
-    <!-- Large Employer -->
-    <Parameter Name="LargeEmployerConnectionString" Value="metadata=res://*/LargeEmployer.csdl|res://*/LargeEmployer.ssdl|res://*/LargeEmployer.msl;provider=System.Data.SqlClient;provider connection string='data source=DCOL-DST-SqlServer-WEU.database.windows.net;initial catalog=LargeEmployers;User Id=LargeEmployer_RO_User;Password=8xn1XvaPVrBIzfh@mF2ZesNHKCES6Ty95QLYuUOW-pjgiMDcARqdt7JwlG34bok06arBfgApdim;MultipleActiveResultSets=True;App=EntityFramework;Encrypt=True;'" />
-    <!-- Collections Management -->
-    <Parameter Name="CollectionsManagementConnectionString" Value="data source=(local);initial catalog=JobManagement;Connect Timeout=90" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="" />
   </Parameters>
 </Application>

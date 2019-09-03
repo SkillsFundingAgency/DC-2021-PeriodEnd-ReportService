@@ -5,27 +5,41 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.ReferenceData.FCS.Model;
 using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
-    public sealed class FcsProviderService : IFcsProviderService
+    public sealed class FCSProviderService : IFCSProviderService
     {
         private readonly ILogger _logger;
-        private readonly Func<IFcsContext> _fcsContext;
+        private readonly Func<IFcsContext> _fcsContextFunc;
 
-        public FcsProviderService(ILogger logger, Func<IFcsContext> fcsContext)
+        public FCSProviderService(ILogger logger, Func<IFcsContext> fcsContext)
         {
             _logger = logger;
-            _fcsContext = fcsContext;
+            _fcsContextFunc = fcsContext;
         }
 
-        public async Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(
-            int ukPrn,
-            CancellationToken cancellationToken)
+        public async Task<List<DataExtractFcsInfo>> GetFCSForDataExtractReport(IEnumerable<string> OrganisationIds, CancellationToken cancellationToken)
+        {
+            using (IFcsContext fcsContext = _fcsContextFunc())
+            {
+                return await fcsContext.Contractors
+                    .Include(x => x.Contracts)
+                    .Where(x => OrganisationIds.Contains(x.OrganisationIdentifier, StringComparer.OrdinalIgnoreCase))
+                    .GroupBy(x => new { x.OrganisationIdentifier, x.Ukprn })
+                    .Select(x => new DataExtractFcsInfo
+                    {
+                        OrganisationIdentifier = x.Key.OrganisationIdentifier,
+                        UkPrn = x.Key.Ukprn
+                    }).ToListAsync(cancellationToken);
+            }
+        }
+
+        public async Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo = null;
 
@@ -39,7 +53,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (var fcsContext = _fcsContext())
+                using (var fcsContext = _fcsContextFunc())
                 {
                     // Get a list of fcs contracts by Ukprn (need to link to the Contractor table for the Ukprn)
                     var fcsContracts = await fcsContext.Contracts
@@ -86,40 +100,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             return appsMonthlyPaymentFcsInfo;
         }
-
-        public string GetFcsContractAllocationNumber(
-            int ukPrn,
-            string fundingStreamPeriodCode)
-        {
-            string contractAllocationNumber = string.Empty;
-
-            try
-            {
-                using (var fcsContext = _fcsContext())
-                {
-                    var contract = fcsContext.Contracts
-                        .Include(x => x.Contractor)
-                        .Include(x => x.ContractAllocations)
-                        .Where(x => x.Contractor.Ukprn == ukPrn &&
-                                    x.ContractAllocations.Any(y =>
-                                        y.FundingStreamPeriodCode == fundingStreamPeriodCode))
-                        .FirstOrDefault();
-
-                    if (contract != null && contract.ContractAllocations != null)
-                    {
-                        contractAllocationNumber =
-                            contract.ContractAllocations.FirstOrDefault().ContractAllocationNumber;
-                    }
-                }
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError("Failed to get FCS Contracts", ex);
-            }
-
-            return contractAllocationNumber;
-        }
-
-        //appsMonthlyPaymentFcsInfo.UkPrn = contract.Contractor.Ukprn ?? throw new InvalidDataException(string.Format("Exception in {0}: {1} cannot be null", nameof(this.CreateAppsMonthlyPaymentFcsInfoFromEFModel), nameof(contract.Contractor.Ukprn)));
     }
 }

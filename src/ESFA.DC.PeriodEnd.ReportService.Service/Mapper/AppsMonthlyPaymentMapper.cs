@@ -1,6 +1,6 @@
 ﻿using System.Globalization;
 using CsvHelper.Configuration;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 {

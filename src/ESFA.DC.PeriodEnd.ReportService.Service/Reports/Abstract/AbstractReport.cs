@@ -48,6 +48,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             return $"{reportServiceContext.Ukprn}_{reportServiceContext.JobId}_{ReportFileName} {dateTime:yyyyMMdd-HHmmss}";
         }
 
+        public string GetFilenameForInternalReport(IReportServiceContext reportServiceContext)
+        {
+            DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
+            return $"{reportServiceContext.ReturnPeriod}_{ReportFileName}";
+        }
+
         public string GetZipFilename(IReportServiceContext reportServiceContext)
         {
             DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);

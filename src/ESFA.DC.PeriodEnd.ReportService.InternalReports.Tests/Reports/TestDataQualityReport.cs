@@ -133,8 +133,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                     Name = "AMERSHAM & WYCOMBE COLLEGE",
                     LatestFileName = "10006341/ILR-10006341-1920-20190805-110110-35.XML",
                     LatestReturn = "R12",
-                    NoOfValidLearners = 1023,
-                    NoOfInvalidLearners = 350,
+                    NoOfValidLearners = 2250,
+                    NoOfInvalidLearners = 1050,
                     Status = "Active",
                     SubmittedDateTime = new DateTime(2019, 05, 01)
                 }
@@ -160,10 +160,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             {
                 new DataQualityReturningProviders()
                 {
-                    Collection = "",
-                    Description = "",
-                    EarliestValidSubmission = null,
-                    LastValidSubmission = null,
+                    Collection = "R12",
+                    Description = "Returning Providers per Period",
+                    EarliestValidSubmission = new DateTime(2019, 4, 01),
+                    LastValidSubmission =  new DateTime(2019, 5, 01),
                     NoOfProviders = 15,
                     NoOfValidFilesSubmitted = 3598
                 }

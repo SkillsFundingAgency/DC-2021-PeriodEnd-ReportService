@@ -127,7 +127,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             {
                 var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
                 optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.ILRDataStoreConnectionString,
+                    reportServiceConfiguration.ILR1920DataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
@@ -141,7 +141,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             {
                 var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
                 optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.ILRDataStoreConnectionString,
+                    reportServiceConfiguration.ILR1920DataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
@@ -149,11 +149,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .SingleInstance();
 
             containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.ILRDataStoreValidConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.ILR1920DataStoreConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
             }).As<ILR1920_DataStoreEntitiesValid>()

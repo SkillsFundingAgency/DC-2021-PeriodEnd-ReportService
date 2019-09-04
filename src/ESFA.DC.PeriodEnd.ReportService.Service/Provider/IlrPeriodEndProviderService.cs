@@ -202,7 +202,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .GroupBy(x => new { x.ID })
                 .Select(x => new
                 {
-                    Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID.ToString().PadLeft(2, '0')}",
+                    Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID.ToString():D2)}",
                     Files = x.Select(y => y.Filename).Count(),
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
                     Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
@@ -334,7 +334,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         Ukprn = x.UKPRN,
                         SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
                         LatestFileName = x.Filename,
-                        LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods).ToString().PadLeft(2, '0')}",
+                        LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods).ToString():D2}",
                     })
                     .ToList();
             }

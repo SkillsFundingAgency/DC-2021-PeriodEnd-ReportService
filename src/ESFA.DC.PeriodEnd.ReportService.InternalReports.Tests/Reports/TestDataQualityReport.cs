@@ -41,7 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(returnPeriod);
             reportServiceContextMock.SetupGet(x => x.ILRPeriods).Returns(BuildReturnPeriodsModel());
 
-            var filename = $"R{returnPeriod.ToString().PadLeft(2, '0')}_{reportFileName} {dateTime:yyyyMMdd-HHmmss}";
+            var filename = $"R{returnPeriod.ToString():D2}_{reportFileName} {dateTime:yyyyMMdd-HHmmss}";
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();

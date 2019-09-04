@@ -113,7 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             Workbook workbook = GetWorkbookFromTemplate(TemplateName);
             var worksheet = workbook.Worksheets[DataQualityTabName];
 
-            worksheet.Cells[1, 1].PutValue($"ILR Data Quality Reports - R{periodNumber.ToString().PadLeft(2, '0')}");
+            worksheet.Cells[1, 1].PutValue($"ILR Data Quality Reports - R{periodNumber.ToString():D2}");
             worksheet.Cells[2, 1].PutValue($"Report Run: {_dateTimeProvider.ConvertUtcToUk(_dateTimeProvider.GetNowUtc()).ToString("u")}");
 
             var designer = new WorkbookDesigner

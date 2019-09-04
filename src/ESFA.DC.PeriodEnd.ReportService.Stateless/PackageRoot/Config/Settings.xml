@@ -27,7 +27,6 @@
     <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
     <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
-    <Parameter Name="JobQueueManagerConnectionString" Value="" />
     <Parameter Name="JobStatusConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="OrgConnectionString" Value="" />

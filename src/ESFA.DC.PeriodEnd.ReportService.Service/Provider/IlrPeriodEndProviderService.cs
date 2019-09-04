@@ -3,12 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
-using ESFA.DC.JobQueueManager.Data.Entities;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
@@ -164,7 +164,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,
-            List<ReturnPeriod> returnPeriods,
+            IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken)
         {
             List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
@@ -202,7 +202,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .GroupBy(x => new { x.ID })
                 .Select(x => new
                 {
-                    Collection = $"R{x.Key.ID.ToString().PadLeft(2, '0')}",
+                    Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID.ToString().PadLeft(2, '0')}",
                     Files = x.Select(y => y.Filename).Count(),
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
                     Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
@@ -287,7 +287,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         public async Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
             int collectionYear,
-            List<ReturnPeriod> returnPeriods,
+            IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -350,7 +350,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top10ProvidersWithInvalidLearners;
         }
 
-        private int GetPeriodReturn(DateTime? submittedDateTime, List<ReturnPeriod> returnPeriods)
+        private int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
         {
             return !submittedDateTime.HasValue ? 0 : returnPeriods
                     .SingleOrDefault(x =>
@@ -359,7 +359,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     ?.PeriodNumber ?? 99;
         }
 
-        private int GetLatestPeriodReturn(DateTime? submittedDateTime, List<ReturnPeriod> returnPeriods)
+        private int GetLatestPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
         {
             return !submittedDateTime.HasValue ? 0 : returnPeriods
                     .SingleOrDefault(x =>

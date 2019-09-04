@@ -15,7 +15,6 @@
   <ItemGroup>
     <PackageReference Include="ESFA.DC.FileService.Interface" Version="0.1.18-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.FundingService.FM36.FundingOutput.Model" Version="0.0.217" />
-    <PackageReference Include="ESFA.DC.JobQueueManager.Data" Version="0.2.10-beta0001" />
     <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Moq" Version="4.11.0" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">

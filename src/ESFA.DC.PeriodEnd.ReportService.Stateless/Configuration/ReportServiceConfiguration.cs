@@ -14,8 +14,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
 
         public string ILRDataStoreValidConnectionString { get; set; }
 
-        public string JobQueueManagerConnectionString { get; set; }
-
         public string LarsConnectionString { get; set; }
 
         public string OrgConnectionString { get; set; }

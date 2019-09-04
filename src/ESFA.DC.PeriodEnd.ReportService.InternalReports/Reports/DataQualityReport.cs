@@ -1,26 +1,19 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Aspose.Cells;
-using CsvHelper;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
-using ESFA.DC.JobQueueManager.Data.Entities;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
-using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.ReferenceData.Organisations.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
@@ -33,7 +26,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         private readonly ILogger _logger;
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IOrgProviderService _orgProviderService;
-        private readonly IJobQueueDataProviderService _jobQueueDataProviderService;
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
 
@@ -41,7 +33,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             ILogger logger,
             IDateTimeProvider dateTimeProvider,
             IOrgProviderService orgProviderService,
-            IJobQueueDataProviderService jobQueueDataProviderService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IValueProvider valueProvider)
@@ -51,7 +42,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             _dateTimeProvider = dateTimeProvider;
             _orgProviderService = orgProviderService;
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
-            _jobQueueDataProviderService = jobQueueDataProviderService;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
         }
 
@@ -66,10 +56,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             var externalFileName = GetFilename(reportServiceContext);
 
-            List<ReturnPeriod> returnPeriods = (await _jobQueueDataProviderService.GetReturnPeriodsAsync(reportServiceContext.CollectionYear, cancellationToken)).ToList();
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
                 reportServiceContext.CollectionYear,
-                returnPeriods,
+                reportServiceContext.ILRPeriods,
                 CancellationToken.None);
 
             IEnumerable<RuleViolationsInfo> ruleViolations = await _ilrPeriodEndProviderService.GetTop20RuleViolationsAsync(CancellationToken.None);
@@ -81,7 +70,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = await
                 _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
                 reportServiceContext.CollectionYear,
-                returnPeriods,
+                reportServiceContext.ILRPeriods,
                 CancellationToken.None);
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
 

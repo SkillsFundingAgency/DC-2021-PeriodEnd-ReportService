@@ -16,8 +16,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 
         string ILRDataStoreValidConnectionString { get; set; }
 
-        string JobQueueManagerConnectionString { get; set; }
-
         string LarsConnectionString { get; set; }
 
         string OrgConnectionString { get; set; }

@@ -1,7 +1,7 @@
 ﻿using Aspose.Cells;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
-using ESFA.DC.JobQueueManager.Data.Entities;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
@@ -39,13 +39,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(ukPrn);
             reportServiceContextMock.SetupGet(x => x.CollectionYear).Returns(collectionYear);
             reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(returnPeriod);
+            reportServiceContextMock.SetupGet(x => x.ILRPeriods).Returns(BuildReturnPeriodsModel());
 
-            var filename = $"{returnPeriod.ToString().PadLeft(2, '0')}_{reportFileName} {dateTime:yyyyMMdd-HHmmss}";
+            var filename = $"R{returnPeriod.ToString().PadLeft(2, '0')}_{reportFileName} {dateTime:yyyyMMdd-HHmmss}";
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();
             Mock<IOrgProviderService> orgProviderMock = new Mock<IOrgProviderService>();
-            Mock<IJobQueueDataProviderService> jobQueueDatProviderMock = new Mock<IJobQueueDataProviderService>();
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IStreamableKeyValuePersistenceService> storage = new Mock<IStreamableKeyValuePersistenceService>();
             IValueProvider valueProvider = new ValueProvider();
@@ -72,8 +72,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
             orgProviderMock.Setup(x => x.GetOrgDetailsForUKPRNsAsync(It.IsAny<List<long>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(orgInfo);
-            jobQueueDatProviderMock.Setup(x => x.GetReturnPeriodsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(periodReturnInfo);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(dataQualityReturningInfo);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetTop20RuleViolationsAsync(It.IsAny<CancellationToken>()))
@@ -90,7 +88,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                 logger: logger.Object,
                 dateTimeProvider: dateTimeProviderMock.Object,
                 orgProviderService : orgProviderMock.Object,
-                jobQueueDataProviderService: jobQueueDatProviderMock.Object,
                 ilrPeriodEndProviderService: ilrPeriodEndProviderServiceMock.Object,
                 streamableKeyValuePersistenceService: storage.Object,
                 valueProvider: valueProvider);

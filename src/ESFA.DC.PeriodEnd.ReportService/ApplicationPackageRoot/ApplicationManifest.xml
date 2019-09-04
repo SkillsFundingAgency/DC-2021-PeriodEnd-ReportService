@@ -31,8 +31,6 @@
     <Parameter Name="DasCommitmentsConnectionString" DefaultValue="" />
     <!-- ILR Validation Errors -->
     <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
-    <!-- Job Queue Manager -->
-    <Parameter Name="JobQueueManagerConnectionString" DefaultValue="" />
     <!-- Lars -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
     <!-- Organsiation -->
@@ -69,7 +67,6 @@
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
             <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
-            <Parameter Name="JobQueueManagerConnectionString" Value="[JobQueueManagerConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">

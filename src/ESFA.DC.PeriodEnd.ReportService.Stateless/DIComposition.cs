@@ -22,7 +22,6 @@ using ESFA.DC.JobContextManager;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
-using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Services;
@@ -240,20 +239,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<SummarisationContext>>()
                 .SingleInstance();
 
-            // JobQueueManager
-            containerBuilder.RegisterType<JobQueueDataContext>().As<IJobQueueDataContext>().ExternallyOwned();
-            containerBuilder.Register(context =>
-            {
-                var optionsBuilder = new DbContextOptionsBuilder<JobQueueDataContext>();
-                optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.JobQueueManagerConnectionString,
-                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
-
-                return optionsBuilder.Options;
-            })
-                .As<DbContextOptions<JobQueueDataContext>>()
-                .SingleInstance();
-
             // Organisation
             containerBuilder.RegisterType<OrganisationsContext>().As<IOrganisationsContext>().ExternallyOwned();
             containerBuilder.Register(context =>
@@ -321,9 +306,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<PeriodEndQueryService1920>().As<IPeriodEndQueryService1920>()
-                .InstancePerLifetimeScope();
-
-            containerBuilder.RegisterType<JobQueueDataProviderService>().As<IJobQueueDataProviderService>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<OrgProviderService>().As<IOrgProviderService>()

@@ -67,6 +67,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             return string.Equals(reportTaskName, ReportTaskName, StringComparison.OrdinalIgnoreCase);
         }
 
+        public virtual void ApplyConfiguration(CsvWriter csvWriter)
+        {
+        }
+
         protected Stream WriteModelsToCsv<TMapper, TModel>(Stream stream, IEnumerable<TModel> models)
             where TMapper : ClassMap
             where TModel : class
@@ -87,6 +91,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             where TModel : class
         {
             csvWriter.Configuration.RegisterClassMap<TMapper>();
+
+            ApplyConfiguration(csvWriter);
 
             csvWriter.WriteHeader<TModel>();
             csvWriter.NextRecord();

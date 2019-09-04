@@ -41,12 +41,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.LearningDeliveryAimType).Index(i++).Name("Aim type");
             Map(m => m.LearningDeliverySoftwareSupplierAimIdentifier).Index(i++).Name("Software supplier aim identifier");
 
-            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringA).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (A)");
-            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringB).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (B)");
-            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringC).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (C)");
-            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringD).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (D)");
-            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringE).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (E)");
-            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringF).Index(i++).Name("Learning delivery funding and monitoring type – learning delivery monitoring (F)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringA).Index(i++).Name("Learning delivery funding and monitoring type - learning delivery monitoring (A)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringB).Index(i++).Name("Learning delivery funding and monitoring type - learning delivery monitoring (B)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringC).Index(i++).Name("Learning delivery funding and monitoring type - learning delivery monitoring (C)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringD).Index(i++).Name("Learning delivery funding and monitoring type - learning delivery monitoring (D)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringE).Index(i++).Name("Learning delivery funding and monitoring type - learning delivery monitoring (E)");
+            Map(m => m.LearningDeliveryFamTypeLearningDeliveryMonitoringF).Index(i++).Name("Learning delivery funding and monitoring type - learning delivery monitoring (F)");
 
             Map(m => m.ProviderSpecifiedDeliveryMonitoringA).Index(i++).Name("Provider specified delivery monitoring (A)");
             Map(m => m.ProviderSpecifiedDeliveryMonitoringB).Index(i++).Name("Provider specified delivery monitoring (B)");
@@ -67,7 +67,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 
             Map(m => m.PaymentFundingLineType).Index(i++).Name("Funding line type");
 
-            Map(m => m.PaymentApprenticeshipContractType).Index(i++).Name("Learning delivery funding and monitoring type – apprenticeship contract type");
+            Map(m => m.PaymentApprenticeshipContractType).Index(i++).Name("Learning delivery funding and monitoring type - apprenticeship contract type");
 
             Map(m => m.LearnerEmploymentStatusEmployerId).Index(i++).Name("Employer identifier on employment status date");
 
@@ -77,8 +77,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.LearnerEmploymentStatusDate).Index(i++).Name("Employment status date");
 
             Map(m => m.AugustLevyPayments).Index(i++).Name("August (R01) levy payments");
-            Map(m => m.AugustCoInvestmentPayments).Index(i++).Name("August (R01) co-investment payments");
-            Map(m => m.AugustCoInvestmentDueFromEmployerPayments).Index(i++).Name("August (R01) co-investment (below band upper limit) due from employer");
+            Map(m => m.AugustCoInvestmentPayments).Index(i++).Name("August (R01) co-nvestment payments");
+            Map(m => m.AugustCoInvestmentDueFromEmployerPayments).Index(i++).Name("August (R01) co-nvestment (below band upper limit) due from employer");
             Map(m => m.AugustEmployerAdditionalPayments).Index(i++).Name("August (R01) employer additional payments");
             Map(m => m.AugustProviderAdditionalPayments).Index(i++).Name("August (R01) provider additional payments");
             Map(m => m.AugustApprenticeAdditionalPayments).Index(i++).Name("August (R01) apprentice additional payments");

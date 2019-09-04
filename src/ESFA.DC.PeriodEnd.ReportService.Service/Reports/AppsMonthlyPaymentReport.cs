@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -55,6 +56,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         public override string ReportFileName => "Apps Monthly Payment Report";
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsMonthlyPaymentReport;
+
+        public override void ApplyConfiguration(CsvWriter csvWriter)
+        {
+            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats =
+                new[] { "#############.##" };
+        }
 
         public override async Task GenerateReport(
             IReportServiceContext reportServiceContext,

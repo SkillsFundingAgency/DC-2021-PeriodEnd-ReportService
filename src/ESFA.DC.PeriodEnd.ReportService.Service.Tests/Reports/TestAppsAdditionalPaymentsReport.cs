@@ -48,12 +48,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
-            string filename = $"10036143_1_Apps Additional Payments Report {dateTime:yyyyMMdd-HHmmss}";
+            string filename = $"R01_10036143_Apps Additional Payments Report {dateTime:yyyyMMdd-HHmmss}";
             int ukPrn = 10036143;
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);
             reportServiceContextMock.SetupGet(x => x.SubmissionDateTimeUtc).Returns(DateTime.UtcNow);
             reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(ukPrn);
+            reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(1);
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();

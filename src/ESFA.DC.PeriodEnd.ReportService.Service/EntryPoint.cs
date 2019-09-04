@@ -36,14 +36,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
         {
             _logger.LogInfo("Reporting callback invoked");
 
-            var reportZipFileKey = $"{_reportServiceContext.Ukprn}_{_reportServiceContext.JobId}_Reports.zip";
+            var reportZipFileKey = $"R{_reportServiceContext.ReturnPeriod:00}_{_reportServiceContext.Ukprn}_Reports.zip";
             cancellationToken.ThrowIfCancellationRequested();
 
             MemoryStream memoryStream = new MemoryStream();
             var zipFileExists = await _streamableKeyValuePersistenceService.ContainsAsync(reportZipFileKey, cancellationToken);
             if (zipFileExists)
             {
-                await _streamableKeyValuePersistenceService.GetAsync(reportZipFileKey, memoryStream, cancellationToken);
+                await _streamableKeyValuePersistenceService.RemoveAsync(reportZipFileKey, cancellationToken);
             }
 
             using (memoryStream)

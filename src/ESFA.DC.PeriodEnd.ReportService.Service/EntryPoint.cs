@@ -2,12 +2,14 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service
 {
@@ -43,7 +45,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
             var zipFileExists = await _streamableKeyValuePersistenceService.ContainsAsync(reportZipFileKey, cancellationToken);
             if (zipFileExists)
             {
-                await _streamableKeyValuePersistenceService.RemoveAsync(reportZipFileKey, cancellationToken);
+                if (_reportServiceContext.Tasks.Any(x => x.CaseInsensitiveEquals(ReportTaskNameConstants.TaskClearPeriodEndDASZip)))
+                {
+                    await _streamableKeyValuePersistenceService.RemoveAsync(reportZipFileKey, cancellationToken);
+                }
+                else
+                {
+                    await _streamableKeyValuePersistenceService.GetAsync(reportZipFileKey, memoryStream, cancellationToken);
+                }
             }
 
             using (memoryStream)

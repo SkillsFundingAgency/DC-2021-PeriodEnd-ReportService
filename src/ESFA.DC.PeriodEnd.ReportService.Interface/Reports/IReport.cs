@@ -1,7 +1,6 @@
 ﻿using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.PeriodEnd.ReportService.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 {
@@ -12,6 +11,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
         string ReportFileName { get; }
 
         string GetFilename(IReportServiceContext reportServiceContext);
+
+        string GetFilenameForInternalReport(IReportServiceContext reportServiceContext);
 
         string GetZipFilename(IReportServiceContext reportServiceContext);
 

@@ -3,12 +3,24 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
-    <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
-    <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionStringServiceFabric__" />
-    <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
+    <Parameter Name="ILRDataStoreConnectionString" Value="__ILR1920DataStoreConnectionString__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
-    <Parameter Name="JobStatusConnectionString" Value="__JobStatusConnectionString__" />
-    <!-- Topic Names -->
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="__TopicReports_TaskGenerateAppsMonthlyPaymentReport__" />
+    <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionString__" />
+    <Parameter Name="AuditQueueName" Value="__AuditQueueName__" />
+    <Parameter Name="TopicName" Value="__PE1920ReportingTopicName__" />
+    <Parameter Name="LoggerConnectionstring" Value="__LoggerConnectionstring__" />
+    <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
+    <Parameter Name="JobStatusQueueName" Value="__JobStatusQueueName__" />
+    <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
+    <!-- Subscription Name -->
+    <Parameter Name="SubscriptionName" Value="__PE1920ReportingSubscriptionName__" />
+    <!-- DASPayments -->
+    <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
+    <!-- Lars -->
+    <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
+    <!-- Summarised Actuals -->
+    <Parameter Name="SummarisedActualsConnectionString" Value="__SummarisedActualsConnectionString__" />
+    <!-- OrgConnectionString -->
+    <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
   </Parameters>
 </Application>

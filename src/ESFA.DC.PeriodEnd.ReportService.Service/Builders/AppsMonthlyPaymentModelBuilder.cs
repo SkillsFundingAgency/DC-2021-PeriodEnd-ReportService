@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders

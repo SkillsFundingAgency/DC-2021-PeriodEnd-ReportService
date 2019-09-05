@@ -12,6 +12,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
@@ -34,17 +35,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
             int ukPrn = 10036143;
-            string filename = $"10036143_1_Apps Monthly Payment Report {dateTime:yyyyMMdd-HHmmss}";
+            string filename = $"R01_10036143_Apps Monthly Payment Report {dateTime:yyyyMMdd-HHmmss}";
 
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);
             reportServiceContextMock.SetupGet(x => x.SubmissionDateTimeUtc).Returns(DateTime.UtcNow);
             reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(10036143);
+            reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(1);
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();
             Mock<IStreamableKeyValuePersistenceService> storage = new Mock<IStreamableKeyValuePersistenceService>();
-            Mock<IIlrPeriodEndProviderService> IlrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
+            Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
@@ -56,7 +58,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var appsMonthlyPaymentDasInfo = BuildDasPaymentsModel(ukPrn);
             var larsDeliveryInfoModel = BuildLarsDeliveryInfoModel();
 
-            IlrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentIlrInfo);
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentIlrInfo);
             fm36ProviderServiceMock.Setup(x => x.GetFM36DataForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentRulebaseInfo);
             dasPaymentProviderMock.Setup(x => x.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasInfo);
             larsProviderServiceMock.Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(It.IsAny<string[]>(), It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
@@ -68,7 +70,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var report = new AppsMonthlyPaymentReport(
                 logger.Object,
                 storage.Object,
-                IlrPeriodEndProviderServiceMock.Object,
+                ilrPeriodEndProviderServiceMock.Object,
                 fm36ProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
                 larsProviderServiceMock.Object,

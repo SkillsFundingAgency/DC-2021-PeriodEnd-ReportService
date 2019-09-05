@@ -1,21 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.JobContext.Interface;
-using ESFA.DC.JobContextManager.Model;
+using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
+using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 {
     public sealed class ReportServiceContext : IReportServiceContext
     {
-        private readonly JobContextMessage _jobContextMessage;
+        private readonly IJobContextMessage _jobContextMessage;
+        private readonly ISerializationService _serializationService;
 
-        public ReportServiceContext(JobContextMessage jobContextMessage)
+        public ReportServiceContext(IJobContextMessage jobContextMessage, ISerializationService serializationService)
         {
             _jobContextMessage = jobContextMessage;
+            _serializationService = serializationService;
         }
 
         public string Filename => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString();
@@ -26,12 +29,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 
         public IEnumerable<string> Tasks => _jobContextMessage.Topics[_jobContextMessage.TopicPointer].Tasks.SelectMany(x => x.Tasks);
 
-        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs["ReturnPeriod"].ToString());
+        public int CollectionYear => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.CollectionYear].ToString());
+
+        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.ReturnPeriod].ToString());
 
         public long JobId => _jobContextMessage.JobId;
 
         public DateTime SubmissionDateTimeUtc => _jobContextMessage.SubmissionDateTimeUtc;
 
-        public string CollectionName => _jobContextMessage.KeyValuePairs["CollectionName"].ToString();
+        public string CollectionName => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionName].ToString();
+
+        public string CollectionReturnCodeDC => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeDC].ToString();
+
+        public string CollectionReturnCodeESF => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeESF].ToString();
+
+        public string CollectionReturnCodeApp => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeApp].ToString();
+
+        public IEnumerable<ReturnPeriod> ILRPeriods => (IEnumerable<ReturnPeriod>)_jobContextMessage.KeyValuePairs[MessageKeys.ILRPeriods];
     }
 }

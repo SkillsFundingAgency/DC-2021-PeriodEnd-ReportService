@@ -13,7 +13,6 @@
     <Parameter Name="AuditQueueName" Value="" />
     <Parameter Name="AuditMaxConcurrentCalls" Value="" />
     <Parameter Name="LoggerConnectionString" Value="" />
-    <Parameter Name="ReportingSubscriptionName" Value="" />
   </Section>
 
   <Section  Name="AzureStorageSection">
@@ -22,18 +21,14 @@
   </Section>
 
   <Section Name="ReportServiceConfiguration">
-    <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
-    <Parameter Name="OrgConnectionString" Value=""/>
-    <Parameter Name="DasCommitmentsConnectionString" Value="" />
-    <Parameter Name="EasConnectionString" Value="asdf" />
-    <Parameter Name="PostcodeConnectionString" Value="" />
-    <Parameter Name="LargeEmployerConnectionString" Value="" />
-    <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
+    <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
-    <Parameter Name="JobStatusConnectionString" Value="" />
+    <Parameter Name="LarsConnectionString" Value="" />
+    <Parameter Name="OrgConnectionString" Value="" />
+    <Parameter Name="SummarisedActualsConnectionString" Value="" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">
@@ -42,10 +37,5 @@
 
   <Section Name="VersionSection">
     <Parameter Name="ServiceReleaseVersion" Value="" />
-  </Section>
-
-  <Section Name="TopicAndTaskSection">
-    <Parameter Name="TopicReports" Value="" />
-    <Parameter Name="TopicReports_TaskGenerateAppsMonthlyPaymentReport" Value="" />
   </Section>
 </Settings>

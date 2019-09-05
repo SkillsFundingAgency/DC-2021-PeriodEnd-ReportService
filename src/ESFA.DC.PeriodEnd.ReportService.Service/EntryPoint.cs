@@ -2,12 +2,14 @@
 using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service
 {
@@ -16,38 +18,48 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
         private readonly ILogger _logger;
 
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
+        private readonly IReportServiceContext _reportServiceContext;
 
         private readonly IList<IReport> _reports;
 
         public EntryPoint(
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
+            IReportServiceContext reportServiceContext,
             IList<IReport> reports)
         {
             _logger = logger;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
+            _reportServiceContext = reportServiceContext;
             _reports = reports;
         }
 
-        public async Task<bool> Callback(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task<bool> Callback(CancellationToken cancellationToken)
         {
             _logger.LogInfo("Reporting callback invoked");
 
-            var reportZipFileKey = $"{reportServiceContext.Ukprn}_{reportServiceContext.JobId}_Reports.zip";
+            var reportZipFileKey = $"R{_reportServiceContext.ReturnPeriod:00}_{_reportServiceContext.Ukprn}_Reports.zip";
             cancellationToken.ThrowIfCancellationRequested();
 
             MemoryStream memoryStream = new MemoryStream();
             var zipFileExists = await _streamableKeyValuePersistenceService.ContainsAsync(reportZipFileKey, cancellationToken);
             if (zipFileExists)
             {
-                await _streamableKeyValuePersistenceService.GetAsync(reportZipFileKey, memoryStream, cancellationToken);
+                if (_reportServiceContext.Tasks.Any(x => x.CaseInsensitiveEquals(ReportTaskNameConstants.TaskClearPeriodEndDASZip)))
+                {
+                    await _streamableKeyValuePersistenceService.RemoveAsync(reportZipFileKey, cancellationToken);
+                }
+                else
+                {
+                    await _streamableKeyValuePersistenceService.GetAsync(reportZipFileKey, memoryStream, cancellationToken);
+                }
             }
 
             using (memoryStream)
             {
                 using (var archive = new ZipArchive(memoryStream, ZipArchiveMode.Update, true))
                 {
-                    await ExecuteTasks(reportServiceContext, archive, cancellationToken);
+                    await ExecuteTasks(_reportServiceContext, archive, cancellationToken);
                 }
 
                 await _streamableKeyValuePersistenceService.SaveAsync(reportZipFileKey, memoryStream, cancellationToken);

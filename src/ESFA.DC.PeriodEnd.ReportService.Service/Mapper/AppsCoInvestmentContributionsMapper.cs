@@ -20,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.EmployerIdentifierAtStartOfLearning).Index(i++).Name("Employer identifier (ERN) at start of learning");
             Map(m => m.EmployerNameFromApprenticeshipService).Index(i++).Name("Employer name from apprenticeship service");
             Map(m => m.EmployerCoInvestmentPercentage).Index(i++).Name("Employer co-investment percentage");
-            Map(m => m.EmployerProgrammeStartDate).Index(i++).Name("Applicable programme start date");
+            Map(m => m.LearningStartDate).Index(i++).Name("Applicable programme start date");
             Map(m => m.TotalPMRPreviousFundingYears).Index(i++).Name("Total employer contribution collected (PMR) in previous funding years");
             Map(m => m.TotalCoInvestmentDueFromEmployerInPreviousFundingYears).Index(i++).Name("Total co-investment (below band upper limit) due from employer in previous funding years");
             Map(m => m.TotalPMRThisFundingYear).Index(i++).Name("Total employer contribution collected (PMR) in this funding year");

@@ -349,24 +349,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top10ProvidersWithInvalidLearners;
         }
 
-        private int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
-        {
-            return !submittedDateTime.HasValue ? 0 : returnPeriods
-                    .SingleOrDefault(x =>
-                        x.StartDateTimeUtc < submittedDateTime &&
-                        x.EndDateTimeUtc > submittedDateTime)
-                    ?.PeriodNumber ?? 99;
-        }
-
-        private int GetLatestPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
-        {
-            return !submittedDateTime.HasValue ? 0 : returnPeriods
-                    .SingleOrDefault(x =>
-                    x.StartDateTimeUtc >= submittedDateTime
-                    && x.EndDateTimeUtc <= submittedDateTime)
-                        ?.PeriodNumber ?? 0;
-        }
-
         public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             var appsCoInvestmentIlrInfo = new AppsCoInvestmentILRInfo
@@ -437,6 +419,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsCoInvestmentIlrInfo;
+        }
+
+        private int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
+        {
+            return !submittedDateTime.HasValue ? 0 : returnPeriods
+                    .SingleOrDefault(x =>
+                        x.StartDateTimeUtc < submittedDateTime &&
+                        x.EndDateTimeUtc > submittedDateTime)
+                    ?.PeriodNumber ?? 99;
+        }
+
+        private int GetLatestPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
+        {
+            return !submittedDateTime.HasValue ? 0 : returnPeriods
+                    .SingleOrDefault(x =>
+                    x.StartDateTimeUtc >= submittedDateTime
+                    && x.EndDateTimeUtc <= submittedDateTime)
+                        ?.PeriodNumber ?? 0;
         }
     }
 }

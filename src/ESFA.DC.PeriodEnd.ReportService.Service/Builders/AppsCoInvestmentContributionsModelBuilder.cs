@@ -1,11 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
@@ -97,11 +95,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                                   paymentGroup.Key.LearningAimPathwayCode);
 
                         var prevYearAppFinData = learningDeliveryInfo?.AppFinRecords
-                            .Where(x => x.AFinDate < Constants.Constants.BeginningOfYear &&
+                            .Where(x => x.AFinDate < Generics.BeginningOfYear &&
                                         string.Equals(x.AFinType, "PMR", StringComparison.OrdinalIgnoreCase)).ToList();
 
                         var currentYearAppFinData = learningDeliveryInfo?.AppFinRecords
-                            .Where(x => x.AFinDate >= Constants.Constants.BeginningOfYear && x.AFinDate <= Constants.Constants.EndOfYear &&
+                            .Where(x => x.AFinDate >= Generics.BeginningOfYear && x.AFinDate <= Generics.EndOfYear &&
                                         string.Equals(x.AFinType, "PMR", StringComparison.OrdinalIgnoreCase)).ToList();
 
                         var aecApprenticeshipPriceEpisode =
@@ -110,37 +108,74 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     x.UKPRN == paymentGroup.Key.UkPrn &&
                                     x.LearnRefNumber == paymentGroup.Key.LearnerReferenceNumber);
 
-                        var aecLearningDelivery = appsCoInvestmentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x => x.LearnRefNumber == )
+                        var aecLearningDelivery =
+                            appsCoInvestmentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x =>
+                                x.LearnRefNumber == paymentGroup.Key.LearnerReferenceNumber);
 
-                        var model = new AppsCoInvestmentContributionsModel()
+                        if (prevYearAppFinData != null)
                         {
-                            LearnRefNumber = paymentGroup.Key.LearnerReferenceNumber,
-                            UniqueLearnerNumber = paymentGroup.Key.LearnerUln,
-                            LearningStartDate = paymentGroup.Key.LearningStartDate?.ToString("dd/MM/yyyy"),
-                            ProgType = paymentGroup.Key.LearningAimProgrammeType,
-                            StandardCode = paymentGroup.Key.LearningAimStandardCode,
-                            FrameworkCode = paymentGroup.Key.LearningAimFrameworkCode,
-                            ApprenticeshipPathway = paymentGroup.Key.LearningAimPathwayCode,
-                            SoftwareSupplierAimIdentifier = learningDeliveryInfo?.SWSupAimId,
-                            LearningDeliveryFAMTypeApprenticeshipContractType = paymentGroup.Key.ContractType,
-                            EmployerIdentifierAtStartOfLearning = learner.LearnerEmploymentStatus.Where(x => x.DateEmpStatApp <= paymentGroup.Key.LearningStartDate).OrderByDescending(x => x.DateEmpStatApp).FirstOrDefault()?.EmpId,
-                            EmployerNameFromApprenticeshipService = GetEmployerName(paymentGroup.Key),
-                            EmployerCoInvestmentPercentage = GetCoInvestmentPercentage(),
-                            ApplicableProgrammeStartDate = aecApprenticeshipPriceEpisode,
-                            TotalPMRPreviousFundingYears = prevYearAppFinData.Where(x => x.AFinCode == 1 || x.AFinCode == 2).Sum(x => x.AFinAmount) -
-                                                           prevYearAppFinData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount),
-                            TotalCoInvestmentDueFromEmployerInPreviousFundingYears = 0,
-                            TotalCoInvestmentDueFromEmployerThisFundingYear = 0,
-                            PercentageOfCoInvestmentCollected = 0,
-                            LDM356Or361 = learningDeliveryInfo.LearningDeliveryFAMs.Any(x => (x.LearnDelFAMType == "LDM" && x.LearnDelFAMCode == "356") ||
-                                                                                             (x.LearnDelFAMType == "LDM" && x.LearnDelFAMCode == "361")) ? "Yes" : "No",
-                            CompletionEarningThisFundingYear = 
-                        };
+                            var model = new AppsCoInvestmentContributionsModel()
+                            {
+                                LearnRefNumber = paymentGroup.Key.LearnerReferenceNumber,
+                                UniqueLearnerNumber = paymentGroup.Key.LearnerUln,
+                                LearningStartDate = paymentGroup.Key.LearningStartDate?.ToString("dd/MM/yyyy"),
+                                ProgType = paymentGroup.Key.LearningAimProgrammeType,
+                                StandardCode = paymentGroup.Key.LearningAimStandardCode,
+                                FrameworkCode = paymentGroup.Key.LearningAimFrameworkCode,
+                                ApprenticeshipPathway = paymentGroup.Key.LearningAimPathwayCode,
+                                SoftwareSupplierAimIdentifier = learningDeliveryInfo?.SWSupAimId,
+                                LearningDeliveryFAMTypeApprenticeshipContractType = paymentGroup.Key.ContractType,
+                                EmployerIdentifierAtStartOfLearning = learner.LearnerEmploymentStatus
+                                    .Where(x => x.DateEmpStatApp <= paymentGroup.Key.LearningStartDate)
+                                    .OrderByDescending(x => x.DateEmpStatApp).FirstOrDefault()?.EmpId,
+                                EmployerNameFromApprenticeshipService = GetEmployerName(), // todo
+                                EmployerCoInvestmentPercentage = GetCoInvestmentPercentage(), // todo
+                                ApplicableProgrammeStartDate = DateTime.Now, // todo
+                                TotalPMRPreviousFundingYears =
+                                    prevYearAppFinData.Where(x => x.AFinCode == 1 || x.AFinCode == 2)
+                                        .Sum(x => x.AFinAmount) -
+                                    prevYearAppFinData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount),
+                                TotalCoInvestmentDueFromEmployerInPreviousFundingYears = 0, // todo
+                                TotalCoInvestmentDueFromEmployerThisFundingYear = 0, // todo
+                                PercentageOfCoInvestmentCollected = 0, // todo
+                                LDM356Or361 = learningDeliveryInfo.LearningDeliveryFAMs.Any(x =>
+                                    (x.LearnDelFAMType == "LDM" && x.LearnDelFAMCode == "356") ||
+                                    (x.LearnDelFAMType == "LDM" && x.LearnDelFAMCode == "361"))
+                                    ? "Yes"
+                                    : "No",
+                                CompletionEarningThisFundingYear = 0, // todo
+                                CompletionPaymentsThisFundingYear = 0, // todo
+                                CoInvestmentDueFromEmployerForAugust = 0, // todo
+                                CoInvestmentDueFromEmployerForSeptember = 0, // todo
+                                CoInvestmentDueFromEmployerForOctober = 0, // todo
+                                CoInvestmentDueFromEmployerForNovember = 0, // todo
+                                CoInvestmentDueFromEmployerForDecember = 0, // todo
+                                CoInvestmentDueFromEmployerForJanuary = 0, // todo
+                                CoInvestmentDueFromEmployerForFebruary = 0, // todo
+                                CoInvestmentDueFromEmployerForMarch = 0, // todo
+                                CoInvestmentDueFromEmployerForApril = 0, // todo
+                                CoInvestmentDueFromEmployerForMay = 0, // todo
+                                CoInvestmentDueFromEmployerForJune = 0, // todo
+                                CoInvestmentDueFromEmployerForJuly = 0, // todo
+                                CoInvestmentDueFromEmployerForR13 = 0, // todo
+                                CoInvestmentDueFromEmployerForR14 = 0 // todo
+                            };
+                        }
                     }
                 }
             }
 
             return appsCoInvestmentContributionsModels;
+        }
+
+        private string GetEmployerName()
+        {
+            return string.Empty;
+        }
+
+        private decimal GetCoInvestmentPercentage()
+        {
+            return 0;
         }
     }
 }

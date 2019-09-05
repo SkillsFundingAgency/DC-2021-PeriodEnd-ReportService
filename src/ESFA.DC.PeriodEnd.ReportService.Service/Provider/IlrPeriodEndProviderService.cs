@@ -177,10 +177,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToListAsync(cancellationToken);
             }
 
-            if (fd.Count > 0)
-            {
-                fd.ForEach(f => f.ID = GetPeriodReturn(f.SubmittedTime, returnPeriods));
-            }
+            fd.ForEach(f => f.ID = GetPeriodReturn(f.SubmittedTime, returnPeriods));
 
             var fds = fd.GroupBy(x => x.UKPRN)
                 .Select(x => new

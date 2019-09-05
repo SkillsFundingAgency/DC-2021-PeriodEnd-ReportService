@@ -323,9 +323,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             List<Top10ProvidersWithInvalidLearners> top10ProvidersWithInvalidLearners;
             using (var ilrContext = _ilrContextFactory())
             {
-                top10ProvidersWithInvalidLearners = (await ilrContext.FileDetails
-                    .Join(top10ProvidersWithInvalidLearnersInvalid, f => f.UKPRN, t => t.Ukprn, (file, top) => file)
-                    .ToListAsync(cancellationToken))
+                var fileDetails = await (from p in ilrContext.FileDetails
+                                         join ukpr in top10ProvidersWithInvalidLearnersInvalid on p.UKPRN equals ukpr.Ukprn into pukpr
+                                        group p by p.UKPRN into op
+                                        select new
+                                        {
+                                            UKPRN = op.Key,
+                                            ID = op.Max(x => x.ID)
+                                        }).ToListAsync(cancellationToken);
+
+                top10ProvidersWithInvalidLearners = await ilrContext.FileDetails
+                    .Join(fileDetails, fd => fd.ID, f => f.ID, (fDetail, fLatest) => fDetail)
                     .Select(x => new Top10ProvidersWithInvalidLearners
                     {
                         Ukprn = x.UKPRN,
@@ -333,7 +341,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         LatestFileName = x.Filename,
                         LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods).ToString():D2}",
                     })
-                    .ToList();
+                    .ToListAsync();
             }
 
             foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in top10ProvidersWithInvalidLearners)

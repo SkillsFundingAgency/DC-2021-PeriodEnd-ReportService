@@ -11,6 +11,8 @@ using ESFA.DC.FileService.Config.Interface;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.Invalid;
+using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
@@ -45,6 +47,8 @@ using ESFA.DC.ReferenceData.FCS.Model;
 using ESFA.DC.ReferenceData.FCS.Model.Interface;
 using ESFA.DC.ReferenceData.LARS.Model;
 using ESFA.DC.ReferenceData.LARS.Model.Interface;
+using ESFA.DC.ReferenceData.Organisations.Model;
+using ESFA.DC.ReferenceData.Organisations.Model.Interface;
 using ESFA.DC.ServiceFabric.Common.Modules;
 using ESFA.DC.Summarisation.Model;
 using ESFA.DC.Summarisation.Model.Interface;
@@ -123,7 +127,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             {
                 var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
                 optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.ILR1920DataStoreConnectionString,
+                    reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
@@ -137,7 +141,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             {
                 var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
                 optionsBuilder.UseSqlServer(
-                    reportServiceConfiguration.ILR1920DataStoreConnectionString,
+                    reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
@@ -148,12 +152,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 {
                     var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
                     optionsBuilder.UseSqlServer(
-                        reportServiceConfiguration.ILR1920DataStoreConnectionString,
+                        reportServiceConfiguration.ILRDataStoreConnectionString,
                         options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
+                    return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
             }).As<ILR1920_DataStoreEntitiesValid>()
                 .ExternallyOwned();
+
+            // ILR 1920 DataStore InValid Learners
+            containerBuilder.RegisterType<ILR1920_DataStoreEntitiesInvalid>().As<IIlr1920InvalidContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesInvalid>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.ILRDataStoreConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<ILR1920_DataStoreEntitiesInvalid>>()
+                .SingleInstance();
 
             // DAS Payments
             containerBuilder.RegisterType<DASPaymentsContext>().As<IDASPaymentsContext>();
@@ -220,6 +238,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             })
                 .As<DbContextOptions<SummarisationContext>>()
                 .SingleInstance();
+
+            // Organisation
+            containerBuilder.RegisterType<OrganisationsContext>().As<IOrganisationsContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<OrganisationsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.OrgConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<OrganisationsContext>>()
+                .SingleInstance();
         }
 
         private static void RegisterReports(ContainerBuilder containerBuilder)
@@ -238,6 +270,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<PeriodEndMetricsReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<DataExtractReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<DataQualityReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)
@@ -272,6 +306,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<PeriodEndQueryService1920>().As<IPeriodEndQueryService1920>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<OrgProviderService>().As<IOrgProviderService>()
                 .InstancePerLifetimeScope();
         }
 

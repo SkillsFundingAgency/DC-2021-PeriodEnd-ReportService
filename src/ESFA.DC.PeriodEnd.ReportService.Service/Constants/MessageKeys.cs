@@ -15,5 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string CollectionReturnCodeESF = "CollectionReturnCodeESF";
 
         public const string CollectionReturnCodeApp = "CollectionReturnCodeApp";
+
+        public const string ILRPeriods = "ILRPeriods";
     }
 }

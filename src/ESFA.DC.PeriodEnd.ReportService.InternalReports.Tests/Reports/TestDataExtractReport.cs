@@ -17,8 +17,6 @@ using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
-using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using FluentAssertions;
 using Moq;
@@ -41,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             string collectionReturnCodeDC = "R01";
             string collectionReturnCodeESF = "ESF01";
             
-            string filename = $"01_Data Extract Report {dateTime:yyyyMMdd-HHmmss}";
+            string filename = $"R{returnPeriod.ToString():D2}_Data Extract Report R{returnPeriod.ToString():D2} {dateTime:yyyyMMdd-HHmmss}";
 
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);

@@ -177,7 +177,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToListAsync(cancellationToken);
             }
 
-            if ((fd?.Count ?? 0) != 0)
+            if (fd.Count > 0)
             {
                 fd.ForEach(f => f.ID = GetPeriodReturn(f.SubmittedTime, returnPeriods));
             }
@@ -203,7 +203,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .Select(x => new
                 {
                     Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID.ToString():D2)}",
-                    Files = x.Select(y => y.Filename).Count(),
+                    Files = x.Count(),
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
                     Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
                 })

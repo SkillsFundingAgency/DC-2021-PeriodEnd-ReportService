@@ -13,17 +13,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\ILRDataQualityReportTemplate.xlsx" />
     <None Remove="Assets\PeriodEndChecks-Template-v2.xlsx" />
+    <None Remove="Assets\ProviderSubmissionsReportTemplate.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
-    <EmbeddedResource Include="Assets\PeriodEndChecks-Template-v2.xlsx">
-      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    <EmbeddedResource Include="Assets\ILRDataQualityReportTemplate.xlsx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
+    <EmbeddedResource Include="Assets\PeriodEndChecks-Template-v2.xlsx">
+      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Assets\ProviderSubmissionsReportTemplate.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.7.0" />
+    <PackageReference Include="ESFA.DC.CollectionsManagement.Models" Version="0.2.10-beta0001" />
+    <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
     <PackageReference Include="ESFA.DC.FileService" Version="0.1.19-beta0001" />
     <PackageReference Include="ESFA.DC.IO.Interfaces" Version="0.1.18-beta0001" />

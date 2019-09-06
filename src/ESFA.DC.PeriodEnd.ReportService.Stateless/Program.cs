@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using Autofac;
 using Autofac.Integration.ServiceFabric;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.PeriodEnd.ReportService.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.ServiceFabric.Common.Config;
@@ -22,6 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             try
             {
                 IServiceFabricConfigurationService serviceFabricConfigurationService = new ServiceFabricConfigurationService();
+                ReturnPeriod returnPeriod = null;
 
                 // License Aspose.Cells
                 SoftwareLicenceSection softwareLicenceSection = serviceFabricConfigurationService.GetConfigSectionAs<SoftwareLicenceSection>(nameof(SoftwareLicenceSection));

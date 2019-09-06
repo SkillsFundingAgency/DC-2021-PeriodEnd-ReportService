@@ -1,20 +1,24 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
+using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 {
     public sealed class ReportServiceContext : IReportServiceContext
     {
         private readonly IJobContextMessage _jobContextMessage;
+        private readonly ISerializationService _serializationService;
 
-        public ReportServiceContext(IJobContextMessage jobContextMessage)
+        public ReportServiceContext(IJobContextMessage jobContextMessage, ISerializationService serializationService)
         {
             _jobContextMessage = jobContextMessage;
+            _serializationService = serializationService;
         }
 
         public string Filename => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString();
@@ -40,5 +44,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
         public string CollectionReturnCodeESF => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeESF].ToString();
 
         public string CollectionReturnCodeApp => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeApp].ToString();
+
+        public IEnumerable<ReturnPeriod> ILRPeriods => (IEnumerable<ReturnPeriod>)_jobContextMessage.KeyValuePairs[MessageKeys.ILRPeriods];
     }
 }

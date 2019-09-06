@@ -199,7 +199,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .GroupBy(x => new { x.ID })
                 .Select(x => new
                 {
-                    Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID.ToString():D2)}",
+                    Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID:D2)}",
                     Files = x.Count(),
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
                     Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
@@ -339,9 +339,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         Ukprn = x.UKPRN,
                         SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
                         LatestFileName = x.Filename,
-                        LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods).ToString():D2}",
+                        LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods):D2}",
                     })
-                    .ToListAsync();
+                    .ToListAsync(cancellationToken);
             }
 
             foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in top10ProvidersWithInvalidLearners)

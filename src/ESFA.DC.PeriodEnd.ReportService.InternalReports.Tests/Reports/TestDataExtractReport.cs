@@ -39,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             string collectionReturnCodeDC = "R01";
             string collectionReturnCodeESF = "ESF01";
             
-            string filename = $"R{returnPeriod.ToString():D2}_Data Extract Report R{returnPeriod.ToString():D2} {dateTime:yyyyMMdd-HHmmss}";
+            string filename = $"R{returnPeriod:D2}_Data Extract Report R{returnPeriod:D2} {dateTime:yyyyMMdd-HHmmss}";
 
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);

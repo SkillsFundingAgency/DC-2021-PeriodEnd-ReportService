@@ -5,7 +5,7 @@ using System.Text;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport
 {
-    public sealed partial class FileDetailsPerUKPRN
+    public sealed partial class FilePeriodInfo
     {
         public int UKPRN { get; set; }
         public string Filename { get; set; }

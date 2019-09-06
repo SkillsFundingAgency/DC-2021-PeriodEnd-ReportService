@@ -179,11 +179,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             CancellationToken cancellationToken)
         {
             List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
-            List<FileDetailsPerUKPRN> fd;
+            List<FilePeriodInfo> fd;
 
             fd = fileDetails
                 .Where(x => x.Success == true)
-                .Select(f => new FileDetailsPerUKPRN()
+                .Select(f => new FilePeriodInfo()
                 {
                     UKPRN = f.UKPRN,
                     Filename = f.Filename,

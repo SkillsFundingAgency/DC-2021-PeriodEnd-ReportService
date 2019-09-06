@@ -38,7 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         public string GetFilename(IReportServiceContext reportServiceContext)
         {
             DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
-            return $"R{reportServiceContext.ReturnPeriod.ToString():D2}_{ReportFileName} R{reportServiceContext.ReturnPeriod.ToString():D2} {dateTime:yyyyMMdd-HHmmss}";
+            return $"R{reportServiceContext.ReturnPeriod:D2}_{ReportFileName} R{reportServiceContext.ReturnPeriod:D2} {dateTime:yyyyMMdd-HHmmss}";
         }
 
         public abstract Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);

@@ -1,29 +1,11 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ESFA.DC.PeriodEnd1920.ReportService" xmlns="http://schemas.microsoft.com/2011/01/fabric">
-  <Parameters>
-    <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
-    <Parameter Name="ProcessingServicePlacementConstraints" Value="" />
-    <!-- Service Bus Configuration -->
-    <Parameter Name="AuditQueueName" Value="auditingqueue" />
-    <Parameter Name="TopicName" Value="periodendtopic" />
-    <Parameter Name="AzureBlobContainerName" Value="ilr-files" />
-    <Parameter Name="JobStatusQueueName" Value="jobstatusqueue" />
-    <Parameter Name="ServiceReleaseVersion" Value="1.2.3.4" />
-    <Parameter Name="ServiceBusConnectionString" Value="Endpoint=sb://xx-gg-servicebus-weu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=LNO5Sw9r1uPzuyH6qd9Ig8zfeGem8ETDdkqfCh9nvNg=" />
-    <!-- Logger -->
-    <!-- Connection Strings -->
-    <!-- Topic Names -->
-    <Parameter Name="LoggerConnectionstring" Value="data source=DEV-DSS;initial catalog=logging;Id=SA;Password=Password1;Connect Timeout=90" />
-    <!-- ILR -->
-    <Parameter Name="ILR1920DataStoreConnectionString" Value="data source=DCOL-TST-SqlServer-WEU.database.windows.net;initial catalog=ILR1920DataStore;User Id=ILR1920DataStore_RO_User;Password=B42k7A@Hjp1lZodbahuDVtiKnRxrGLy-FEIX6OsSqTUz59w8PWYgQN03ecCMmfJverE-xdtNwIB;MultipleActiveResultSets=true;Encrypt=True;" />
-    <Parameter Name="AzureBlobConnectionString" Value="DefaultEndpointsProtocol=https;AccountName=gpesfatest;AccountKey=pYzDxY828keLHs1EOGeQUQG0HNXsEA/eYI3ML/0DD0Awaw7g3TeGzuk5SghgCP5N/gr/9QEvq9uBVsL5QPlZNQ==;EndpointSuffix=core.windows.net" />
-    <!-- FCS -->
-    <Parameter Name="FCSConnectionString" Value="Data Source=DCOL-TST-SqlServer-WEU.database.windows.net;Initial Catalog=FCS;User ID=FCS_RO_User;Password=Pw-9cdVZQmATKbEWp0Ono6ifNYLGj5UruMylhzJtqsx3I2g@akBSR48X71FDeCHvDa5d2yQb3OS;Encrypt=True;" />
-    <!-- LARS -->
-    <Parameter Name="LarsConnectionString" Value="data source=DCOL-TST-SqlServer-WEU.database.windows.net;initial catalog=Lars;User Id=Lars_RO_User;Password=qysSYaBPhDb2lHd0EZzkvGtXQ8pJAi3KLeo1Fg6mU9jM7TxcurC5W4NVwOIfnR-@rNMX42EvK76;MultipleActiveResultSets=true;Encrypt=True;" />
-    <!-- DASPayments -->
-    <Parameter Name="DASPaymentsConnectionString" Value="Data Source=DCOL-TST-SqlServer-WEU.database.windows.net;Initial Catalog=DASPayments;User ID=DASPaymentROUser;Password=X2Bk1WjYqCuHsley83Z@JfUcxRPItModLagz6mKE9DvVApSO04F-G5Q7rnihTwNb2Ejc56hOigx;Encrypt=True;" />
-    <!-- Org -->
-    <Parameter Name="ProcessingServicePlacementConstraints" Value="" />
-  </Parameters>
-</Application>
+<PublishProfile xmlns="http://schemas.microsoft.com/2015/05/fabrictools">
+  <!-- ClusterConnectionParameters allows you to specify the PowerShell parameters to use when connecting to the Service Fabric cluster.
+       Valid parameters are any that are accepted by the Connect-ServiceFabricCluster cmdlet.
+       
+       For a local cluster, you would typically not use any parameters.
+         For example: <ClusterConnectionParameters />
+  -->
+  <ClusterConnectionParameters />
+  <ApplicationParameterFile Path="..\ApplicationParameters\Local.1Node.xml" />
+</PublishProfile>

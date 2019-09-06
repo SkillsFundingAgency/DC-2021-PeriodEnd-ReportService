@@ -2,13 +2,13 @@
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 {
-    public class AppsMonthlyPaymentLearnerInfo
+    public class AppsMonthlyPaymentLearnerModel
     {
-        public string Ukprn { get; set; }
+        public int? Ukprn { get; set; }
 
         public string LearnRefNumber { get; set; }
 
-        public string UniqueLearnerNumber { get; set; }
+        public long? UniqueLearnerNumber { get; set; }
 
         public string CampId { get; set; }
 
@@ -16,6 +16,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public ICollection<AppsMonthlyPaymentLearnerEmploymentStatusInfo> LearnerEmploymentStatus { get; set; }
 
-        public ICollection<AppsMonthlyPaymentLearningDeliveryInfo> LearningDeliveries { get; set; }
+        public ICollection<AppsMonthlyPaymentLearningDeliveryModel> LearningDeliveries { get; set; }
     }
 }

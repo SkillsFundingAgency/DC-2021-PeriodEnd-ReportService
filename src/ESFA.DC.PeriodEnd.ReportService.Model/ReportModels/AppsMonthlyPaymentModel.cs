@@ -4,11 +4,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 {
     public class AppsMonthlyPaymentModel
     {
-        public string Ukprn { get; set; }
+        public int? Ukprn { get; set; }
 
         public string PaymentLearnerReferenceNumber { get; set; }
 
-        public string PaymentUniqueLearnerNumber { get; set; }
+        public long? PaymentUniqueLearnerNumber { get; set; }
 
         public string LearnerCampusIdentifier { get; set; }
 
@@ -18,35 +18,35 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 
         public Guid? PaymentEarningEventId { get; set; }
 
-        public string PaymentEarningEventAimSeqNumber { get; set; }
+        public byte? PaymentEarningEventAimSeqNumber { get; set; }
 
         public string PaymentLearningAimReference { get; set; }
 
         public string LarsLearningDeliveryLearningAimTitle { get; set; }
 
-        public string LearningDeliveryOriginalLearningStartDate { get; set; }
+        public DateTime? LearningDeliveryOriginalLearningStartDate { get; set; }
 
         public DateTime? PaymentLearningStartDate { get; set; }
 
-        public string LearningDeliveryLearningPlannedEndData { get; set; }
+        public DateTime? LearningDeliveryLearningPlannedEndDate { get; set; }
 
-        public string LearningDeliveryCompletionStatus { get; set; }
+        public int? LearningDeliveryCompletionStatus { get; set; }
 
-        public string LearningDeliveryLearningActualEndDate { get; set; }
+        public DateTime? LearningDeliveryLearningActualEndDate { get; set; }
 
-        public string LearningDeliveryAchievementDate { get; set; }
+        public DateTime? LearningDeliveryAchievementDate { get; set; }
 
-        public string LearningDeliveryOutcome { get; set; }
+        public int? LearningDeliveryOutcome { get; set; }
 
-        public string PaymentProgrammeType { get; set; }
+        public int? PaymentProgrammeType { get; set; }
 
-        public string PaymentStandardCode { get; set; }
+        public int? PaymentStandardCode { get; set; }
 
-        public string PaymentFrameworkCode { get; set; }
+        public int? PaymentFrameworkCode { get; set; }
 
-        public string PaymentPathwayCode { get; set; }
+        public int? PaymentPathwayCode { get; set; }
 
-        public string LearningDeliveryAimType { get; set; }
+        public int? LearningDeliveryAimType { get; set; }
 
         public string LearningDeliverySoftwareSupplierAimIdentifier { get; set; }
 
@@ -72,9 +72,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 
         public string LearningDeliveryEndPointAssessmentOrganisation { get; set; }
 
-        public string RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim { get; set; }
+        public int? RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim { get; set; }
 
-        public string LearningDeliverySubContractedOrPartnershipUkprn { get; set; }
+        public int? LearningDeliverySubContractedOrPartnershipUkprn { get; set; }
 
         public string PaymentPriceEpisodeIdentifier { get; set; }
 
@@ -86,32 +86,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
 
         public string PaymentFundingLineType { get; set; }
 
-        public string PaymentApprenticeshipContractType { get; set; }
+        public byte? PaymentApprenticeshipContractType { get; set; }
 
-        public string LearnerEmploymentStatusEmployerId { get; set; }
+        public int? LearnerEmploymentStatusEmployerId { get; set; }
 
         public string RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier { get; set; }
 
-        public string LearnerEmploymentStatus { get; set; }
+        public int? LearnerEmploymentStatus { get; set; }
 
-        public string LearnerEmploymentStatusDate { get; set; }
-
-        //// payments arrays to hold period payments
-        //public decimal[] LevyPayments { get; set; }
-
-        //public decimal[] CoInvestmentPayments { get; set; }
-
-        //public decimal[] CoInvestmentDueFromEmployerPayments { get; set; }
-
-        //public decimal[] EmployerAdditionalPayments { get; set; }
-
-        //public decimal[] ProviderAdditionalPayments { get; set; }
-
-        //public decimal[] ApprenticeAdditionalPayments { get; set; }
-
-        //public decimal[] EnglishAndMathsPayments { get; set; }
-
-        //public decimal[] LearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
+        public DateTime? LearnerEmploymentStatusDate { get; set; }
 
         // Period payments - August (R01)
         public decimal? AugustLevyPayments { get; set; }

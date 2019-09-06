@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
     {
         public long UkPrn { get; set; }
 
-        public List<AppsMonthlyPaymentDasEarningEventInfo> Earnings { get; set; }
+        public List<AppsMonthlyPaymentDasEarningEventModel> Earnings { get; set; }
     }
 }

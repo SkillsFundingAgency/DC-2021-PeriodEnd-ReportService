@@ -1,16 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
-using System.Transactions;
-using ESFA.DC.DASPayments.EF;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Utils;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
-using ESFA.DC.ReferenceData.FCS.Model;
-using Microsoft.EntityFrameworkCore.Internal;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 {
@@ -45,22 +41,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             "1920-R14"
         };
 
-        private readonly HashSet<int> _fundingSourceLevyPayments = new HashSet<int>() { 1, 5 };
-        private readonly HashSet<int> _fundingSourceCoInvestmentPayments = new HashSet<int>() { 2 };
-        private readonly HashSet<int> _fundingSourceCoInvestmentDueFromEmployer = new HashSet<int>() { 3 };
+        private readonly HashSet<byte?> _fundingSourceLevyPayments = new HashSet<byte?>() { 1, 5 };
+        private readonly HashSet<byte?> _fundingSourceCoInvestmentPayments = new HashSet<byte?>() { 2 };
+        private readonly HashSet<byte?> _fundingSourceCoInvestmentDueFromEmployer = new HashSet<byte?>() { 3 };
 
-        private readonly HashSet<int> _transactionTypesLevyPayments = new HashSet<int>() { 1, 2, 3 };
+        private readonly HashSet<byte?> _transactionTypesLevyPayments = new HashSet<byte?>() { 1, 2, 3 };
 
-        private readonly HashSet<int> _transactionTypesCoInvestmentPayments = new HashSet<int>() { 1, 2, 3 };
-        private readonly HashSet<int> _transactionTypesCoInvestmentDueFromEmployer = new HashSet<int>() { 1, 2, 3 };
+        private readonly HashSet<byte?> _transactionTypesCoInvestmentPayments = new HashSet<byte?>() { 1, 2, 3 };
+        private readonly HashSet<byte?> _transactionTypesCoInvestmentDueFromEmployer = new HashSet<byte?>() { 1, 2, 3 };
 
-        private readonly HashSet<int> _transactionTypesEmployerAdditionalPayments = new HashSet<int>() { 4, 6 };
-        private readonly HashSet<int> _transactionTypesProviderAdditionalPayments = new HashSet<int>() { 5, 7 };
-        private readonly HashSet<int> _transactionTypesApprenticeshipAdditionalPayments = new HashSet<int>() { 16 };
+        private readonly HashSet<byte?> _transactionTypesEmployerAdditionalPayments = new HashSet<byte?>() { 4, 6 };
+        private readonly HashSet<byte?> _transactionTypesProviderAdditionalPayments = new HashSet<byte?>() { 5, 7 };
+        private readonly HashSet<byte?> _transactionTypesApprenticeshipAdditionalPayments = new HashSet<byte?>() { 16 };
 
-        private readonly HashSet<int> _transactionTypesEnglishAndMathsPayments = new HashSet<int>() { 13, 14 };
+        private readonly HashSet<byte?> _transactionTypesEnglishAndMathsPayments = new HashSet<byte?>() { 13, 14 };
 
-        private readonly HashSet<int> _transactionTypesLearningSupportPayments = new HashSet<int>() { 8, 9, 10, 11, 12 };
+        private readonly HashSet<byte?> _transactionTypesLearningSupportPayments = new HashSet<byte?>() { 8, 9, 10, 11, 12 };
 
         public IReadOnlyList<AppsMonthlyPaymentModel> BuildAppsMonthlyPaymentModelList(
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
@@ -113,7 +109,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 Note that English and maths aims do not have price episodes, so there should be just one row per aim.
                 */
                 appsMonthlyPaymentModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear.Equals(1920))
+                    .Where(p => p.AcademicYear == 1920)
                     .GroupBy(r => new
                     {
                         r.Ukprn,
@@ -146,7 +142,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         // The contract type is linked the Reporting Funding Line Type so we won't have more than one type of Contract Type in
                         // this grouping so we can assign the contract type as there will be only one
-                        PaymentApprenticeshipContractType = g.FirstOrDefault()?.ContractType ?? string.Empty,
+                        PaymentApprenticeshipContractType = g.FirstOrDefault()?.ContractType,
 
                         // The PriceEpisodeStartDate isn't part of the Br3 grouping but is the last 10 characters of the PriceEpisodeIdentifier
                         // so will only have the one group row
@@ -157,22 +153,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         // August payments - summed
                         AugustLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
-                        AugustCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 1))
-                            .Sum(c => c.Amount),
-                        AugustCoInvestmentDueFromEmployerPayments = g.Where(p =>
-                                PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 1))
-                            .Sum(c => c.Amount),
-                        AugustEmployerAdditionalPayments =
-                            g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
-                        AugustProviderAdditionalPayments =
-                            g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
-                        AugustApprenticeAdditionalPayments =
-                            g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
-                        AugustEnglishAndMathsPayments =
-                            g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
-                        AugustLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p =>
-                                PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 1))
-                            .Sum(c => c.Amount),
+                        AugustCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
+                        AugustCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
+                        AugustEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
+                        AugustProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
+                        AugustApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
+                        AugustEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
+                        AugustLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 1)).Sum(c => c.Amount),
 
                         // September payments - summed
                         SeptemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 2)).Sum(c => c.Amount),
@@ -439,73 +426,75 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     foreach (var appsMonthlyPaymentModel in appsMonthlyPaymentModelList)
                     {
+                        //------------------------------------------------------------------------------------------------------------------
                         // Aim Sequence Number processing
                         // Get the Earning Event Id for the latest payment in the group of payments
                         // (there may be multiple payment rows that were rolled up into a single row as part of the grouping)
-                        var paymentEarningEventId = _appsMonthlyPaymentDasInfo?.Payments
-                            .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                        x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                            .PaymentLearnerReferenceNumber) &&
-                                        x?.LearnerUln == appsMonthlyPaymentModel?.PaymentUniqueLearnerNumber &&
-                                        x.LearningAimReference.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                            .PaymentLearningAimReference) &&
-                                        x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate &&
-                                        (x?.LearningAimProgrammeType == null || x?.LearningAimProgrammeType ==
-                                         appsMonthlyPaymentModel?.PaymentProgrammeType) &&
-                                        (x?.LearningAimStandardCode == null || x?.LearningAimStandardCode ==
-                                         appsMonthlyPaymentModel?.PaymentStandardCode) &&
-                                        (x?.LearningAimFrameworkCode == null || x?.LearningAimFrameworkCode ==
-                                         appsMonthlyPaymentModel?.PaymentFrameworkCode) &&
-                                        (x?.LearningAimPathwayCode == null || x?.LearningAimPathwayCode ==
-                                         appsMonthlyPaymentModel.PaymentPathwayCode) &&
-                                        x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                            .PaymentFundingLineType) &&
-                                        x?.PriceEpisodeIdentifier ==
-                                        appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier)
-                            .OrderByDescending(x => x.AcademicYear)
-                            .ThenByDescending(x => x.CollectionPeriod)
-                            .ThenByDescending(x => x.DeliveryPeriod)
-                            .FirstOrDefault().EarningEventId;
-
-                        if (paymentEarningEventId != null)
+                        //------------------------------------------------------------------------------------------------------------------
+                        if (_appsMonthlyPaymentDasInfo != null)
                         {
-                            // get the matching sequence number for this earning event id from the Earning Event table
-                             appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = _appsMonthlyPaymentDasEarningsInfo?.Earnings
-                                ?.FirstOrDefault(x => x.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
+                            var paymentEarningEventId = _appsMonthlyPaymentDasInfo?.Payments
+                                .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                            x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
+                                            x?.LearnerUln == appsMonthlyPaymentModel?.PaymentUniqueLearnerNumber &&
+                                            x.LearningAimReference.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearningAimReference) &&
+                                            x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate &&
+                                            (x?.LearningAimProgrammeType == null || x?.LearningAimProgrammeType == appsMonthlyPaymentModel?.PaymentProgrammeType) &&
+                                            (x?.LearningAimStandardCode == null || x?.LearningAimStandardCode == appsMonthlyPaymentModel?.PaymentStandardCode) &&
+                                            (x?.LearningAimFrameworkCode == null || x?.LearningAimFrameworkCode == appsMonthlyPaymentModel?.PaymentFrameworkCode) &&
+                                            (x?.LearningAimPathwayCode == null || x?.LearningAimPathwayCode == appsMonthlyPaymentModel?.PaymentPathwayCode) &&
+                                            x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentFundingLineType) &&
+                                            x?.PriceEpisodeIdentifier == appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier)
+                                .OrderByDescending(x => x?.AcademicYear)
+                                .ThenByDescending(x => x?.CollectionPeriod)
+                                .ThenByDescending(x => x?.DeliveryPeriod)
+                                .FirstOrDefault()?.EarningEventId;
+
+                            if (paymentEarningEventId != null)
+                            {
+                                // get the matching sequence number for this earning event id from the Earning Event table
+                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = (byte)_appsMonthlyPaymentDasEarningsInfo?.Earnings
+                                   ?.FirstOrDefault(x => x.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
+                            }
                         }
 
                         //--------------------------------------------------------------------------------------------------
                         // process the LARS fields
                         //--------------------------------------------------------------------------------------------------
-                        var larsInfo = _appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x =>
-                            x.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                ?.PaymentLearningAimReference));
-
-                        // populate the LARS fields in the appsMonthlyPaymentModel payment.
-                        if (larsInfo != null)
+                        if (_appsMonthlyPaymentLarsLearningDeliveryInfoList != null)
                         {
-                            appsMonthlyPaymentModel.LarsLearningDeliveryLearningAimTitle =
-                                larsInfo?.LearningAimTitle ?? string.Empty;
+                            var larsInfo = _appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x =>
+                                x.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel
+                                    ?.PaymentLearningAimReference));
+
+                            // populate the LARS fields in the appsMonthlyPaymentModel payment.
+                            if (larsInfo != null)
+                            {
+                                appsMonthlyPaymentModel.LarsLearningDeliveryLearningAimTitle = larsInfo?.LearningAimTitle;
+                            }
                         }
 
                         //--------------------------------------------------------------------------------------------------
                         // process the Earning Event fields
                         //--------------------------------------------------------------------------------------------------
-                        var earningEvent = _appsMonthlyPaymentDasEarningsInfo?.Earnings
-                            .Where(x => x?.EventId == appsMonthlyPaymentModel?.PaymentEarningEventId &&
-                                        x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                        x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?
-                                            .PaymentLearnerReferenceNumber) &&
-                                        x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate)
-                            .OrderByDescending(y => y?.AcademicYear)
-                            .ThenByDescending(y => y?.CollectionPeriod)
-                            .FirstOrDefault();
-
-                        // populate the Earning Event fields in the appsMonthlyPaymentModel payment.
-                        if (earningEvent != null)
+                        if (_appsMonthlyPaymentDasEarningsInfo != null)
                         {
-                            appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber =
-                                earningEvent?.LearningAimSequenceNumber;
+                            var earningEvent = _appsMonthlyPaymentDasEarningsInfo?.Earnings
+                                .Where(x => x?.EventId == appsMonthlyPaymentModel?.PaymentEarningEventId &&
+                                            x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                            x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?
+                                                .PaymentLearnerReferenceNumber) &&
+                                            x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate)
+                                .OrderByDescending(y => y?.AcademicYear)
+                                .ThenByDescending(y => y?.CollectionPeriod)
+                                .FirstOrDefault();
+
+                            // populate the Earning Event fields in the appsMonthlyPaymentModel payment.
+                            if (earningEvent != null)
+                            {
+                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber =
+                                    earningEvent?.LearningAimSequenceNumber;
+                            }
                         }
 
                         //--------------------------------------------------------------------------------------------------
@@ -520,9 +509,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         {
                             var contractAllocationNumber = _appsMonthlyPaymentFcsInfo.Contracts
                                 .SelectMany(x => x?.ContractAllocations)
-                                .Where(
-                                    y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
-                                .FirstOrDefault()?.ContractAllocationNumber;
+                                .FirstOrDefault(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))?.ContractAllocationNumber;
 
                             // populate the contract data fields in the appsMonthlyPaymentModel payment.
                             if (contractAllocationNumber != null)
@@ -535,619 +522,600 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         //--------------------------------------------------------------------------------------------------
                         // process the learner fields
                         //--------------------------------------------------------------------------------------------------
-                        var ilrLearner = _appsMonthlyPaymentIlrInfo?.Learners?
-                            .Where(x => x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                .PaymentLearnerReferenceNumber))
-                            .FirstOrDefault();
-
-                        // populate the Learner data fields in the appsMonthlyPaymentModel payment.
-                        if (ilrLearner != null)
+                        if (_appsMonthlyPaymentIlrInfo?.Learners != null)
                         {
-                            appsMonthlyPaymentModel.LearnerCampusIdentifier = ilrLearner.CampId ?? string.Empty;
+                            var ilrLearner = _appsMonthlyPaymentIlrInfo?.Learners?
+                                .Where(x => x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber))
+                                .FirstOrDefault();
 
-                            //--------------------------------------------------------------------------------------------------------
-                            // process the Learner Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment
-                            //--------------------------------------------------------------------------------------------------------
-                            var ilrProviderSpecifiedLearnerMonitoringInfoList = ilrLearner
-                                ?.ProviderSpecLearnerMonitorings?
-                                .Where(pslm => pslm.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                               pslm.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                   .PaymentLearnerReferenceNumber)).ToList();
-                            if (ilrProviderSpecifiedLearnerMonitoringInfoList != null)
+                            // populate the Learner data fields in the appsMonthlyPaymentModel payment.
+                            if (ilrLearner != null)
                             {
-                                // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.                            appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringA =
-                                appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringA =
-                                    ilrProviderSpecifiedLearnerMonitoringInfoList?
-                                        .FirstOrDefault(x =>
-                                            StringExtensions.CaseInsensitiveEquals(x?.ProvSpecLearnMonOccur, "A"))
-                                        ?.ProvSpecLearnMon ?? string.Empty;
+                                appsMonthlyPaymentModel.LearnerCampusIdentifier = ilrLearner?.CampId;
 
-                                appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringB =
-                                    ilrProviderSpecifiedLearnerMonitoringInfoList?
-                                        .FirstOrDefault(x =>
-                                            StringExtensions.CaseInsensitiveEquals(x?.ProvSpecLearnMonOccur, "B"))
-                                        ?.ProvSpecLearnMon ?? string.Empty;
-                            }
-
-                            // Note: The Learner Employment Status fields are processed after the Learning Delivery data due
-                            // to a dependency on the LearningStart date
-
-                            //--------------------------------------------------------------------------------------------------
-                            // process the learning delivery fields
-                            //--------------------------------------------------------------------------------------------------
-                            // Note: This code has a dependency on the Payment.EarningEvent.LearningAimSequenceNumber
-                            //       which should have been populated prior to reaching this point in the code.
-                            AppsMonthlyPaymentLearningDeliveryInfo learningDeliveryInfo = null;
-                            if (!string.IsNullOrEmpty(appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber))
-                            {
-                                learningDeliveryInfo = ilrLearner?.LearningDeliveries?
-                                    .Where(ld => ld.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                                 ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                     .PaymentLearnerReferenceNumber) &&
-                                                 ld.AimSeqNumber == appsMonthlyPaymentModel
-                                                     .PaymentEarningEventAimSeqNumber
-                                                     .ToString()).FirstOrDefault();
-                            }
-
-                            if (learningDeliveryInfo != null)
-                            {
-                                // populate the Learning Delivery fields in the appsMonthlyPaymentModel payment.
-                                appsMonthlyPaymentModel.LearningDeliveryOriginalLearningStartDate =
-                                    learningDeliveryInfo?.OrigLearnStartDate;
-                                appsMonthlyPaymentModel.LearningDeliveryLearningPlannedEndData =
-                                    learningDeliveryInfo?.LearnPlanEndDate;
-                                appsMonthlyPaymentModel.LearningDeliveryCompletionStatus =
-                                    learningDeliveryInfo?.CompStatus ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliveryLearningActualEndDate =
-                                    learningDeliveryInfo?.LearnActEndDate ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliveryAchievementDate =
-                                    learningDeliveryInfo?.AchDate ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliveryOutcome =
-                                    learningDeliveryInfo?.Outcome ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliveryAimType =
-                                    learningDeliveryInfo?.AimType ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliverySoftwareSupplierAimIdentifier =
-                                    learningDeliveryInfo?.SwSupAimId ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliveryEndPointAssessmentOrganisation =
-                                    learningDeliveryInfo?.EpaOrgId ?? string.Empty;
-                                appsMonthlyPaymentModel.LearningDeliverySubContractedOrPartnershipUkprn =
-                                    learningDeliveryInfo?.PartnerUkprn ?? string.Empty;
-
-                                // The LD.AimSequenceNumber should match the PaymentEarningEventAimSeqNumber but may not if the PaymentEarningEventAimSeqNumber
-                                // was empty and we matched the Learning Delivery data by using the Prog fields. If they are different we assign the
-                                // LD AimSequenceNumber to the PaymentEarningEventAimSeqNumber so that we have consistent LD related data (FAMs and
-                                // ProvSpecDelMons) matching the LD data
-                                if (appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber !=
-                                    learningDeliveryInfo.AimSeqNumber)
+                                //--------------------------------------------------------------------------------------------------------
+                                // process the Learner Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment
+                                //--------------------------------------------------------------------------------------------------------
+                                if (ilrLearner?.ProviderSpecLearnerMonitorings != null)
                                 {
-                                    appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber =
-                                        learningDeliveryInfo.AimSeqNumber;
+                                    var ilrProviderSpecifiedLearnerMonitoringInfoList = ilrLearner?.ProviderSpecLearnerMonitorings
+                                        ?.Where(pslm => pslm?.Ukprn == appsMonthlyPaymentModel?.Ukprn && pslm.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber))
+                                        .ToList();
 
-                                    // TODO: log the difference between EarningsEvent AimSeqNumber and the Learning Delivery AimSequence
-                                }
-
-                                // populate the Learning Delivery FAM fields in the appsMonthlyPaymentModel payment.
-                                var ilrLearningDeliveryFamInfoList = learningDeliveryInfo.LearningDeliveryFams?
-                                    .Where(fam => fam.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                                  fam.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                      .PaymentLearnerReferenceNumber) &&
-                                                  fam.AimSeqNumber == appsMonthlyPaymentModel
-                                                      .PaymentEarningEventAimSeqNumber)
-                                    .ToList();
-                                if (ilrLearningDeliveryFamInfoList != null)
-                                {
-                                    appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA =
-                                        ilrLearningDeliveryFamInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.LearnDelFAMType, "LDM1"))
-                                            ?.LearnDelFAMCode ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB =
-                                        ilrLearningDeliveryFamInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.LearnDelFAMType, "LDM2"))
-                                            ?.LearnDelFAMCode ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC =
-                                        ilrLearningDeliveryFamInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.LearnDelFAMType, "LDM3"))
-                                            ?.LearnDelFAMCode ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD =
-                                        ilrLearningDeliveryFamInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.LearnDelFAMType, "LDM4"))
-                                            ?.LearnDelFAMCode ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE =
-                                        ilrLearningDeliveryFamInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.LearnDelFAMType, "LDM5"))
-                                            ?.LearnDelFAMCode ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF =
-                                        ilrLearningDeliveryFamInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.LearnDelFAMType, "LDM6"))
-                                            ?.LearnDelFAMCode ?? string.Empty;
-                                }
-
-                                //--------------------------------------------------------------------------------------------------
-                                // process the Provider Specified Delivery Monitoring fields in the appsMonthlyPaymentModel payment.
-                                //--------------------------------------------------------------------------------------------------
-                                var ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList = learningDeliveryInfo
-                                    .ProviderSpecDeliveryMonitorings?
-                                    .Where(psdm => psdm.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                                   psdm.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                       .PaymentLearnerReferenceNumber) &&
-                                                   psdm.AimSeqNumber == appsMonthlyPaymentModel
-                                                       .PaymentEarningEventAimSeqNumber)
-                                    .ToList();
-                                if (ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList != null)
-                                {
-                                    // populate the Provider Specified Delivery Monitoring fields in the appsMonthlyPaymentModel payment.
-                                    appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringA =
-                                        ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.ProvSpecDelMonOccur, "A"))
-                                            ?.ProvSpecDelMon ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringB =
-                                        ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.ProvSpecDelMonOccur, "B"))
-                                            ?.ProvSpecDelMon ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringC =
-                                        ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.ProvSpecDelMonOccur, "C"))
-                                            ?.ProvSpecDelMon ?? string.Empty;
-
-                                    appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringD =
-                                        ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                            .FirstOrDefault(x =>
-                                                StringExtensions.CaseInsensitiveEquals(x?.ProvSpecDelMonOccur, "D"))
-                                            ?.ProvSpecDelMon ?? string.Empty;
-                                }
-
-                                //-------------------------------------------------------------------
-                                // process the rulebase fields in the appsMonthlyPaymentModel payment
-                                //-------------------------------------------------------------------
-                                if (appsMonthlyPaymentModel != null)
-                                {
-                                    // process the AECPriceEpisode fields
-
-                                    // get the price episode with the latest start date before the payment start date
-                                    // NOTE: This code is dependent on the PaymentLearningStartDate being populated (done in the Learning Delivery population code)
-                                    var ape = _appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList
-                                        .Where(x => x.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                    x.LearnRefNumber == appsMonthlyPaymentModel?
-                                                        .PaymentLearnerReferenceNumber &&
-                                                    x.AimSequenceNumber ==
-                                                    appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber &&
-                                                    x.EpisodeStartDate <=
-                                                    appsMonthlyPaymentModel?.PaymentLearningStartDate)
-                                        .OrderByDescending(x => x.EpisodeStartDate)
-                                        .FirstOrDefault();
-
-                                    // populate the appsMonthlyPaymentModel fields
-                                    if (ape != null)
+                                    if (ilrProviderSpecifiedLearnerMonitoringInfoList != null)
                                     {
-                                        appsMonthlyPaymentModel
-                                                .RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier =
-                                            ape.PriceEpisodeAgreeId;
-                                        appsMonthlyPaymentModel
-                                                .RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate =
-                                            ape.PriceEpisodeActualEndDateIncEPA;
+                                        // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.
+                                        appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringA = ilrProviderSpecifiedLearnerMonitoringInfoList?.FirstOrDefault(x => (x?.ProvSpecLearnMonOccur).CaseInsensitiveEquals("A"))?.ProvSpecLearnMon;
+                                        appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringB = ilrProviderSpecifiedLearnerMonitoringInfoList?.FirstOrDefault(x => (x?.ProvSpecLearnMonOccur).CaseInsensitiveEquals("B"))?.ProvSpecLearnMon;
+                                    }
+                                }
+
+                                // Note: The Learner Employment Status fields are processed after the Learning Delivery data due
+                                // to a dependency on the LearningDelivery.LearningStart date
+
+                                //--------------------------------------------------------------------------------------------------
+                                // process the learning delivery fields
+                                //--------------------------------------------------------------------------------------------------
+                                // Note: This code has a dependency on the Payment.EarningEvent.LearningAimSequenceNumber which should have been populated prior to reaching this point in the code.
+                                AppsMonthlyPaymentLearningDeliveryModel learningDeliveryModel = null;
+
+                                if (appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber != null)
+                                {
+                                    learningDeliveryModel = ilrLearner?.LearningDeliveries?
+                                        .Where(ld => ld?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                     ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
+                                                         ?.PaymentLearnerReferenceNumber) &&
+                                                     ld?.AimSeqNumber == appsMonthlyPaymentModel
+                                                         ?.PaymentEarningEventAimSeqNumber)
+                                        .FirstOrDefault();
+                                }
+
+                                if (learningDeliveryModel != null)
+                                {
+                                    // populate the Learning Delivery fields in the appsMonthlyPaymentModel payment.
+                                    appsMonthlyPaymentModel.LearningDeliveryOriginalLearningStartDate = learningDeliveryModel?.OrigLearnStartDate;
+                                    appsMonthlyPaymentModel.LearningDeliveryLearningPlannedEndDate = learningDeliveryModel?.LearnPlanEndDate;
+                                    appsMonthlyPaymentModel.LearningDeliveryCompletionStatus = learningDeliveryModel?.CompStatus;
+                                    appsMonthlyPaymentModel.LearningDeliveryLearningActualEndDate = learningDeliveryModel?.LearnActEndDate;
+                                    appsMonthlyPaymentModel.LearningDeliveryAchievementDate = learningDeliveryModel?.AchDate;
+                                    appsMonthlyPaymentModel.LearningDeliveryOutcome = learningDeliveryModel?.Outcome;
+                                    appsMonthlyPaymentModel.LearningDeliveryAimType = learningDeliveryModel?.AimType;
+                                    appsMonthlyPaymentModel.LearningDeliverySoftwareSupplierAimIdentifier = learningDeliveryModel?.SwSupAimId;
+                                    appsMonthlyPaymentModel.LearningDeliveryEndPointAssessmentOrganisation = learningDeliveryModel?.EpaOrgId;
+                                    appsMonthlyPaymentModel.LearningDeliverySubContractedOrPartnershipUkprn = learningDeliveryModel?.PartnerUkprn;
+
+                                    // The LD.AimSequenceNumber should match the PaymentEarningEventAimSeqNumber but may not if the PaymentEarningEventAimSeqNumber
+                                    // was empty and we matched the Learning Delivery data by using the Prog fields. If they are different we assign the
+                                    // LD AimSequenceNumber to the PaymentEarningEventAimSeqNumber so that we have consistent LD related data (FAMs and
+                                    // ProvSpecDelMons) matching the LD data
+                                    if (appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber != learningDeliveryModel?.AimSeqNumber)
+                                    {
+                                        appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = learningDeliveryModel?.AimSeqNumber;
+
+                                        // TODO: log the difference between EarningsEvent AimSeqNumber and the Learning Delivery AimSequence
                                     }
 
+                                    //-----------------------------------------------------------------------------------
+                                    // populate the Learning Delivery FAM fields in the appsMonthlyPaymentModel payment.
+                                    //-----------------------------------------------------------------------------------
+                                    if (learningDeliveryModel?.LearningDeliveryFams != null)
+                                    {
+                                        var ilrLearningDeliveryFamInfoList = learningDeliveryModel?.LearningDeliveryFams
+                                            ?
+                                            .Where(fam => fam?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                          fam.LearnRefNumber.CaseInsensitiveEquals(
+                                                              appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
+                                                          fam?.AimSeqNumber == appsMonthlyPaymentModel
+                                                              ?.PaymentEarningEventAimSeqNumber)
+                                            .ToList();
+
+                                        if (ilrLearningDeliveryFamInfoList != null)
+                                        {
+                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA =
+                                                ilrLearningDeliveryFamInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM1"))
+                                                    ?.LearnDelFAMCode;
+
+                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB =
+                                                ilrLearningDeliveryFamInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM2"))
+                                                    ?.LearnDelFAMCode ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC =
+                                                ilrLearningDeliveryFamInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM3"))
+                                                    ?.LearnDelFAMCode ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD =
+                                                ilrLearningDeliveryFamInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM4"))
+                                                    ?.LearnDelFAMCode ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE =
+                                                ilrLearningDeliveryFamInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM5"))
+                                                    ?.LearnDelFAMCode ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF =
+                                                ilrLearningDeliveryFamInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM6"))
+                                                    ?.LearnDelFAMCode ?? string.Empty;
+                                        }
+                                    }
+
+                                    //--------------------------------------------------------------------------------------------------
+                                    // process the Provider Specified Delivery Monitoring fields in the appsMonthlyPaymentModel payment.
+                                    //--------------------------------------------------------------------------------------------------
+                                    if (learningDeliveryModel.ProviderSpecDeliveryMonitorings != null)
+                                    {
+                                        var ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList =
+                                            learningDeliveryModel.ProviderSpecDeliveryMonitorings?
+                                                .Where(psdm => psdm?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                               psdm.LearnRefNumber.CaseInsensitiveEquals(
+                                                                   appsMonthlyPaymentModel
+                                                                       ?.PaymentLearnerReferenceNumber) &&
+                                                               psdm?.AimSeqNumber == appsMonthlyPaymentModel
+                                                                   ?.PaymentEarningEventAimSeqNumber)
+                                                .ToList();
+
+                                        if (ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList != null)
+                                        {
+                                            // populate the Provider Specified Delivery Monitoring fields in the appsMonthlyPaymentModel payment.
+                                            appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringA =
+                                                ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("A"))
+                                                    ?.ProvSpecDelMon ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringB =
+                                                ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("B"))
+                                                    ?.ProvSpecDelMon ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringC =
+                                                ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("C"))
+                                                    ?.ProvSpecDelMon ?? string.Empty;
+
+                                            appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringD =
+                                                ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
+                                                    .FirstOrDefault(x =>
+                                                        (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("D"))
+                                                    ?.ProvSpecDelMon ?? string.Empty;
+                                        }
+                                    }
+
+                                    //-------------------------------------------------------------------
+                                    // process the rulebase fields in the appsMonthlyPaymentModel payment
+                                    //-------------------------------------------------------------------
+                                    if (_appsMonthlyPaymentRulebaseInfo?.AecApprenticeshipPriceEpisodeInfoList != null)
+                                    {
+                                        // process the AECPriceEpisode fields
+
+                                        // get the price episode with the latest start date before the payment start date
+                                        // NOTE: This code is dependent on the PaymentLearningStartDate being populated (done in the Learning Delivery population code)
+                                        var ape = _appsMonthlyPaymentRulebaseInfo
+                                            ?.AecApprenticeshipPriceEpisodeInfoList
+                                            .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                        x.LearnRefNumber.CaseInsensitiveEquals(
+                                                            appsMonthlyPaymentModel
+                                                                ?.PaymentLearnerReferenceNumber) &&
+                                                        x?.AimSequenceNumber == appsMonthlyPaymentModel
+                                                            ?.PaymentEarningEventAimSeqNumber &&
+                                                        x?.EpisodeStartDate <= appsMonthlyPaymentModel
+                                                            ?.PaymentLearningStartDate)
+                                            .OrderByDescending(x => x?.EpisodeStartDate)
+                                            .FirstOrDefault();
+
+                                        // populate the appsMonthlyPaymentModel fields
+                                        if (ape != null)
+                                        {
+                                            appsMonthlyPaymentModel
+                                                    .RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier =
+                                                ape?.PriceEpisodeAgreeId;
+                                            appsMonthlyPaymentModel
+                                                    .RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate
+                                                =
+                                                ape?.PriceEpisodeActualEndDateIncEPA;
+                                        }
+                                    }
+
+                                    //--------------------------------------------------------------------------------------
                                     // process the AECLearningDelivery fields
-
-                                    // NOTE: This code is dependent on the Earning Event Aim Sequence number being populated (done in the Earning Event population code)
-                                    var ald = _appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList
-                                        .FirstOrDefault(x => x.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                             x.LearnRefNumber == appsMonthlyPaymentModel
-                                                                 ?.PaymentLearnerReferenceNumber &&
-                                                             x.AimSequenceNumber ==
-                                                             appsMonthlyPaymentModel
-                                                                 ?.PaymentEarningEventAimSeqNumber &&
-                                                             x.LearnAimRef == appsMonthlyPaymentModel
-                                                                 ?.PaymentLearningAimReference);
-
-                                    // populate the AECLearningDelivery fields
-                                    if (ald != null)
+                                    //--------------------------------------------------------------------------------------
+                                    if (_appsMonthlyPaymentRulebaseInfo?.AecLearningDeliveryInfoList != null)
                                     {
-                                        appsMonthlyPaymentModel
-                                                .RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim
-                                            =
-                                            ald?.PlannedNumOnProgInstalm;
-                                    }
-                                }
+                                        // NOTE: This code is dependent on the Earning Event Aim Sequence number being populated (done in the Earning Event population code)
+                                        var ald = _appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList
+                                            .FirstOrDefault(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                                 x.LearnRefNumber.CaseInsensitiveEquals(
+                                                                     appsMonthlyPaymentModel
+                                                                         ?.PaymentLearnerReferenceNumber) &&
+                                                                 x?.AimSequenceNumber == appsMonthlyPaymentModel
+                                                                     ?.PaymentEarningEventAimSeqNumber &&
+                                                                 x?.LearnAimRef == appsMonthlyPaymentModel
+                                                                     ?.PaymentLearningAimReference);
 
-                                //--------------------------------------------------------------------------------------
-                                // process the Learner Employment Status fields in the appsMonthlyPaymentModel payment
-                                // Note: This code is dependent on the LearningDelivery.LearnStartDate so this code must
-                                //       be done after processing the Learning Delivery data
-                                //--------------------------------------------------------------------------------------
-                                if (learningDeliveryInfo.LearnStartDate != null)
-                                {
-                                    var ilrLearnerEmploymentStatus = ilrLearner?.LearnerEmploymentStatus?
-                                        .Where(les => les.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                                      les.LearnRefNumber.CaseInsensitiveEquals(
-                                                          appsMonthlyPaymentModel
-                                                              .PaymentLearnerReferenceNumber) &&
-                                                      les.DateEmpStatApp <= learningDeliveryInfo.LearnStartDate)
-                                        .OrderByDescending(les => les.DateEmpStatApp)
-                                        .FirstOrDefault();
-                                    if (ilrLearnerEmploymentStatus != null)
+                                        // populate the AECLearningDelivery fields
+                                        if (ald != null)
+                                        {
+                                            appsMonthlyPaymentModel
+                                                    .RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim
+                                                = ald?.PlannedNumOnProgInstalm;
+                                        }
+                                    }
+
+                                    //--------------------------------------------------------------------------------------
+                                    // process the Learner Employment Status fields in the appsMonthlyPaymentModel payment
+                                    // Note: This code is dependent on the LearningDelivery.LearnStartDate so this code must
+                                    //       be done after processing the Learning Delivery data
+                                    //--------------------------------------------------------------------------------------
+                                    if (ilrLearner?.LearnerEmploymentStatus != null)
                                     {
-                                        // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.                            appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringA =
-                                        appsMonthlyPaymentModel.LearnerEmploymentStatusEmployerId =
-                                            ilrLearnerEmploymentStatus?.EmpdId;
+                                        if (learningDeliveryModel.LearnStartDate != null)
+                                        {
+                                            var ilrLearnerEmploymentStatus = ilrLearner?.LearnerEmploymentStatus?
+                                                .Where(les => les?.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                                                              les.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
+                                                              les?.DateEmpStatApp <= learningDeliveryModel?.LearnStartDate)
+                                                .OrderByDescending(les => les?.DateEmpStatApp)
+                                                .FirstOrDefault();
 
-                                        appsMonthlyPaymentModel.LearnerEmploymentStatus =
-                                            ilrLearnerEmploymentStatus?.EmpStat;
-
-                                        appsMonthlyPaymentModel.LearnerEmploymentStatusDate =
-                                            ilrLearnerEmploymentStatus?.DateEmpStatApp.ToString() ?? string.Empty;
+                                            if (ilrLearnerEmploymentStatus != null)
+                                            {
+                                                // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.
+                                                appsMonthlyPaymentModel.LearnerEmploymentStatusEmployerId = ilrLearnerEmploymentStatus?.EmpdId;
+                                                appsMonthlyPaymentModel.LearnerEmploymentStatus = ilrLearnerEmploymentStatus?.EmpStat;
+                                                appsMonthlyPaymentModel.LearnerEmploymentStatusDate = ilrLearnerEmploymentStatus?.DateEmpStatApp;
+                                            }
+                                        }
                                     }
-                                }
-                            } // if (LearningDeliveryInfo != null)
-                        } // if (ilrLearner != null)
+                                } // if (LearningDeliveryInfo != null)
+                            } // if (ilrLearner != null)
+                        } // if (_appsMonthlyPaymentIlrInfo != null)
 
                         // Period totals
-                        appsMonthlyPaymentModel.AugustTotalPayments = appsMonthlyPaymentModel.AugustLevyPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustCoInvestmentPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustCoInvestmentDueFromEmployerPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustEmployerAdditionalPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustProviderAdditionalPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustApprenticeAdditionalPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustEnglishAndMathsPayments +
-                                                                      appsMonthlyPaymentModel
-                                                                          .AugustLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                        appsMonthlyPaymentModel.AugustTotalPayments = appsMonthlyPaymentModel?.AugustLevyPayments +
+                                                                      appsMonthlyPaymentModel?.AugustCoInvestmentPayments +
+                                                                      appsMonthlyPaymentModel?.AugustCoInvestmentDueFromEmployerPayments +
+                                                                      appsMonthlyPaymentModel?.AugustEmployerAdditionalPayments +
+                                                                      appsMonthlyPaymentModel?.AugustProviderAdditionalPayments +
+                                                                      appsMonthlyPaymentModel?.AugustApprenticeAdditionalPayments +
+                                                                      appsMonthlyPaymentModel?.AugustEnglishAndMathsPayments +
+                                                                      appsMonthlyPaymentModel?.AugustLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.SeptemberTotalPayments =
-                            appsMonthlyPaymentModel.SeptemberLevyPayments +
-                            appsMonthlyPaymentModel.SeptemberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.SeptemberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.SeptemberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.SeptemberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.SeptemberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.SeptemberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                        appsMonthlyPaymentModel.SeptemberTotalPayments = appsMonthlyPaymentModel?.SeptemberLevyPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberCoInvestmentPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberCoInvestmentDueFromEmployerPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberEmployerAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberProviderAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberApprenticeAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberEnglishAndMathsPayments +
+                                                                        appsMonthlyPaymentModel?.SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.OctoberTotalPayments = appsMonthlyPaymentModel.OctoberLevyPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberCoInvestmentPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberCoInvestmentDueFromEmployerPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberEmployerAdditionalPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberProviderAdditionalPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberApprenticeAdditionalPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberEnglishAndMathsPayments +
-                                                                       appsMonthlyPaymentModel
-                                                                           .OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                        appsMonthlyPaymentModel.OctoberTotalPayments = appsMonthlyPaymentModel?.OctoberLevyPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberCoInvestmentPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberCoInvestmentDueFromEmployerPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberEmployerAdditionalPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberProviderAdditionalPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberApprenticeAdditionalPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberEnglishAndMathsPayments +
+                                                                       appsMonthlyPaymentModel?.OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.NovemberTotalPayments =
-                            appsMonthlyPaymentModel.NovemberLevyPayments +
-                            appsMonthlyPaymentModel.NovemberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.NovemberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.NovemberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.NovemberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.NovemberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.NovemberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                        appsMonthlyPaymentModel.NovemberTotalPayments = appsMonthlyPaymentModel?.NovemberLevyPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberCoInvestmentPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberCoInvestmentDueFromEmployerPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberEmployerAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberProviderAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberApprenticeAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberEnglishAndMathsPayments +
+                                                                        appsMonthlyPaymentModel?.NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.DecemberTotalPayments =
-                            appsMonthlyPaymentModel.DecemberLevyPayments +
-                            appsMonthlyPaymentModel.DecemberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.DecemberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.DecemberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.DecemberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.DecemberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.DecemberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                        appsMonthlyPaymentModel.DecemberTotalPayments = appsMonthlyPaymentModel?.DecemberLevyPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberCoInvestmentPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberCoInvestmentDueFromEmployerPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberEmployerAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberProviderAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberApprenticeAdditionalPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberEnglishAndMathsPayments +
+                                                                        appsMonthlyPaymentModel?.DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.JanuaryTotalPayments = appsMonthlyPaymentModel.JanuaryLevyPayments +
+                        appsMonthlyPaymentModel.JanuaryTotalPayments = appsMonthlyPaymentModel?.JanuaryLevyPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryCoInvestmentPayments +
+                                                                           ?.JanuaryCoInvestmentPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryCoInvestmentDueFromEmployerPayments +
+                                                                           ?.JanuaryCoInvestmentDueFromEmployerPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryEmployerAdditionalPayments +
+                                                                           ?.JanuaryEmployerAdditionalPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryProviderAdditionalPayments +
+                                                                           ?.JanuaryProviderAdditionalPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryApprenticeAdditionalPayments +
+                                                                           ?.JanuaryApprenticeAdditionalPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryEnglishAndMathsPayments +
+                                                                           ?.JanuaryEnglishAndMathsPayments +
                                                                        appsMonthlyPaymentModel
-                                                                           .JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                           ?.JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
                         appsMonthlyPaymentModel.FebruaryTotalPayments =
-                            appsMonthlyPaymentModel.FebruaryLevyPayments +
-                            appsMonthlyPaymentModel.FebruaryCoInvestmentPayments +
-                            appsMonthlyPaymentModel.FebruaryCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.FebruaryEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.FebruaryProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.FebruaryApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.FebruaryEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                            appsMonthlyPaymentModel?.FebruaryLevyPayments +
+                            appsMonthlyPaymentModel?.FebruaryCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.FebruaryCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.FebruaryEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.FebruaryProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.FebruaryApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.FebruaryEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.MarchTotalPayments = appsMonthlyPaymentModel.MarchLevyPayments +
+                        appsMonthlyPaymentModel.MarchTotalPayments = appsMonthlyPaymentModel?.MarchLevyPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchCoInvestmentPayments +
+                                                                         ?.MarchCoInvestmentPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchCoInvestmentDueFromEmployerPayments +
+                                                                         ?.MarchCoInvestmentDueFromEmployerPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchEmployerAdditionalPayments +
+                                                                         ?.MarchEmployerAdditionalPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchProviderAdditionalPayments +
+                                                                         ?.MarchProviderAdditionalPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchApprenticeAdditionalPayments +
+                                                                         ?.MarchApprenticeAdditionalPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchEnglishAndMathsPayments +
+                                                                         ?.MarchEnglishAndMathsPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .MarchLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                         ?.MarchLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.AprilTotalPayments = appsMonthlyPaymentModel.AprilLevyPayments +
+                        appsMonthlyPaymentModel.AprilTotalPayments = appsMonthlyPaymentModel?.AprilLevyPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilCoInvestmentPayments +
+                                                                         ?.AprilCoInvestmentPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilCoInvestmentDueFromEmployerPayments +
+                                                                         ?.AprilCoInvestmentDueFromEmployerPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilEmployerAdditionalPayments +
+                                                                         ?.AprilEmployerAdditionalPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilProviderAdditionalPayments +
+                                                                         ?.AprilProviderAdditionalPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilApprenticeAdditionalPayments +
+                                                                         ?.AprilApprenticeAdditionalPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilEnglishAndMathsPayments +
+                                                                         ?.AprilEnglishAndMathsPayments +
                                                                      appsMonthlyPaymentModel
-                                                                         .AprilLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                         ?.AprilLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.MayTotalPayments = appsMonthlyPaymentModel.MayLevyPayments +
-                                                                   appsMonthlyPaymentModel.MayCoInvestmentPayments +
+                        appsMonthlyPaymentModel.MayTotalPayments = appsMonthlyPaymentModel?.MayLevyPayments +
+                                                                   appsMonthlyPaymentModel?.MayCoInvestmentPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .MayCoInvestmentDueFromEmployerPayments +
+                                                                       ?.MayCoInvestmentDueFromEmployerPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .MayEmployerAdditionalPayments +
+                                                                       ?.MayEmployerAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .MayProviderAdditionalPayments +
+                                                                       ?.MayProviderAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .MayApprenticeAdditionalPayments +
+                                                                       ?.MayApprenticeAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .MayEnglishAndMathsPayments +
+                                                                       ?.MayEnglishAndMathsPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .MayLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                       ?.MayLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.JuneTotalPayments = appsMonthlyPaymentModel.JuneLevyPayments +
+                        appsMonthlyPaymentModel.JuneTotalPayments = appsMonthlyPaymentModel?.JuneLevyPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneCoInvestmentPayments +
+                                                                        ?.JuneCoInvestmentPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneCoInvestmentDueFromEmployerPayments +
+                                                                        ?.JuneCoInvestmentDueFromEmployerPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneEmployerAdditionalPayments +
+                                                                        ?.JuneEmployerAdditionalPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneProviderAdditionalPayments +
+                                                                        ?.JuneProviderAdditionalPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneApprenticeAdditionalPayments +
+                                                                        ?.JuneApprenticeAdditionalPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneEnglishAndMathsPayments +
+                                                                        ?.JuneEnglishAndMathsPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JuneLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                        ?.JuneLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.JulyTotalPayments = appsMonthlyPaymentModel.JulyLevyPayments +
+                        appsMonthlyPaymentModel.JulyTotalPayments = appsMonthlyPaymentModel?.JulyLevyPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyCoInvestmentPayments +
+                                                                        ?.JulyCoInvestmentPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyCoInvestmentDueFromEmployerPayments +
+                                                                        ?.JulyCoInvestmentDueFromEmployerPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyEmployerAdditionalPayments +
+                                                                        ?.JulyEmployerAdditionalPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyProviderAdditionalPayments +
+                                                                        ?.JulyProviderAdditionalPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyApprenticeAdditionalPayments +
+                                                                        ?.JulyApprenticeAdditionalPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyEnglishAndMathsPayments +
+                                                                        ?.JulyEnglishAndMathsPayments +
                                                                     appsMonthlyPaymentModel
-                                                                        .JulyLearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                        ?.JulyLearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.R13TotalPayments = appsMonthlyPaymentModel.R13LevyPayments +
-                                                                   appsMonthlyPaymentModel.R13CoInvestmentPayments +
+                        appsMonthlyPaymentModel.R13TotalPayments = appsMonthlyPaymentModel?.R13LevyPayments +
+                                                                   appsMonthlyPaymentModel?.R13CoInvestmentPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R13CoInvestmentDueFromEmployerPayments +
+                                                                       ?.R13CoInvestmentDueFromEmployerPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R13EmployerAdditionalPayments +
+                                                                       ?.R13EmployerAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R13ProviderAdditionalPayments +
+                                                                       ?.R13ProviderAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R13ApprenticeAdditionalPayments +
+                                                                       ?.R13ApprenticeAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R13EnglishAndMathsPayments +
+                                                                       ?.R13EnglishAndMathsPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R13LearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                       ?.R13LearningSupportDisadvantageAndFrameworkUpliftPayments;
 
-                        appsMonthlyPaymentModel.R14TotalPayments = appsMonthlyPaymentModel.R14LevyPayments +
-                                                                   appsMonthlyPaymentModel.R14CoInvestmentPayments +
+                        appsMonthlyPaymentModel.R14TotalPayments = appsMonthlyPaymentModel?.R14LevyPayments +
+                                                                   appsMonthlyPaymentModel?.R14CoInvestmentPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R14CoInvestmentDueFromEmployerPayments +
+                                                                       ?.R14CoInvestmentDueFromEmployerPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R14EmployerAdditionalPayments +
+                                                                       ?.R14EmployerAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R14ProviderAdditionalPayments +
+                                                                       ?.R14ProviderAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R14ApprenticeAdditionalPayments +
+                                                                       ?.R14ApprenticeAdditionalPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R14EnglishAndMathsPayments +
+                                                                       ?.R14EnglishAndMathsPayments +
                                                                    appsMonthlyPaymentModel
-                                                                       .R14LearningSupportDisadvantageAndFrameworkUpliftPayments;
+                                                                       ?.R14LearningSupportDisadvantageAndFrameworkUpliftPayments;
 
                         // Academic year totals
 
                         // Total Levy payments
-                        appsMonthlyPaymentModel.TotalLevyPayments = appsMonthlyPaymentModel.AugustLevyPayments +
-                                                                    appsMonthlyPaymentModel.SeptemberLevyPayments +
-                                                                    appsMonthlyPaymentModel.OctoberLevyPayments +
-                                                                    appsMonthlyPaymentModel.NovemberLevyPayments +
-                                                                    appsMonthlyPaymentModel.DecemberLevyPayments +
-                                                                    appsMonthlyPaymentModel.JanuaryLevyPayments +
-                                                                    appsMonthlyPaymentModel.FebruaryLevyPayments +
-                                                                    appsMonthlyPaymentModel.MarchLevyPayments +
-                                                                    appsMonthlyPaymentModel.AprilLevyPayments +
-                                                                    appsMonthlyPaymentModel.MayLevyPayments +
-                                                                    appsMonthlyPaymentModel.JuneLevyPayments +
-                                                                    appsMonthlyPaymentModel.JulyLevyPayments +
-                                                                    appsMonthlyPaymentModel.R13LevyPayments +
-                                                                    appsMonthlyPaymentModel.R14LevyPayments;
+                        appsMonthlyPaymentModel.TotalLevyPayments = appsMonthlyPaymentModel?.AugustLevyPayments +
+                                                                    appsMonthlyPaymentModel?.SeptemberLevyPayments +
+                                                                    appsMonthlyPaymentModel?.OctoberLevyPayments +
+                                                                    appsMonthlyPaymentModel?.NovemberLevyPayments +
+                                                                    appsMonthlyPaymentModel?.DecemberLevyPayments +
+                                                                    appsMonthlyPaymentModel?.JanuaryLevyPayments +
+                                                                    appsMonthlyPaymentModel?.FebruaryLevyPayments +
+                                                                    appsMonthlyPaymentModel?.MarchLevyPayments +
+                                                                    appsMonthlyPaymentModel?.AprilLevyPayments +
+                                                                    appsMonthlyPaymentModel?.MayLevyPayments +
+                                                                    appsMonthlyPaymentModel?.JuneLevyPayments +
+                                                                    appsMonthlyPaymentModel?.JulyLevyPayments +
+                                                                    appsMonthlyPaymentModel?.R13LevyPayments +
+                                                                    appsMonthlyPaymentModel?.R14LevyPayments;
 
                         // Total CoInvestment totals
                         appsMonthlyPaymentModel.TotalCoInvestmentPayments =
-                            appsMonthlyPaymentModel.AugustCoInvestmentPayments +
-                            appsMonthlyPaymentModel.SeptemberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.OctoberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.NovemberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.DecemberCoInvestmentPayments +
-                            appsMonthlyPaymentModel.JanuaryCoInvestmentPayments +
-                            appsMonthlyPaymentModel.FebruaryCoInvestmentPayments +
-                            appsMonthlyPaymentModel.MarchCoInvestmentPayments +
-                            appsMonthlyPaymentModel.AprilCoInvestmentPayments +
-                            appsMonthlyPaymentModel.MayCoInvestmentPayments +
-                            appsMonthlyPaymentModel.JuneCoInvestmentPayments +
-                            appsMonthlyPaymentModel.JulyCoInvestmentPayments +
-                            appsMonthlyPaymentModel.R13CoInvestmentPayments +
-                            appsMonthlyPaymentModel.R14CoInvestmentPayments;
+                            appsMonthlyPaymentModel?.AugustCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.SeptemberCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.OctoberCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.NovemberCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.DecemberCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.JanuaryCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.FebruaryCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.MarchCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.AprilCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.MayCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.JuneCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.JulyCoInvestmentPayments +
+                            appsMonthlyPaymentModel?.R13CoInvestmentPayments +
+                            appsMonthlyPaymentModel?.R14CoInvestmentPayments;
 
                         // Total CoInvestment due from employer
                         appsMonthlyPaymentModel.TotalCoInvestmentDueFromEmployerPayments =
-                            appsMonthlyPaymentModel.AugustCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.SeptemberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.OctoberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.NovemberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.DecemberCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.JanuaryCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.FebruaryCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.MarchCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.AprilCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.MayCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.JuneCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.JulyCoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.R13CoInvestmentDueFromEmployerPayments +
-                            appsMonthlyPaymentModel.R14CoInvestmentDueFromEmployerPayments;
+                            appsMonthlyPaymentModel?.AugustCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.SeptemberCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.OctoberCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.NovemberCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.DecemberCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.JanuaryCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.FebruaryCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.MarchCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.AprilCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.MayCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.JuneCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.JulyCoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.R13CoInvestmentDueFromEmployerPayments +
+                            appsMonthlyPaymentModel?.R14CoInvestmentDueFromEmployerPayments;
 
                         // Total Employer Additional payments
                         appsMonthlyPaymentModel.TotalEmployerAdditionalPayments =
-                            appsMonthlyPaymentModel.AugustEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.SeptemberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.OctoberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.NovemberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.DecemberEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.JanuaryEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.FebruaryEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.MarchEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.AprilEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.MayEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.JuneEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.JulyEmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.R13EmployerAdditionalPayments +
-                            appsMonthlyPaymentModel.R14EmployerAdditionalPayments;
+                            appsMonthlyPaymentModel?.AugustEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.SeptemberEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.OctoberEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.NovemberEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.DecemberEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.JanuaryEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.FebruaryEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.MarchEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.AprilEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.MayEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.JuneEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.JulyEmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.R13EmployerAdditionalPayments +
+                            appsMonthlyPaymentModel?.R14EmployerAdditionalPayments;
 
                         // Total Provider Additional payments
                         appsMonthlyPaymentModel.TotalProviderAdditionalPayments =
-                            appsMonthlyPaymentModel.AugustProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.SeptemberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.OctoberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.NovemberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.DecemberProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.JanuaryProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.FebruaryProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.MarchProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.AprilProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.MayProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.JuneProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.JulyProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.R13ProviderAdditionalPayments +
-                            appsMonthlyPaymentModel.R14ProviderAdditionalPayments;
+                            appsMonthlyPaymentModel?.AugustProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.SeptemberProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.OctoberProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.NovemberProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.DecemberProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.JanuaryProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.FebruaryProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.MarchProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.AprilProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.MayProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.JuneProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.JulyProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.R13ProviderAdditionalPayments +
+                            appsMonthlyPaymentModel?.R14ProviderAdditionalPayments;
 
                         // Total Apprentice Additional payments
                         appsMonthlyPaymentModel.TotalApprenticeAdditionalPayments =
-                            appsMonthlyPaymentModel.AugustApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.SeptemberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.OctoberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.NovemberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.DecemberApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.JanuaryApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.FebruaryApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.MarchApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.AprilApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.MayApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.JuneApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.JulyApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.R13ApprenticeAdditionalPayments +
-                            appsMonthlyPaymentModel.R14ApprenticeAdditionalPayments;
+                            appsMonthlyPaymentModel?.AugustApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.SeptemberApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.OctoberApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.NovemberApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.DecemberApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.JanuaryApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.FebruaryApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.MarchApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.AprilApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.MayApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.JuneApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.JulyApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.R13ApprenticeAdditionalPayments +
+                            appsMonthlyPaymentModel?.R14ApprenticeAdditionalPayments;
 
                         // Total English and Maths payments
                         appsMonthlyPaymentModel.TotalEnglishAndMathsPayments =
-                            appsMonthlyPaymentModel.AugustEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.SeptemberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.OctoberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.NovemberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.DecemberEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.JanuaryEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.FebruaryEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.MarchEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.AprilEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.MayEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.JuneEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.JulyEnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.R13EnglishAndMathsPayments +
-                            appsMonthlyPaymentModel.R14EnglishAndMathsPayments;
+                            appsMonthlyPaymentModel?.AugustEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.SeptemberEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.OctoberEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.NovemberEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.DecemberEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.JanuaryEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.FebruaryEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.MarchEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.AprilEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.MayEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.JuneEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.JulyEnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.R13EnglishAndMathsPayments +
+                            appsMonthlyPaymentModel?.R14EnglishAndMathsPayments;
 
                         // Total Learning Support, Disadvantage and Framework Uplifts
                         appsMonthlyPaymentModel.TotalLearningSupportDisadvantageAndFrameworkUpliftPayments =
-                            appsMonthlyPaymentModel.AugustLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.MarchLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.AprilLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.MayLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.JuneLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.JulyLearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.R13LearningSupportDisadvantageAndFrameworkUpliftPayments +
-                            appsMonthlyPaymentModel.R14LearningSupportDisadvantageAndFrameworkUpliftPayments;
+                            appsMonthlyPaymentModel?.AugustLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.MarchLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.AprilLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.MayLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.JuneLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.JulyLearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.R13LearningSupportDisadvantageAndFrameworkUpliftPayments +
+                            appsMonthlyPaymentModel?.R14LearningSupportDisadvantageAndFrameworkUpliftPayments;
 
                         // Total payments
                         appsMonthlyPaymentModel.TotalPayments = appsMonthlyPaymentModel.TotalPayments =
-                            appsMonthlyPaymentModel.AugustTotalPayments +
-                            appsMonthlyPaymentModel.SeptemberTotalPayments +
-                            appsMonthlyPaymentModel.OctoberTotalPayments +
-                            appsMonthlyPaymentModel.NovemberTotalPayments +
-                            appsMonthlyPaymentModel.DecemberTotalPayments +
-                            appsMonthlyPaymentModel.JanuaryTotalPayments +
-                            appsMonthlyPaymentModel.FebruaryTotalPayments +
-                            appsMonthlyPaymentModel.MarchTotalPayments +
-                            appsMonthlyPaymentModel.AprilTotalPayments +
-                            appsMonthlyPaymentModel.MayTotalPayments +
-                            appsMonthlyPaymentModel.JuneTotalPayments +
-                            appsMonthlyPaymentModel.JulyTotalPayments +
-                            appsMonthlyPaymentModel.R13TotalPayments +
-                            appsMonthlyPaymentModel.R14TotalPayments;
+                            appsMonthlyPaymentModel?.AugustTotalPayments +
+                            appsMonthlyPaymentModel?.SeptemberTotalPayments +
+                            appsMonthlyPaymentModel?.OctoberTotalPayments +
+                            appsMonthlyPaymentModel?.NovemberTotalPayments +
+                            appsMonthlyPaymentModel?.DecemberTotalPayments +
+                            appsMonthlyPaymentModel?.JanuaryTotalPayments +
+                            appsMonthlyPaymentModel?.FebruaryTotalPayments +
+                            appsMonthlyPaymentModel?.MarchTotalPayments +
+                            appsMonthlyPaymentModel?.AprilTotalPayments +
+                            appsMonthlyPaymentModel?.MayTotalPayments +
+                            appsMonthlyPaymentModel?.JuneTotalPayments +
+                            appsMonthlyPaymentModel?.JulyTotalPayments +
+                            appsMonthlyPaymentModel?.R13TotalPayments +
+                            appsMonthlyPaymentModel?.R14TotalPayments;
                     } // foreach (var appsMonthlyPaymentModel in appsMonthlyPaymentModelList)
                 }
             }
@@ -1172,7 +1140,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment, int period)
+        private bool PeriodLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalLevyPaymentsTypePredicate(payment);
@@ -1180,7 +1148,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        private bool TotalLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
+        private bool TotalLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                    payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1200,7 +1168,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a CoInvestment payment, otherwise false.</returns>
-        private bool PeriodCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment, int period)
+        private bool PeriodCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalCoInvestmentPaymentsTypePredicate(payment);
@@ -1208,7 +1176,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        private bool TotalCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
+        private bool TotalCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                           payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1229,7 +1197,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a CoInvestment due from the employer payment, otherwise false.</returns>
         private bool PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment, int period)
+            AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(payment);
@@ -1237,7 +1205,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
+        private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                           payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1258,7 +1226,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if an Employer additional payment, otherwise false.</returns>
         private bool PeriodEmployerAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment, int period)
+            AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalEmployerAdditionalPaymentsTypePredicate(payment);
@@ -1266,7 +1234,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
+        private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                           payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1286,7 +1254,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Provider additional payment, otherwise false.</returns>
         private bool PeriodProviderAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment, int period)
+            AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalProviderAdditionalPaymentsTypePredicate(payment);
@@ -1294,7 +1262,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        private bool TotalProviderAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
+        private bool TotalProviderAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                           payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1314,7 +1282,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if an Apprenticeship additional payment, otherwise false.</returns>
         private bool PeriodApprenticeAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment, int period)
+            AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
@@ -1323,7 +1291,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         private bool TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment)
+            AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                    payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1343,7 +1311,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if an English and Maths payment.</returns>
         private bool PeriodEnglishAndMathsPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment, int period)
+            AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                           TotalEnglishAndMathsPaymentsTypePredicate(payment);
@@ -1351,7 +1319,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPayments2Payment payment)
+        private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
                           !payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
@@ -1371,7 +1339,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if aLearning Support, Disadvantage and Framework Uplift payments.</returns>
         private bool PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment, int period)
+            AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
                    TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
@@ -1380,13 +1348,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         private bool TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPayments2Payment payment)
+            AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == 1920 &&
-                   (payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
-                   _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) &&
-                   // English and Maths payment
-                   (!payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && payment.TransactionType == 15);
+                           ((payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+                           _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) ||
+                           (!payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && payment.TransactionType == 15));
+
+            if (result)
+            {
+                var t = result;
+            }
 
             return result;
         }

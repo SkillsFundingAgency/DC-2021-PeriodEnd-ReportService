@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
     {
         public int UkPrn { get; set; }
 
-        public List<AppsMonthlyPaymentLearnerInfo> Learners { get; set; }
+        public List<AppsMonthlyPaymentLearnerModel> Learners { get; set; }
     }
 }

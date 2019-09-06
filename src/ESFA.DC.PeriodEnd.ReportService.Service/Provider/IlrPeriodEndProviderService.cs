@@ -42,7 +42,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 appsMonthlyPaymentIlrInfo = new AppsMonthlyPaymentILRInfo()
                 {
                     UkPrn = ukPrn,
-                    Learners = new List<AppsMonthlyPaymentLearnerInfo>()
+                    Learners = new List<AppsMonthlyPaymentLearnerModel>()
                 };
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -59,72 +59,67 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .ToListAsync(cancellationToken);
                 }
 
-                // Convert the database null values to a default value so that we don't have to keep checking for null later
-                // Also give 'not null' columns a default value as the table definition may change to nullable at a later date causing our code to break
                 foreach (var learner in learnersList)
                 {
-                    var learnerInfo = new AppsMonthlyPaymentLearnerInfo
+                    var learnerInfo = new AppsMonthlyPaymentLearnerModel
                     {
-                        Ukprn = learner?.UKPRN.ToString() ?? string.Empty,
-                        LearnRefNumber = learner?.LearnRefNumber ?? string.Empty,
-                        UniqueLearnerNumber = learner?.ULN.ToString() ?? string.Empty,
-                        CampId = learner?.CampId ?? string.Empty,
+                        Ukprn = learner?.UKPRN,
+                        LearnRefNumber = learner?.LearnRefNumber,
+                        UniqueLearnerNumber = learner?.ULN,
+                        CampId = learner?.CampId,
                         LearningDeliveries = learner?.LearningDeliveries.Select(x =>
-                                                 new AppsMonthlyPaymentLearningDeliveryInfo
+                                                 new AppsMonthlyPaymentLearningDeliveryModel
                                                  {
-                                                     Ukprn = x.UKPRN.ToString() ?? string.Empty,
-                                                     LearnRefNumber = x?.LearnRefNumber ?? string.Empty,
-                                                     LearnAimRef = x?.LearnAimRef ?? string.Empty,
-                                                     AimType = x?.AimType.ToString() ?? string.Empty,
-                                                     AimSeqNumber = x?.AimSeqNumber.ToString() ?? string.Empty,
+                                                     Ukprn = x.UKPRN,
+                                                     LearnRefNumber = x.LearnRefNumber,
+                                                     LearnAimRef = x.LearnAimRef,
+                                                     AimType = x.AimType,
+                                                     AimSeqNumber = (byte)x.AimSeqNumber,
                                                      LearnStartDate = x.LearnStartDate,
-                                                     OrigLearnStartDate =
-                                                         x?.LearnStartDate.ToString("dd/mm/yyyy") ?? string.Empty,
-                                                     LearnPlanEndDate =
-                                                         x?.LearnPlanEndDate.ToString("dd/mm/yyyy") ?? string.Empty,
-                                                     FundModel = x?.FundModel.ToString() ?? string.Empty,
-                                                     ProgType = x?.ProgType.ToString() ?? string.Empty,
-                                                     StdCode = x?.StdCode.ToString() ?? string.Empty,
-                                                     FworkCode = x?.FworkCode.ToString() ?? string.Empty,
-                                                     PwayCode = x?.PwayCode.ToString() ?? string.Empty,
-                                                     PartnerUkprn = x?.PartnerUKPRN.ToString() ?? string.Empty,
-                                                     ConRefNumber = x?.ConRefNumber ?? string.Empty,
-                                                     EpaOrgId = x.EPAOrgID ?? string.Empty,
-                                                     SwSupAimId = x?.SWSupAimId ?? string.Empty,
-                                                     CompStatus = x?.CompStatus.ToString() ?? string.Empty,
-                                                     LearnActEndDate = x?.LearnActEndDate.ToString() ?? string.Empty,
-                                                     Outcome = x?.Outcome.ToString() ?? string.Empty,
-                                                     AchDate = x?.AchDate?.ToString("dd/mm/yyyy") ?? string.Empty,
+                                                     OrigLearnStartDate = x.OrigLearnStartDate,
+                                                     LearnPlanEndDate = x.LearnPlanEndDate,
+                                                     FundModel = x.FundModel,
+                                                     ProgType = x.ProgType,
+                                                     StdCode = x.StdCode,
+                                                     FworkCode = x.FworkCode,
+                                                     PwayCode = x.PwayCode,
+                                                     PartnerUkprn = x.PartnerUKPRN,
+                                                     ConRefNumber = x.ConRefNumber,
+                                                     EpaOrgId = x.EPAOrgID,
+                                                     SwSupAimId = x.SWSupAimId,
+                                                     CompStatus = x.CompStatus,
+                                                     LearnActEndDate = x.LearnActEndDate,
+                                                     Outcome = x.Outcome,
+                                                     AchDate = x.AchDate,
 
                                                      ProviderSpecDeliveryMonitorings = x
                                                          ?.ProviderSpecDeliveryMonitorings
                                                          .Select(y =>
                                                              new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
                                                              {
-                                                                 Ukprn = y.UKPRN.ToString(),
-                                                                 LearnRefNumber = y?.LearnRefNumber ?? string.Empty,
-                                                                 AimSeqNumber = y.AimSeqNumber.ToString(),
-                                                                 ProvSpecDelMon = y?.ProvSpecDelMon ?? string.Empty,
-                                                                 ProvSpecDelMonOccur =
-                                                                     y?.ProvSpecDelMonOccur ?? string.Empty
+                                                                 Ukprn = y.UKPRN,
+                                                                 LearnRefNumber = y?.LearnRefNumber,
+                                                                 AimSeqNumber = (byte)y.AimSeqNumber,
+                                                                 ProvSpecDelMon = y?.ProvSpecDelMon,
+                                                                 ProvSpecDelMonOccur = y?.ProvSpecDelMonOccur
                                                              }).ToList(),
                                                      LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y =>
                                                          new AppsMonthlyPaymentLearningDeliveryFAMInfo
                                                          {
-                                                             Ukprn = y?.UKPRN.ToString() ?? string.Empty,
-                                                             LearnRefNumber = y?.LearnRefNumber ?? string.Empty,
-                                                             AimSeqNumber = y.AimSeqNumber.ToString() ?? string.Empty,
-                                                             LearnDelFAMType = y?.LearnDelFAMType ?? string.Empty,
-                                                             LearnDelFAMCode = y?.LearnDelFAMCode ?? string.Empty
+                                                             Ukprn = y?.UKPRN,
+                                                             LearnRefNumber = y?.LearnRefNumber,
+                                                             AimSeqNumber = (byte)y.AimSeqNumber,
+                                                             LearnDelFAMType = y?.LearnDelFAMType,
+                                                             LearnDelFAMCode = y?.LearnDelFAMCode
                                                          }).ToList(),
-                                                 }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryInfo>(),
+                                                 }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryModel>(),
                         ProviderSpecLearnerMonitorings = learner?.ProviderSpecLearnerMonitorings.Select(x =>
                             new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
                             {
-                                Ukprn = x.UKPRN.ToString(),
-                                LearnRefNumber = x?.LearnRefNumber ?? string.Empty,
-                                ProvSpecLearnMon = x?.ProvSpecLearnMon ?? string.Empty,
-                                ProvSpecLearnMonOccur = x?.ProvSpecLearnMonOccur ?? string.Empty
+                                Ukprn = x.UKPRN,
+                                LearnRefNumber = x?.LearnRefNumber,
+                                ProvSpecLearnMon = x?.ProvSpecLearnMon,
+                                ProvSpecLearnMonOccur = x?.ProvSpecLearnMonOccur
                             }).ToList(),
                     };
 

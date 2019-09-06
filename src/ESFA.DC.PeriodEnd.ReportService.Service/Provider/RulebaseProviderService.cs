@@ -55,7 +55,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     {
                         UKPRN = ukPrn,
                         LearnRefNumber = aecApprenticeshipPriceEpisodePeriodisedValue.LearnRefNumber,
-                        AimSeqNumber = (int)aecApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber,
+                        AimSeqNumber = (int)aecApprenticeshipPriceEpisode?.PriceEpisodeAimSeqNumber,
                         AttributeName = aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName,
                         Periods = new[]
                         {
@@ -110,27 +110,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 using (var ilrContext = _ilrRulebaseContextFactory())
                 {
-                    appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList = await ilrContext?.AEC_ApprenticeshipPriceEpisodes
+                    appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList =
+                        await ilrContext?.AEC_ApprenticeshipPriceEpisodes
                         .Where(x => x.UKPRN == ukPrn)
                         .Select(ape => new AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo
                         {
-                            Ukprn = (ape != null && ape.UKPRN != null) ? ape.UKPRN.ToString() : string.Empty,
-                            LearnRefNumber = (ape != null && ape.LearnRefNumber != null) ? ape.LearnRefNumber : string.Empty,
-                            PriceEpisodeIdentifier = (ape != null && ape.PriceEpisodeIdentifier != null) ? ape.PriceEpisodeIdentifier : string.Empty,
-                            AimSequenceNumber = ape.PriceEpisodeAimSeqNumber.ToString() ?? string.Empty,
+                            Ukprn = ape.UKPRN,
+                            LearnRefNumber = ape.LearnRefNumber,
+                            PriceEpisodeIdentifier = ape.PriceEpisodeIdentifier,
+                            AimSequenceNumber = (byte?)ape.PriceEpisodeAimSeqNumber,
                             EpisodeStartDate = ape.EpisodeStartDate,
                             PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
                             PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
-                            PriceEpisodeAgreeId = (ape != null && ape.PriceEpisodeAgreeId != null) ? ape.PriceEpisodeAgreeId : string.Empty
+                            PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
                         }).ToListAsync(cancellationToken);
 
-                    appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList = await ilrContext?.AEC_LearningDeliveries
+                    appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList = await ilrContext.AEC_LearningDeliveries
                         .Where(x => x.UKPRN == ukPrn)
                         .Select(ald => new AppsMonthlyPaymentAECLearningDeliveryInfo
                         {
-                            Ukprn = (ald != null && ald.UKPRN != null) ? ald.UKPRN.ToString() : string.Empty,
-                            LearnRefNumber = (ald != null && ald.LearnRefNumber != null) ? ald.LearnRefNumber : string.Empty,
-                            PlannedNumOnProgInstalm = (ald != null && ald.PlannedNumOnProgInstalm != null) ? ald.PlannedNumOnProgInstalm.ToString() : string.Empty,
+                            Ukprn = ald.UKPRN,
+                            LearnRefNumber = ald.LearnRefNumber,
+                            PlannedNumOnProgInstalm = ald.PlannedNumOnProgInstalm,
                         }).ToListAsync(cancellationToken);
                 }
             }

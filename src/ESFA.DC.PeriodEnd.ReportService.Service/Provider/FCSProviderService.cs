@@ -55,7 +55,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 using (var fcsContext = _fcsContextFunc())
                 {
-                    // Get a list of fcs contracts by Ukprn (need to link to the Contractor table for the Ukprn)
+                    // Get a list of fcs contracts by Ukprn
                     var fcsContracts = await fcsContext.Contracts
                         .Include(x => x.Contractor)
                         .Include(y => y.ContractAllocations)
@@ -67,10 +67,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     {
                         var appsMonthlyPaymentContractInfo = new AppsMonthlyPaymentContractInfo()
                         {
-                            ContractNumber = fcsContract?.ContractNumber ?? string.Empty,
+                            ContractNumber = fcsContract.ContractNumber,
                             ContractVersionNumber = fcsContract?.ContractVersionNumber.ToString() ?? string.Empty,
-                            StartDate = fcsContract?.StartDate.ToString() ?? string.Empty,
-                            EndDate = fcsContract?.EndDate.ToString() ?? string.Empty,
+                            StartDate = fcsContract.StartDate,
+                            EndDate = fcsContract.EndDate,
                             ContractAllocations = fcsContract?.ContractAllocations.Select(x => new AppsMonthlyPaymentContractAllocation
                             {
                                 ContractAllocationNumber = x?.ContractAllocationNumber ?? string.Empty,
@@ -78,14 +78,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 PeriodTypeCode = x?.PeriodTypeCode ?? string.Empty,
                                 FundingStreamCode = x?.FundingStreamCode ?? string.Empty,
                                 FundingStreamPeriodCode = x?.FundingStreamPeriodCode ?? string.Empty,
-                                StartDate = x?.StartDate.ToString() ?? string.Empty,
-                                EndDate = x?.EndDate.ToString() ?? string.Empty
+                                StartDate = x.StartDate,
+                                EndDate = x.EndDate
                             }).ToList() ?? new List<AppsMonthlyPaymentContractAllocation>(),
                             Provider = new AppsMonthlyPaymentContractorInfo()
                             {
-                                UkPrn = fcsContract?.Contractor?.Ukprn.ToString() ?? string.Empty,
-                                OrganisationIdentifier = fcsContract?.Contractor?.OrganisationIdentifier ?? string.Empty,
-                                LegalName = fcsContract?.Contractor?.LegalName ?? string.Empty
+                                UkPrn = fcsContract?.Contractor?.Ukprn,
+                                OrganisationIdentifier = fcsContract?.Contractor?.OrganisationIdentifier,
+                                LegalName = fcsContract?.Contractor?.LegalName
                             }
                         };
 

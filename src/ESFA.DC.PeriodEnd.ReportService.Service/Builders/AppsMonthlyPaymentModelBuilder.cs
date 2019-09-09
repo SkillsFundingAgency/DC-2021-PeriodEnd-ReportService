@@ -454,7 +454,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             {
                                 // get the matching sequence number for this earning event id from the Earning Event table
                                 appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = (byte)_appsMonthlyPaymentDasEarningsInfo?.Earnings
-                                   ?.FirstOrDefault(x => x.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
+                                   ?.FirstOrDefault(x => x?.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
                             }
                         }
 
@@ -471,29 +471,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             if (larsInfo != null)
                             {
                                 appsMonthlyPaymentModel.LarsLearningDeliveryLearningAimTitle = larsInfo?.LearningAimTitle;
-                            }
-                        }
-
-                        //--------------------------------------------------------------------------------------------------
-                        // process the Earning Event fields
-                        //--------------------------------------------------------------------------------------------------
-                        if (_appsMonthlyPaymentDasEarningsInfo != null)
-                        {
-                            var earningEvent = _appsMonthlyPaymentDasEarningsInfo?.Earnings
-                                .Where(x => x?.EventId == appsMonthlyPaymentModel?.PaymentEarningEventId &&
-                                            x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                            x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?
-                                                .PaymentLearnerReferenceNumber) &&
-                                            x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate)
-                                .OrderByDescending(y => y?.AcademicYear)
-                                .ThenByDescending(y => y?.CollectionPeriod)
-                                .FirstOrDefault();
-
-                            // populate the Earning Event fields in the appsMonthlyPaymentModel payment.
-                            if (earningEvent != null)
-                            {
-                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber =
-                                    earningEvent?.LearningAimSequenceNumber;
                             }
                         }
 

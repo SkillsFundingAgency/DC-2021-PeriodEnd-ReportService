@@ -49,7 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IIlrPeriodEndProviderService> IlrPeriodEndProviderServiceMock =
                 new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
-            Mock<IRulebaseProviderService> fm36ProviderServiceMock = new Mock<IRulebaseProviderService>();
+            Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
             Mock<IFCSProviderService> fcsProviderServiceMock = new Mock<IFCSProviderService>();
             IValueProvider valueProvider = new ValueProvider();
@@ -849,9 +849,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             appsMonthlyPaymentDasInfo.Payments = new List<AppsMonthlyPaymentDasPaymentModel>();
 
             /*
-                        ------------------------------------------------------------------------------------------------------------------------------------------
-                            ***There should be a new row on the report where the data is different for any of the following fields in the Payments2.Payment table:***
-                                ------------------------------------------------------------------------------------------------------------------------------------------
+                        -------------------------------------------------------------------------------------------------------------------------------------------
+                        *** There should be a new row on the report where the data is different for any of the following fields in the Payments2.Payment table: ***
+                        -------------------------------------------------------------------------------------------------------------------------------------------
                             • LearnerReferenceNumber
                             • LearnerUln
                             • LearningAimReference

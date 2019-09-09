@@ -77,8 +77,8 @@
     <Reference Include="ESFA.DC.CollectionsManagement.Models, Version=0.2.10.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.CollectionsManagement.Models.0.2.10-beta0001\lib\netstandard2.0\ESFA.DC.CollectionsManagement.Models.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.DASPayments.EF, Version=0.1.77.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.DASPayments.EF.0.1.77\lib\netstandard2.0\ESFA.DC.DASPayments.EF.dll</HintPath>
+    <Reference Include="ESFA.DC.DASPayments.EF, Version=0.1.83.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.DASPayments.EF.0.1.83\lib\netstandard2.0\ESFA.DC.DASPayments.EF.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.Data.LARS.Model, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -108,17 +108,17 @@
     <Reference Include="ESFA.DC.ILR.Model.Interface, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1920.Model.Interface.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Model.Interface.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR1920.Database.EF, Version=0.0.304.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.304\lib\netstandard2.0\ESFA.DC.ILR1920.Database.EF.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR1920.Database.EF, Version=0.0.373.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.373\lib\netstandard2.0\ESFA.DC.ILR1920.Database.EF.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR1920.DataStore.EF, Version=0.0.304.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.304\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR1920.DataStore.EF, Version=0.0.373.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.373\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR1920.DataStore.EF.Invalid, Version=0.0.304.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.304\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.Invalid.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR1920.DataStore.EF.Invalid, Version=0.0.373.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.373\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.Invalid.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR1920.DataStore.EF.Valid, Version=0.0.304.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.304\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.Valid.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR1920.DataStore.EF.Valid, Version=0.0.373.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR1920.Database.EF.0.0.373\lib\netstandard2.0\ESFA.DC.ILR1920.DataStore.EF.Valid.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.IO.AzureStorage, Version=0.1.19.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.IO.AzureStorage.0.1.19-beta0001\lib\netstandard2.0\ESFA.DC.IO.AzureStorage.dll</HintPath>
@@ -431,9 +431,7 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="packages.config">
-      <SubType>Designer</SubType>
-    </None>
+    <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.DataAccess\ESFA.DC.PeriodEnd.ReportService.DataAccess.csproj">
@@ -457,7 +455,6 @@
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.dll" />
   </ItemGroup>
-  <ItemGroup />
   <ItemGroup>
     <Content Include="PackageRoot\Config\Settings.xml">
       <SubType>Designer</SubType>

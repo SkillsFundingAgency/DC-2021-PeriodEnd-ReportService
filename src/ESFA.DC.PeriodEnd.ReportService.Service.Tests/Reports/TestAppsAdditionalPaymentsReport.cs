@@ -61,7 +61,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IStreamableKeyValuePersistenceService> storage = new Mock<IStreamableKeyValuePersistenceService>();
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
-            Mock<IRulebaseProviderService> fm36ProviderServiceMock = new Mock<IRulebaseProviderService>();
+            Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             IValueProvider valueProvider = new ValueProvider();
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
@@ -181,7 +181,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = "A12345",
                         AimSeqNumber = 1,
                         PriceEpisodeIdentifier = "1",
-                        Periods = new decimal[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
                         AttributeName = "PriceEpisodeFirstEmp1618Pay"
                     },
                     new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
@@ -190,7 +190,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = "A12345",
                         AimSeqNumber = 1,
                         PriceEpisodeIdentifier = "1",
-                        Periods = new decimal[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
                         AttributeName = "PriceEpisodeSecondProv1618Pay"
                     }
                     }

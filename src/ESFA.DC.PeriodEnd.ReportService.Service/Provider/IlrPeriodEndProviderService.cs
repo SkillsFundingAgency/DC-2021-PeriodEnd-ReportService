@@ -28,14 +28,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         public IlrPeriodEndProviderService(
             ILogger logger,
-            Func<IIlr1920RulebaseContext> ilrContextFactory,
-            Func<IIlr1920ValidContext> ilrValidContextFactory,
             Func<IIlr1920RulebaseContext> ilrContextFactory)
             : base(logger)
         {
             _ilrContextFactory = ilrContextFactory;
-            _ilrValidContextFactory = ilrValidContextFactory;
-            _ilrInValidContextFactory = ilrInValidContextFactory;
         }
 
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(

@@ -31,7 +31,7 @@
 //            ILogger logger,
 //            IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
 //            IIlrPeriodEndProviderService ilrPeriodEndProviderService,
-//            IRulebaseProviderService fm36ProviderService,
+//            IFM36PeriodEndProviderService fm36ProviderService,
 //            IDASPaymentsProviderService dasPaymentsProviderService,
 //            ILarsProviderService larsProviderService,
 //            IFcsProviderService fcsProviderService,

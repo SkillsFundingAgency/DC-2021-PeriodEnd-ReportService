@@ -22,7 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
     public class AppsAdditionalPaymentsReport : AbstractReport, IReport
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
-        private readonly IRulebaseProviderService _fm36ProviderService;
+        private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
         private readonly IAppsAdditionalPaymentsModelBuilder _modelBuilder;
 
@@ -30,7 +30,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
-            IRulebaseProviderService fm36ProviderService,
+            IFM36PeriodEndProviderService fm36ProviderService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             IDASPaymentsProviderService dasPaymentsProviderService,

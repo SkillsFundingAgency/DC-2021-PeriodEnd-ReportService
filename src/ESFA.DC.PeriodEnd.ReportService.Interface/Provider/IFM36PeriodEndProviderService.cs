@@ -5,7 +5,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
-    public interface IRulebaseProviderService
+    public interface IFM36PeriodEndProviderService
     {
         Task<AppsAdditionalPaymentRulebaseInfo> GetFM36DataForAppsAdditionalPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 

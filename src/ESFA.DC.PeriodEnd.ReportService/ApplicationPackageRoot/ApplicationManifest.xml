@@ -6,7 +6,7 @@
     <Parameter Name="AuditQueueName" DefaultValue="audit-queue" />
     <Parameter Name="TopicName" DefaultValue="periodendtopic" />
     <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
-    <Parameter Name="ILR1920DataStoreConnectionString" DefaultValue="" />
+    <Parameter Name="ILRDataStoreConnectionString" DefaultValue="" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -22,12 +22,16 @@
     <Parameter Name="AuditMaxConcurrentCalls" DefaultValue="1" />
     <!-- FCS -->
     <Parameter Name="FCSConnectionString" DefaultValue="" />
-    <!-- Summarisation -->
-    <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" DefaultValue="" />
+    <!-- ILR Validation Errors -->
+    <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
     <!-- Lars -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
+    <!-- Organsiation -->
+    <Parameter Name="OrgConnectionString" DefaultValue="" />
+    <!-- Summarised Actuals -->
+    <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -53,8 +57,11 @@
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
             <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
-            <Parameter Name="ILR1920DataStoreConnectionString" Value="[ILR1920DataStoreConnectionString]" />
+            <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
+            <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
+            <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
+            <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />

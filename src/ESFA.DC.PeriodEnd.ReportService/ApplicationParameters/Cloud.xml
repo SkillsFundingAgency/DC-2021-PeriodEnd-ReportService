@@ -1,26 +1,26 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<PublishProfile xmlns="http://schemas.microsoft.com/2015/05/fabrictools">
-  <!-- ClusterConnectionParameters allows you to specify the PowerShell parameters to use when connecting to the Service Fabric cluster.
-       Valid parameters are any that are accepted by the Connect-ServiceFabricCluster cmdlet.
-       
-       For a remote cluster, you would need to specify the appropriate parameters for that specific cluster.
-         For example: <ClusterConnectionParameters ConnectionEndpoint="mycluster.westus.cloudapp.azure.com:19000" />
-
-       Example showing parameters for a cluster that uses certificate security:
-       <ClusterConnectionParameters ConnectionEndpoint="mycluster.westus.cloudapp.azure.com:19000"
-                                    X509Credential="true"
-                                    ServerCertThumbprint="0123456789012345678901234567890123456789"
-                                    FindType="FindByThumbprint"
-                                    FindValue="9876543210987654321098765432109876543210"
-                                    StoreLocation="CurrentUser"
-                                    StoreName="My" />
-
-       Example showing parameters for a cluster that uses Azure Active Directory (AAD) security:
-       <ClusterConnectionParameters ConnectionEndpoint="mycluster.westus.cloudapp.azure.com:19000"
-                                    AzureActiveDirectory="true"
-                                    ServerCertThumbprint="0123456789012345678901234567890123456789" />
-  -->
-  <ClusterConnectionParameters ConnectionEndpoint="" />
-  <ApplicationParameterFile Path="..\ApplicationParameters\Cloud.xml" />
-  <CopyPackageParameters CompressPackage="true" />
-</PublishProfile>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ESFA.DC.PeriodEnd1920.ReportService" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
+    <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
+    <Parameter Name="ILRDataStoreConnectionString" Value="__ILR1920DataStoreConnectionString__" />
+    <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
+    <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionString__" />
+    <Parameter Name="AuditQueueName" Value="__AuditQueueName__" />
+    <Parameter Name="TopicName" Value="__PE1920ReportingTopicName__" />
+    <Parameter Name="LoggerConnectionstring" Value="__LoggerConnectionstring__" />
+    <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
+    <Parameter Name="JobStatusQueueName" Value="__JobStatusQueueName__" />
+    <Parameter Name="ServiceReleaseVersion" Value="__ServiceReleaseVersion__" />
+    <!-- Subscription Name -->
+    <Parameter Name="SubscriptionName" Value="__PE1920ReportingSubscriptionName__" />
+    <!-- DASPayments -->
+    <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
+    <!-- Lars -->
+    <Parameter Name="LarsConnectionString" Value="__LarsConnectionString__" />
+    <!-- Summarised Actuals -->
+    <Parameter Name="SummarisedActualsConnectionString" Value="__SummarisedActualsConnectionString__" />
+    <!-- OrgConnectionString -->
+    <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
+  </Parameters>
+</Application>

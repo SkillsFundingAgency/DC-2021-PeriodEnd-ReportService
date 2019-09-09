@@ -57,9 +57,7 @@
             <Parameter Name="FCSConnectionString" Value="[FCSConnectionString]" />
             <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
-            <Parameter Name="IlrValidationErrorsConnectionString" Value="[IlrValidationErrorsConnectionString]" />
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
-            <Parameter Name="ILRDataStoreValidConnectionString" Value="[ILRDataStoreValidConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
           </Section>

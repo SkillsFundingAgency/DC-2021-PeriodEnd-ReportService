@@ -27,12 +27,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         private readonly Func<IIlr1920InvalidContext> _ilrInValidContextFactory;
 
         public IlrPeriodEndProviderService(
+            ILogger logger,
             Func<IIlr1920RulebaseContext> ilrContextFactory,
             Func<IIlr1920ValidContext> ilrValidContextFactory,
             Func<IIlr1920InvalidContext> ilrInValidContextFactory)
             : base(logger)
         {
+            _ilrContextFactory = ilrContextFactory;
             _ilrValidContextFactory = ilrValidContextFactory;
+            _ilrInValidContextFactory = ilrInValidContextFactory;
         }
 
         public async Task<IEnumerable<FileDetail>> GetFileDetailsAsync(CancellationToken cancellationToken)

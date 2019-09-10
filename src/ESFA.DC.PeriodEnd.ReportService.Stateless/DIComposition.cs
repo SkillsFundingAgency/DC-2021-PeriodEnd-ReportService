@@ -240,18 +240,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .SingleInstance();
 
             // Organisation
-            //containerBuilder.RegisterType<OrganisationsContext>().As<IOrganisationsContext>().ExternallyOwned();
-            //containerBuilder.Register(context =>
-            //{
-            //    var optionsBuilder = new DbContextOptionsBuilder<OrganisationsContext>();
-            //    optionsBuilder.UseSqlServer(
-            //        reportServiceConfiguration.OrgConnectionString,
-            //        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+            containerBuilder.RegisterType<OrganisationsContext>().As<IOrganisationsContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<OrganisationsContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.OrgConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-            //    return optionsBuilder.Options;
-            //})
-            //    .As<DbContextOptions<OrganisationsContext>>()
-            //    .SingleInstance();
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<OrganisationsContext>>()
+                .SingleInstance();
         }
 
         private static void RegisterReports(ContainerBuilder containerBuilder)

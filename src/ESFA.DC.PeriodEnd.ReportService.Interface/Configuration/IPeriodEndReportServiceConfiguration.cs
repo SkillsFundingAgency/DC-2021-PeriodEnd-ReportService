@@ -14,6 +14,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 
         string LarsConnectionString { get; set; }
 
-//        string OrgConnectionString { get; set; }
+        string OrgConnectionString { get; set; }
     }
 }

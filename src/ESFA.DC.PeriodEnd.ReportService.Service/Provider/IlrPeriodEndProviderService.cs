@@ -134,8 +134,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var ilrContext = _ilrValidContextFactory())
             {
                 learnersList = await ilrContext.Learners
-                                                .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
-                                                .ToListAsync(cancellationToken);
+                    .Include(x => x.LearningDeliveries)
+                    .Include(x => x.ProviderSpecLearnerMonitorings)
+                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                    .ToListAsync(cancellationToken);
             }
 
             foreach (var learner in learnersList)

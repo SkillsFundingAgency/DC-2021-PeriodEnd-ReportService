@@ -140,9 +140,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         PaymentFundingLineType = g.Key.ReportingAimFundingLineType,
                         PaymentPriceEpisodeIdentifier = g.Key.PriceEpisodeIdentifier,
 
-                        // The contract type is linked the Reporting Funding Line Type so we won't have more than one type of Contract Type in
-                        // this grouping so we can assign the contract type as there will be only one
-                        PaymentApprenticeshipContractType = g.SingleOrDefault().ContractType,
+                        PaymentApprenticeshipContractType = g?.FirstOrDefault().ContractType,
 
                         // The PriceEpisodeStartDate isn't part of the Br3 grouping but is the last 10 characters of the PriceEpisodeIdentifier
                         // so will only have the one group row
@@ -448,7 +446,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 .OrderByDescending(x => x?.AcademicYear)
                                 .ThenByDescending(x => x?.CollectionPeriod)
                                 .ThenByDescending(x => x?.DeliveryPeriod)
-                                .SingleOrDefault()?.EarningEventId;
+                                .FirstOrDefault()?.EarningEventId;
 
                             if (paymentEarningEventId != null)
                             {

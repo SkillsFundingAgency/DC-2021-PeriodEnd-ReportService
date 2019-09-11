@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac;
 using Autofac.Features.AttributeFilters;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.DateTimeProvider.Interface;

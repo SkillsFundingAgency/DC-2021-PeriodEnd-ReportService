@@ -23,9 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _fcsContextFunc = fcsContext;
         }
 
-        public async Task<List<DataExtractFcsInfo>> GetFCSForDataExtractReport(
-            IEnumerable<string>OrganisationIds,
-            CancellationToken cancellationToken)
+        public async Task<List<DataExtractFcsInfo>> GetFCSForDataExtractReport(IEnumerable<string> OrganisationIds, CancellationToken cancellationToken)
         {
             using (IFcsContext fcsContext = _fcsContextFunc())
             {
@@ -41,9 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
-        public async Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(
-            int ukPrn,
-            CancellationToken cancellationToken)
+        public async Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo = null;
 
@@ -57,49 +53,43 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                var fcsContext = _fcsContextFunc();
-                if (fcsContext != null)
+                using (var fcsContext = _fcsContextFunc())
                 {
-                    using (fcsContext)
+                    // Get a list of fcs contracts by Ukprn
+                    var fcsContracts = await fcsContext.Contracts
+                        .Include(x => x.Contractor)
+                        .Include(y => y.ContractAllocations)
+                        .Where(x => x.Contractor.Ukprn == ukPrn)
+                        .ToListAsync(cancellationToken);
+
+                    // copy the fields we need from the EF model to our report model
+                    foreach (var fcsContract in fcsContracts)
                     {
-                        // Get a list of fcs contracts by Ukprn
-                        var fcsContracts = await fcsContext.Contracts
-                            .Include(x => x.Contractor)
-                            .Include(y => y.ContractAllocations)
-                            .Where(x => x.Contractor.Ukprn == ukPrn)
-                            .ToListAsync(cancellationToken);
-
-                        // copy the fields we need from the EF model to our report model
-                        foreach (var fcsContract in fcsContracts)
+                        var appsMonthlyPaymentContractInfo = new AppsMonthlyPaymentContractInfo()
                         {
-                            var appsMonthlyPaymentContractInfo = new AppsMonthlyPaymentContractInfo()
+                            ContractNumber = fcsContract?.ContractNumber,
+                            ContractVersionNumber = fcsContract?.ContractVersionNumber.ToString(),
+                            StartDate = fcsContract?.StartDate,
+                            EndDate = fcsContract?.EndDate,
+                            ContractAllocations = fcsContract?.ContractAllocations.Select(x => new AppsMonthlyPaymentContractAllocation
                             {
-                                ContractNumber = fcsContract?.ContractNumber,
-                                ContractVersionNumber = fcsContract?.ContractVersionNumber.ToString(),
-                                StartDate = fcsContract?.StartDate,
-                                EndDate = fcsContract?.EndDate,
-                                ContractAllocations = fcsContract?.ContractAllocations.Select(x =>
-                                                          new AppsMonthlyPaymentContractAllocation
-                                                          {
-                                                              ContractAllocationNumber = x?.ContractAllocationNumber,
-                                                              Period = x?.Period,
-                                                              PeriodTypeCode = x?.PeriodTypeCode,
-                                                              FundingStreamCode = x?.FundingStreamCode,
-                                                              FundingStreamPeriodCode = x?.FundingStreamPeriodCode,
-                                                              StartDate = x?.StartDate,
-                                                              EndDate = x?.EndDate
-                                                          }).ToList() ??
-                                                      new List<AppsMonthlyPaymentContractAllocation>(),
-                                Provider = new AppsMonthlyPaymentContractorInfo()
-                                {
-                                    UkPrn = fcsContract?.Contractor?.Ukprn,
-                                    OrganisationIdentifier = fcsContract?.Contractor?.OrganisationIdentifier,
-                                    LegalName = fcsContract?.Contractor?.LegalName
-                                }
-                            };
+                                ContractAllocationNumber = x?.ContractAllocationNumber,
+                                Period = x?.Period,
+                                PeriodTypeCode = x?.PeriodTypeCode,
+                                FundingStreamCode = x?.FundingStreamCode,
+                                FundingStreamPeriodCode = x?.FundingStreamPeriodCode,
+                                StartDate = x?.StartDate,
+                                EndDate = x?.EndDate
+                            }).ToList() ?? new List<AppsMonthlyPaymentContractAllocation>(),
+                            Provider = new AppsMonthlyPaymentContractorInfo()
+                            {
+                                UkPrn = fcsContract?.Contractor?.Ukprn,
+                                OrganisationIdentifier = fcsContract?.Contractor?.OrganisationIdentifier,
+                                LegalName = fcsContract?.Contractor?.LegalName
+                            }
+                        };
 
-                            appsMonthlyPaymentFcsInfo.Contracts.Add(appsMonthlyPaymentContractInfo);
-                        }
+                        appsMonthlyPaymentFcsInfo.Contracts.Add(appsMonthlyPaymentContractInfo);
                     }
                 }
             }

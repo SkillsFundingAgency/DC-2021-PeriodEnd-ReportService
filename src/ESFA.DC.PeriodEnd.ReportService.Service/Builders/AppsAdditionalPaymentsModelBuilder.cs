@@ -68,20 +68,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                         MayEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.May),
                         JuneEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.June),
                         JulyEarnings = aecApprenticeshipPriceEpisodePeriodisedValuesInfo == null ? 0 : GetMonthlyEarnings(paymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfo, PeriodMonths.July),
-                        AugustR01Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.AugustR01),
-                        SeptemberR02Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.SeptemberR02),
-                        OctoberR03Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.OctoberR03),
-                        NovemberR04Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.NovemberR04),
-                        DecemberR05Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.DecemberR05),
-                        JanuaryR06Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.JanuaryR06),
-                        FebruaryR07Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.FebruaryR07),
-                        MarchR08Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.MarchR08),
-                        AprilR09Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.AprilR09),
-                        MayR10Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.MayR10),
-                        JuneR11Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.JuneR11),
-                        JulyR12Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.JulyR12),
-                        R13Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.R13),
-                        R14Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1819.R14)
+                        AugustR01Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.AugustR01),
+                        SeptemberR02Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.SeptemberR02),
+                        OctoberR03Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.OctoberR03),
+                        NovemberR04Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.NovemberR04),
+                        DecemberR05Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.DecemberR05),
+                        JanuaryR06Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.JanuaryR06),
+                        FebruaryR07Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.FebruaryR07),
+                        MarchR08Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.MarchR08),
+                        AprilR09Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.AprilR09),
+                        MayR10Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.MayR10),
+                        JuneR11Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.JuneR11),
+                        JulyR12Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.JulyR12),
+                        R13Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.R13),
+                        R14Payments = GetMonthlyPayments(paymentInfo, CollectionPeriods1920.R14)
                     };
                     model.TotalEarnings = BuildTotalEarnings(model);
                     model.TotalPaymentsYearToDate = BuildTotalPayments(model);
@@ -195,19 +195,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
             int month)
         {
             decimal? result = 0;
-            if (paymentInfo.TransactionType == 4 || paymentInfo.TransactionType == 6)
+            if (paymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive || paymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive)
             {
                 result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0 +
                          aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
-            if (paymentInfo.TransactionType == 5 || paymentInfo.TransactionType == 7)
+            if (paymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive || paymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive)
             {
                 result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0 +
                          aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
-            if (paymentInfo.TransactionType == 16)
+            if (paymentInfo.TransactionType == Constants.DASPayments.TransactionType.Apprenticeship)
             {
                 result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }

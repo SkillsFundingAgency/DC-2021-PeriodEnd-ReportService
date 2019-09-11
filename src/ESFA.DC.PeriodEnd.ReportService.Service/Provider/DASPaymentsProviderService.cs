@@ -14,8 +14,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : IDASPaymentsProviderService
     {
-        private const int FundingSource = 3;
-        private int[] AppsAdditionalPaymentsTransactionTypes = { 4, 5, 6, 7, 16 };
+        private int[] AppsAdditionalPaymentsTransactionTypes = {
+            Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive,
+            Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive,
+            Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive,
+            Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive,
+            Constants.DASPayments.TransactionType.Apprenticeship };
+
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
 
         public DASPaymentsProviderService(Func<IDASPaymentsContext> dasPaymentsContextFactory)
@@ -38,8 +43,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var context = _dasPaymentsContextFactory())
             {
                 paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
-                                                                x.FundingSource == FundingSource &&
-                                                                 AppsAdditionalPaymentsTransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
+                                                            x.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
+                                                            AppsAdditionalPaymentsTransactionTypes.Contains(x.TransactionType))
+                                                            .ToListAsync(cancellationToken);
 
                 apprenticeships = await context.Apprenticeships.Join(
                     paymentsList,
@@ -90,7 +96,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             List<Payment> paymentsList;
             using (var context = _dasPaymentsContextFactory())
             {
-                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource).ToListAsync(cancellationToken);
+                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == Constants.DASPayments.FundingSource.Co_Invested_Employer).ToListAsync(cancellationToken);
             }
 
             foreach (var payment in paymentsList)

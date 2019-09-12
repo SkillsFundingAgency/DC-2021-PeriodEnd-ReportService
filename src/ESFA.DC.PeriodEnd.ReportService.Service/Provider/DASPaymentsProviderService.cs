@@ -15,6 +15,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : IDASPaymentsProviderService
     {
+        private const int _fundingSource = 3;
+
         private int[] AppsAdditionalPaymentsTransactionTypes = {
             Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive,
@@ -22,8 +24,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Apprenticeship };
 
-        private const int _fundingSource = 3;
-        private int[] AppsAdditionalPaymentsTransactionTypes = { 4, 5, 6, 7, 16 };
         private int[] TransactionTypes = { 1, 2, 3 };
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
 

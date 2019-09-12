@@ -25,7 +25,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken);
 
         Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(int collectionYear, IEnumerable<ReturnPeriod> returnPeriods, IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken);
-        Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(int collectionYear, IEnumerable<ReturnPeriod> returnPeriods, CancellationToken cancellationToken);
 
         Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken);
     }

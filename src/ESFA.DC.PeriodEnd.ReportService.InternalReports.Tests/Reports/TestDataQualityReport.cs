@@ -1,6 +1,7 @@
 ﻿using Aspose.Cells;
 using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -41,7 +42,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(returnPeriod);
             reportServiceContextMock.SetupGet(x => x.ILRPeriods).Returns(BuildReturnPeriodsModel());
 
-            var filename = $"R{returnPeriod.ToString():D2}_{reportFileName} R{returnPeriod.ToString():D2} {dateTime:yyyyMMdd-HHmmss}";
+            var filename = $"R{returnPeriod.ToString().PadLeft(2, '0')}_{reportFileName} R{returnPeriod.ToString().PadLeft(2, '0')} {dateTime:yyyyMMdd-HHmmss}";
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();
@@ -65,6 +66,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
             var orgInfo = BuildOrgModel(ukPrn);
             var periodReturnInfo = BuildReturnPeriodsModel();
+            var fileDetails = BuildFileDetailsModel();
             var dataQualityReturningInfo = BuilDataQualityReturningModel();
             var top20RuleViolations = BuildTop20RuleViolationModel();
             var providerWithoutValidLearner = BuildProviderWithoutValidLearnerModel(ukPrn);
@@ -72,13 +74,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
             orgProviderMock.Setup(x => x.GetOrgDetailsForUKPRNsAsync(It.IsAny<List<long>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(orgInfo);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetFileDetailsAsync(It.IsAny<CancellationToken>()))
+                .ReturnsAsync(fileDetails);
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetail>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(dataQualityReturningInfo);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetTop20RuleViolationsAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(top20RuleViolations);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithoutValidLearners(It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithoutValidLearners(It.IsAny<List<FileDetail>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(providerWithoutValidLearner);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithInvalidLearners(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithInvalidLearners(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetail>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(providerWithInValidLearner);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
@@ -103,6 +107,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             wb.Should().NotBeNull();
             wb.Worksheets.Count().Should().BeGreaterThan(0);
             wb.Worksheets[0].Name.Should().Be("ILR Data Quality Reports");
+        }
+
+        private IEnumerable<FileDetail> BuildFileDetailsModel()
+        {
+            return new List<FileDetail>()
+            {
+                new FileDetail()
+                {
+                     ID = 12,
+                     Filename = "10006341/ILR-10006341-1920-20190805-110110-35.XML",
+                     Success = true,
+                     SubmittedTime = new DateTime(2019, 05, 01)
+                }
+            };
         }
 
         private List<RuleViolationsInfo> BuildTop20RuleViolationModel()

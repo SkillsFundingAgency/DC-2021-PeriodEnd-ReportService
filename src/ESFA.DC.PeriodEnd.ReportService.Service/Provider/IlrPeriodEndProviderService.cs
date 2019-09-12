@@ -38,6 +38,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _ilrInValidContextFactory = ilrInValidContextFactory;
         }
 
+        public async Task<IEnumerable<FileDetail>> GetFileDetailsAsync(CancellationToken cancellationToken)
+        {
+            using (var ilrContext = _ilrContextFactory())
+            {
+                return await ilrContext
+                    .FileDetails
+                    .ToListAsync(cancellationToken);
+            }
+        }
+
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             var appsMonthlyPaymentIlrInfo = new AppsMonthlyPaymentILRInfo()
@@ -126,8 +136,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var ilrContext = _ilrValidContextFactory())
             {
                 learnersList = await ilrContext.Learners
-                                                .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
-                                                .ToListAsync(cancellationToken);
+                    .Include(x => x.LearningDeliveries)
+                    .Include(x => x.ProviderSpecLearnerMonitorings)
+                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                    .ToListAsync(cancellationToken);
             }
 
             foreach (var learner in learnersList)
@@ -167,19 +179,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
+            IEnumerable<FileDetail> fileDetails,
             CancellationToken cancellationToken)
         {
             List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
-            List<FileDetail> fd;
+            List<FilePeriodInfo> fd;
 
-            using (var ilrContext = _ilrContextFactory())
-            {
-                fd = await ilrContext
-                    .FileDetails.Where(x => x.Success == true)
-                    .ToListAsync(cancellationToken);
-            }
-
-            fd.ForEach(f => f.ID = GetPeriodReturn(f.SubmittedTime, returnPeriods));
+            fd = fileDetails
+                .Where(x => x.Success == true)
+                .Select(f => new FilePeriodInfo()
+                {
+                    UKPRN = f.UKPRN,
+                    Filename = f.Filename,
+                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods),
+                    SubmittedTime = f.SubmittedTime,
+                    Success = f.Success
+                }).ToList();
 
             var fds = fd.GroupBy(x => x.UKPRN)
                 .Select(x => new
@@ -198,10 +213,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             });
 
             var fdCs = fd
-                .GroupBy(x => new { x.ID })
+                .GroupBy(x => new { x.PeriodNumber })
                 .Select(x => new
                 {
-                    Collection = x.Key.ID == 99 ? string.Empty : $"R{x.Key.ID.ToString():D2)}",
+                    Collection = x.Key.PeriodNumber == 99 ? string.Empty : $"R{x.Key.PeriodNumber.ToString("D2")}",
                     Files = x.Count(),
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
                     Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
@@ -252,7 +267,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top20RuleViolationsList;
         }
 
-        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -266,10 +281,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToListAsync(cancellationToken);
             }
 
-            List<ProviderWithoutValidLearners> providersWithoutValidLearnersList;
-            using (var ilrContext = _ilrContextFactory())
-            {
-                providersWithoutValidLearnersList = await ilrContext.FileDetails
+            List<ProviderWithoutValidLearners>
+                providersWithoutValidLearnersList = fileDetails
                     .Where(x => !validLearnerUkprns.Contains(x.UKPRN))
                     .GroupBy(x => x.UKPRN)
                     .Select(x => new ProviderWithoutValidLearners
@@ -277,9 +290,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         Ukprn = x.Key,
                         LatestFileSubmitted = x.Select(y => y.SubmittedTime ?? DateTime.MinValue).Max()
                     })
-                     .OrderBy(x => x.Ukprn)
-                    .ToListAsync(cancellationToken);
-            }
+                    .OrderBy(x => x.Ukprn)
+                    .ToList();
 
             return providersWithoutValidLearnersList;
         }
@@ -287,6 +299,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
+            IEnumerable<FileDetail> fileDetails,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -323,20 +336,25 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             List<Top10ProvidersWithInvalidLearners> top10ProvidersWithInvalidLearners;
-            using (var ilrContext = _ilrContextFactory())
-            {
-                top10ProvidersWithInvalidLearners = (await ilrContext.FileDetails
-                    .Join(top10ProvidersWithInvalidLearnersInvalid, f => f.UKPRN, t => t.Ukprn, (file, top) => file)
-                    .ToListAsync(cancellationToken))
+
+            var fileDetailsforUKPRNs = from p in fileDetails
+                                            join ukpr in top10ProvidersWithInvalidLearnersInvalid on p.UKPRN equals ukpr.Ukprn into pukpr
+                                            group p by p.UKPRN into op
+                                            select new
+                                            {
+                                                UKPRN = op.Key,
+                                                ID = op.Max(x => x.ID)
+                                            };
+
+            top10ProvidersWithInvalidLearners = fileDetails
+                    .Join(fileDetailsforUKPRNs, fd => fd.ID, f => f.ID, (fDetail, fLatest) => fDetail)
                     .Select(x => new Top10ProvidersWithInvalidLearners
                     {
                         Ukprn = x.UKPRN,
                         SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
                         LatestFileName = x.Filename,
-                        LatestReturn = $"R{GetLatestPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods).ToString():D2}",
-                    })
-                    .ToList();
-            }
+                        LatestReturn = $"R{GetPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods):D2}",
+                    }).ToList();
 
             foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in top10ProvidersWithInvalidLearners)
             {
@@ -425,18 +443,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         {
             return !submittedDateTime.HasValue ? 0 : returnPeriods
                     .SingleOrDefault(x =>
-                        x.StartDateTimeUtc < submittedDateTime &&
-                        x.EndDateTimeUtc > submittedDateTime)
+                        submittedDateTime >= x.StartDateTimeUtc &&
+                        submittedDateTime <= x.EndDateTimeUtc)
                     ?.PeriodNumber ?? 99;
-        }
-
-        private int GetLatestPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
-        {
-            return !submittedDateTime.HasValue ? 0 : returnPeriods
-                    .SingleOrDefault(x =>
-                    x.StartDateTimeUtc >= submittedDateTime
-                    && x.EndDateTimeUtc <= submittedDateTime)
-                        ?.PeriodNumber ?? 0;
         }
     }
 }

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Aspose.Cells;
 using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -55,22 +56,25 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             List<long> ukprns = new List<long>();
 
             var externalFileName = GetFilename(reportServiceContext);
+            IEnumerable<FileDetail> fileDetails = await _ilrPeriodEndProviderService.GetFileDetailsAsync(CancellationToken.None);
 
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
                 reportServiceContext.CollectionYear,
                 reportServiceContext.ILRPeriods,
+                fileDetails,
                 CancellationToken.None);
 
             IEnumerable<RuleViolationsInfo> ruleViolations = await _ilrPeriodEndProviderService.GetTop20RuleViolationsAsync(CancellationToken.None);
 
             IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = await
-                _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(CancellationToken.None);
+                _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(fileDetails, CancellationToken.None);
             ukprns.AddRange(providersWithoutValidLearners.Select(x => (long)x.Ukprn));
 
             IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = await
                 _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
                 reportServiceContext.CollectionYear,
                 reportServiceContext.ILRPeriods,
+                fileDetails,
                 CancellationToken.None);
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
 
@@ -113,7 +117,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             Workbook workbook = GetWorkbookFromTemplate(TemplateName);
             var worksheet = workbook.Worksheets[DataQualityTabName];
 
-            worksheet.Cells[1, 1].PutValue($"ILR Data Quality Reports - R{periodNumber.ToString():D2}");
+            worksheet.Cells[1, 1].PutValue($"ILR Data Quality Reports - R{periodNumber:D2}");
             worksheet.Cells[2, 1].PutValue($"Report Run: {_dateTimeProvider.ConvertUtcToUk(_dateTimeProvider.GetNowUtc()).ToString("u")}");
 
             var designer = new WorkbookDesigner

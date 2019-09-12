@@ -10,6 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
 
         public int AimSeqNumber { get; set; }
 
+        public AECLearningDeliveryValuesInfo LearningDeliveryValues { get; set; }
+
         public int? LearnDelEmpIdFirstAdditionalPaymentThreshold { get; set; }
 
         public int? LearnDelEmpIdSecondAdditionalPaymentThreshold { get; set; }

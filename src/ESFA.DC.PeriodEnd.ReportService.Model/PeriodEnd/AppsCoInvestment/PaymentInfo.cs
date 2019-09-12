@@ -35,5 +35,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public string LegalEntityName { get; set; }
 
         public long UkPrn { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string PriceEpisodeIdentifier { get; set; }
+
+        public decimal SfaContributionPercentage { get; set; }
+
+        public string EmployerName { get; set; }
     }
 }

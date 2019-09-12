@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : IDASPaymentsProviderService
     {
-        private const int FundingSource = 3;
+        private const int _fundingSource = 3;
         private int[] AppsAdditionalPaymentsTransactionTypes = { 4, 5, 6, 7, 16 };
         private int[] TransactionTypes = { 1, 2, 3 };
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
@@ -40,7 +40,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var context = _dasPaymentsContextFactory())
             {
                 paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
-                                                                x.FundingSource == FundingSource &&
+                                                                x.FundingSource == _fundingSource &&
                                                                  AppsAdditionalPaymentsTransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
 
                 apprenticeships = await context.Apprenticeships.Join(
@@ -92,7 +92,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             List<Payment> paymentsList;
             using (var context = _dasPaymentsContextFactory())
             {
-                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == FundingSource).ToListAsync(cancellationToken);
+                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn && x.FundingSource == _fundingSource).ToListAsync(cancellationToken);
             }
 
             foreach (var payment in paymentsList)
@@ -134,12 +134,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
             List<Payment> paymentsList;
-
+            List<Apprenticeship> apprenticeships;
             using (IDASPaymentsContext context = _dasPaymentsContextFactory())
             {
                 paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
-                                                                x.FundingSource == FundingSource &&
+                                                                x.FundingSource == _fundingSource &&
                                                                 TransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
+                apprenticeships = await context.Apprenticeships.Join(
+                    paymentsList,
+                    a => a.Id,
+                    p => p.ApprenticeshipId,
+                    (a, p) => a).ToListAsync(cancellationToken);
             }
 
             foreach (var payment in paymentsList)
@@ -160,7 +165,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     LearningAimReference = payment.LearningAimReference,
                     LearningAimStandardCode = payment.LearningAimStandardCode,
                     LearningStartDate = payment.LearningStartDate,
-                    UkPrn = payment.Ukprn
+                    UkPrn = payment.Ukprn,
+                    Amount = payment.Amount,
+                    PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+                    SfaContributionPercentage = payment.SfaContributionPercentage,
+                    EmployerName = apprenticeships?.SingleOrDefault(a => a.Id == payment.ApprenticeshipId)?.LegalEntityName ?? string.Empty
                 };
 
                 appsCoInvestmentPaymentsInfo.Payments.Add(paymentInfo);

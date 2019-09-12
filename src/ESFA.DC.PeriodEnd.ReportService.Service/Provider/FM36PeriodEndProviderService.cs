@@ -154,7 +154,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     {
                         UKPRN = ukPrn,
                         LearnRefNumber = aecApprenticeshipPriceEpisodePeriodisedValue.LearnRefNumber,
-                        AimSeqNumber = (int)aecApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber,
+                        AimSeqNumber = aecApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber.GetValueOrDefault(),
                         AttributeName = aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName,
                         Periods = new[]
                         {
@@ -186,7 +186,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     AimSeqNumber = aecLearningDelivery.AimSeqNumber,
                     LearnDelEmpIdFirstAdditionalPaymentThreshold = aecLearningDelivery.LearnDelEmpIdFirstAdditionalPaymentThreshold,
                     LearnDelEmpIdSecondAdditionalPaymentThreshold = aecLearningDelivery.LearnDelEmpIdSecondAdditionalPaymentThreshold,
-                    AppAdjLearnStartDate = aecLearningDelivery.AppAdjLearnStartDate
+                    AppAdjLearnStartDate = aecLearningDelivery.AppAdjLearnStartDate,
+                    LearningDeliveryValues = new AECLearningDeliveryValuesInfo()
+                    {
+                        LearnDelMathEng = aecLearningDelivery.LearnDelMathEng.GetValueOrDefault(),
+                        LearnDelInitialFundLineType = aecLearningDelivery.LearnDelInitialFundLineType,
+                        LearnAimRef = aecLearningDelivery.LearnAimRef,
+                        AppAdjLearnStartDate = aecLearningDelivery.AppAdjLearnStartDate.GetValueOrDefault(),
+                        AgeAtProgStart = aecLearningDelivery.AgeAtProgStart.GetValueOrDefault()
+                    },
                 };
 
                 appsCoInvestmentRulebaseInfo.AECLearningDeliveries.Add(aecLearningDeliveryInfo);

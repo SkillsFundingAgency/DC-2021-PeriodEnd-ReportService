@@ -8,7 +8,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
     {
         public string LearnRefNumber { get; set; }
 
-        public long UniqueLearnerNumber { get; set; }
+        public long? UniqueLearnerNumber { get; set; }
 
         public string LearningStartDate { get; set; }
 
@@ -22,7 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public string SoftwareSupplierAimIdentifier { get; set; }
 
-        public byte LearningDeliveryFAMTypeApprenticeshipContractType { get; set; }
+        public byte? LearningDeliveryFAMTypeApprenticeshipContractType { get; set; }
 
         public int? EmployerIdentifierAtStartOfLearning { get; set; }
 

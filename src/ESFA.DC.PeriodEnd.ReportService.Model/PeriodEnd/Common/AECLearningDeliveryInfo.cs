@@ -15,6 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
         public int? LearnDelEmpIdFirstAdditionalPaymentThreshold { get; set; }
 
         public int? LearnDelEmpIdSecondAdditionalPaymentThreshold { get; set; }
+
         public DateTime? AppAdjLearnStartDate { get; set; }
     }
 }

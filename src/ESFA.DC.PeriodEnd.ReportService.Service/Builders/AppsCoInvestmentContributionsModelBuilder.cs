@@ -18,6 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             Constants.DASPayments.TransactionType.Balancing,
         };
 
+        private readonly string PRICEEPISODECOMPLETIONPAYMENTATTR = "PriceEpisodeCompletionPayment";
+
         public bool IsValidLearner(LearnerInfo learner)
         {
             if (learner.LearningDeliveries.Any(x => x.AppFinRecords.Any(y => y.AFinType.CaseInsensitiveEquals(Generics.PMR))))
@@ -62,7 +64,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     y.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber))).ToList();
 
                 var rulebaseInfo = appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
-                    x.AttributeName.CaseInsensitiveEquals("PriceEpisodeCompletionPayment") &&
+                    x.AttributeName.CaseInsensitiveEquals(PRICEEPISODECOMPLETIONPAYMENTATTR) &&
                     x.Periods.All(p => p != decimal.Zero) &&
                     x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
 
@@ -111,7 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         var model = new AppsCoInvestmentContributionsModel
                         {
                             LearnRefNumber = payment.LearnerReferenceNumber,
-                            UniqueLearnerNumber = !payment.PaymentInfoList.Select(x => x.LearnerUln).Distinct().Any() ?
+                            UniqueLearnerNumber = payment.PaymentInfoList.Select(x => x.LearnerUln).Distinct().Count() == 1 ?
                                 payment.PaymentInfoList.First().LearnerUln : (long?)null,
                             LearningStartDate = payment.LearningStartDate?.ToString("dd/MM/yyyy"),
                             ProgType = payment.LearningAimProgrammeType,
@@ -170,8 +172,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             model.TotalCoInvestmentDueFromEmployerThisFundingYear == 0
                                 ? 0
                                 : ((model.TotalPMRPreviousFundingYears + model.TotalPMRThisFundingYear) /
-                                   (model.TotalCoInvestmentDueFromEmployerInPreviousFundingYears +
-                                    model.TotalCoInvestmentDueFromEmployerThisFundingYear)) * 100;
+                                   (model.TotalCoInvestmentDueFromEmployerInPreviousFundingYears + model.TotalCoInvestmentDueFromEmployerThisFundingYear)) * 100;
 
                         var minSfaContributionPercentage = payment.PaymentInfoList.Where(x =>
                                 x.FundingSource == _fundingSource && _transactionTypes.Any(y => y == x.TransactionType))

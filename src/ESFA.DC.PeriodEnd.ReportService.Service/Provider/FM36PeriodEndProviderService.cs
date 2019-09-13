@@ -190,10 +190,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     LearningDeliveryValues = new AECLearningDeliveryValuesInfo()
                     {
                         LearnDelMathEng = aecLearningDelivery.LearnDelMathEng.GetValueOrDefault(),
-                        LearnDelInitialFundLineType = aecLearningDelivery.LearnDelInitialFundLineType,
-                        LearnAimRef = aecLearningDelivery.LearnAimRef,
-                        AppAdjLearnStartDate = aecLearningDelivery.AppAdjLearnStartDate.GetValueOrDefault(),
-                        AgeAtProgStart = aecLearningDelivery.AgeAtProgStart.GetValueOrDefault()
                     },
                 };
 

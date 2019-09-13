@@ -13,7 +13,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
         public DateTime? PriceEpisodeActualEndDate { get; set; }
 
         public string PriceEpisodeAgreeId { get; set; }
-
-        public DateTime? AppAdjLearnStartDate { get; set; }
     }
 }

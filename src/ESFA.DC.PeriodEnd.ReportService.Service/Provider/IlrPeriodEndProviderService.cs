@@ -46,6 +46,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public async Task<IEnumerable<FileDetail>> GetFileDetailsLatestSubmittedAsync(CancellationToken cancellationToken)
+        {
+            using (var ilrContext = _ilrContextFactory())
+            {
+                var latestFilesSubmitted = await ilrContext
+                    .FileDetails
+                    .Where(x => x.Success == true)
+                    .GroupBy(x => x.UKPRN)
+                    .Select(x => x.Max(y => y.ID))
+                    .ToListAsync(cancellationToken);
+
+                return await ilrContext
+                    .FileDetails
+                    .Join(latestFilesSubmitted, l => l.ID, f => f, (fd, lfs) => fd)
+                    .ToListAsync(cancellationToken);
+            }
+        }
+
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             var appsMonthlyPaymentIlrInfo = new AppsMonthlyPaymentILRInfo()
@@ -365,7 +383,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top10ProvidersWithInvalidLearners;
         }
 
-        private int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
+        public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
         {
             return !submittedDateTime.HasValue ? 0 : returnPeriods
                     .SingleOrDefault(x =>

@@ -19,5 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
         string OrgConnectionString { get; set; }
 
         string SummarisedActualsConnectionString { get; set; }
+
+        string JobQueueManagerConnectionString { get; set; }
     }
 }

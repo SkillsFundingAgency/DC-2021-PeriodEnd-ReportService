@@ -36,8 +36,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 return await jobQueueDataContext.OrganisationCollection
                     .Include(x => x.Organisation)
-                    .Include(x => x.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
-                    .Where(x => x.StartDateTimeUtc <= rturnPeriod.StartDateTimeUtc &&
+                    .Include(x => x.Collection)
+                    .Where(x => x.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase) &&
+                                x.StartDateTimeUtc <= rturnPeriod.StartDateTimeUtc &&
                                 x.EndDateTimeUtc >= rturnPeriod.EndDateTimeUtc)
                     .Select(x => x.Organisation.Ukprn)
                     .Distinct()
@@ -59,8 +60,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 return await jobQueueDataContext.FileUploadJobMetaData
                     .Include(x => x.Job)
-                    .ThenInclude(x => x.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase))
-                    .Where(x => x.PeriodNumber == returnPeriod &&
+                    .ThenInclude(x => x.Collection)
+                    .Where(x => x.Job.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase) &&
+                        x.PeriodNumber == returnPeriod &&
                         x.Job.Ukprn.HasValue)
                     .Select(x => x.Job.Ukprn.Value)
                     .Distinct()

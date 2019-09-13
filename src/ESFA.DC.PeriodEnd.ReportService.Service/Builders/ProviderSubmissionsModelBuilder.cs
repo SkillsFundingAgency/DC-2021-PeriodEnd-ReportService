@@ -39,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     Name = GetOrgNameForUKPRN(x.UKPRN, orgDetails),
                     Expected = expectedReturners.Any(e => e == x.UKPRN),
                     Returned = actualReturners.Any(e => e == x.UKPRN),
-                    LatestReturn = $"{_ilrPeriodEndProviderService.GetPeriodReturn(x.SubmittedTime, returnPeriods)}:D2"
+                    LatestReturn = $"R{_ilrPeriodEndProviderService.GetPeriodReturn(x.SubmittedTime, returnPeriods):D2}"
                 })
                 .ToList();
         }

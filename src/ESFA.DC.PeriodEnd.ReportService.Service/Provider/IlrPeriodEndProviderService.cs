@@ -48,20 +48,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         public async Task<IEnumerable<FileDetail>> GetFileDetailsLatestSubmittedAsync(CancellationToken cancellationToken)
         {
-            using (var ilrContext = _ilrContextFactory())
-            {
-                var latestFilesSubmitted = await ilrContext
-                    .FileDetails
-                    .Where(x => x.Success == true)
-                    .GroupBy(x => x.UKPRN)
-                    .Select(x => x.Max(y => y.ID))
-                    .ToListAsync(cancellationToken);
+            IEnumerable<FileDetail> fileDetails = await GetFileDetailsAsync(cancellationToken);
 
-                return await ilrContext
-                    .FileDetails
-                    .Join(latestFilesSubmitted, l => l.ID, f => f, (fd, lfs) => fd)
-                    .ToListAsync(cancellationToken);
-            }
+            var latestFilesSubmitted = fileDetails
+                .Where(x => x.Success == true)
+                .GroupBy(x => x.UKPRN)
+                .Select(x => x.Max(y => y.ID));
+
+            return fileDetails
+                .Join(latestFilesSubmitted, l => l.ID, f => f, (fd, lfs) => fd)
+                .ToList();
         }
 
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)

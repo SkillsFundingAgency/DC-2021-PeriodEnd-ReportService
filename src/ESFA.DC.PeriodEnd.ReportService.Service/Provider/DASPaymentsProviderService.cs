@@ -15,16 +15,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : IDASPaymentsProviderService
     {
-        private const int _fundingSource = 3;
+        private const int AppsCoInvestmenFundingType = 3;
 
-        private int[] AppsAdditionalPaymentsTransactionTypes = {
+        private readonly int[] AppsAdditionalPaymentsTransactionTypes = {
             Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Apprenticeship };
 
-        private int[] TransactionTypes = { 1, 2, 3 };
+        private readonly int[] AppsCoInvestmenTransactionTypes =
+        {
+            Constants.DASPayments.TransactionType.Learning_On_Programme,
+            Constants.DASPayments.TransactionType.Completion,
+            Constants.DASPayments.TransactionType.Balancing,
+        };
+
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
 
         public DASPaymentsProviderService(Func<IDASPaymentsContext> dasPaymentsContextFactory)
@@ -146,8 +152,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (IDASPaymentsContext context = _dasPaymentsContextFactory())
             {
                 paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
-                                                                x.FundingSource == _fundingSource &&
-                                                                TransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
+                                                                x.FundingSource == AppsCoInvestmenFundingType &&
+                                                                AppsCoInvestmenTransactionTypes.Contains(x.TransactionType)).ToListAsync(cancellationToken);
                 apprenticeships = await context.Apprenticeships.Join(
                     paymentsList,
                     a => a.Id,

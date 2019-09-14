@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
-using ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.Output;
-using ESFA.DC.ILR.Model.Interface;
 using ESFA.DC.ILR1920.DataStore.EF;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Dependencies
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public static class DependentDataCatalog
     {
-        public static readonly Type ValidIlr = typeof(IMessage);
+        public static readonly Type ValidIlr = null;
 
         public static readonly Type InvalidIlr = null;
 

@@ -5,8 +5,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 {
     public class FM25Learner
     {
-        public FM25Learner() { }
-
         public int? ThresholdDays { get; set; }
         public bool? StartFund { get; set; }
         public decimal? RetentNew { get; set; }

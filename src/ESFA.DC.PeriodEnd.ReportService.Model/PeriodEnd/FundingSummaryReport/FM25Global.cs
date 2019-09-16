@@ -4,10 +4,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 {
     public class FM25Global
     {
-        public FM25Global()
-        {
-        }
-
         public int? UKPRN { get; set; }
         public string LARSVersion { get; set; }
         public string OrgVersion { get; set; }

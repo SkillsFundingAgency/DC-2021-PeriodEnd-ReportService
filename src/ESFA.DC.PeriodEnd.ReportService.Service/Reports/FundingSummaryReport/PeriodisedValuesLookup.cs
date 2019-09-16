@@ -3,7 +3,9 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
-    public class PeriodisedValuesLookup : Dictionary<FundingDataSources, Dictionary<string, Dictionary<string, decimal?[][]>>>, IPeriodisedValuesLookup
+    public class PeriodisedValuesLookup
+        : Dictionary<FundingDataSources, Dictionary<string, Dictionary<string, decimal?[][]>>>,
+        IPeriodisedValuesLookup
     {
         public IEnumerable<decimal?[]> GetPeriodisedValues(FundingDataSources fundModel, IEnumerable<string> fundLines, IEnumerable<string> attributes)
         {

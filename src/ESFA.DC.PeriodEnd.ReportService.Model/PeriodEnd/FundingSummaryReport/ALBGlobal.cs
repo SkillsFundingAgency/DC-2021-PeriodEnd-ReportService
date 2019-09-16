@@ -4,8 +4,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 {
     public class ALBGlobal
     {
-        public ALBGlobal() { }
-
         public int UKPRN { get; set; }
         public string LARSVersion { get; set; }
         public string PostcodeAreaCostVersion { get; set; }

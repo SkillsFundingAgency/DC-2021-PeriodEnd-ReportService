@@ -7,8 +7,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 {
     public class MetaData
     {
-        public MetaData() { }
-
         public DateTime DateGenerated { get; set; }
         public ReferenceDataVersion ReferenceDataVersions { get; set; }
         public IReadOnlyCollection<ValidationError> ValidationErrors { get; set; }

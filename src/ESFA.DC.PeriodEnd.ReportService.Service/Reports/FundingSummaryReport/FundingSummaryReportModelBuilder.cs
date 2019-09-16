@@ -14,9 +14,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
-        private readonly IPeriodisedValuesLookupProvider _periodisedValuesLookupProvider;
+        private readonly IPeriodisedValuesLookupProviderService _periodisedValuesLookupProvider;
 
-        public FundingSummaryReportModelBuilder(IPeriodisedValuesLookupProvider periodisedValuesLookupProvider)
+        public FundingSummaryReportModelBuilder(IPeriodisedValuesLookupProviderService periodisedValuesLookupProvider)
         {
             _periodisedValuesLookupProvider = periodisedValuesLookupProvider;
 
@@ -42,7 +42,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
             var reportCurrentPeriod = reportServiceContext.ReturnPeriod > 12 ? 12 : reportServiceContext.ReturnPeriod;
 
-            return new FundingSummaryReportModel(
+            var fundingSummaryReportModel = new FundingSummaryReportModel(
                 new List<IFundingCategory>()
                 {
                     new FundingCategory(
@@ -265,6 +265,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                                 .WithFundLineGroup(BuildEasFm99FundLineGroup(reportCurrentPeriod, periodisedValues))
                         })
                 });
+
+            return fundingSummaryReportModel;
         }
 
         protected virtual IFundLineGroup BuildEasFm35FundLineGroup(string ageRange, string description,

@@ -242,7 +242,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         CollectionPeriod = 1,
                         DeliveryPeriod = 1,
                         EmployerName = employerName,
-                        SfaContributionPercentage = 1,
+                        SfaContributionPercentage = new decimal(0.9D),
                         PriceEpisodeIdentifier = "ABC-123"
                     },
                     new PaymentInfo()
@@ -264,7 +264,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         CollectionPeriod = 1,
                         DeliveryPeriod = 1,
                         EmployerName = employerName,
-                        SfaContributionPercentage = 2,
+                        SfaContributionPercentage = new decimal(0.95D),
                         PriceEpisodeIdentifier = "ABC-234"
                     }
                 }

@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             Constants.DASPayments.TransactionType.Balancing,
         };
 
-        private readonly string PRICEEPISODECOMPLETIONPAYMENTATTR = "PriceEpisodeCompletionPayment";
+        private readonly string _priceepisodecompletionpayment = "PriceEpisodeCompletionPayment";
 
         public bool IsValidLearner(LearnerInfo learner)
         {
@@ -64,7 +64,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     y.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber))).ToList();
 
                 var rulebaseInfo = appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
-                    x.AttributeName.CaseInsensitiveEquals(PRICEEPISODECOMPLETIONPAYMENTATTR) &&
+                    x.AttributeName.CaseInsensitiveEquals(_priceepisodecompletionpayment) &&
                     x.Periods.All(p => p != decimal.Zero) &&
                     x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
 
@@ -133,7 +133,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 prevYearAppFinData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount),
                             TotalCoInvestmentDueFromEmployerInPreviousFundingYears = payment.PaymentInfoList.Where(x => x.FundingSource == _fundingSource &&
                                                                                                                         _transactionTypes.Any(y => y == x.TransactionType) &&
-                                                                                                                        x.AcademicYear != Generics.AcademicYear).Select(x => x.Amount).Sum(),
+                                                                                                                        x.AcademicYear != Generics.AcademicYear).Sum(x => x.Amount),
                             TotalPMRThisFundingYear = currentYearAppFinData.Where(x => x.AFinCode == 1 || x.AFinCode == 2)
                                                           .Sum(x => x.AFinAmount) -
                                                       currentYearAppFinData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount),
@@ -143,7 +143,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 ? "Yes"
                                 : "No",
                             CompletionEarningThisFundingYear = rulebaseInfo.SelectMany(x => x.Periods).Sum(),
-                            CompletionPaymentsThisFundingYear = payment.PaymentInfoList.Where(x => x.TransactionType == 3 && x.AcademicYear == Generics.AcademicYear).Select(x => x.Amount).Sum(),
+                            CompletionPaymentsThisFundingYear = payment.PaymentInfoList.Where(x => x.TransactionType == 3 && x.AcademicYear == Generics.AcademicYear).Sum(x => x.Amount),
                             CoInvestmentDueFromEmployerForAugust = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 1),
                             CoInvestmentDueFromEmployerForSeptember = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 2),
                             CoInvestmentDueFromEmployerForOctober = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 3),
@@ -178,10 +178,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 x.FundingSource == _fundingSource && _transactionTypes.Any(y => y == x.TransactionType))
                             .GroupBy(x => x.DeliveryPeriod).Select(x => new
                             {
-                                SfaContributionPercentage = x.ToList().Select(y => y.SfaContributionPercentage)
-                            }).ToList().Min(x => x.SfaContributionPercentage).First();
+                                TotalAmount = x.Sum(y => y.Amount),
+                                SfaContributionPercentage = x.Min(y => y.SfaContributionPercentage)
+                            }).ToList().Where(x => x.TotalAmount != 0)?.OrderBy(x => x.SfaContributionPercentage)
+                            .FirstOrDefault().SfaContributionPercentage;
 
-                        model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100;
+                        model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100 ?? 0;
 
                         model.EmployerNameFromApprenticeshipService = payment.PaymentInfoList
                             .OrderBy(x => x.DeliveryPeriod).Select(x => x.EmployerName).FirstOrDefault();
@@ -197,7 +199,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private decimal CalculateCoInvestmentDueForMonth(bool flag, List<PaymentInfo> paymentInfoList, int deliveryPeriod)
         {
             return flag
-                ? paymentInfoList.Where(x => x.DeliveryPeriod == deliveryPeriod).Select(x => x.Amount).Sum()
+                ? paymentInfoList.Where(x => x.DeliveryPeriod == deliveryPeriod).Sum(x => x.Amount)
                 : 0;
         }
     }

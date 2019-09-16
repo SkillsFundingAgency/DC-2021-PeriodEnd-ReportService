@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public byte TransactionType { get; set; }
 
-        string LegalEntityName { get; set; }
+        public string LegalEntityName { get; set; }
 
         public int LearningAimProgrammeType { get; set; }
 
@@ -34,7 +34,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public short AcademicYear { get; set; }
 
-        public Decimal Amount { get; set; }
+        public decimal Amount { get; set; }
 
         public byte FundingSource { get; set; }
 

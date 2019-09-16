@@ -1,5 +1,4 @@
-﻿
-using System;
+﻿using System;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 {

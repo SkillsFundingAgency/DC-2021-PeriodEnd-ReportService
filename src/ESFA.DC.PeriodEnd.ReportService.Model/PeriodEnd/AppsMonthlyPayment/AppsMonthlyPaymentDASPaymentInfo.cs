@@ -40,8 +40,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public short AcademicYear { get; set; }
 
-        public Decimal Amount { get; set; }
+        public decimal Amount { get; set; }
+
         public DateTime? LearningStartDate { get; set; }
+
         public int UkPrn { get; set; }
     }
 }

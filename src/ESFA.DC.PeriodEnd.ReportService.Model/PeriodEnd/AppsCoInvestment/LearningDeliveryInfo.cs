@@ -25,11 +25,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public int? FworkCode { get; set; }
 
         public int? PwayCode { get; set; }
-        
+
         public string SWSupAimId { get; set; }
 
-        public ICollection<AppFinRecordInfo> AppFinRecords { get; set; }
+        public IReadOnlyCollection<AppFinRecordInfo> AppFinRecords { get; set; }
 
-        public ICollection<LearningDeliveryFAM> LearningDeliveryFAMs { get; set; }
+        public IReadOnlyCollection<LearningDeliveryFAM> LearningDeliveryFAMs { get; set; }
     }
 }

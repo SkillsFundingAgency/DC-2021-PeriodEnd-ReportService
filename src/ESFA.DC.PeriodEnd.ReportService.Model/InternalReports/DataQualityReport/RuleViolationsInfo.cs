@@ -1,5 +1,4 @@
-﻿
-namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport
 {
     public sealed class RuleViolationsInfo
     {

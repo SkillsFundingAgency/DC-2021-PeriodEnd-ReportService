@@ -15,6 +15,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public DateTime AFinDate { get; set; }
 
         public int AFinAmount { get; set; }
-        
     }
 }

@@ -18,17 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             Constants.DASPayments.TransactionType.Balancing,
         };
 
-        private readonly string _priceepisodecompletionpayment = "PriceEpisodeCompletionPayment";
-
-        public bool IsValidLearner(LearnerInfo learner)
-        {
-            if (learner.LearningDeliveries.Any(x => x.AppFinRecords.Any(y => y.AFinType.CaseInsensitiveEquals(Generics.PMR))))
-            {
-                return true;
-            }
-
-            return false;
-        }
+        private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
 
         public IEnumerable<AppsCoInvestmentContributionsModel> BuildModel(
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
@@ -59,22 +49,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         PaymentInfoList = x.ToList()
                     }).ToList();
 
-                var ilrLearningDeliveriesInfo = learner.LearningDeliveries.Where(x => x.AppFinRecords.Any(y =>
+                var ilrLearningDeliveriesInfo = learner.LearningDeliveries?.Where(x => x.AppFinRecords.Any(y =>
                     y.AFinType.CaseInsensitiveEquals(Generics.PMR) &&
                     y.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber))).ToList();
 
-                var rulebaseInfo = appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
-                    x.AttributeName.CaseInsensitiveEquals(_priceepisodecompletionpayment) &&
+                var rulebaseInfo = appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues?.Where(x =>
+                    x.AttributeName.CaseInsensitiveEquals(_priceEpisodeCompletionPayment) &&
                     x.Periods.All(p => p != decimal.Zero) &&
                     x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
 
-                if (ilrLearningDeliveriesInfo.Any() || rulebaseInfo.Any() || paymentGroups.Any(x => x.PaymentInfoList.Any(y => y.FundingSource == _fundingSource) ||
-                    x.PaymentInfoList.Any(y => y.TransactionType == 3)))
+                if (ilrLearningDeliveriesInfo.Any() ||
+                    rulebaseInfo.Any() ||
+                    paymentGroups.Any(x => x.PaymentInfoList.Any(y => y.FundingSource == _fundingSource || y.TransactionType == 3)))
                 {
                     foreach (var payment in paymentGroups)
                     {
                         var paymentInfo = payment.PaymentInfoList.First();
-                        var learningDelivery = ilrLearningDeliveriesInfo.FirstOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
+                        var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
                                                                            x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                                                            x.LearnAimRef.CaseInsensitiveEquals(paymentInfo.LearningAimReference) &&
                                                                            x.LearnStartDate == payment.LearningStartDate &&
@@ -98,7 +89,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                         x.AFinType.CaseInsensitiveEquals(Generics.PMR)).ToList();
 
                         var aecLearningDeliveryInfo =
-                            appsCoInvestmentRulebaseInfo.AECLearningDeliveries.FirstOrDefault(x =>
+                            appsCoInvestmentRulebaseInfo.AECLearningDeliveries?.FirstOrDefault(x =>
                                 x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                 x.AimSeqNumber == learningDelivery.AimSeqNumber);
 
@@ -142,7 +133,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 (x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM) && x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode361)))
                                 ? "Yes"
                                 : "No",
-                            CompletionEarningThisFundingYear = rulebaseInfo.SelectMany(x => x.Periods).Sum(),
+                            CompletionEarningThisFundingYear = rulebaseInfo?.SelectMany(x => x.Periods).Sum() ?? 0,
                             CompletionPaymentsThisFundingYear = payment.PaymentInfoList.Where(x => x.TransactionType == 3 && x.AcademicYear == Generics.AcademicYear).Sum(x => x.Amount),
                             CoInvestmentDueFromEmployerForAugust = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 1),
                             CoInvestmentDueFromEmployerForSeptember = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 2),
@@ -180,8 +171,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             {
                                 TotalAmount = x.Sum(y => y.Amount),
                                 SfaContributionPercentage = x.Min(y => y.SfaContributionPercentage)
-                            }).ToList().Where(x => x.TotalAmount != 0)?.OrderBy(x => x.SfaContributionPercentage)
-                            .FirstOrDefault().SfaContributionPercentage;
+                            }).ToList().Where(x => x.TotalAmount != 0).OrderBy(x => x.SfaContributionPercentage)
+                            .FirstOrDefault()?.SfaContributionPercentage;
 
                         model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100 ?? 0;
 

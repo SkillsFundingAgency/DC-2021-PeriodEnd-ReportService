@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Aspose.Cells;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
@@ -60,6 +61,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             _logger.LogInfo($"In {ReportFileName} report.");
             List<long> ukprns = new List<long>();
 
+            IEnumerable<ReturnPeriod> returnPeriodsAdjusted = reportServiceContext.ILRPeriodsAdjustedTimes;
+
             var externalFileName = GetFilename(reportServiceContext);
 
             IEnumerable<FileDetail> fileDetails = await _ilrPeriodEndProviderService
@@ -72,18 +75,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 .GetExpectedReturnersUKPRNsAsync(
                     reportServiceContext.CollectionName,
                     reportServiceContext.ReturnPeriod,
-                    reportServiceContext.ILRPeriods,
+                    returnPeriodsAdjusted,
                     cancellationToken);
 
             IEnumerable<long> actualReturners = await _jobQueueManagerProviderService
                 .GetActualReturnersUKPRNsAsync(
                     reportServiceContext.CollectionName,
                     reportServiceContext.ReturnPeriod,
-                    reportServiceContext.ILRPeriods,
+                    returnPeriodsAdjusted,
                     cancellationToken);
 
             IEnumerable<ProviderSubmissionModel> providerSubmissionsModel = _providerSubmissionsModelBuilder
-                .BuildModel(fileDetails, orgDetails, expectedReturners, actualReturners, reportServiceContext.ILRPeriods);
+                .BuildModel(fileDetails, orgDetails, expectedReturners, actualReturners, returnPeriodsAdjusted);
 
             Workbook providerSubmissionWorkbook = GenerateWorkbook(
                 reportServiceContext.ReturnPeriod,

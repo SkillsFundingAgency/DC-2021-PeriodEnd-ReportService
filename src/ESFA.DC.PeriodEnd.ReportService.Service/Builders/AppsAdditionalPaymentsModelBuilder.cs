@@ -195,19 +195,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
             int month)
         {
             decimal? result = 0;
-            if (paymentInfo.TransactionType == 4 || paymentInfo.TransactionType == 6)
+            if (paymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive || paymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive)
             {
                 result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0 +
                          aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
-            if (paymentInfo.TransactionType == 5 || paymentInfo.TransactionType == 7)
+            if (paymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive || paymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive)
             {
                 result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0 +
                          aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }
 
-            if (paymentInfo.TransactionType == 16)
+            if (paymentInfo.TransactionType == Constants.DASPayments.TransactionType.Apprenticeship)
             {
                 result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.SingleOrDefault(x => x.AttributeName.Equals(Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName, StringComparison.OrdinalIgnoreCase))?.Periods[month] ?? 0;
             }

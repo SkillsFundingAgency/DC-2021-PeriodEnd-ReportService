@@ -64,8 +64,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     foreach (var payment in paymentGroups)
                     {
-                        var paymentInfo = payment.PaymentInfoList.First();
-                        var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
+                        var paymentInfo = payment.PaymentInfoList
+                            .FirstOrDefault(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001));
+                        var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo?.UkPrn &&
                                                                            x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                                                            x.LearnAimRef.CaseInsensitiveEquals(paymentInfo.LearningAimReference) &&
                                                                            x.LearnStartDate == payment.LearningStartDate &&

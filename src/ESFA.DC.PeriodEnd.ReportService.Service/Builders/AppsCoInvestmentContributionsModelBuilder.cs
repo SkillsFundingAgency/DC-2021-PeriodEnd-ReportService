@@ -106,7 +106,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         {
                             LearnRefNumber = payment.LearnerReferenceNumber,
                             UniqueLearnerNumber = payment.PaymentInfoList.Select(x => x.LearnerUln).Distinct().Count() == 1 ?
-                                payment.PaymentInfoList.First().LearnerUln : (long?)null,
+                                paymentInfo.LearnerUln : (long?)null,
                             LearningStartDate = payment.LearningStartDate?.ToString("dd/MM/yyyy"),
                             ProgType = payment.LearningAimProgrammeType,
                             StandardCode = payment.LearningAimStandardCode,
@@ -114,7 +114,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             ApprenticeshipPathway = payment.LearningAimPathwayCode,
                             SoftwareSupplierAimIdentifier = ilrLearningDeliveriesInfo.Where(x => x.LearnAimRef.CaseInsensitiveEquals(Generics.ZPROG001)).Select(x => x.SWSupAimId).FirstOrDefault(),
                             LearningDeliveryFAMTypeApprenticeshipContractType = !payment.PaymentInfoList.Select(x => x.ContractType).Distinct().Any() ?
-                                payment.PaymentInfoList.First().ContractType : (byte?)null,
+                                paymentInfo.ContractType : (byte?)null,
                             EmployerIdentifierAtStartOfLearning = learner.LearnerEmploymentStatus
                                 .Where(x => x.DateEmpStatApp <= payment.LearningStartDate)
                                 .OrderByDescending(x => x.DateEmpStatApp).FirstOrDefault()?.EmpId,

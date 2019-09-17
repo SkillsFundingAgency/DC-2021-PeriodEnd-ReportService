@@ -385,8 +385,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                 .Include(x => x.LearnerEmploymentStatuses)
                                                 .Where(x => x.UKPRN == ukPrn &&
                                                             x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel) &&
-                                                            x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.CaseInsensitiveEquals(Constants.Generics.PMR) &&
-                                                                                                                   z.LearnRefNumber.CaseInsensitiveEquals(x.LearnRefNumber))))
+                                                            x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.Equals(Constants.Generics.PMR) &&
+                                                                                                                   z.LearnRefNumber.Equals(x.LearnRefNumber))))
                                                 .ToListAsync(cancellationToken);
             }
 

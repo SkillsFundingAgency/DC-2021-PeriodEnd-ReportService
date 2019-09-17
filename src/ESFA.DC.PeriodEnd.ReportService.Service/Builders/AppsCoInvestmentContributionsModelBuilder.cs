@@ -65,7 +65,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     foreach (var payment in paymentGroups)
                     {
                         var paymentInfo = payment.PaymentInfoList
-                            .FirstOrDefault(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001));
+                            .SingleOrDefault(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001));
+
                         var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo?.UkPrn &&
                                                                            x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                                                            x.LearnAimRef.CaseInsensitiveEquals(paymentInfo.LearningAimReference) &&
@@ -90,7 +91,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                         x.AFinType.CaseInsensitiveEquals(Generics.PMR)).ToList();
 
                         var aecLearningDeliveryInfo =
-                            appsCoInvestmentRulebaseInfo.AECLearningDeliveries?.FirstOrDefault(x =>
+                            appsCoInvestmentRulebaseInfo.AECLearningDeliveries?.SingleOrDefault(x =>
                                 x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                 x.AimSeqNumber == learningDelivery.AimSeqNumber);
 
@@ -112,7 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             StandardCode = payment.LearningAimStandardCode,
                             FrameworkCode = payment.LearningAimFrameworkCode,
                             ApprenticeshipPathway = payment.LearningAimPathwayCode,
-                            SoftwareSupplierAimIdentifier = ilrLearningDeliveriesInfo.Where(x => x.LearnAimRef.CaseInsensitiveEquals(Generics.ZPROG001)).Select(x => x.SWSupAimId).FirstOrDefault(),
+                            SoftwareSupplierAimIdentifier = learningDelivery.SWSupAimId ?? null,
                             LearningDeliveryFAMTypeApprenticeshipContractType = !payment.PaymentInfoList.Select(x => x.ContractType).Distinct().Any() ?
                                 paymentInfo.ContractType : (byte?)null,
                             EmployerIdentifierAtStartOfLearning = learner.LearnerEmploymentStatus
@@ -178,7 +179,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100 ?? 0;
 
                         model.EmployerNameFromApprenticeshipService = payment.PaymentInfoList
-                            .OrderBy(x => x.DeliveryPeriod).Select(x => x.EmployerName).FirstOrDefault();
+                            .OrderBy(x => x.DeliveryPeriod).FirstOrDefault()?.EmployerName;
 
                         appsCoInvestmentContributionsModels.Add(model);
                     }

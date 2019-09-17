@@ -249,7 +249,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     {
                         UkPrn = ukPrn,
                         LearnerReferenceNumber = dasLearnRefNumber,
-                        LearningAimReference = dasLearnAimRef,
+                        LearningAimReference = "ABC001",
                         LearnerUln = 12345,
                         LearningStartDate = new DateTime(2017, 06, 28),
                         LearningAimProgrammeType = 1,

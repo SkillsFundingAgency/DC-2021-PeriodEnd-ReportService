@@ -135,7 +135,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             LearnAimRef = ilrLearnAimRef,
                             AimType = 3,
                             AimSeqNumber = 1,
-                            LearnStartDate = new DateTime(2017, 06, 28),
+                            LearnStartDate = new DateTime(2019, 08, 28),
                             FundModel = 36,
                             ProgType = 1,
                             StdCode = 1,
@@ -181,7 +181,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = "A12345",
                         AimSeqNumber = 1,
                         PriceEpisodeIdentifier = "1",
-                        Periods = new decimal[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
                         AttributeName = "PriceEpisodeFirstEmp1618Pay"
                     },
                     new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
@@ -190,7 +190,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = "A12345",
                         AimSeqNumber = 1,
                         PriceEpisodeIdentifier = "1",
-                        Periods = new decimal[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
                         AttributeName = "PriceEpisodeSecondProv1618Pay"
                     }
                     }
@@ -210,7 +210,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = dasLearnRefNumber,
                     LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,
@@ -232,7 +232,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = dasLearnRefNumber,
                     LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
-                    LearningStartDate = new DateTime(2017, 06, 28),
+                    LearningStartDate = new DateTime(2019, 08, 28),
                     LearningAimProgrammeType = 1,
                     LearningAimStandardCode = 1,
                     LearningAimFrameworkCode = 1,

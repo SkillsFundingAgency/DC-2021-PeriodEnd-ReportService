@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CollectionsManagement.Models;
@@ -12,7 +13,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
     public interface IIlrPeriodEndProviderService
     {
+        int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods);
+
         Task<IEnumerable<FileDetail>> GetFileDetailsAsync(CancellationToken cancellationToken);
+
+        Task<IEnumerable<FileDetail>> GetFileDetailsLatestSubmittedAsync(CancellationToken cancellationToken);
 
         Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 

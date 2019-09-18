@@ -29,6 +29,7 @@
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="OrgConnectionString" Value="" />
     <Parameter Name="SummarisedActualsConnectionString" Value="" />
+    <Parameter Name="JobQueueManagerConnectionString" Value="" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">

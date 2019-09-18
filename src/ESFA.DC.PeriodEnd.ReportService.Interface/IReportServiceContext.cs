@@ -32,5 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
         string CollectionReturnCodeApp { get; }
 
         IEnumerable<ReturnPeriod> ILRPeriods { get; }
+
+        IEnumerable<ReturnPeriod> ILRPeriodsAdjustedTimes { get; }
     }
 }

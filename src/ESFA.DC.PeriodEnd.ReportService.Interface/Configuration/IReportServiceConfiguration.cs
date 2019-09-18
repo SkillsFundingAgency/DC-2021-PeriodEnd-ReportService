@@ -15,5 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
         string LarsConnectionString { get; set; }
 
         string SummarisedActualsConnectionString { get; set; }
+
+        string JobQueueManagerConnectionString { get; set; }
     }
 }

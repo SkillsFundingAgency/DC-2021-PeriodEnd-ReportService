@@ -23,6 +23,7 @@ using ESFA.DC.JobContextManager;
 using ESFA.DC.JobContextManager.Interface;
 using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
+using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.Mapping.Interface;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Services;
@@ -254,6 +255,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             })
                 .As<DbContextOptions<OrganisationsContext>>()
                 .SingleInstance();
+
+            // Job Queue Manager
+            containerBuilder.RegisterType<JobQueueDataContext>().As<IJobQueueDataContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<JobQueueDataContext>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.JobQueueManagerConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                return optionsBuilder.Options;
+            })
+                .As<DbContextOptions<JobQueueDataContext>>()
+                .SingleInstance();
         }
 
         private static void RegisterReports(ContainerBuilder containerBuilder)
@@ -278,6 +293,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<DataExtractReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<DataQualityReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<ProviderSubmissionsReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)
@@ -316,6 +333,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
             containerBuilder.RegisterType<OrgProviderService>().As<IOrgProviderService>()
                 .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<JobQueueManagerProviderService>().As<IJobQueueManagerProviderService>()
+                .InstancePerLifetimeScope();
         }
 
         private static void RegisterBuilders(ContainerBuilder containerBuilder)
@@ -330,6 +350,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<DataExtractModelBuilder>().As<IDataExtractModelBuilder>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<ProviderSubmissionsModelBuilder>().As<IProviderSubmissionsModelBuilder>()
                 .InstancePerLifetimeScope();
         }
 

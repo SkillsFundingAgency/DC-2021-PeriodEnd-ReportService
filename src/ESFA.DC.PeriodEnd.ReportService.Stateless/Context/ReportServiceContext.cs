@@ -46,5 +46,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
         public string CollectionReturnCodeApp => _jobContextMessage.KeyValuePairs[MessageKeys.CollectionReturnCodeApp].ToString();
 
         public IEnumerable<ReturnPeriod> ILRPeriods => (IEnumerable<ReturnPeriod>)_jobContextMessage.KeyValuePairs[MessageKeys.ILRPeriods];
+
+        public IEnumerable<ReturnPeriod> ILRPeriodsAdjustedTimes => GetReturnPeriodsWithAdjustedEndTimes((IEnumerable<ReturnPeriod>)_jobContextMessage.KeyValuePairs[MessageKeys.ILRPeriods]);
+
+        public IEnumerable<ReturnPeriod> GetReturnPeriodsWithAdjustedEndTimes(IEnumerable<ReturnPeriod> returnPeriods)
+        {
+            foreach (ReturnPeriod period in returnPeriods.OrderBy(p => p.PeriodNumber))
+            {
+                if (period.PeriodNumber == 14)
+                {
+                    period.EndDateTimeUtc = period.EndDateTimeUtc.AddDays(14);
+                }
+                else if (returnPeriods.Any(p => p.PeriodNumber == period.PeriodNumber + 1))
+                {
+                    period.EndDateTimeUtc = returnPeriods.Single(p => p.PeriodNumber == period.PeriodNumber + 1).StartDateTimeUtc.AddSeconds(-1);
+                }
+            }
+
+            return returnPeriods;
+        }
     }
 }

@@ -245,25 +245,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             string[] learnerAimRefs,
             CancellationToken cancellationToken)
         {
-            var appsMonthlyPaymentLarsLearningDeliveryInfoList = new List<AppsMonthlyPaymentLarsLearningDeliveryInfo>();
+            List<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList = null;
 
-            cancellationToken.ThrowIfCancellationRequested();
-
-            using (var context = _larsContext())
+            try
             {
-                var larsLearningDeliveries = await context
-                    .LARS_LearningDeliveries
-                    .Where(x => learnerAimRefs.Contains(x.LearnAimRef))
-                    .ToListAsync(cancellationToken);
+                appsMonthlyPaymentLarsLearningDeliveryInfoList = new List<AppsMonthlyPaymentLarsLearningDeliveryInfo>();
 
-                foreach (var learningDelivery in larsLearningDeliveries)
+                cancellationToken.ThrowIfCancellationRequested();
+
+                using (var context = _larsContext())
                 {
-                    appsMonthlyPaymentLarsLearningDeliveryInfoList.Add(new AppsMonthlyPaymentLarsLearningDeliveryInfo()
+                    var larsLearningDeliveries = await context
+                        .LARS_LearningDeliveries
+                        .Where(x => learnerAimRefs.Contains(x.LearnAimRef))
+                        .ToListAsync(cancellationToken);
+
+                    foreach (var learningDelivery in larsLearningDeliveries)
                     {
-                        LearnAimRef = learningDelivery.LearnAimRef,
-                        LearningAimTitle = learningDelivery.LearnAimRefTitle
-                    });
+                        appsMonthlyPaymentLarsLearningDeliveryInfoList.Add(new AppsMonthlyPaymentLarsLearningDeliveryInfo()
+                        {
+                            LearnAimRef = learningDelivery.LearnAimRef,
+                            LearningAimTitle = learningDelivery.LearnAimRefTitle
+                        });
+                    }
                 }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to get LARS data", ex);
             }
 
             return appsMonthlyPaymentLarsLearningDeliveryInfoList;

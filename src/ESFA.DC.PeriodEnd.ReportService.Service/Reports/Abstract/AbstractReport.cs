@@ -67,6 +67,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             return string.Equals(reportTaskName, ReportTaskName, StringComparison.OrdinalIgnoreCase);
         }
 
+        public virtual void ApplyConfiguration(CsvWriter csvWriter)
+        {
+        }
+
         protected Stream WriteModelsToCsv<TMapper, TModel>(Stream stream, IEnumerable<TModel> models)
             where TMapper : ClassMap
             where TModel : class
@@ -88,10 +92,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
         {
             csvWriter.Configuration.RegisterClassMap<TMapper>();
 
+            ApplyConfiguration(csvWriter);
+
             csvWriter.WriteHeader<TModel>();
             csvWriter.NextRecord();
 
-            csvWriter.WriteRecords(records);
+            if (records != null)
+            {
+                csvWriter.WriteRecords(records);
+            }
 
             csvWriter.Configuration.UnregisterClassMap();
         }
@@ -324,7 +333,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
         }
 
         /// <summary>
-        /// Writes a blank row to the worksheet (increments the current row number)
+        /// Writes a blank row to the worksheet (increments the current row number).
         /// </summary>
         /// <param name="worksheet">The current worksheet.</param>
         /// <param name="numberOfBlankRows">The optional number of blank rows to create.</param>
@@ -336,9 +345,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
         }
 
         /// <summary>
-        /// Writes a new heading row in column 1, optionally extends across a number of columns
+        /// Writes a new heading row in column 1, optionally extends across a number of columns.
         /// </summary>
-        /// <param name="worksheet">The current worksheet,</param>
+        /// <param name="worksheet">The current worksheet.</param>
         /// <param name="heading">The heading text to write out.</param>
         /// <param name="headerStyle">The optional header style.</param>
         /// <param name="numberOfColumns">The optional number of columns.</param>

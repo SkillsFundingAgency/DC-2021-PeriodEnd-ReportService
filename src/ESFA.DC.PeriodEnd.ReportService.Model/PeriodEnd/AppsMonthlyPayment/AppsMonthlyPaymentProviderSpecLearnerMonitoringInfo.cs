@@ -2,7 +2,7 @@
 {
     public class AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
     {
-        public int UKPRN { get; set; }
+        public int? Ukprn { get; set; }
 
         public string LearnRefNumber { get; set; }
 

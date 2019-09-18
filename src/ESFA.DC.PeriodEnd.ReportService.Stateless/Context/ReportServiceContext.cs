@@ -55,11 +55,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
             {
                 if (period.PeriodNumber == 14)
                 {
-                    period.EndDateTimeUtc.AddDays(14);
+                    period.EndDateTimeUtc = period.EndDateTimeUtc.AddDays(14);
                 }
                 else if (returnPeriods.Any(p => p.PeriodNumber == period.PeriodNumber + 1))
                 {
-                    period.EndDateTimeUtc = returnPeriods.SingleOrDefault(p => p.PeriodNumber == period.PeriodNumber + 1).StartDateTimeUtc.AddMinutes(-1);
+                    period.EndDateTimeUtc = returnPeriods.SingleOrDefault(p => p.PeriodNumber == period.PeriodNumber + 1).StartDateTimeUtc.AddSeconds(-1);
                 }
             }
 

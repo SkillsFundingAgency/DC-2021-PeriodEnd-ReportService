@@ -476,7 +476,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsCoInvestmentIlrInfo;
         }
 
-        private int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
+        public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
         {
             return !submittedDateTime.HasValue ? 0 : returnPeriods
                     .SingleOrDefault(x =>

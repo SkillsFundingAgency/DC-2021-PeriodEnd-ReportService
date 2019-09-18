@@ -17,12 +17,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
             public const string DataExtractReport = "TaskGenerateDataExtractReport";
             public const string DataQualityReport = "TaskGenerateDataQualityReport";
             public const string PeriodEndMetricsReport = "TaskGeneratePeriodEndMetricsReport";
+            public const string ProviderSubmissionsReport = "TaskGenerateProviderSubmissionsReport";
 
             public static IEnumerable<string> TasksList = new List<string>()
             {
                 DataExtractReport,
                 DataQualityReport,
-                PeriodEndMetricsReport
+                PeriodEndMetricsReport,
+                ProviderSubmissionsReport
             };
         }
     }

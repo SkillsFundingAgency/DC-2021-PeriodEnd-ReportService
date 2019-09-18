@@ -28,7 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken)
         {
-            ReturnPeriod rturnPeriod = returnPeriods.Single(x =>
+            ReturnPeriod returnPeriodForCollection = returnPeriods.Single(x =>
                     x.PeriodNumber == returnPeriod &&
                     x.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
 
@@ -38,8 +38,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Include(x => x.Organisation)
                     .Include(x => x.Collection)
                     .Where(x => x.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase) &&
-                                x.StartDateTimeUtc <= rturnPeriod.StartDateTimeUtc &&
-                                x.EndDateTimeUtc >= rturnPeriod.EndDateTimeUtc)
+                                x.StartDateTimeUtc <= returnPeriodForCollection.StartDateTimeUtc &&
+                                x.EndDateTimeUtc >= returnPeriodForCollection.EndDateTimeUtc)
                     .Select(x => x.Organisation.Ukprn)
                     .Distinct()
                     .ToListAsync(cancellationToken);
@@ -52,10 +52,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken)
         {
-            ReturnPeriod rturnPeriod = returnPeriods.Single(x =>
-                    x.PeriodNumber == returnPeriod &&
-                    x.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
-
             using (var jobQueueDataContext = _jobQueueDataFactory())
             {
                 return await jobQueueDataContext.FileUploadJobMetaData

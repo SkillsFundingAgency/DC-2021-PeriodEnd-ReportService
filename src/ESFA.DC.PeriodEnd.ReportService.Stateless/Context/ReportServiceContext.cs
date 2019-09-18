@@ -59,7 +59,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
                 }
                 else if (returnPeriods.Any(p => p.PeriodNumber == period.PeriodNumber + 1))
                 {
-                    period.EndDateTimeUtc = returnPeriods.SingleOrDefault(p => p.PeriodNumber == period.PeriodNumber + 1).StartDateTimeUtc.AddSeconds(-1);
+                    period.EndDateTimeUtc = returnPeriods.Single(p => p.PeriodNumber == period.PeriodNumber + 1).StartDateTimeUtc.AddSeconds(-1);
                 }
             }
 

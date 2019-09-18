@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Autofac;
 using Autofac.Features.AttributeFilters;
+using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.DateTimeProvider.Interface;
@@ -150,13 +151,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .SingleInstance();
 
             containerBuilder.Register(context =>
-                {
-                    var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
-                    optionsBuilder.UseSqlServer(
-                        reportServiceConfiguration.ILRDataStoreConnectionString,
-                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
+                optionsBuilder.UseSqlServer(
+                    reportServiceConfiguration.ILRDataStoreConnectionString,
+                    options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                    return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
+                return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
             }).As<ILR1920_DataStoreEntitiesValid>()
                 .ExternallyOwned();
 

@@ -6,12 +6,13 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
+    <Folder Include="ReportModels\" />
     <Folder Include="Styling\" />
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Cells" Version="19.7.0" />
-    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.304" />
+    <PackageReference Include="Aspose.Cells" Version="19.8.0" />
+    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.373" />
   </ItemGroup>
 
 </Project>

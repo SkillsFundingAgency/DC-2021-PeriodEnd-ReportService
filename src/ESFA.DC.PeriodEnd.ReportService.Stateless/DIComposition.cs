@@ -255,7 +255,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<OrganisationsContext>>()
                 .SingleInstance();
 
-            // Job Queuer Manager
+            // Job Queue Manager
             containerBuilder.RegisterType<JobQueueDataContext>().As<IJobQueueDataContext>().ExternallyOwned();
             containerBuilder.Register(context =>
             {

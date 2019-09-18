@@ -174,9 +174,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 TotalAmount = x.Sum(y => y.Amount),
                                 SfaContributionPercentage = x.Min(y => y.SfaContributionPercentage)
                             }).ToList().Where(x => x.TotalAmount != 0).OrderBy(x => x.SfaContributionPercentage)
-                            .FirstOrDefault()?.SfaContributionPercentage;
+                            .FirstOrDefault()?.SfaContributionPercentage ?? 0;
 
-                        model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100 ?? 0;
+                        model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100;
 
                         model.EmployerNameFromApprenticeshipService = payment.PaymentInfoList
                             .OrderBy(x => x.DeliveryPeriod).FirstOrDefault()?.EmployerName;

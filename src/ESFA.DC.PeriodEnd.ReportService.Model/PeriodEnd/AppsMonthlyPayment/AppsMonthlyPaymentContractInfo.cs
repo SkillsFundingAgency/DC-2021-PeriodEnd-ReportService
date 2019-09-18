@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public DateTime? EndDate { get; set; }
 
-        public IList<AppsMonthlyPaymentContractAllocation> ContractAllocations { get; set; }
+        public IList<AppsMonthlyPaymentContractAllocationInfo> ContractAllocations { get; set; }
 
         public AppsMonthlyPaymentContractorInfo Provider { get; set; }
     }

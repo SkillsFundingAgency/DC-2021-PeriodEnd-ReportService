@@ -16,8 +16,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
-    public class FM36PeriodEndProviderService : AbstractFundModelProviderService,
-        Interface.Provider.IFM36PeriodEndProviderService
+    public class FM36PeriodEndProviderService : AbstractFundModelProviderService, IFM36PeriodEndProviderService
     {
         private readonly Func<IIlr1920RulebaseContext> _ilrRulebaseContextFactory;
 
@@ -191,18 +190,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         AttributeName = aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName,
                         Periods = new[]
                         {
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_1.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_2.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_3.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_4.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_5.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_6.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_7.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_8.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_9.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_10.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_11.GetValueOrDefault(),
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_12.GetValueOrDefault(),
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_1,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_2,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_3,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_4,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_5,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_6,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_7,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_8,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_9,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_10,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_11,
+                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_12
                         }
                     };
 

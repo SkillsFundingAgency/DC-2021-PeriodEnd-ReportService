@@ -200,7 +200,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = ilrLearnRefNumber,
                         AimSeqNumber = aimSeqNumber,
                         PriceEpisodeIdentifier = "ABC-123",
-                        Periods = new decimal[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140 },
+                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140 },
                         AttributeName = "PriceEpisodeCompletionPayment"
                     },
                     new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
@@ -209,7 +209,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = ilrLearnRefNumber,
                         AimSeqNumber = aimSeqNumber,
                         PriceEpisodeIdentifier = "ABC-123",
-                        Periods = new decimal[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140 },
+                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120, 130, 140 },
                         AttributeName = "PriceEpisodeCompletionPayment"
                     }
                 }

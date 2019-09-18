@@ -42,6 +42,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public byte? CollectionPeriod { get; set; }
 
-        public Decimal? Amount { get; set; }
+        public decimal? Amount { get; set; }
     }
 }

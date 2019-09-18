@@ -790,9 +790,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             OrganisationIdentifier = "Manchester College",
                             LegalName = "Manchester College Ltd",
                         },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocation>()
+                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
                         {
-                            new AppsMonthlyPaymentContractAllocation()
+                            new AppsMonthlyPaymentContractAllocationInfo()
                             {
                                 ContractAllocationNumber = "YNLP-1503",
                                 FundingStreamPeriodCode = "16-18NLAP2018",

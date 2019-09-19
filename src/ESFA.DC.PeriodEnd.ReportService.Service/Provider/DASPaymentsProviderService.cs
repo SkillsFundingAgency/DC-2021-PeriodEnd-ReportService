@@ -17,16 +17,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : AbstractFundModelProviderService, IDASPaymentsProviderService
     {
-        private const int AppsCoInvestmenFundingType = 3;
+        private const int AppsCoInvestmentFundingType = 3;
 
-        private readonly int[] AppsAdditionalPaymentsTransactionTypes = {
+        private readonly int[] _appsAdditionalPaymentsTransactionTypes = {
             Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Apprenticeship };
 
-        private readonly int[] AppsCoInvestmenTransactionTypes =
+        private readonly int[] _appsCoInvestmentTransactionTypes =
         {
             Constants.DASPayments.TransactionType.Learning_On_Programme,
             Constants.DASPayments.TransactionType.Completion,
@@ -61,7 +61,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                            join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
                            where payment.Ukprn == ukPrn &&
                                  payment.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
-                                 AppsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
+                                 _appsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
                            select new DASPaymentInfo()
                            {
                                FundingSource = payment.FundingSource,
@@ -213,8 +213,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     await (from payment in context.Payments
                            join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
                            where payment.Ukprn == ukPrn &&
-                                 payment.FundingSource == AppsCoInvestmenFundingType &&
-                                 AppsCoInvestmenTransactionTypes.Contains(payment.TransactionType)
+                                 payment.FundingSource == AppsCoInvestmentFundingType &&
+                                 _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType)
                            select new PaymentInfo()
                            {
                                FundingSource = payment.FundingSource,

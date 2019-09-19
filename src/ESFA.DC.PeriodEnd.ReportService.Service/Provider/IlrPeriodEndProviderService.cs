@@ -414,63 +414,57 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<Learner> learnersList;
             using (var ilrContext = _ilrValidContextFactory())
             {
-                learnersList = await ilrContext.Learners
+                var learnersList = await ilrContext.Learners
                                                 .Include(x => x.LearningDeliveries).ThenInclude(y => y.AppFinRecords)
                                                 .Include(x => x.LearnerEmploymentStatuses)
                                                 .Where(x => x.UKPRN == ukPrn &&
                                                             x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel) &&
                                                             x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.Equals(Constants.Generics.PMR) &&
                                                                                                                    z.LearnRefNumber.Equals(x.LearnRefNumber))))
-                                                .ToListAsync(cancellationToken);
-            }
-
-            foreach (var learner in learnersList)
-            {
-                var learnerInfo = new LearnerInfo
-                {
-                    LearnRefNumber = learner.LearnRefNumber,
-                    LearningDeliveries = learner.LearningDeliveries.Select(x => new LearningDeliveryInfo()
+                    .Select(learner => new LearnerInfo()
                     {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = x.LearnRefNumber,
-                        LearnAimRef = x.LearnAimRef,
-                        AimType = x.AimType,
-                        AimSeqNumber = x.AimSeqNumber,
-                        LearnStartDate = x.LearnStartDate,
-                        ProgType = x.ProgType,
-                        StdCode = x.StdCode,
-                        FworkCode = x.FworkCode,
-                        PwayCode = x.PwayCode,
-                        SWSupAimId = x.SWSupAimId,
-                        AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
+                        LearnRefNumber = learner.LearnRefNumber,
+                        LearningDeliveries = learner.LearningDeliveries.Select(x => new LearningDeliveryInfo()
                         {
-                            LearnRefNumber = y.LearnRefNumber,
-                            AimSeqNumber = y.AimSeqNumber,
-                            AFinType = y.AFinType,
-                            AFinCode = y.AFinCode,
-                            AFinDate = y.AFinDate,
-                            AFinAmount = y.AFinAmount
+                            UKPRN = ukPrn,
+                            LearnRefNumber = x.LearnRefNumber,
+                            LearnAimRef = x.LearnAimRef,
+                            AimType = x.AimType,
+                            AimSeqNumber = x.AimSeqNumber,
+                            LearnStartDate = x.LearnStartDate,
+                            ProgType = x.ProgType,
+                            StdCode = x.StdCode,
+                            FworkCode = x.FworkCode,
+                            PwayCode = x.PwayCode,
+                            SWSupAimId = x.SWSupAimId,
+                            AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
+                            {
+                                LearnRefNumber = y.LearnRefNumber,
+                                AimSeqNumber = y.AimSeqNumber,
+                                AFinType = y.AFinType,
+                                AFinCode = y.AFinCode,
+                                AFinDate = y.AFinDate,
+                                AFinAmount = y.AFinAmount
+                            }).ToList(),
+                            LearningDeliveryFAMs = x.LearningDeliveryFAMs.Select(y => new LearningDeliveryFAM()
+                            {
+                                UKPRN = y.UKPRN,
+                                LearnRefNumber = y.LearnRefNumber,
+                                AimSeqNumber = y.AimSeqNumber,
+                                LearnDelFAMType = y.LearnDelFAMType,
+                                LearnDelFAMCode = y.LearnDelFAMCode
+                            }).ToList(),
                         }).ToList(),
-                        LearningDeliveryFAMs = x.LearningDeliveryFAMs.Select(y => new LearningDeliveryFAM()
+                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
                         {
-                            UKPRN = y.UKPRN,
-                            LearnRefNumber = y.LearnRefNumber,
-                            AimSeqNumber = y.AimSeqNumber,
-                            LearnDelFAMType = y.LearnDelFAMType,
-                            LearnDelFAMCode = y.LearnDelFAMCode
-                        }).ToList(),
-                    }).ToList(),
-                    LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
-                    {
-                        LearnRefNumber = x.LearnRefNumber,
-                        DateEmpStatApp = x.DateEmpStatApp,
-                        EmpId = x.EmpId
-                    }).ToList()
-                };
-                appsCoInvestmentIlrInfo.Learners.Add(learnerInfo);
+                            LearnRefNumber = x.LearnRefNumber,
+                            DateEmpStatApp = x.DateEmpStatApp,
+                            EmpId = x.EmpId
+                        }).ToList()
+                    }).ToListAsync(cancellationToken);
+                appsCoInvestmentIlrInfo.Learners.AddRange(learnersList);
             }
 
             return appsCoInvestmentIlrInfo;

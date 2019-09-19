@@ -67,7 +67,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         var paymentInfo = payment.PaymentInfoList
                             .SingleOrDefault(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001));
 
-                        var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo?.UkPrn &&
+                        if (paymentInfo == null)
+                        {
+                            continue;
+                        }
+
+                        var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
                                                                            x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                                                            x.LearnAimRef.CaseInsensitiveEquals(paymentInfo.LearningAimReference) &&
                                                                            x.LearnStartDate == payment.LearningStartDate &&
@@ -99,8 +104,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             aecLearningDeliveryInfo?.LearningDeliveryValues.LearnDelMathEng ?? false;
 
                         bool flagCalculateCoInvestmentAmount =
-                            !learnDelMathEng && (paymentInfo?.FundingSource == _fundingSource &&
-                                                 _transactionTypes.Any(x => x == paymentInfo?.TransactionType)) &&
+                            !learnDelMathEng && (paymentInfo.FundingSource == _fundingSource &&
+                                                 _transactionTypes.Any(x => x == paymentInfo.TransactionType)) &&
                                                  paymentInfo.AcademicYear == Generics.AcademicYear;
 
                         var model = new AppsCoInvestmentContributionsModel
@@ -119,17 +124,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             EmployerIdentifierAtStartOfLearning = learner.LearnerEmploymentStatus
                                 .Where(x => x.DateEmpStatApp <= payment.LearningStartDate)
                                 .OrderByDescending(x => x.DateEmpStatApp).FirstOrDefault()?.EmpId,
-                            ApplicableProgrammeStartDate = aecLearningDeliveryInfo.AppAdjLearnStartDate,
-                            TotalPMRPreviousFundingYears =
-                                prevYearAppFinData.Where(x => x.AFinCode == 1 || x.AFinCode == 2)
-                                    .Sum(x => x.AFinAmount) -
-                                prevYearAppFinData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount),
+                            ApplicableProgrammeStartDate = aecLearningDeliveryInfo?.AppAdjLearnStartDate,
+                            TotalPMRPreviousFundingYears = prevYearAppFinData?.Sum(x => x.AFinCode == 1 || x.AFinCode == 2 ? x.AFinAmount : -x.AFinAmount) ?? 0,
                             TotalCoInvestmentDueFromEmployerInPreviousFundingYears = payment.PaymentInfoList.Where(x => x.FundingSource == _fundingSource &&
                                                                                                                         _transactionTypes.Any(y => y == x.TransactionType) &&
                                                                                                                         x.AcademicYear != Generics.AcademicYear).Sum(x => x.Amount),
-                            TotalPMRThisFundingYear = currentYearAppFinData.Where(x => x.AFinCode == 1 || x.AFinCode == 2)
-                                                          .Sum(x => x.AFinAmount) -
-                                                      currentYearAppFinData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount),
+                            TotalPMRThisFundingYear = currentYearAppFinData?.Sum(x => x.AFinCode == 1 || x.AFinCode == 2 ? x.AFinAmount : -x.AFinAmount) ?? 0,
                             LDM356Or361 = learningDelivery.LearningDeliveryFAMs.Any(x =>
                                 (x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM) && x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode356)) ||
                                 (x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM) && x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode361)))
@@ -189,7 +189,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return appsCoInvestmentContributionsModels;
         }
 
-        private decimal CalculateCoInvestmentDueForMonth(bool flag, List<PaymentInfo> paymentInfoList, int deliveryPeriod)
+        private decimal CalculateCoInvestmentDueForMonth(bool flag, IEnumerable<PaymentInfo> paymentInfoList, int deliveryPeriod)
         {
             return flag
                 ? paymentInfoList.Where(x => x.DeliveryPeriod == deliveryPeriod).Sum(x => x.Amount)

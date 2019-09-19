@@ -1,19 +1,20 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class PeriodisedValuesLookup
-        : Dictionary<FundingDataSources, Dictionary<string, Dictionary<string, decimal?[][]>>>,
+        : Dictionary<FundingDataSource, Dictionary<string, Dictionary<string, decimal?[][]>>>,
         IPeriodisedValuesLookup
     {
-        public IEnumerable<decimal?[]> GetPeriodisedValues(FundingDataSources fundModel, IEnumerable<string> fundLines, IEnumerable<string> attributes)
+        public IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource fundModel, IEnumerable<string> fundLines, IEnumerable<string> attributes)
         {
             var periodisedValuesList = new List<decimal?[]>();
 
             if (fundLines == null || attributes == null)
             {
-                return null;
+                return periodisedValuesList;
             }
 
             if (TryGetValue(fundModel, out var fundLineDictionary))

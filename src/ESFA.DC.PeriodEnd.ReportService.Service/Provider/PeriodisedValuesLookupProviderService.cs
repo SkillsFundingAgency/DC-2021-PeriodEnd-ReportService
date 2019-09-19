@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.Output;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
@@ -14,45 +15,39 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class PeriodisedValuesLookupProviderService : IPeriodisedValuesLookupProviderService
     {
-        public IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSources> fundingDataSources,
-            IReportServiceDependentData reportServiceDependentData)
+        public IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSource> fundingDataSources, IReportServiceDependentData reportServiceDependentData)
         {
             var periodisedValuesLookup = new PeriodisedValuesLookup();
 
-            if (fundingDataSources.Contains(FundingDataSources.FM35))
+            if (fundingDataSources.Contains(FundingDataSource.FM35))
             {
-                periodisedValuesLookup[FundingDataSources.FM35] =
-                    BuildFm35Dictionary(reportServiceDependentData.Get<FM35Global>());
+                periodisedValuesLookup[FundingDataSource.FM35] = BuildFm35Dictionary(reportServiceDependentData.Get<FM35Global>());
             }
 
-            if (fundingDataSources.Contains(FundingDataSources.FM81))
+            if (fundingDataSources.Contains(FundingDataSource.FM81))
             {
-                periodisedValuesLookup[FundingDataSources.FM81] =
-                    BuildFm81Dictionary(reportServiceDependentData.Get<FM81Global>());
+                periodisedValuesLookup[FundingDataSource.FM81] = BuildFm81Dictionary(reportServiceDependentData.Get<FM81Global>());
             }
 
-            if (fundingDataSources.Contains(FundingDataSources.FM25))
+            if (fundingDataSources.Contains(FundingDataSource.FM25))
             {
-                periodisedValuesLookup[FundingDataSources.FM25] =
+                periodisedValuesLookup[FundingDataSource.FM25] =
                     BuildFm25Dictionary(reportServiceDependentData.Get<FM25Global>());
             }
 
-            if (fundingDataSources.Contains(FundingDataSources.FM36))
+            if (fundingDataSources.Contains(FundingDataSource.FM36))
             {
-                periodisedValuesLookup[FundingDataSources.FM36] =
-                    BuildFm36Dictionary(reportServiceDependentData.Get<FM36Global>());
+                periodisedValuesLookup[FundingDataSource.FM36] = BuildFm36Dictionary(reportServiceDependentData.Get<FM36Global>());
             }
 
-            if (fundingDataSources.Contains(FundingDataSources.FM99))
+            if (fundingDataSources.Contains(FundingDataSource.FM99))
             {
-                periodisedValuesLookup[FundingDataSources.FM99] =
-                    BuildFm99Dictionary(reportServiceDependentData.Get<ALBGlobal>());
+                periodisedValuesLookup[FundingDataSource.FM99] = BuildFm99Dictionary(reportServiceDependentData.Get<ALBGlobal>());
             }
 
-            if (fundingDataSources.Contains(FundingDataSources.EAS))
+            if (fundingDataSources.Contains(FundingDataSource.EAS))
             {
-                periodisedValuesLookup[FundingDataSources.EAS] =
-                    BuildEASDictionary(reportServiceDependentData.Get<ReferenceDataRoot>());
+                periodisedValuesLookup[FundingDataSource.EAS] = BuildEASDictionary(reportServiceDependentData.Get<ReferenceDataRoot>());
             }
 
             return periodisedValuesLookup;

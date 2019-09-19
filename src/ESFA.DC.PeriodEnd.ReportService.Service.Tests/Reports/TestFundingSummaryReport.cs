@@ -83,7 +83,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var reportServiceDependentData = Mock.Of<IReportServiceDependentData>();
             var periodisedValuesLookupProvider = new Mock<IPeriodisedValuesLookupProviderService>();
 
-            periodisedValuesLookupProvider.Setup(p => p.Provide(It.IsAny<IEnumerable<FundingDataSources>>(), reportServiceDependentData)).Returns(new PeriodisedValuesLookup());
+            periodisedValuesLookupProvider.Setup(p => p.Provide(It.IsAny<IEnumerable<FundingDataSource>>(), reportServiceDependentData)).Returns(new PeriodisedValuesLookup());
 
             var fundingSummaryReportModelBuilder = new FundingSummaryReportModelBuilder(periodisedValuesLookupProvider.Object);
 

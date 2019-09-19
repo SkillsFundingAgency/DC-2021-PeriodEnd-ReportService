@@ -2,6 +2,10 @@
 {
     public interface IFundingSummaryReportRow
     {
+        byte CurrentPeriod { get; }
+
+        string ContractAllocationNumber { get; }
+
         string Title { get; }
 
         decimal Period1 { get; }
@@ -35,7 +39,5 @@
         decimal YearToDate { get; }
 
         decimal Total { get; }
-
-        int CurrentPeriod { get; }
     }
 }

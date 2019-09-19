@@ -6,7 +6,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingCategory : IFundingCategory
     {
-        public FundingCategory(string fundingCategoryTitle, int currentPeriod, List<IFundingSubCategory>fundingSubCategories, string note = null)
+        public FundingCategory(string fundingCategoryTitle, byte currentPeriod, List<IFundingSubCategory>fundingSubCategories, string note = null)
         {
             FundingCategoryTitle = fundingCategoryTitle;
             CurrentPeriod = currentPeriod;
@@ -20,7 +20,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         public string Title => $"Total {FundingCategoryTitle} (£)";
 
-        public int CurrentPeriod { get; }
+        public byte CurrentPeriod { get; }
+
+        public string ContractAllocationNumber { get;  }
 
         public string CumulativeFundingCategoryTitle => $"Total {FundingCategoryTitle} Cumulative (£)";
 

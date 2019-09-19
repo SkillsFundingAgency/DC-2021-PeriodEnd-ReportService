@@ -7,23 +7,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundLineGroup : IFundLineGroup
     {
-        private readonly FundingDataSources _fundModel;
+        private readonly FundingDataSource _fundModel;
         private readonly IEnumerable<string> _fundLines;
         private readonly IPeriodisedValuesLookup _periodisedValues;
 
         public FundLineGroup(
             string title,
-            int currentPeriod,
-            FundingDataSources fundModel,
+            byte currentPeriod,
+            FundingDataSource fundModel,
             IEnumerable<string> fundLines,
             IPeriodisedValuesLookup periodisedValues)
         {
             CurrentPeriod = currentPeriod;
+            ContractAllocationNumber = null;
             _fundModel = fundModel;
             _fundLines = fundLines;
             _periodisedValues = periodisedValues;
             Title = title;
         }
+
+        public byte CurrentPeriod { get; }
+
+        public string ContractAllocationNumber { get; }
 
         public IList<IFundLine> FundLines { get; set; } = new List<IFundLine>();
 
@@ -61,8 +66,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         public decimal Total => FundLinesForTotal.Sum(fl => fl.Total);
 
-        public int CurrentPeriod { get; }
-
         private IEnumerable<IFundLine> FundLinesForTotal => FundLines.Where(fl => fl.IncludeInTotals);
 
         public FundLineGroup WithFundLine(string title, IEnumerable<string> fundLines, IEnumerable<string> attributes, bool includeInTotals = true)
@@ -87,32 +90,37 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         {
             var periodisedValuesList = _periodisedValues.GetPeriodisedValues(_fundModel, fundLines ?? _fundLines, attributes);
 
+            FundLine fundLine = null;
             if (periodisedValuesList != null)
             {
-                return new FundLine(
+                fundLine = new FundLine(
                     CurrentPeriod,
+                    ContractAllocationNumber,
                     title,
-                    periodisedValuesList.Where(pv => pv[0].HasValue).Sum(pv => pv[0].Value),
-                    periodisedValuesList.Where(pv => pv[1].HasValue).Sum(pv => pv[1].Value),
-                    periodisedValuesList.Where(pv => pv[2].HasValue).Sum(pv => pv[2].Value),
-                    periodisedValuesList.Where(pv => pv[3].HasValue).Sum(pv => pv[3].Value),
-                    periodisedValuesList.Where(pv => pv[4].HasValue).Sum(pv => pv[4].Value),
-                    periodisedValuesList.Where(pv => pv[5].HasValue).Sum(pv => pv[5].Value),
-                    periodisedValuesList.Where(pv => pv[6].HasValue).Sum(pv => pv[6].Value),
-                    periodisedValuesList.Where(pv => pv[7].HasValue).Sum(pv => pv[7].Value),
-                    periodisedValuesList.Where(pv => pv[8].HasValue).Sum(pv => pv[8].Value),
-                    periodisedValuesList.Where(pv => pv[9].HasValue).Sum(pv => pv[9].Value),
-                    periodisedValuesList.Where(pv => pv[10].HasValue).Sum(pv => pv[10].Value),
-                    periodisedValuesList.Where(pv => pv[11].HasValue).Sum(pv => pv[11].Value),
+                    GetTotalFrom(periodisedValuesList, 0),
+                    GetTotalFrom(periodisedValuesList, 1),
+                    GetTotalFrom(periodisedValuesList, 2),
+                    GetTotalFrom(periodisedValuesList, 3),
+                    GetTotalFrom(periodisedValuesList, 4),
+                    GetTotalFrom(periodisedValuesList, 5),
+                    GetTotalFrom(periodisedValuesList, 6),
+                    GetTotalFrom(periodisedValuesList, 7),
+                    GetTotalFrom(periodisedValuesList, 8),
+                    GetTotalFrom(periodisedValuesList, 9),
+                    GetTotalFrom(periodisedValuesList, 10),
+                    GetTotalFrom(periodisedValuesList, 11),
                     includeInTotals);
             }
+            else
+            {
+                fundLine = new FundLine(CurrentPeriod, ContractAllocationNumber, title, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                    0);
+            }
 
-            return BuildEmptyFundLine(title);
+            return fundLine;
         }
 
-        private IFundLine BuildEmptyFundLine(string title)
-        {
-            return new FundLine(CurrentPeriod, title, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
-        }
+        public decimal GetTotalFrom(IReadOnlyCollection<decimal?[]> values, byte index) =>
+            values.Where(pv => pv[index].HasValue).Sum(pv => pv[index]) ?? 0m;
     }
 }

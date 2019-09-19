@@ -4,11 +4,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundLine : IFundLine
     {
-        private const int _periodCount = 12;
+        private const int PeriodCount = 12;
         private readonly decimal[] _periods;
 
         public FundLine(
-            int currentPeriod,
+            byte currentPeriod,
+            string contractAllocationNumber,
             string title,
             decimal period1,
             decimal period2,
@@ -25,6 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             bool includeInTotals = true)
         {
             CurrentPeriod = currentPeriod;
+            ContractAllocationNumber = contractAllocationNumber;
             Title = title;
             _periods = new[]
             {
@@ -44,6 +46,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
             IncludeInTotals = includeInTotals;
         }
+
+        public byte CurrentPeriod { get; }
+
+        public string ContractAllocationNumber { get; }
 
         public string Title { get; }
 
@@ -79,15 +85,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         public decimal Total => SumPeriods(1, 12);
 
-        public int CurrentPeriod { get; }
-
         public bool IncludeInTotals { get; }
 
-        private decimal SumPeriods(int start, int end)
+        private decimal SumPeriods(byte start, byte end)
         {
             decimal total = 0;
 
-            var endIndex = end > _periodCount ? _periodCount : end;
+            var endIndex = end > PeriodCount ? PeriodCount : end;
 
             for (var index = start - 1; index < endIndex; index++)
             {

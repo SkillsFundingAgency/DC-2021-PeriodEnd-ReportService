@@ -6,7 +6,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingSubCategory : IFundingSubCategory
     {
-        public FundingSubCategory(string fundingSubCategoryTitle, int currentPeriod)
+        public FundingSubCategory(string fundingSubCategoryTitle, byte currentPeriod)
         {
             FundingSubCategoryTitle = fundingSubCategoryTitle;
             CurrentPeriod = currentPeriod;
@@ -15,6 +15,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         public IList<IFundLineGroup> FundLineGroups { get; set; } = new List<IFundLineGroup>();
 
         public string FundingSubCategoryTitle { get; }
+
+        public byte CurrentPeriod { get; }
 
         public string Title => $"Total {FundingSubCategoryTitle} (£)";
 
@@ -49,8 +51,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         public decimal YearToDate => FundLineGroups.Sum(flg => flg.YearToDate);
 
         public decimal Total => FundLineGroups.Sum(flg => flg.Total);
-
-        public int CurrentPeriod { get; }
 
         public FundingSubCategory WithFundLineGroup(IFundLineGroup fundLineGroup)
         {

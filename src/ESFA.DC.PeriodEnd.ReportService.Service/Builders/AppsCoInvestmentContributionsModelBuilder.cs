@@ -58,7 +58,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     x.Periods.All(p => p != decimal.Zero) &&
                     x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
 
-                if (ilrLearningDeliveriesInfo?.Count > 0 || rulebaseInfo?.Count > 0 ||
+                if ((ilrLearningDeliveriesInfo?.Any() ?? false) || (rulebaseInfo?.Any() ?? false) ||
                     paymentGroups.Any(x => x.PaymentInfoList.Any(y => y.FundingSource == _fundingSource || y.TransactionType == 3)))
                 {
                     foreach (var payment in paymentGroups)

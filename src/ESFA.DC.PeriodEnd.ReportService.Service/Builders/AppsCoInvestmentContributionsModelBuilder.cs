@@ -58,7 +58,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     x.Periods.All(p => p != decimal.Zero) &&
                     x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
 
-                if ((ilrLearningDeliveriesInfo?.Any() ?? false) || (rulebaseInfo?.Any() ?? false) ||
+                if (ilrLearningDeliveriesInfo.Any() || rulebaseInfo.Any() ||
                     paymentGroups.Any(x => x.PaymentInfoList.Any(y => y.FundingSource == _fundingSource || y.TransactionType == 3)))
                 {
                     foreach (var payment in paymentGroups)
@@ -71,7 +71,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             continue;
                         }
 
-                        var learningDelivery = ilrLearningDeliveriesInfo?.FirstOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
+                        var learningDelivery = ilrLearningDeliveriesInfo.FirstOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
                                                                            x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
                                                                            x.LearnAimRef.CaseInsensitiveEquals(paymentInfo.LearningAimReference) &&
                                                                            x.LearnStartDate == payment.LearningStartDate &&
@@ -133,7 +133,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 x => x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)
                                      && (x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode356)
                                          || x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode361))) ? "Yes" : "No",
-                            CompletionEarningThisFundingYear = rulebaseInfo?.SelectMany(x => x.Periods).Sum() ?? 0,
+                            CompletionEarningThisFundingYear = rulebaseInfo.SelectMany(x => x.Periods).Sum() ?? 0,
                             CompletionPaymentsThisFundingYear = payment.PaymentInfoList.Where(x => x.TransactionType == 3 && x.AcademicYear == Generics.AcademicYear).Sum(x => x.Amount),
                             CoInvestmentDueFromEmployerForAugust = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 1),
                             CoInvestmentDueFromEmployerForSeptember = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 2),

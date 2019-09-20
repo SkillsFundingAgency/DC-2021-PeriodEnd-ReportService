@@ -58,8 +58,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     x.Periods.All(p => p != decimal.Zero) &&
                     x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
 
-                if (ilrLearningDeliveriesInfo.Any() ||
-                    rulebaseInfo.Any() ||
+                if (ilrLearningDeliveriesInfo?.Count > 0 || rulebaseInfo?.Count > 0 ||
                     paymentGroups.Any(x => x.PaymentInfoList.Any(y => y.FundingSource == _fundingSource || y.TransactionType == 3)))
                 {
                     foreach (var payment in paymentGroups)
@@ -130,11 +129,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                                                                                                         _transactionTypes.Any(y => y == x.TransactionType) &&
                                                                                                                         x.AcademicYear != Generics.AcademicYear).Sum(x => x.Amount),
                             TotalPMRThisFundingYear = currentYearAppFinData?.Sum(x => x.AFinCode == 1 || x.AFinCode == 2 ? x.AFinAmount : -x.AFinAmount) ?? 0,
-                            LDM356Or361 = learningDelivery.LearningDeliveryFAMs.Any(x =>
-                                (x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM) && x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode356)) ||
-                                (x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM) && x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode361)))
-                                ? "Yes"
-                                : "No",
+                            LDM356Or361 = learningDelivery.LearningDeliveryFAMs.Any(
+                                x => x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)
+                                     && (x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode356)
+                                         || x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode361))) ? "Yes" : "No",
                             CompletionEarningThisFundingYear = rulebaseInfo?.SelectMany(x => x.Periods).Sum() ?? 0,
                             CompletionPaymentsThisFundingYear = payment.PaymentInfoList.Where(x => x.TransactionType == 3 && x.AcademicYear == Generics.AcademicYear).Sum(x => x.Amount),
                             CoInvestmentDueFromEmployerForAugust = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, payment.PaymentInfoList, 1),

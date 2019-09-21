@@ -451,7 +451,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             if (paymentEarningEventId != null)
                             {
                                 // get the matching sequence number for this earning event id from the Earning Event table
-                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = (byte)_appsMonthlyPaymentDasEarningsInfo?.Earnings
+                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = _appsMonthlyPaymentDasEarningsInfo?.Earnings
                                    ?.SingleOrDefault(x => x?.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
                             }
                         }
@@ -549,6 +549,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 {
                                     // populate the Learning Delivery fields in the appsMonthlyPaymentModel payment.
                                     appsMonthlyPaymentModel.LearningDeliveryOriginalLearningStartDate = learningDeliveryModel?.OrigLearnStartDate;
+                                    appsMonthlyPaymentModel.PaymentLearningStartDate = learningDeliveryModel?.LearnStartDate;
                                     appsMonthlyPaymentModel.LearningDeliveryLearningPlannedEndDate = learningDeliveryModel?.LearnPlanEndDate;
                                     appsMonthlyPaymentModel.LearningDeliveryCompletionStatus = learningDeliveryModel?.CompStatus;
                                     appsMonthlyPaymentModel.LearningDeliveryLearningActualEndDate = learningDeliveryModel?.LearnActEndDate;

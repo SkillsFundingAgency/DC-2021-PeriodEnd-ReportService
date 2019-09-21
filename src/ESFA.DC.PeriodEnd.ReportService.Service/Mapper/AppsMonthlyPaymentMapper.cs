@@ -11,6 +11,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
         public AppsMonthlyPaymentMapper()
         {
             int i = 0;
+
             Map(m => m.PaymentLearnerReferenceNumber).Index(i++).Name("Learner reference number");
             Map(m => m.PaymentUniqueLearnerNumber).Index(i++).Name("Unique learner number");
 
@@ -24,17 +25,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 
             Map(m => m.LarsLearningDeliveryLearningAimTitle).Index(i++).Name("Learning aim title");
 
-            Map(m => m.LearningDeliveryOriginalLearningStartDate).Index(i++).Name("Original learning start date");
-
-            Map(m => m.PaymentLearningStartDate).Index(i++).Name("Learning start date");
-
-            Map(m => m.LearningDeliveryLearningPlannedEndDate).Index(i++).Name("Learning planned end date");
+            Map(m => m.LearningDeliveryOriginalLearningStartDate).ConvertUsing(p => (p.LearningDeliveryOriginalLearningStartDate != null) ? p.LearningDeliveryOriginalLearningStartDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Original learning start date");
+            Map(m => m.PaymentLearningStartDate).ConvertUsing(p => (p.PaymentLearningStartDate != null) ? p.PaymentLearningStartDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Learning start date");
+            Map(m => m.LearningDeliveryLearningPlannedEndDate).ConvertUsing(p => (p.LearningDeliveryLearningPlannedEndDate != null) ? p.LearningDeliveryLearningPlannedEndDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Learning planned end date");
 
             Map(m => m.LearningDeliveryCompletionStatus).Index(i++).Name("Completion status");
 
-            Map(m => m.LearningDeliveryLearningActualEndDate).Index(i++).Name("Learning actual end date");
-
-            Map(m => m.LearningDeliveryAchievementDate).Index(i++).Name("Achievement date");
+            Map(m => m.LearningDeliveryLearningActualEndDate).ConvertUsing(p => (p.LearningDeliveryLearningActualEndDate != null) ? p.LearningDeliveryLearningActualEndDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Learning actual end date");
+            Map(m => m.LearningDeliveryAchievementDate).ConvertUsing(p => (p.LearningDeliveryAchievementDate != null) ? p.LearningDeliveryAchievementDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Achievement date");
 
             Map(m => m.LearningDeliveryOutcome).Index(i++).Name("Outcome");
 
@@ -66,7 +64,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 
             Map(m => m.PaymentPriceEpisodeStartDate).Index(i++).Name("Price episode start date");
 
-            Map(m => m.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate).Index(i++).Name("Price episode actual end date");
+            Map(m => m.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate).ConvertUsing(p => (p.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate != null) ? p.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Price episode actual end date");
 
             Map(m => m.FcsContractContractAllocationContractAllocationNumber).Index(i++).Name("Contract no");
 
@@ -79,7 +77,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier).Index(i++).Name("Agreement identifier");
 
             Map(m => m.LearnerEmploymentStatus).Index(i++).Name("Employment status");
-            Map(m => m.LearnerEmploymentStatusDate).Index(i++).Name("Employment status date");
+            Map(m => m.LearnerEmploymentStatusDate).ConvertUsing(p => (p.LearnerEmploymentStatusDate != null) ? p.LearnerEmploymentStatusDate?.ToString("dd/MM/yyyy") : string.Empty).Index(i++).Name("Employment status date");
 
             Map(m => m.AugustLevyPayments).Index(i++).Name("August (R01) levy payments");
             Map(m => m.AugustCoInvestmentPayments).Index(i++).Name("August (R01) co-investment payments");

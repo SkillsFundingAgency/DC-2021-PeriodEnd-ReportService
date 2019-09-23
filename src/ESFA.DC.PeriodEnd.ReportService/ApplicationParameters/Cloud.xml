@@ -22,5 +22,8 @@
     <Parameter Name="SummarisedActualsConnectionString" Value="__SummarisedActualsConnectionString__" />
     <!-- OrgConnectionString -->
     <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
+    <Parameter Name="FCSConnectionString" Value="__FCSConnectionString__" />
+    <!-- JobQueueManager -->
+    <Parameter Name="JobQueueManagerConnectionString" Value="__JobQueueManagerConnectionString__" />
   </Parameters>
 </Application>

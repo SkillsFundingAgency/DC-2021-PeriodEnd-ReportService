@@ -16,8 +16,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : AbstractFundModelProviderService, IDASPaymentsProviderService
     {
-        private const int FundingSource = 3;
-        private readonly int[] _appsAdditionalPaymentsTransactionTypes = { 4, 5, 6, 7, 16 };
+        private int[] AppsAdditionalPaymentsTransactionTypes = {
+            Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive,
+            Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive,
+            Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive,
+            Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive,
+            Constants.DASPayments.TransactionType.Apprenticeship };
+
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
 
         public DASPaymentsProviderService(
@@ -44,9 +49,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var context = _dasPaymentsContextFactory())
             {
                 paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
-                                                                 x.FundingSource == FundingSource &&
-                                                                 _appsAdditionalPaymentsTransactionTypes.Contains(
-                                                                     x.TransactionType)).ToListAsync(cancellationToken);
+                                                            x.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
+                                                            AppsAdditionalPaymentsTransactionTypes.Contains(x.TransactionType))
+                                                            .ToListAsync(cancellationToken);
 
                 apprenticeships = await context.Apprenticeships.Join(
                     paymentsList,

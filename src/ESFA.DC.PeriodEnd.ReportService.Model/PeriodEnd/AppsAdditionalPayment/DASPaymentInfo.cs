@@ -38,7 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public byte FundingSource { get; set; }
 
-        public DateTime LearningStartDate { get; set; }
+        public DateTime? LearningStartDate { get; set; }
 
         public string TypeOfAdditionalPayment { get; set; }
 

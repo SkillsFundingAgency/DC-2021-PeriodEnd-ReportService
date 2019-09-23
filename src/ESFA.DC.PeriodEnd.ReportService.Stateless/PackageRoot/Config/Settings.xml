@@ -25,7 +25,6 @@
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
     <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
-    <Parameter Name="ILRDataStoreValidConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="OrgConnectionString" Value="" />
     <Parameter Name="SummarisedActualsConnectionString" Value="" />

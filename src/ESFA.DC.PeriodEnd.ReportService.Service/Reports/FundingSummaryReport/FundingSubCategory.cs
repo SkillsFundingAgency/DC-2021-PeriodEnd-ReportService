@@ -18,6 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         public byte CurrentPeriod { get; }
 
+        public string ContractAllocationNumber { get; }
+
         public string Title => $"Total {FundingSubCategoryTitle} (£)";
 
         public decimal Period1 => FundLineGroups.Sum(flg => flg.Period1);

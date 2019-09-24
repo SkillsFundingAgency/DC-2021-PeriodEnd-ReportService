@@ -140,6 +140,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             catch (Exception ex)
             {
                 _logger.LogError("Failed to get Rulebase data", ex);
+                throw;
             }
 
             return appsMonthlyPaymentDasInfo;

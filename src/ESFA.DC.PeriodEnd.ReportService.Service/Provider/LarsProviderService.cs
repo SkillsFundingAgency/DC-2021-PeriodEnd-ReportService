@@ -91,6 +91,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             catch (Exception ex)
             {
                 _logger.LogError("Failed to get LARS learning deliveries", ex);
+                throw;
             }
             finally
             {

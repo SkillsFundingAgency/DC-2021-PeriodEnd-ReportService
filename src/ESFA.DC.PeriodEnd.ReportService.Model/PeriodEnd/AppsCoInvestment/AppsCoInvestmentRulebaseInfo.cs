@@ -1,9 +1,12 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Text;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
-    public class AppsAdditionalPaymentRulebaseInfo
+    public class AppsCoInvestmentRulebaseInfo
     {
         public int UkPrn { get; set; }
 

@@ -14,6 +14,8 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
@@ -788,9 +790,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             OrganisationIdentifier = "Manchester College",
                             LegalName = "Manchester College Ltd",
                         },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocation>()
+                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
                         {
-                            new AppsMonthlyPaymentContractAllocation()
+                            new AppsMonthlyPaymentContractAllocationInfo()
                             {
                                 ContractAllocationNumber = "YNLP-1503",
                                 FundingStreamPeriodCode = "16-18NLAP2018",

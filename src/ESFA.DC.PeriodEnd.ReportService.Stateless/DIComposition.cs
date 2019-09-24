@@ -28,6 +28,7 @@ using ESFA.DC.Mapping.Interface;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Services;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
@@ -280,6 +281,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
+            containerBuilder.RegisterType<AppsCoInvestmentContributionsReport>().As<IReport>()
+                .WithAttributeFiltering()
+                .InstancePerLifetimeScope();
+
             containerBuilder.Register(c => new List<IReport>(c.Resolve<IEnumerable<IReport>>()))
                 .As<IList<IReport>>();
 
@@ -339,6 +344,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<AppsAdditionalPaymentsModelBuilder>().As<IAppsAdditionalPaymentsModelBuilder>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<AppsCoInvestmentContributionsModelBuilder>().As<IAppsCoInvestmentContributionsModelBuilder>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<DataExtractModelBuilder>().As<IDataExtractModelBuilder>()

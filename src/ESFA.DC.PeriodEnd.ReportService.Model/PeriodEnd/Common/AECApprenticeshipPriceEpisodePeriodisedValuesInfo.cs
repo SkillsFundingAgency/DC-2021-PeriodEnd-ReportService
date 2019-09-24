@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
 {
     public class AECApprenticeshipPriceEpisodePeriodisedValuesInfo
     {
@@ -6,7 +6,7 @@
 
         public string LearnRefNumber { get; set; }
 
-        public byte? AimSeqNumber { get; set; }
+        public int? AimSeqNumber { get; set; }
 
         public string PriceEpisodeIdentifier { get; set; }
 

@@ -1,22 +1,14 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
-    public class DASPaymentInfo
+    public class PaymentInfo
     {
-        public int UkPrn { get; set; }
-
         public string LearnerReferenceNumber { get; set; }
 
         public string LearningAimReference { get; set; }
 
         public long LearnerUln { get; set; }
-
-        public string LearningAimFundingLineType { get; set; }
-
-        public byte TransactionType { get; set; }
-
-        public string LegalEntityName { get; set; }
 
         public int LearningAimProgrammeType { get; set; }
 
@@ -34,13 +26,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public short AcademicYear { get; set; }
 
-        public decimal Amount { get; set; }
+        public byte TransactionType { get; set; }
 
         public byte FundingSource { get; set; }
 
         public DateTime? LearningStartDate { get; set; }
 
-        public string TypeOfAdditionalPayment { get; set; }
+        public string LegalEntityName { get; set; }
+
+        public long UkPrn { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public string PriceEpisodeIdentifier { get; set; }
+
+        public decimal SfaContributionPercentage { get; set; }
 
         public string EmployerName { get; set; }
     }

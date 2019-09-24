@@ -19,6 +19,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public DateTime? PriceEpisodeActualEndDateIncEPA { get; set; }
 
         public string PriceEpisodeAgreeId { get; set; }
-        
     }
 }

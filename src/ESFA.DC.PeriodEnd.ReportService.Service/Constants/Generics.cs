@@ -14,6 +14,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string LearningDeliveryFAMCodeSOF = "SOF";
 
         public const string LearningDeliveryFAMCode107 = "107";
+        public const string LearningDeliveryFAMCode356 = "356";
+        public const string LearningDeliveryFAMCode361 = "361";
 
         // learner FAM codes
         public const string LearnerFAMCodeEHC = "EHC";
@@ -124,8 +126,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string ProviderSpecifiedLearnerMonitoringA = "A";
         public const string ProviderSpecifiedLearnerMonitoringB = "B";
 
+        // Fin Types
+        public const string PMR = "PMR";
+
+        // Learning Aim Reference
+        public const string ZPROG001 = "ZPROG001";
+
         // Dates
-        public const string Year = "2018/19";
+        public const string Year = "2019/20";
+        public const int AcademicYear = 1920;
 
         public const string FundingSummaryReportDecimalFormat = "#,##0.00";
 
@@ -136,7 +145,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public static string DateTimeMin = DateTime.MinValue.ToString("dd/MM/yyyy");
 
         // Dates
-        public static readonly DateTime BeginningOfYear = new DateTime(2018, 8, 1);
-        public static readonly DateTime EndOfYear = new DateTime(2019, 7, 31, 23, 59, 59);
+        public static readonly DateTime BeginningOfYear = new DateTime(2019, 8, 1);
+        public static readonly DateTime EndOfYear = new DateTime(2020, 7, 31, 23, 59, 59);
     }
 }

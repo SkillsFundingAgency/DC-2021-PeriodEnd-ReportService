@@ -8,6 +8,7 @@ using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
@@ -16,12 +17,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public class DASPaymentsProviderService : AbstractFundModelProviderService, IDASPaymentsProviderService
     {
-        private int[] AppsAdditionalPaymentsTransactionTypes = {
+        private const int AppsCoInvestmentFundingType = 3;
+
+        private readonly int[] _appsAdditionalPaymentsTransactionTypes = {
             Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive,
             Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive,
             Constants.DASPayments.TransactionType.Apprenticeship };
+
+        private readonly int[] _appsCoInvestmentTransactionTypes =
+        {
+            Constants.DASPayments.TransactionType.Learning_On_Programme,
+            Constants.DASPayments.TransactionType.Completion,
+            Constants.DASPayments.TransactionType.Balancing,
+        };
 
         private readonly Func<IDASPaymentsContext> _dasPaymentsContextFactory;
 
@@ -44,48 +54,36 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<Payment> paymentsList;
-            List<Apprenticeship> apprenticeships;
             using (var context = _dasPaymentsContextFactory())
             {
-                paymentsList = await context.Payments.Where(x => x.Ukprn == ukPrn &&
-                                                            x.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
-                                                            AppsAdditionalPaymentsTransactionTypes.Contains(x.TransactionType))
-                                                            .ToListAsync(cancellationToken);
+                var paymentsList =
+                    await (from payment in context.Payments
+                           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
+                           where payment.Ukprn == ukPrn &&
+                                 payment.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
+                                 _appsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
+                           select new DASPaymentInfo()
+                           {
+                               FundingSource = payment.FundingSource,
+                               TransactionType = payment.TransactionType,
+                               AcademicYear = payment.AcademicYear,
+                               CollectionPeriod = payment.CollectionPeriod,
+                               ContractType = payment.ContractType,
+                               DeliveryPeriod = payment.DeliveryPeriod,
+                               LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                               LearnerUln = payment.LearnerUln,
+                               LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                               LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                               LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                               LearningAimReference = payment.LearningAimReference,
+                               LearningAimStandardCode = payment.LearningAimStandardCode,
+                               Amount = payment.Amount,
+                               LearningAimFundingLineType = payment.LearningAimFundingLineType,
+                               TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
+                               EmployerName = apprenticeships.LegalEntityName ?? string.Empty
+                           }).ToListAsync(cancellationToken);
 
-                apprenticeships = await context.Apprenticeships.Join(
-                    paymentsList,
-                    a => a.Id,
-                    p => p.ApprenticeshipId,
-                    (a, p) => a).ToListAsync(cancellationToken);
-            }
-
-            foreach (var payment in paymentsList)
-            {
-                var paymentInfo = new DASPaymentInfo
-                {
-                    FundingSource = payment.FundingSource,
-                    TransactionType = payment.TransactionType,
-                    AcademicYear = payment.AcademicYear,
-                    CollectionPeriod = payment.CollectionPeriod,
-                    ContractType = payment.ContractType,
-                    DeliveryPeriod = payment.DeliveryPeriod,
-                    LearnerReferenceNumber = payment.LearnerReferenceNumber,
-                    LearnerUln = payment.LearnerUln,
-                    LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-                    LearningAimPathwayCode = payment.LearningAimPathwayCode,
-                    LearningAimProgrammeType = payment.LearningAimProgrammeType,
-                    LearningAimReference = payment.LearningAimReference,
-                    LearningAimStandardCode = payment.LearningAimStandardCode,
-                    Amount = payment.Amount,
-                    LearningAimFundingLineType = payment.LearningAimFundingLineType,
-                    TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                    EmployerName =
-                        apprenticeships?.SingleOrDefault(a => a.Id == payment.ApprenticeshipId)?.LegalEntityName ??
-                        string.Empty
-                };
-
-                appsAdditionalPaymentDasPaymentsInfo.Payments.Add(paymentInfo);
+                appsAdditionalPaymentDasPaymentsInfo.Payments.AddRange(paymentsList);
             }
 
             return appsAdditionalPaymentDasPaymentsInfo;
@@ -198,6 +196,52 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsMonthlyPaymentDasEarningsInfo;
+        }
+
+        public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        {
+            var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo
+            {
+                UkPrn = ukPrn,
+                Payments = new List<PaymentInfo>()
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+            using (IDASPaymentsContext context = _dasPaymentsContextFactory())
+            {
+                var paymentsList =
+                    await (from payment in context.Payments
+                           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
+                           where payment.Ukprn == ukPrn &&
+                                 payment.FundingSource == AppsCoInvestmentFundingType &&
+                                 _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType)
+                           select new PaymentInfo()
+                           {
+                               FundingSource = payment.FundingSource,
+                               TransactionType = payment.TransactionType,
+                               AcademicYear = payment.AcademicYear,
+                               CollectionPeriod = payment.CollectionPeriod,
+                               ContractType = payment.ContractType,
+                               DeliveryPeriod = payment.DeliveryPeriod,
+                               LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                               LearnerUln = payment.LearnerUln,
+                               LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                               LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                               LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                               LearningAimReference = payment.LearningAimReference,
+                               LearningAimStandardCode = payment.LearningAimStandardCode,
+                               LearningStartDate = payment.LearningStartDate,
+                               UkPrn = payment.Ukprn,
+                               Amount = payment.Amount,
+                               PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+                               SfaContributionPercentage = payment.SfaContributionPercentage,
+                               EmployerName = apprenticeships.LegalEntityName ?? string.Empty
+                           }).ToListAsync(cancellationToken);
+
+                appsCoInvestmentPaymentsInfo.Payments.AddRange(paymentsList);
+            }
+
+            return appsCoInvestmentPaymentsInfo;
         }
 
         private string GetTypeOfAdditionalPayment(byte transactionType)

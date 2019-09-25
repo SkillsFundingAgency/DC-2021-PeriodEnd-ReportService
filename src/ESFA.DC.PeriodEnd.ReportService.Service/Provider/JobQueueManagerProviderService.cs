@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
@@ -64,6 +65,47 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Distinct()
                     .ToListAsync(cancellationToken);
             }
+        }
+
+        public async Task<IEnumerable<CollectionStatsModel>> GetCollectionStatsModels(
+            int collectionYear,
+            int collectionPeriod,
+            CancellationToken cancellationToken)
+        {
+            List<CollectionStatsModel> models;
+
+            using (var ctx = _jobQueueDataFactory())
+            {
+                models = await ctx.Job
+                    .Include(x => x.Collection)
+                    .ThenInclude(x => x.CollectionType)
+                    .Include(x => x.FileUploadJobMetaData)
+                    .Where(x => (x.Collection.CollectionType.Type == "ILR"
+                                || x.Collection.CollectionType.Type == "EAS"
+                                || x.Collection.CollectionType.Type == "ESF")
+                                && x.Collection.CollectionYear == collectionYear
+                                && x.FileUploadJobMetaData.Single().PeriodNumber == collectionPeriod
+                                && (x.Status == 4
+                                || x.Status == 5
+                                || x.Status == 6))
+                    .GroupBy(x => x.Collection.Name)
+                    .Select(x => new CollectionStatsModel
+                    {
+                        CollectionName = x.Key,
+                        CountOfComplete = x.Count(y => y.Status == 4),
+                        CountOfFail = x.Count(y => y.Status == 5 || y.Status == 6)
+                    })
+                    .ToListAsync(cancellationToken);
+            }
+
+            models.Add(new CollectionStatsModel
+            {
+                CollectionName = "Total",
+                CountOfComplete = models.Sum(x => x.CountOfComplete),
+                CountOfFail = models.Sum(x => x.CountOfFail)
+            });
+
+            return models;
         }
     }
 }

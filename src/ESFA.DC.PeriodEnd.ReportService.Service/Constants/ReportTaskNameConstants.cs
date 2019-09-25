@@ -15,6 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
 
         public static class InternalReports
         {
+            public const string CollectionStatsReport = "TaskGenerateCollectionStatsReport";
             public const string DataExtractReport = "TaskGenerateDataExtractReport";
             public const string DataQualityReport = "TaskGenerateDataQualityReport";
             public const string PeriodEndMetricsReport = "TaskGeneratePeriodEndMetricsReport";
@@ -22,6 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
 
             public static IEnumerable<string> TasksList = new List<string>()
             {
+                CollectionStatsReport,
                 DataExtractReport,
                 DataQualityReport,
                 PeriodEndMetricsReport,

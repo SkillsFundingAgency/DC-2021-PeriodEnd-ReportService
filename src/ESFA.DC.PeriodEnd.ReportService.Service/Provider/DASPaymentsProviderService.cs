@@ -59,6 +59,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 var paymentsList =
                     await (from payment in context.Payments
                            join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
+                           into payment_apprenticeship_join
+                           from payment_apprenticeship in payment_apprenticeship_join.DefaultIfEmpty()
                            where payment.Ukprn == ukPrn &&
                                  payment.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
                                  _appsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
@@ -80,7 +82,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                Amount = payment.Amount,
                                LearningAimFundingLineType = payment.LearningAimFundingLineType,
                                TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                               EmployerName = apprenticeships.LegalEntityName ?? string.Empty
+                               EmployerName = payment_apprenticeship.LegalEntityName ?? string.Empty
                            }).ToListAsync(cancellationToken);
 
                 appsAdditionalPaymentDasPaymentsInfo.Payments.AddRange(paymentsList);

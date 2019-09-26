@@ -67,7 +67,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             return string.Equals(reportTaskName, ReportTaskName, StringComparison.OrdinalIgnoreCase);
         }
 
-        public virtual void ApplyConfiguration(CsvWriter csvWriter)
+        public virtual void CsvWriterConfiguration(CsvWriter csvWriter)
         {
         }
 
@@ -92,7 +92,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
         {
             csvWriter.Configuration.RegisterClassMap<TMapper>();
 
-            ApplyConfiguration(csvWriter);
+            CsvWriterConfiguration(csvWriter);
 
             csvWriter.WriteHeader<TModel>();
             csvWriter.NextRecord();

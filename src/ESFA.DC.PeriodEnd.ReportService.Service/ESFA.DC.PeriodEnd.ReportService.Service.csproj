@@ -29,6 +29,7 @@
     <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.83" />
     <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
+    <PackageReference Include="ESFA.DC.EAS1920.EF" Version="0.0.90" />
     <PackageReference Include="ESFA.DC.FileService" Version="0.1.19-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.FundingService.FM36.FundingOutput.Model" Version="0.0.239" />
     <PackageReference Include="ESFA.DC.ILR.1920.Model" Version="0.1.8-beta0001" />

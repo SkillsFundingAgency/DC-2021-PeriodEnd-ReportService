@@ -49,6 +49,8 @@
         public const string EasNonLevyApprenticeshipEmployerOnAppService1618 = "16-18 Apprenticeship (Employer on App Service) Non-Levy funding";
         public const string EasNonLevyApprenticeshipEmployerOnAppService19Plus = "19+ Apprenticeship (Employer on App Service) Non-Levy funding";
 
+        public const string ApprenticeshipEmployerOnAppService1618Levy = "16-18 Apprenticeship (Employer on App Service) Levy";
+
         // FM99 FundLines
         public const string AdvancedLearnerLoansBursary = "Advanced Learner Loans Bursary";
     }

@@ -296,31 +296,32 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public Dictionary<string, Dictionary<string, decimal?[][]>> BuildEASDictionary(
             ReferenceDataRoot referenceDataRoot)
         {
-            return referenceDataRoot?
-                       .EasFundingLines?
-                       .GroupBy(fl => fl.FundLine, StringComparer.OrdinalIgnoreCase)
-                       .ToDictionary(k => k.Key,
-                           v => v.SelectMany(ld => ld.EasSubmissionValues)
-                               .GroupBy(easv => easv.AdjustmentTypeName, StringComparer.OrdinalIgnoreCase)
-                               .ToDictionary(k => k.Key, value =>
-                                       value.Select(pvGroup => new decimal?[]
-                                       {
-                                           pvGroup.Period1.PaymentValue,
-                                           pvGroup.Period2.PaymentValue,
-                                           pvGroup.Period3.PaymentValue,
-                                           pvGroup.Period4.PaymentValue,
-                                           pvGroup.Period5.PaymentValue,
-                                           pvGroup.Period6.PaymentValue,
-                                           pvGroup.Period7.PaymentValue,
-                                           pvGroup.Period8.PaymentValue,
-                                           pvGroup.Period9.PaymentValue,
-                                           pvGroup.Period10.PaymentValue,
-                                           pvGroup.Period11.PaymentValue,
-                                           pvGroup.Period12.PaymentValue,
-                                       }).ToArray(),
-                                   StringComparer.OrdinalIgnoreCase),
-                           StringComparer.OrdinalIgnoreCase)
-                   ?? new Dictionary<string, Dictionary<string, decimal?[][]>>();
+            return null;
+            //return referenceDataRoot?
+            //           .EasFundingLines?
+            //           .GroupBy(fl => fl.FundLine, StringComparer.OrdinalIgnoreCase)
+            //           .ToDictionary(k => k.Key,
+            //               v => v.SelectMany(ld => ld.EasSubmissionValues)
+            //                   .GroupBy(easv => easv.AdjustmentTypeName, StringComparer.OrdinalIgnoreCase)
+            //                   .ToDictionary(k => k.Key, value =>
+            //                           value.Select(pvGroup => new decimal?[]
+            //                           {
+            //                               pvGroup.Period1.PaymentValue,
+            //                               pvGroup.Period2.PaymentValue,
+            //                               pvGroup.Period3.PaymentValue,
+            //                               pvGroup.Period4.PaymentValue,
+            //                               pvGroup.Period5.PaymentValue,
+            //                               pvGroup.Period6.PaymentValue,
+            //                               pvGroup.Period7.PaymentValue,
+            //                               pvGroup.Period8.PaymentValue,
+            //                               pvGroup.Period9.PaymentValue,
+            //                               pvGroup.Period10.PaymentValue,
+            //                               pvGroup.Period11.PaymentValue,
+            //                               pvGroup.Period12.PaymentValue,
+            //                           }).ToArray(),
+            //                       StringComparer.OrdinalIgnoreCase),
+            //               StringComparer.OrdinalIgnoreCase)
+            //       ?? new Dictionary<string, Dictionary<string, decimal?[][]>>();
         }
     }
 }

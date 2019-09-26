@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CollectionsManagement.Models;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
@@ -19,6 +20,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
             string collectionName,
             int returnPeriod,
             IEnumerable<ReturnPeriod> returnPeriods,
+            CancellationToken cancellationToken);
+
+        Task<IEnumerable<CollectionStatsModel>> GetCollectionStatsModels(
+            int collectionYear,
+            int collectionPeriod,
             CancellationToken cancellationToken);
     }
 }

@@ -9,6 +9,7 @@ using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
@@ -16,6 +17,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     public class JobQueueManagerProviderService : IJobQueueManagerProviderService
     {
         private readonly Func<IJobQueueDataContext> _jobQueueDataFactory;
+
+        private readonly string[] _collectionTypes =
+        {
+            JobQueue.CollectionTypes.ILR,
+            JobQueue.CollectionTypes.ESF,
+            JobQueue.CollectionTypes.EAS
+        };
+
+        private readonly int[] _jobStatuses =
+        {
+            JobQueue.Status.Completed,
+            JobQueue.Status.Failed,
+            JobQueue.Status.FailedRetry
+        };
 
         public JobQueueManagerProviderService(
             Func<IJobQueueDataContext> jobQueueDataFactory)
@@ -80,20 +95,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Include(x => x.Collection)
                     .ThenInclude(x => x.CollectionType)
                     .Include(x => x.FileUploadJobMetaData)
-                    .Where(x => (x.Collection.CollectionType.Type == "ILR"
-                                || x.Collection.CollectionType.Type == "EAS"
-                                || x.Collection.CollectionType.Type == "ESF")
-                                && x.Collection.CollectionYear == collectionYear
+                    .Where(x => x.Collection.CollectionYear == collectionYear
                                 && x.FileUploadJobMetaData.Single().PeriodNumber == collectionPeriod
-                                && (x.Status == 4
-                                || x.Status == 5
-                                || x.Status == 6))
+                                && _collectionTypes.Contains(x.Collection.CollectionType.Type, StringComparer.OrdinalIgnoreCase)
+                                && _jobStatuses.Contains(x.Status))
                     .GroupBy(x => x.Collection.Name)
                     .Select(x => new CollectionStatsModel
                     {
                         CollectionName = x.Key,
-                        CountOfComplete = x.Count(y => y.Status == 4),
-                        CountOfFail = x.Count(y => y.Status == 5 || y.Status == 6)
+                        CountOfComplete = x.Count(y => y.Status == JobQueue.Status.Completed),
+                        CountOfFail = x.Count(y => y.Status == JobQueue.Status.FailedRetry || y.Status == JobQueue.Status.Failed)
                     })
                     .ToListAsync(cancellationToken);
             }

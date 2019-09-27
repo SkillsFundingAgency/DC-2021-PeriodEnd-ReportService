@@ -22,8 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
                 }
 
                 var value = ((double)CountOfComplete / (CountOfComplete + CountOfFail)) * 100;
-                var percentage = Convert.ToInt32(Math.Round(value, 0));
-                return percentage;
+                return Convert.ToInt32(Math.Round(value, 0));
             }
         }
     }

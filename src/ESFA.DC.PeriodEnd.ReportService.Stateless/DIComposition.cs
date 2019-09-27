@@ -295,6 +295,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<DataQualityReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<ProviderSubmissionsReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<CollectionStatsReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)

@@ -12,7 +12,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public int Total => CountOfComplete + CountOfFail;
 
-        public int Percent
+        public double Percent
         {
             get
             {
@@ -21,8 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
                     return 0;
                 }
 
-                var value = ((double)CountOfComplete / (CountOfComplete + CountOfFail)) * 100;
-                return Convert.ToInt32(Math.Round(value, 0));
+                return Math.Round(((double)CountOfComplete / (CountOfComplete + CountOfFail) * 100), 2);
             }
         }
     }

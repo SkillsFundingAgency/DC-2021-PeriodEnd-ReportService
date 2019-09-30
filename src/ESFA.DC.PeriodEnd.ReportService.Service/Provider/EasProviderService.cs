@@ -30,41 +30,61 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _easContextFactory = easContextFactory;
         }
 
-        public async Task<ProviderEasSubmissionInfo> GetProviderEasSubmissions(
-            int ukPrn,
+        public async Task<IList<ProviderEasInfo>> GetProviderEasInfoForFundingSummaryReport(
+            int ukprn,
             CancellationToken cancellationToken)
         {
-            ProviderEasSubmissionInfo providerEasSubmissionInfo = null;
+            List<ProviderEasInfo> providerEasSubmissionInfoList = new List<ProviderEasInfo>();
+
+            // TODO: Refactor to use dictionary's for better performance
             try
             {
-                providerEasSubmissionInfo = new ProviderEasSubmissionInfo()
-                {
-                    UKPRN = ukPrn.ToString(),
-                    EasSubmissions = new List<ProviderEasSubmission>()
-                };
+                // Get all the EAS submissions data for this provider
+                var easSubmissionInfos = GetEasSubmissionInfo(ukprn, cancellationToken).GetAwaiter().GetResult();
+                var easSubmissionValueInfos = GetEasSubmissionValueInfo(cancellationToken).GetAwaiter().GetResult();
+                var easPaymentTypeInfos = GetEasPaymentTypeInfo(cancellationToken).GetAwaiter().GetResult();
+                var easFundingLineInfos = GetEasFundingLineInfo(cancellationToken).GetAwaiter().GetResult();
+                var easAdjustmentTypeInfos = GetEasAdjustmentTypeInfo(cancellationToken).GetAwaiter().GetResult();
 
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using (var context = _easContextFactory())
+                // Iterate through the submissions to build the model
+                foreach (EasSubmissionInfo easSubmissionInfo in easSubmissionInfos)
                 {
-                    providerEasSubmissionInfo.EasSubmissions = await context.EasSubmissions
-                        .Where(x => x.Ukprn == ukPrn.ToString())
-                        .Select(s => new ProviderEasSubmission
-                        (
-                            s.SubmissionId,
-                            s.Ukprn,
-                            (byte?) s.CollectionPeriod
-                        ))
-                        .ToListAsync(cancellationToken);
+                    // get the matching EasSubmissionValues for the this easSubmissionInfo
+                    var easSubmissionMatchedEasSubmissionValueInfos = easSubmissionValueInfos
+                        .Where(x => x.SubmissionId == easSubmissionInfo?.SubmissionId).ToList();
+
+                    // Iterate through the submission values to get the matching payment types in order to get the linking
+                    // names for the FundingLine and AdjustmentTypes
+                    foreach (EasSubmissionValueInfo easSubmissionValueInfo in easSubmissionMatchedEasSubmissionValueInfos)
+                    {
+                        // Not sure if there can be multiple payment types for a given eas submission value so might not need to iterate here
+                        var easSubmissionValueMatchedPaymentTypeInfos = easPaymentTypeInfos
+                            .Where(x => x.PaymentId == easSubmissionValueInfo.PaymentId).ToList();
+
+                        // Iterate though the payment types to get the fund line and adjustment type id's
+                        foreach (EasPaymentTypeInfo easPaymentType in easSubmissionValueMatchedPaymentTypeInfos)
+                        {
+                            string fundLineName = easFundingLineInfos?
+                                    .SingleOrDefault(f => f.Id == easPaymentType?.FundingLineId)?.Name ?? string.Empty;
+
+                            string adjustmentTypeName = easAdjustmentTypeInfos?
+                                    .SingleOrDefault(a => a.Id == easPaymentType?.AdjustmentTypeId)?
+                                    .Name ?? string.Empty;
+
+                            providerEasSubmissionInfoList.Add(
+                                BuildProviderEasInfoModel(fundLineName, adjustmentTypeName,
+                                    easSubmissionValueInfo.CollectionPeriod, easSubmissionValueInfo.PaymentValue));
+                        }
+                    }
                 }
             }
             catch (Exception ex)
             {
-                _logger.LogError("Failed to get EAS data", ex);
+                _logger.LogError("Failed to get Provider EAS data", ex);
                 throw;
             }
 
-            return providerEasSubmissionInfo;
+            return providerEasSubmissionInfoList;
         }
 
         public async Task<IList<EasSubmissionInfo>> GetEasSubmissionInfo(int ukprn, CancellationToken cancellationToken)
@@ -91,14 +111,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
-        public async Task<IList<EasSubmissionValueInfo>> GetEasSubmissionValueInfo(Guid submissionId, CancellationToken cancellationToken)
+        public async Task<IList<EasSubmissionValueInfo>> GetEasSubmissionValueInfo(CancellationToken cancellationToken)
         {
             try
             {
                 using (var context = _easContextFactory())
                 {
                     return await context.EasSubmissionValues
-                        .Where(x => x.SubmissionId == submissionId)
                         .Select(v => new EasSubmissionValueInfo
                         {
                             SubmissionId = v.SubmissionId,
@@ -116,6 +135,31 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public async Task<IList<EasPaymentTypeInfo>> GetEasPaymentTypeInfo(CancellationToken cancellationToken)
+        {
+            try
+            {
+                using (var context = _easContextFactory())
+                {
+                    return await context.PaymentTypes
+                        .Select(p => new EasPaymentTypeInfo
+                        {
+                            PaymentId = p.PaymentId,
+                            PaymentName = p.PaymentName,
+                            PaymentTypeDescription = p.PaymentTypeDescription,
+                            FundingLineId = p.FundingLineId,
+                            AdjustmentTypeId = p.AdjustmentTypeId,
+                            Fm36 = p.Fm36
+                        })
+                        .ToListAsync(cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to get EAS Payment Type data", ex);
+                throw;
+            }
+        }
 
         public async Task<IList<EasAdjustmentTypeInfo>> GetEasAdjustmentTypeInfo(CancellationToken cancellationToken)
         {
@@ -161,28 +205,88 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
-        public async Task<IList<EasSubmissionInfo>> GetEasSubmissions(int ukprn, CancellationToken cancellationToken)
+        private ProviderEasInfo BuildProviderEasInfoModel(string fundLineName, string adjustmentTypeName, byte? collectionPeriod, decimal? paymentValue)
         {
-            try
+            // create an instance of the final providerEasSubmissionInfo model
+            ProviderEasInfo providerEasInfo = new ProviderEasInfo();
+
+            if (collectionPeriod != null)
             {
-                using (var context = _easContextFactory())
+                // assign the fundline and adjustment type
+                providerEasInfo.FundLine = fundLineName;
+                providerEasInfo.AdjustmentType = adjustmentTypeName;
+
+                // default the period values to zero
+                providerEasInfo.Period1 = 0m;
+                providerEasInfo.Period2 = 0m;
+                providerEasInfo.Period3 = 0m;
+                providerEasInfo.Period4 = 0m;
+                providerEasInfo.Period5 = 0m;
+                providerEasInfo.Period6 = 0m;
+                providerEasInfo.Period7 = 0m;
+                providerEasInfo.Period8 = 0m;
+                providerEasInfo.Period9 = 0m;
+                providerEasInfo.Period10 = 0m;
+                providerEasInfo.Period11 = 0m;
+                providerEasInfo.Period12 = 0m;
+
+                // assign the payment value to the appropriate collection period
+                switch (collectionPeriod)
                 {
-                    return await context.EasSubmissions
-                        .Where(x => x.Ukprn == ukprn.ToString())
-                        .Select(s => new EasSubmissionInfo
-                        {
-                            SubmissionId = s.SubmissionId,
-                            UKPRN = s.Ukprn,
-                            CollectionPeriod = (byte?) s.CollectionPeriod
-                        })
-                        .ToListAsync(cancellationToken);
+                    case 1:
+                        providerEasInfo.Period1 = collectionPeriod;
+                        break;
+
+                    case 2:
+                        providerEasInfo.Period2 = collectionPeriod;
+                        break;
+
+                    case 3:
+                        providerEasInfo.Period3 = collectionPeriod;
+                        break;
+
+                    case 4:
+                        providerEasInfo.Period4 = collectionPeriod;
+                        break;
+
+                    case 5:
+                        providerEasInfo.Period5 = collectionPeriod;
+                        break;
+
+                    case 6:
+                        providerEasInfo.Period6 = collectionPeriod;
+                        break;
+
+                    case 7:
+                        providerEasInfo.Period7 = collectionPeriod;
+                        break;
+
+                    case 8:
+                        providerEasInfo.Period8 = collectionPeriod;
+                        break;
+
+                    case 9:
+                        providerEasInfo.Period9 = collectionPeriod;
+                        break;
+
+                    case 10:
+                        providerEasInfo.Period10 = collectionPeriod;
+                        break;
+
+                    case 11:
+                        providerEasInfo.Period11 = collectionPeriod;
+                        break;
+
+                    case 12:
+                        providerEasInfo.Period12 = collectionPeriod;
+                        break;
+
+                    default:
+                        break;
                 }
             }
-            catch (Exception ex)
-            {
-                _logger.LogError("Failed to get EAS Submission data", ex);
-                throw;
-            }
+
+            return providerEasInfo;
         }
     }
 }

@@ -7,7 +7,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
 {
     public interface IFundingSummaryReportModelBuilder
     {
-        IReadOnlyList<IFundingCategory> BuildAppsMonthlyPaymentModelList(
+        IReadOnlyList<IFundingCategory> BuildFundingSummaryReportModel(
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
             AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo,
             AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,

@@ -18,6 +18,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
+using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
@@ -25,12 +26,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
     public class FundingSummaryReport : AbstractReport
     {
         #region Member variable initialisation
-        private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
-        private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
-        private readonly IDASPaymentsProviderService _dasEarningsProviderService;
-        private readonly ILarsProviderService _larsProviderService;
+        private readonly IlrRulebaseProviderService _ilrRulebaseProviderService;
+        private readonly IEasProviderService _easProviderService;
         private readonly IFCSProviderService _fcsProviderService;
+
+
+
+
+        private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
+
+        private readonly IFm35PeriodEndProviderService _fm35ProviderService;
+
+
+        private readonly ILarsProviderService _larsProviderService;
+
         private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
 
         private readonly IFileNameService _fileNameService;
@@ -43,9 +53,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         public FundingSummaryReport(
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
+            IDASPaymentsProviderService dasPaymentsProviderService,
+            IlrRulebaseProviderService ilrRulebaseProviderService,
+            IFm35PeriodEndProviderService fm35ProviderService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IFM36PeriodEndProviderService fm36ProviderService,
-            IDASPaymentsProviderService dasPaymentsProviderService,
             ILarsProviderService larsProviderService,
             IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
@@ -63,6 +75,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
+            _fm35ProviderService = ilrRulebaseProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
             _larsProviderService = larsProviderService;
@@ -97,25 +110,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var fileName = GetZipFilename(reportServiceContext);
 
             // get the DAS payments data
-            var appsMonthlyPaymentDasInfo =
-                await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn, cancellationToken);
+            var fm35LearningDeliveryPeriodisedValues = _fm35ProviderService.GetFM35LearningDeliveryPerioisedValues(reportServiceContext.Ukprn);
 
-            // get the DAS Earnings Event data
-            var appsMonthlyPaymentDasEarningsInfo =
-                await _dasPaymentsProviderService.GetEarningsInfoForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn, cancellationToken);
+            // get the EAS data
+            var providerEasInfo =
+                await _easProviderService.GetProviderEasInfoForFundingSummaryReport(reportServiceContext.Ukprn, cancellationToken);
 
             // get the ILR data
             var appsMonthlyPaymentIlrInfo =
                 await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
-
-            // Get the AEC data
-            var appsMonthlyPaymentRulebaseInfo =
-                await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn,
-                    cancellationToken);
 
             // Get the Fcs Contract data
             var appsMonthlyPaymentFcsInfo =
@@ -131,7 +135,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                     learnAimRefs,
                     cancellationToken);
 
-            // Build the actual Apps Monthly Payment Report
+            // Build the Report
             var appsMonthlyPaymentsModel = _modelBuilder.BuildAppsMonthlyPaymentModelList(
                 appsMonthlyPaymentIlrInfo,
                 appsMonthlyPaymentRulebaseInfo,

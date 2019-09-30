@@ -3,9 +3,35 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 {
-    public class ProviderEasnInfo
+    public class ProviderEasInfo
     {
-        public int? Ukprn { get; set; }
+        public string FundLine { get; set; }
+
+        public string AdjustmentType { get; set; }
+
+        public decimal? Period1 { get; set; }
+
+        public decimal? Period2 { get; set; }
+
+        public decimal? Period3 { get; set; }
+
+        public decimal? Period4 { get; set; }
+
+        public decimal? Period5 { get; set; }
+
+        public decimal? Period6 { get; set; }
+
+        public decimal? Period7 { get; set; }
+
+        public decimal? Period8 { get; set; }
+
+        public decimal? Period9 { get; set; }
+
+        public decimal? Period10 { get; set; }
+
+        public decimal? Period11 { get; set; }
+
+        public decimal? Period12 { get; set; }
 
         //IList<EasFundingLine>
         //return referenceDataRoot?
@@ -38,7 +64,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 
     public class EasSubmissionInfo
     {
-        public Guid? SubmissionId { get; set; }
+        public Guid SubmissionId { get; set; }
 
         public string UKPRN { get; set; }
 
@@ -47,7 +73,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 
     public class EasSubmissionValueInfo
     {
-        public Guid? SubmissionId { get; set; }
+        public Guid SubmissionId { get; set; }
 
         public byte? CollectionPeriod { get; set; }
 
@@ -58,7 +84,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 
     public class EasPaymentTypeInfo
     {
-        public int? PaymentId { get; set; }
+        public int PaymentId { get; set; }
 
         public string PaymentName { get; set; }
 
@@ -73,14 +99,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 
     public class EasAdjustmentTypeInfo
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
     }
 
     public class EasFundingLineInfo
     {
-        public int? Id { get; set; }
+        public int Id { get; set; }
 
         public string Name { get; set; }
     }

@@ -13,6 +13,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 
         public string UKPRN { get; set; }
 
-        public IList<ProviderEasSubmission> EasSubmissions { get; set; }
+       // public IList<ProviderEasSubmission> EasSubmissions { get; set; }
     }
 }

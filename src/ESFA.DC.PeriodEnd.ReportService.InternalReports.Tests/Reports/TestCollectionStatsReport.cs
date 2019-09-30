@@ -50,7 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                 .Returns(Task.CompletedTask);
 
             var collectionStatsInfo = BuildCollectionStatsModel();
-            string collectionStats = "[{\"CollectionName\":\"EAS1920\",\"CountOfComplete\":6,\"CountOfFail\":1,\"Total\":7,\"Percent\":86},{\"CollectionName\":\"ESFR2 - 1920\",\"CountOfComplete\":2,\"CountOfFail\":1,\"Total\":3,\"Percent\":67},{\"CollectionName\":\"ILR1920\",\"CountOfComplete\":7,\"CountOfFail\":14,\"Total\":21,\"Percent\":33},{\"CollectionName\":\"Total\",\"CountOfComplete\":15,\"CountOfFail\":16,\"Total\":31,\"Percent\":48}]";
+            string collectionStats = "[{\"CollectionName\":\"EAS1920\",\"CountOfComplete\":6,\"CountOfFail\":1,\"Total\":7,\"Percent\":85.71},{\"CollectionName\":\"ESFR2 - 1920\",\"CountOfComplete\":2,\"CountOfFail\":1,\"Total\":3,\"Percent\":66.67},{\"CollectionName\":\"ILR1920\",\"CountOfComplete\":7,\"CountOfFail\":14,\"Total\":21,\"Percent\":33.33},{\"CollectionName\":\"Total\",\"CountOfComplete\":15,\"CountOfFail\":16,\"Total\":31,\"Percent\":48.39}]";
 
             jsonMock.Setup(x => x.Serialize<IEnumerable<CollectionStatsModel>>(collectionStatsInfo))
                 .Returns(collectionStats);

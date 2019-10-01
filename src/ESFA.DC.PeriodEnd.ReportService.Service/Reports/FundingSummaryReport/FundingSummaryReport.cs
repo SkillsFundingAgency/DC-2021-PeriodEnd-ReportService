@@ -31,17 +31,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private readonly IEasProviderService _easProviderService;
         private readonly IFCSProviderService _fcsProviderService;
 
+        //private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
 
+        //private readonly IFm35PeriodEndProviderService _fm35ProviderService;
 
+        //private readonly ILarsProviderService _larsProviderService;
 
-        private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
-
-        private readonly IFm35PeriodEndProviderService _fm35ProviderService;
-
-
-        private readonly ILarsProviderService _larsProviderService;
-
-        private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
+        //private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
 
         private readonly IFileNameService _fileNameService;
         private readonly IModelBuilder<IFundingSummaryReport> _fundingSummaryReportModelBuilder;
@@ -55,14 +51,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IDASPaymentsProviderService dasPaymentsProviderService,
             IlrRulebaseProviderService ilrRulebaseProviderService,
-            IFm35PeriodEndProviderService fm35ProviderService,
-            IIlrPeriodEndProviderService ilrPeriodEndProviderService,
-            IFM36PeriodEndProviderService fm36ProviderService,
-            ILarsProviderService larsProviderService,
+            IEasProviderService easProviderService,
             IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
-            IAppsMonthlyPaymentModelBuilder modelBuilder)
+            // IAppsMonthlyPaymentModelBuilder modelBuilder)
+            IFundingSummaryReportModelBuilder modelBuilder)
 
         //IFileNameService fileNameService,
         //IModelBuilder<IFundingSummaryReport> fundingSummaryReportModelBuilder,
@@ -74,11 +68,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             streamableKeyValuePersistenceService,
             logger)
         {
-            _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
-            _fm35ProviderService = ilrRulebaseProviderService;
-            _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
-            _larsProviderService = larsProviderService;
+            _ilrRulebaseProviderService = ilrRulebaseProviderService;
+            _easProviderService = easProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
 //            _fileNameService = fileNameService;

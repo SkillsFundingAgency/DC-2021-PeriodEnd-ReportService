@@ -145,6 +145,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         {
                             Ukprn = ald.UKPRN,
                             LearnRefNumber = ald.LearnRefNumber,
+                            AimSequenceNumber = (byte?)ald.AimSeqNumber,
+                            LearnAimRef = ald.LearnAimRef,
                             PlannedNumOnProgInstalm = ald.PlannedNumOnProgInstalm,
                         }).ToListAsync(cancellationToken);
                 }

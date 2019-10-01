@@ -86,6 +86,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .Include(x => x.LearningDeliveries).ThenInclude(y => y.LearningDeliveryFAMs)
                         .Include(x => x.LearningDeliveries).ThenInclude(y => y.ProviderSpecDeliveryMonitorings)
                         .Include(x => x.ProviderSpecLearnerMonitorings)
+                        .Include(x => x.LearnerEmploymentStatuses)
                         .Where(x => x.UKPRN == ukPrn &&
                                     x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
                         .ToListAsync(cancellationToken);
@@ -154,6 +155,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 ProvSpecLearnMon = x.ProvSpecLearnMon,
                                 ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
                             }).ToList(),
+                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
+                        new AppsMonthlyPaymentLearnerEmploymentStatusInfo
+                        {
+                            Ukprn = x.UKPRN,
+                            LearnRefNumber = x.LearnRefNumber,
+                            DateEmpStatApp = x.DateEmpStatApp,
+                            EmpStat = x.EmpStat,
+                            EmpdId = x.EmpId,
+                            AgreeId = x.AgreeId
+                        }).ToList()
                     };
 
                     appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);

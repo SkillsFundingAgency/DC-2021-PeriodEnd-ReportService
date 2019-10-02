@@ -16,6 +16,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
@@ -31,18 +32,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private readonly IEasProviderService _easProviderService;
         private readonly IFCSProviderService _fcsProviderService;
 
-        //private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
-
-        //private readonly IFm35PeriodEndProviderService _fm35ProviderService;
-
-        //private readonly ILarsProviderService _larsProviderService;
-
-        //private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
-
         private readonly IFileNameService _fileNameService;
-        private readonly IModelBuilder<IFundingSummaryReport> _fundingSummaryReportModelBuilder;
         private readonly IExcelService _excelService;
         private readonly IRenderService<IFundingSummaryReport> _fundingSummaryReportRenderService;
+        private readonly IFundingSummaryReportModelBuilder _modelBuilder;
         #endregion Member variable initialisation
 
         #region Constructors
@@ -56,12 +49,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             // IAppsMonthlyPaymentModelBuilder modelBuilder)
-            IFundingSummaryReportModelBuilder modelBuilder)
+            IFundingSummaryReportModelBuilder modelBuilder,
 
         //IFileNameService fileNameService,
         //IModelBuilder<IFundingSummaryReport> fundingSummaryReportModelBuilder,
-        //IExcelService excelService,
-        //IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService)
+        IExcelService excelService,
+        IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService)
         : base(
             dateTimeProvider,
             valueProvider,
@@ -75,8 +68,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             _modelBuilder = modelBuilder;
 //            _fileNameService = fileNameService;
 //            _fundingSummaryReportModelBuilder = fundingSummaryReportModelBuilder;
-//            _excelService = excelService;
-//            _fundingSummaryReportRenderService = fundingSummaryReportRenderService;
+            _excelService = excelService;
+            _fundingSummaryReportRenderService = fundingSummaryReportRenderService;
         }
         #endregion Constructors
 
@@ -102,16 +95,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var fileName = GetZipFilename(reportServiceContext);
 
             // get the DAS payments data
-            var fm35LearningDeliveryPeriodisedValues = _fm35ProviderService.GetFM35LearningDeliveryPerioisedValues(reportServiceContext.Ukprn);
+            var fm35LearningDeliveryPeriodisedValues = _ilrRulebaseProviderService.GetFM35LearningDeliveryPerioisedValues(reportServiceContext.Ukprn);
 
             // get the EAS data
-            var providerEasInfo =
+            ProviderEasInfo providerEasInfo =
                 await _easProviderService.GetProviderEasInfoForFundingSummaryReport(reportServiceContext.Ukprn, cancellationToken);
-
-            // get the ILR data
-            var appsMonthlyPaymentIlrInfo =
-                await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn, cancellationToken);
 
             // Get the Fcs Contract data
             var appsMonthlyPaymentFcsInfo =
@@ -119,28 +107,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                     reportServiceContext.Ukprn,
                     cancellationToken);
 
-            // Get the name's of the learning aims
-            string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)
-                .Select(x => x.LearnAimRef).Distinct().ToArray();
-            var appsMonthlyPaymentLarsLearningDeliveryInfos =
-                await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
-                    learnAimRefs,
-                    cancellationToken);
-
             // Build the Report
-            var appsMonthlyPaymentsModel = _modelBuilder.BuildAppsMonthlyPaymentModelList(
-                appsMonthlyPaymentIlrInfo,
-                appsMonthlyPaymentRulebaseInfo,
-                appsMonthlyPaymentDasInfo,
-                appsMonthlyPaymentDasEarningsInfo,
-                appsMonthlyPaymentFcsInfo,
-                appsMonthlyPaymentLarsLearningDeliveryInfos);
+            var fundingSummaryReportModel = _modelBuilder.BuildFundingSummaryReportModel(
+                fm35LearningDeliveryPeriodisedValues,
+                providerEasInfo,
+                appsMonthlyPaymentFcsInfo);
+
+            //using (var workbook = _excelService.NewWorkbook())
+            //{
+            //    var worksheet = _excelService.GetWorksheetFromWorkbook(workbook, 0);
+
+            //    _fundingSummaryReportRenderService.Render(fundingSummaryReportModel, worksheet);
+
+            //    await _excelService.SaveWorkbookAsync(workbook, fileName, reportServiceContext.Container, cancellationToken);
+            //}
 
             //var fundingSummaryReportModel = _fundingSummaryReportModelBuilder.Build(reportServiceContext, reportsDependentData);
 
-            string csv = await GetCsv(appsMonthlyPaymentsModel, cancellationToken);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
-            await WriteZipEntry(archive, $"{fileName}.csv", csv);
+            //string csv = await GetCsv(fundingSummaryReportModel, cancellationToken);
+            //await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
+            //await WriteZipEntry(archive, $"{fileName}.csv", csv);
         }
 
         private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)

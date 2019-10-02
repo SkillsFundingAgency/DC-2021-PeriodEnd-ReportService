@@ -5,6 +5,8 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Model;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 
@@ -36,7 +38,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         protected IEnumerable<FundingDataSource> FundingDataSources { private get; set; }
 
-        public FundingSummaryReportModel Build(IReportServiceContext reportServiceContext, IReportServiceDependentData reportServiceDependentData)
+        public FundingSummaryReportModel BuildFundingSummaryReportModel
+        (
+            IReportServiceContext reportServiceContext,
+            IReportServiceDependentData reportServiceDependentData,
+            Dictionary<string, Dictionary<string, decimal?[][]>> fm35LearningDeliveryPeriodisedValues,
+            IList<ProviderEasInfo> providerEasInfo,
+            AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo
+
+        )
         {
             var periodisedValues = _periodisedValuesLookupProvider.Provide(FundingDataSources, reportServiceDependentData);
 

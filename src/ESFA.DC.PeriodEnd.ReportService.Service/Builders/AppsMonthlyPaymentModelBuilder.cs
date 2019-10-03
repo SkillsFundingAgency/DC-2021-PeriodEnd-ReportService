@@ -643,7 +643,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         // Period totals
                         appsMonthlyPaymentModel.AugustTotalPayments = appsMonthlyPaymentModel?.AugustLevyPayments +
                                                                       appsMonthlyPaymentModel?.AugustCoInvestmentPayments +
-                                                                      appsMonthlyPaymentModel?.AugustCoInvestmentDueFromEmployerPayments +
                                                                       appsMonthlyPaymentModel?.AugustEmployerAdditionalPayments +
                                                                       appsMonthlyPaymentModel?.AugustProviderAdditionalPayments +
                                                                       appsMonthlyPaymentModel?.AugustApprenticeAdditionalPayments +
@@ -652,7 +651,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.SeptemberTotalPayments = appsMonthlyPaymentModel?.SeptemberLevyPayments +
                                                                         appsMonthlyPaymentModel?.SeptemberCoInvestmentPayments +
-                                                                        appsMonthlyPaymentModel?.SeptemberCoInvestmentDueFromEmployerPayments +
                                                                         appsMonthlyPaymentModel?.SeptemberEmployerAdditionalPayments +
                                                                         appsMonthlyPaymentModel?.SeptemberProviderAdditionalPayments +
                                                                         appsMonthlyPaymentModel?.SeptemberApprenticeAdditionalPayments +
@@ -661,7 +659,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.OctoberTotalPayments = appsMonthlyPaymentModel?.OctoberLevyPayments +
                                                                        appsMonthlyPaymentModel?.OctoberCoInvestmentPayments +
-                                                                       appsMonthlyPaymentModel?.OctoberCoInvestmentDueFromEmployerPayments +
                                                                        appsMonthlyPaymentModel?.OctoberEmployerAdditionalPayments +
                                                                        appsMonthlyPaymentModel?.OctoberProviderAdditionalPayments +
                                                                        appsMonthlyPaymentModel?.OctoberApprenticeAdditionalPayments +
@@ -670,7 +667,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.NovemberTotalPayments = appsMonthlyPaymentModel?.NovemberLevyPayments +
                                                                         appsMonthlyPaymentModel?.NovemberCoInvestmentPayments +
-                                                                        appsMonthlyPaymentModel?.NovemberCoInvestmentDueFromEmployerPayments +
                                                                         appsMonthlyPaymentModel?.NovemberEmployerAdditionalPayments +
                                                                         appsMonthlyPaymentModel?.NovemberProviderAdditionalPayments +
                                                                         appsMonthlyPaymentModel?.NovemberApprenticeAdditionalPayments +
@@ -679,7 +675,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.DecemberTotalPayments = appsMonthlyPaymentModel?.DecemberLevyPayments +
                                                                         appsMonthlyPaymentModel?.DecemberCoInvestmentPayments +
-                                                                        appsMonthlyPaymentModel?.DecemberCoInvestmentDueFromEmployerPayments +
                                                                         appsMonthlyPaymentModel?.DecemberEmployerAdditionalPayments +
                                                                         appsMonthlyPaymentModel?.DecemberProviderAdditionalPayments +
                                                                         appsMonthlyPaymentModel?.DecemberApprenticeAdditionalPayments +
@@ -688,7 +683,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.JanuaryTotalPayments = appsMonthlyPaymentModel?.JanuaryLevyPayments +
                                                                        appsMonthlyPaymentModel?.JanuaryCoInvestmentPayments +
-                                                                       appsMonthlyPaymentModel?.JanuaryCoInvestmentDueFromEmployerPayments +
                                                                        appsMonthlyPaymentModel?.JanuaryEmployerAdditionalPayments +
                                                                        appsMonthlyPaymentModel?.JanuaryProviderAdditionalPayments +
                                                                        appsMonthlyPaymentModel?.JanuaryApprenticeAdditionalPayments +
@@ -698,7 +692,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         appsMonthlyPaymentModel.FebruaryTotalPayments =
                             appsMonthlyPaymentModel?.FebruaryLevyPayments +
                             appsMonthlyPaymentModel?.FebruaryCoInvestmentPayments +
-                            appsMonthlyPaymentModel?.FebruaryCoInvestmentDueFromEmployerPayments +
                             appsMonthlyPaymentModel?.FebruaryEmployerAdditionalPayments +
                             appsMonthlyPaymentModel?.FebruaryProviderAdditionalPayments +
                             appsMonthlyPaymentModel?.FebruaryApprenticeAdditionalPayments +
@@ -707,7 +700,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.MarchTotalPayments = appsMonthlyPaymentModel?.MarchLevyPayments +
                                                                      appsMonthlyPaymentModel?.MarchCoInvestmentPayments +
-                                                                     appsMonthlyPaymentModel?.MarchCoInvestmentDueFromEmployerPayments +
                                                                      appsMonthlyPaymentModel?.MarchEmployerAdditionalPayments +
                                                                      appsMonthlyPaymentModel?.MarchProviderAdditionalPayments +
                                                                      appsMonthlyPaymentModel?.MarchApprenticeAdditionalPayments +
@@ -716,7 +708,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.AprilTotalPayments = appsMonthlyPaymentModel?.AprilLevyPayments +
                                                                      appsMonthlyPaymentModel?.AprilCoInvestmentPayments +
-                                                                     appsMonthlyPaymentModel?.AprilCoInvestmentDueFromEmployerPayments +
                                                                      appsMonthlyPaymentModel?.AprilEmployerAdditionalPayments +
                                                                      appsMonthlyPaymentModel?.AprilProviderAdditionalPayments +
                                                                      appsMonthlyPaymentModel?.AprilApprenticeAdditionalPayments +
@@ -725,7 +716,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.MayTotalPayments = appsMonthlyPaymentModel?.MayLevyPayments +
                                                                    appsMonthlyPaymentModel?.MayCoInvestmentPayments +
-                                                                   appsMonthlyPaymentModel?.MayCoInvestmentDueFromEmployerPayments +
                                                                    appsMonthlyPaymentModel?.MayEmployerAdditionalPayments +
                                                                    appsMonthlyPaymentModel?.MayProviderAdditionalPayments +
                                                                    appsMonthlyPaymentModel?.MayApprenticeAdditionalPayments +
@@ -734,7 +724,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.JuneTotalPayments = appsMonthlyPaymentModel?.JuneLevyPayments +
                                                                     appsMonthlyPaymentModel?.JuneCoInvestmentPayments +
-                                                                    appsMonthlyPaymentModel?.JuneCoInvestmentDueFromEmployerPayments +
                                                                     appsMonthlyPaymentModel?.JuneEmployerAdditionalPayments +
                                                                     appsMonthlyPaymentModel?.JuneProviderAdditionalPayments +
                                                                     appsMonthlyPaymentModel?.JuneApprenticeAdditionalPayments +
@@ -743,7 +732,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.JulyTotalPayments = appsMonthlyPaymentModel?.JulyLevyPayments +
                                                                     appsMonthlyPaymentModel?.JulyCoInvestmentPayments +
-                                                                    appsMonthlyPaymentModel?.JulyCoInvestmentDueFromEmployerPayments +
                                                                     appsMonthlyPaymentModel?.JulyEmployerAdditionalPayments +
                                                                     appsMonthlyPaymentModel?.JulyProviderAdditionalPayments +
                                                                     appsMonthlyPaymentModel?.JulyApprenticeAdditionalPayments +
@@ -752,7 +740,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.R13TotalPayments = appsMonthlyPaymentModel?.R13LevyPayments +
                                                                    appsMonthlyPaymentModel?.R13CoInvestmentPayments +
-                                                                   appsMonthlyPaymentModel?.R13CoInvestmentDueFromEmployerPayments +
                                                                    appsMonthlyPaymentModel?.R13EmployerAdditionalPayments +
                                                                    appsMonthlyPaymentModel?.R13ProviderAdditionalPayments +
                                                                    appsMonthlyPaymentModel?.R13ApprenticeAdditionalPayments +
@@ -761,7 +748,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         appsMonthlyPaymentModel.R14TotalPayments = appsMonthlyPaymentModel?.R14LevyPayments +
                                                                    appsMonthlyPaymentModel?.R14CoInvestmentPayments +
-                                                                   appsMonthlyPaymentModel?.R14CoInvestmentDueFromEmployerPayments +
                                                                    appsMonthlyPaymentModel?.R14EmployerAdditionalPayments +
                                                                    appsMonthlyPaymentModel?.R14ProviderAdditionalPayments +
                                                                    appsMonthlyPaymentModel?.R14ApprenticeAdditionalPayments +

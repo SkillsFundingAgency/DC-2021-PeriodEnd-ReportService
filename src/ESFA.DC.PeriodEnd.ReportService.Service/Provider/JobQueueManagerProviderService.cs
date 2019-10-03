@@ -44,9 +44,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken)
         {
-            ReturnPeriod returnPeriodForCollection = returnPeriods.Single(x =>
-                    x.PeriodNumber == returnPeriod &&
-                    x.CollectionName.Equals(collectionName, StringComparison.OrdinalIgnoreCase));
+            ReturnPeriod returnPeriodForCollection = returnPeriods.Single(x => x.PeriodNumber == returnPeriod);
 
             using (var jobQueueDataContext = _jobQueueDataFactory())
             {

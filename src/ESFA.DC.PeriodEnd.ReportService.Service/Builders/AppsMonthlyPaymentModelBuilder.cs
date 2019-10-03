@@ -57,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private readonly HashSet<byte?> _transactionTypesEnglishAndMathsPayments = new HashSet<byte?>() { 13, 14 };
 
-        private readonly HashSet<byte?> _transactionTypesLearningSupportPayments = new HashSet<byte?>() { 8, 9, 10, 11, 12 };
+        private readonly HashSet<byte?> _transactionTypesLearningSupportPayments = new HashSet<byte?>() { 8, 9, 10, 11, 12, 15 };
 
         public IReadOnlyList<AppsMonthlyPaymentModel> BuildAppsMonthlyPaymentModelList(
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
@@ -125,6 +125,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         r.ReportingAimFundingLineType,
                         r.PriceEpisodeIdentifier
                     })
+                    .OrderBy(o => o.Key.Ukprn)
+                        .ThenBy(o => o.Key.LearnerReferenceNumber)
+                        .ThenBy(o => o.Key.LearnerUln)
+                        .ThenBy(o => o.Key.LearningAimReference)
+                        .ThenBy(o => o.Key.LearningStartDate)
+                        .ThenBy(o => o.Key.LearningAimProgrammeType)
+                        .ThenBy(o => o.Key.LearningAimStandardCode)
+                        .ThenBy(o => o.Key.LearningAimFrameworkCode)
+                        .ThenBy(o => o.Key.LearningAimPathwayCode)
+                        .ThenBy(o => o.Key.ReportingAimFundingLineType)
+                        .ThenBy(o => o.Key.PriceEpisodeIdentifier)
                     .Select(g => new AppsMonthlyPaymentModel
                     {
                         Ukprn = g.Key.Ukprn,
@@ -1144,11 +1155,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                            ((payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
                            _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) ||
                            (!payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && payment.TransactionType == 15));
-
-            if (result)
-            {
-                var t = result;
-            }
 
             return result;
         }

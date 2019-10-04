@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
@@ -11,6 +12,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsCoInvestmentContributionsModelBuilder : IAppsCoInvestmentContributionsModelBuilder
     {
         private readonly int _fundingSource = 3;
+        private readonly ILogger _logger;
+
         private readonly int[] _transactionTypes =
         {
             Constants.DASPayments.TransactionType.Learning_On_Programme,
@@ -20,10 +23,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
 
+        public AppsCoInvestmentContributionsModelBuilder(ILogger logger)
+        {
+            _logger = logger;
+        }
+
         public IEnumerable<AppsCoInvestmentContributionsModel> BuildModel(
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             AppsCoInvestmentRulebaseInfo appsCoInvestmentRulebaseInfo,
-            AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo)
+            AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo,
+            long jobId)
         {
             List<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels = new List<AppsCoInvestmentContributionsModel>();
             foreach (var learner in appsCoInvestmentIlrInfo.Learners)
@@ -63,8 +72,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     foreach (var payment in paymentGroups)
                     {
-                        var paymentInfo = payment.PaymentInfoList
-                            .SingleOrDefault(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001));
+                        var validPaymentInfos = payment.PaymentInfoList.Where(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001)).ToList();
+
+                        if (validPaymentInfos.Count > 1)
+                        {
+                            _logger.LogInfo($"Multiple matching payment info found for leaner {learner.LearnRefNumber}", jobIdOverride: jobId);
+
+                            foreach (var pi in validPaymentInfos)
+                            {
+                                _logger.LogInfo(
+                                    $"AimRef-{pi.LearningAimReference}_LearnRef-{pi.LearnerReferenceNumber}_FworkCode-{pi.LearningAimFrameworkCode}_StdCode-{pi.LearningAimStandardCode}_PwayCode-{pi.LearningAimPathwayCode}_ProgType{pi.LearningAimProgrammeType}_LearnStartDate-{pi.LearningStartDate}", jobIdOverride: jobId);
+                            }
+                        }
+
+                        var paymentInfo = validPaymentInfos.FirstOrDefault();
 
                         if (paymentInfo == null)
                         {
@@ -94,10 +115,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                         x.AFinDate <= Generics.EndOfYear &&
                                         x.AFinType.CaseInsensitiveEquals(Generics.PMR)).ToList();
 
-                        var aecLearningDeliveryInfo =
-                            appsCoInvestmentRulebaseInfo.AECLearningDeliveries?.SingleOrDefault(x =>
-                                x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
-                                x.AimSeqNumber == learningDelivery.AimSeqNumber);
+                        var validAecLearningDeliveries = appsCoInvestmentRulebaseInfo.AECLearningDeliveries?.Where(x =>
+                            x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
+                            x.AimSeqNumber == learningDelivery.AimSeqNumber).ToList();
+
+                        if (validAecLearningDeliveries.Count > 1)
+                        {
+                            _logger.LogInfo($"Multiple matching AEC Learning deliveries found for leaner {learner.LearnRefNumber}", jobIdOverride: jobId);
+
+                            foreach (var ld in validAecLearningDeliveries)
+                            {
+                                _logger.LogInfo(
+                                    $"AimSeq-{ld.AimSeqNumber}_LearnRef-{ld.LearnRefNumber}_AppAdjStartDate-{ld.AppAdjLearnStartDate}", jobIdOverride: jobId);
+                            }
+                        }
+
+                        var aecLearningDeliveryInfo = validAecLearningDeliveries.FirstOrDefault();
 
                         bool learnDelMathEng =
                             aecLearningDeliveryInfo?.LearningDeliveryValues.LearnDelMathEng ?? false;

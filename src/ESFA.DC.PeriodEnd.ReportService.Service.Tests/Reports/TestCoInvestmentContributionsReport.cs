@@ -75,7 +75,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
-            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder();
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(logger.Object);
 
             var report = new AppsCoInvestmentContributionsReport(
                 logger.Object,

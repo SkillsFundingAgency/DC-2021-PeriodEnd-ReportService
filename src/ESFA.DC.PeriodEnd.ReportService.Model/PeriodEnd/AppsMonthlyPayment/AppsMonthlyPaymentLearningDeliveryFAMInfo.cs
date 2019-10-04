@@ -11,6 +11,5 @@
         public string LearnDelFAMType { get; set; }
 
         public string LearnDelFAMCode { get; set; }
-
     }
 }

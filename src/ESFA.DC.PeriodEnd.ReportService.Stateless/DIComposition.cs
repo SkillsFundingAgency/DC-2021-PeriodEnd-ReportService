@@ -281,6 +281,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
+            containerBuilder.RegisterType<AppsCoInvestmentContributionsReport>().As<IReport>()
+                .WithAttributeFiltering()
+                .InstancePerLifetimeScope();
+
             containerBuilder.Register(c => new List<IReport>(c.Resolve<IEnumerable<IReport>>()))
                 .As<IList<IReport>>();
 
@@ -291,6 +295,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<DataQualityReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<ProviderSubmissionsReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<CollectionStatsReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)
@@ -340,6 +346,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<AppsAdditionalPaymentsModelBuilder>().As<IAppsAdditionalPaymentsModelBuilder>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<AppsCoInvestmentContributionsModelBuilder>().As<IAppsCoInvestmentContributionsModelBuilder>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<DataExtractModelBuilder>().As<IDataExtractModelBuilder>()

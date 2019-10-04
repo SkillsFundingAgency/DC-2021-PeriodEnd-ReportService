@@ -14,7 +14,9 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
@@ -344,7 +346,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].AugustApprenticeAdditionalPayments.Should().Be(32);
             result[1].AugustEnglishAndMathsPayments.Should().Be(0);
             result[1].AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].AugustTotalPayments.Should().Be(198);
+            result[1].AugustTotalPayments.Should().Be(172);
 
             // September
             result[1].SeptemberLevyPayments.Should().Be(22);
@@ -355,7 +357,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].SeptemberApprenticeAdditionalPayments.Should().Be(32);
             result[1].SeptemberEnglishAndMathsPayments.Should().Be(0);
             result[1].SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].SeptemberTotalPayments.Should().Be(198);
+            result[1].SeptemberTotalPayments.Should().Be(172);
 
             // October
             result[1].OctoberLevyPayments.Should().Be(22);
@@ -366,7 +368,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].OctoberApprenticeAdditionalPayments.Should().Be(32);
             result[1].OctoberEnglishAndMathsPayments.Should().Be(0);
             result[1].OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].OctoberTotalPayments.Should().Be(198);
+            result[1].OctoberTotalPayments.Should().Be(172);
 
             // November
             result[1].NovemberLevyPayments.Should().Be(22);
@@ -377,7 +379,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].NovemberApprenticeAdditionalPayments.Should().Be(32);
             result[1].NovemberEnglishAndMathsPayments.Should().Be(0);
             result[1].NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].NovemberTotalPayments.Should().Be(198);
+            result[1].NovemberTotalPayments.Should().Be(172);
 
             // December
             result[1].DecemberLevyPayments.Should().Be(22);
@@ -388,7 +390,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].DecemberApprenticeAdditionalPayments.Should().Be(32);
             result[1].DecemberEnglishAndMathsPayments.Should().Be(0);
             result[1].DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].DecemberTotalPayments.Should().Be(198);
+            result[1].DecemberTotalPayments.Should().Be(172);
 
             // January
             result[1].JanuaryLevyPayments.Should().Be(22);
@@ -399,7 +401,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].JanuaryApprenticeAdditionalPayments.Should().Be(32);
             result[1].JanuaryEnglishAndMathsPayments.Should().Be(0);
             result[1].JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].JanuaryTotalPayments.Should().Be(198);
+            result[1].JanuaryTotalPayments.Should().Be(172);
 
             // February
             result[1].FebruaryLevyPayments.Should().Be(22);
@@ -410,7 +412,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].FebruaryApprenticeAdditionalPayments.Should().Be(32);
             result[1].FebruaryEnglishAndMathsPayments.Should().Be(0);
             result[1].FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].FebruaryTotalPayments.Should().Be(198);
+            result[1].FebruaryTotalPayments.Should().Be(172);
 
             // March
             result[1].MarchLevyPayments.Should().Be(22);
@@ -421,7 +423,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].MarchApprenticeAdditionalPayments.Should().Be(32);
             result[1].MarchEnglishAndMathsPayments.Should().Be(0);
             result[1].MarchLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].MarchTotalPayments.Should().Be(198);
+            result[1].MarchTotalPayments.Should().Be(172);
 
             // April
             result[1].AprilLevyPayments.Should().Be(22);
@@ -432,7 +434,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].AprilApprenticeAdditionalPayments.Should().Be(32);
             result[1].AprilEnglishAndMathsPayments.Should().Be(0);
             result[1].AprilLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].AprilTotalPayments.Should().Be(198);
+            result[1].AprilTotalPayments.Should().Be(172);
 
             // May
             result[1].MayLevyPayments.Should().Be(22);
@@ -443,7 +445,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].MayApprenticeAdditionalPayments.Should().Be(32);
             result[1].MayEnglishAndMathsPayments.Should().Be(0);
             result[1].MayLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].MayTotalPayments.Should().Be(198);
+            result[1].MayTotalPayments.Should().Be(172);
 
             // June
             result[1].JuneLevyPayments.Should().Be(22);
@@ -454,7 +456,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].JuneApprenticeAdditionalPayments.Should().Be(32);
             result[1].JuneEnglishAndMathsPayments.Should().Be(0);
             result[1].JuneLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].JuneTotalPayments.Should().Be(198);
+            result[1].JuneTotalPayments.Should().Be(172);
 
             // July
             result[1].JulyLevyPayments.Should().Be(22);
@@ -465,7 +467,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].JulyApprenticeAdditionalPayments.Should().Be(32);
             result[1].JulyEnglishAndMathsPayments.Should().Be(0);
             result[1].JulyLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].JulyTotalPayments.Should().Be(198);
+            result[1].JulyTotalPayments.Should().Be(172);
 
             // R13
             result[1].R13LevyPayments.Should().Be(22);
@@ -476,7 +478,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].R13ApprenticeAdditionalPayments.Should().Be(32);
             result[1].R13EnglishAndMathsPayments.Should().Be(0);
             result[1].R13LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].R13TotalPayments.Should().Be(198);
+            result[1].R13TotalPayments.Should().Be(172);
 
             // R14
             result[1].R14LevyPayments.Should().Be(22);
@@ -487,7 +489,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].R14ApprenticeAdditionalPayments.Should().Be(32);
             result[1].R14EnglishAndMathsPayments.Should().Be(0);
             result[1].R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(36);
-            result[1].R14TotalPayments.Should().Be(198);
+            result[1].R14TotalPayments.Should().Be(172);
 
             result[1].TotalLevyPayments.Should().Be(308);
             result[1].TotalCoInvestmentPayments.Should().Be(336);
@@ -497,7 +499,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[1].TotalApprenticeAdditionalPayments.Should().Be(448);
             result[1].TotalEnglishAndMathsPayments.Should().Be(0);
             result[1].TotalLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(504);
-            result[1].TotalPayments.Should().Be(2772);
+            result[1].TotalPayments.Should().Be(2408);
         }
 
         private List<AppsMonthlyPaymentLarsLearningDeliveryInfo> BuildLarsDeliveryInfoModel()
@@ -788,9 +790,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             OrganisationIdentifier = "Manchester College",
                             LegalName = "Manchester College Ltd",
                         },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocation>()
+                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
                         {
-                            new AppsMonthlyPaymentContractAllocation()
+                            new AppsMonthlyPaymentContractAllocationInfo()
                             {
                                 ContractAllocationNumber = "YNLP-1503",
                                 FundingStreamPeriodCode = "16-18NLAP2018",

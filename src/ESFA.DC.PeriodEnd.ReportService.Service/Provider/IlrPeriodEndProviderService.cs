@@ -12,6 +12,7 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
@@ -87,6 +88,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .Include(x => x.LearningDeliveries).ThenInclude(y => y.LearningDeliveryFAMs)
                         .Include(x => x.LearningDeliveries).ThenInclude(y => y.ProviderSpecDeliveryMonitorings)
                         .Include(x => x.ProviderSpecLearnerMonitorings)
+                        .Include(x => x.LearnerEmploymentStatuses)
                         .Where(x => x.UKPRN == ukPrn &&
                                     x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
                         .ToListAsync(cancellationToken);
@@ -155,6 +157,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 ProvSpecLearnMon = x.ProvSpecLearnMon,
                                 ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
                             }).ToList(),
+                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
+                        new AppsMonthlyPaymentLearnerEmploymentStatusInfo
+                        {
+                            Ukprn = x.UKPRN,
+                            LearnRefNumber = x.LearnRefNumber,
+                            DateEmpStatApp = x.DateEmpStatApp,
+                            EmpStat = x.EmpStat,
+                            EmpdId = x.EmpId,
+                            AgreeId = x.AgreeId
+                        }).ToList()
                     };
 
                     appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);
@@ -424,6 +436,72 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return top10ProvidersWithInvalidLearners;
+        }
+
+        public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        {
+            var appsCoInvestmentIlrInfo = new AppsCoInvestmentILRInfo
+            {
+                UkPrn = ukPrn,
+                Learners = new List<LearnerInfo>()
+            };
+
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using (var ilrContext = _ilrValidContextFactory())
+            {
+                var learnersList = await ilrContext.Learners
+                                                .Include(x => x.LearningDeliveries).ThenInclude(y => y.AppFinRecords)
+                                                .Include(x => x.LearnerEmploymentStatuses)
+                                                .Where(x => x.UKPRN == ukPrn &&
+                                                            x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel) &&
+                                                            x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.Equals(Constants.Generics.PMR) &&
+                                                                                                                   z.LearnRefNumber.Equals(x.LearnRefNumber))))
+                    .Select(learner => new LearnerInfo()
+                    {
+                        LearnRefNumber = learner.LearnRefNumber,
+                        LearningDeliveries = learner.LearningDeliveries.Select(x => new LearningDeliveryInfo()
+                        {
+                            UKPRN = ukPrn,
+                            LearnRefNumber = x.LearnRefNumber,
+                            LearnAimRef = x.LearnAimRef,
+                            AimType = x.AimType,
+                            AimSeqNumber = x.AimSeqNumber,
+                            LearnStartDate = x.LearnStartDate,
+                            ProgType = x.ProgType,
+                            StdCode = x.StdCode,
+                            FworkCode = x.FworkCode,
+                            PwayCode = x.PwayCode,
+                            SWSupAimId = x.SWSupAimId,
+                            AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
+                            {
+                                LearnRefNumber = y.LearnRefNumber,
+                                AimSeqNumber = y.AimSeqNumber,
+                                AFinType = y.AFinType,
+                                AFinCode = y.AFinCode,
+                                AFinDate = y.AFinDate,
+                                AFinAmount = y.AFinAmount
+                            }).ToList(),
+                            LearningDeliveryFAMs = x.LearningDeliveryFAMs.Select(y => new LearningDeliveryFAM()
+                            {
+                                UKPRN = y.UKPRN,
+                                LearnRefNumber = y.LearnRefNumber,
+                                AimSeqNumber = y.AimSeqNumber,
+                                LearnDelFAMType = y.LearnDelFAMType,
+                                LearnDelFAMCode = y.LearnDelFAMCode
+                            }).ToList(),
+                        }).ToList(),
+                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
+                        {
+                            LearnRefNumber = x.LearnRefNumber,
+                            DateEmpStatApp = x.DateEmpStatApp,
+                            EmpId = x.EmpId
+                        }).ToList()
+                    }).ToListAsync(cancellationToken);
+                appsCoInvestmentIlrInfo.Learners.AddRange(learnersList);
+            }
+
+            return appsCoInvestmentIlrInfo;
         }
 
         public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)

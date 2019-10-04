@@ -1,5 +1,4 @@
-﻿
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 {
     public class AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo
     {

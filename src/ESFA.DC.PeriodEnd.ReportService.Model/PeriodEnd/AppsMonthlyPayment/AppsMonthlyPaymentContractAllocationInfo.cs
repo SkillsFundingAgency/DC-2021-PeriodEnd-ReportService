@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 {
-    public class AppsMonthlyPaymentContractAllocation
+    public class AppsMonthlyPaymentContractAllocationInfo
     {
         public string ContractAllocationNumber { get; set; }
 

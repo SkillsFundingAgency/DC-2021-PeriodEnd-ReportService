@@ -71,7 +71,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             ContractVersionNumber = fcsContract?.ContractVersionNumber.ToString(),
                             StartDate = fcsContract?.StartDate,
                             EndDate = fcsContract?.EndDate,
-                            ContractAllocations = fcsContract?.ContractAllocations.Select(x => new AppsMonthlyPaymentContractAllocation
+                            ContractAllocations = fcsContract?.ContractAllocations.Select(x => new AppsMonthlyPaymentContractAllocationInfo
                             {
                                 ContractAllocationNumber = x?.ContractAllocationNumber,
                                 Period = x?.Period,
@@ -80,7 +80,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 FundingStreamPeriodCode = x?.FundingStreamPeriodCode,
                                 StartDate = x?.StartDate,
                                 EndDate = x?.EndDate
-                            }).ToList() ?? new List<AppsMonthlyPaymentContractAllocation>(),
+                            }).ToList() ?? new List<AppsMonthlyPaymentContractAllocationInfo>(),
                             Provider = new AppsMonthlyPaymentContractorInfo()
                             {
                                 UkPrn = fcsContract?.Contractor?.Ukprn,

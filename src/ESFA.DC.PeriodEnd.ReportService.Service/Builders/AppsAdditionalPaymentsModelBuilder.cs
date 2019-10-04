@@ -4,6 +4,7 @@ using System.Linq;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
@@ -90,9 +91,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 appsAdditionalPaymentsModels.Add(model);
             }
 
-            appsAdditionalPaymentsModels = BuildAppsAdditionalPaymentsResultModel(appsAdditionalPaymentsModels);
-
-            return appsAdditionalPaymentsModels;
+            return BuildAppsAdditionalPaymentsResultModel(appsAdditionalPaymentsModels);
         }
 
         private string GetProviderSpecMonitor(AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo, string providerSpecifiedLearnerMonitoring)
@@ -157,7 +156,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 R14Payments = x.Sum(p => p.R14Payments),
                 TotalEarnings = x.Sum(p => p.TotalEarnings),
                 TotalPaymentsYearToDate = x.Sum(p => p.TotalPaymentsYearToDate)
-            }).ToList();
+            })
+            .OrderBy(a => a.LearnerReferenceNumber)
+            .ToList();
         }
 
         private decimal BuildTotalEarnings(AppsAdditionalPaymentsModel model)

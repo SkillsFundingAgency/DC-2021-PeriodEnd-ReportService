@@ -57,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var appsCoInvestmentRulebaseInfo = await _fm36PeriodEndProviderService.GetFM36DataForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var appsCoInvestmentPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
-            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo);
+            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, reportServiceContext.JobId);
 
             string csv = await GetCsv(appsCoInvestmentContributionsModels, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);

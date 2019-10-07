@@ -35,7 +35,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public decimal TotalCoInvestmentDueFromEmployerThisFundingYear { get; set; }
 
-        public decimal PercentageOfCoInvestmentCollected { get; set; }
+        public int PercentageOfCoInvestmentCollected { get; set; }
 
         public string LDM356Or361 { get; set; }
 

@@ -214,7 +214,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 var paymentsList =
                     await (from payment in context.Payments
-                           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
+                           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id into groupjoin
+                           from subapps in groupjoin.DefaultIfEmpty()
                            where payment.Ukprn == ukPrn &&
                                  payment.FundingSource == AppsCoInvestmentFundingType &&
                                  _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType)
@@ -238,7 +239,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                Amount = payment.Amount,
                                PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
                                SfaContributionPercentage = payment.SfaContributionPercentage,
-                               EmployerName = apprenticeships.LegalEntityName ?? string.Empty
+                               EmployerName = subapps.LegalEntityName ?? string.Empty
                            }).ToListAsync(cancellationToken);
 
                 appsCoInvestmentPaymentsInfo.Payments.AddRange(paymentsList);

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
@@ -19,32 +20,43 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         };
 
         private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
+        private readonly ILogger _logger;
 
-        public decimal CalculateCoInvestmentDueForMonth(bool flag, IEnumerable<PaymentInfo> paymentInfoList, int deliveryPeriod)
+        public AppsCoInvestmentContributionsModelBuilder(ILogger logger)
         {
-            return flag
-                ? paymentInfoList.Where(x => x.DeliveryPeriod == deliveryPeriod).Sum(x => x.Amount)
-                : 0;
+            _logger = logger;
         }
 
         public IEnumerable<AppsCoInvestmentContributionsModel> BuildModel(
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             AppsCoInvestmentRulebaseInfo appsCoInvestmentRulebaseInfo,
-            AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo)
+            AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo,
+            long jobId)
         {
+            string errorMessage = string.Empty;
+
             if (appsCoInvestmentIlrInfo == null || appsCoInvestmentIlrInfo.Learners == null)
             {
-                throw new Exception("Error: BuildModel() - AppsCoInvestmentILRInfo is null, no data has been retrieved from the ILR1920 data store.");
+                errorMessage = "Error: BuildModel() - AppsCoInvestmentILRInfo is null, no data has been retrieved from the ILR1920 data store.";
+                _logger.LogInfo(errorMessage, jobIdOverride: jobId);
+
+                throw new Exception(errorMessage);
             }
 
             if (appsCoInvestmentRulebaseInfo == null)
             {
-                throw new Exception("Error: BuildModel() - AppsCoInvestmentRulebaseInfo is null, no data has been retrieved from the ILR1920 data store.");
+                errorMessage = "Error: BuildModel() - AppsCoInvestmentRulebaseInfo is null, no data has been retrieved from the ILR1920 data store.";
+                _logger.LogInfo(errorMessage, jobIdOverride: jobId);
+
+                throw new Exception(errorMessage);
             }
 
             if (appsCoInvestmentPaymentsInfo == null)
             {
-                throw new Exception("Error: BuildModel() - appsCoInvestmentPaymentsInfo is null, no data has been retrieved from the Payments data store.");
+                errorMessage = "Error: BuildModel() - appsCoInvestmentPaymentsInfo is null, no data has been retrieved from the Payments data store.";
+                _logger.LogInfo(errorMessage, jobIdOverride: jobId);
+
+                throw new Exception(errorMessage);
             }
 
             List<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels = new List<AppsCoInvestmentContributionsModel>();
@@ -225,6 +237,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             }
 
             return appsCoInvestmentContributionsModels;
+        }
+
+        public decimal CalculateCoInvestmentDueForMonth(bool flag, IEnumerable<PaymentInfo> paymentInfoList, int deliveryPeriod)
+        {
+            return flag
+                ? paymentInfoList.Where(x => x.DeliveryPeriod == deliveryPeriod).Sum(x => x.Amount)
+                : 0;
         }
     }
 }

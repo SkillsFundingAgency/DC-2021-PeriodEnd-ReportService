@@ -545,6 +545,42 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                    ?? new Dictionary<string, Dictionary<string, decimal?[][]>>();
         }
 
+        public Task<FM25Learner> GetFm25LearnerPeriodisedValuesAsyn(int ukprn,
+                CancellationToken cancellationToken)
+        {
+            AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo = null;
+
+            //try
+            //{
+            //    appsMonthlyPaymentIlrInfo = new AppsMonthlyPaymentILRInfo()
+            //    {
+            //        UkPrn = ukPrn,
+            //        Learners = new List<AppsMonthlyPaymentLearnerModel>()
+            //    };
+
+            //    cancellationToken.ThrowIfCancellationRequested();
+
+            //    List<Learner> learnersList;
+            //    using (var ilrContext = _ilrValidContextFactory())
+            //    {
+            //        learnersList = await ilrContext.Learners
+            //            .Include(x => x.LearningDeliveries).ThenInclude(y => y.LearningDeliveryFAMs)
+            //            .Include(x => x.LearningDeliveries).ThenInclude(y => y.ProviderSpecDeliveryMonitorings)
+            //            .Include(x => x.ProviderSpecLearnerMonitorings)
+            //            .Where(x => x.UKPRN == ukPrn &&
+            //                        x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+            //            .ToListAsync(cancellationToken);
+            //    }
+            //}
+            //catch (Exception e)
+            //{
+            //    _logger.LogError("Failed to get ILR data", e);
+            //    throw;
+            //}
+
+            return null;
+        }
+
         public async Task<AppsMonthlyPaymentILRInfo> GetFm35LearningDeliveryPeriodisedValuesAsync(int ukPrn,
             CancellationToken cancellationToken)
         {
@@ -571,8 +607,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                     x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
                         .ToListAsync(cancellationToken);
 
-                    var fm35 = await ilrContext.
-
                     //CREATE TABLE[Rulebase].[FM35_LearningDelivery_PeriodisedValues]
                     //    (
                     //    [UKPRN][int] NOT NULL,
@@ -592,72 +626,73 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     //    [Period_11] [decimal](15, 5) NULL,
                     //    [Period_12] [decimal](15, 5) NULL,
 
-                foreach (var learner in learnersList)
-                {
-                    var learnerInfo = new AppsMonthlyPaymentLearnerModel
+                    foreach (var learner in learnersList)
                     {
-                        Ukprn = learner.UKPRN,
-                        LearnRefNumber = learner.LearnRefNumber,
-                        UniqueLearnerNumber = learner.ULN,
-                        CampId = learner.CampId,
-                        LearningDeliveries = learner.LearningDeliveries.Select(x =>
-                                                 new AppsMonthlyPaymentLearningDeliveryModel
-                                                 {
-                                                     Ukprn = x.UKPRN,
-                                                     LearnRefNumber = x.LearnRefNumber,
-                                                     LearnAimRef = x.LearnAimRef,
-                                                     AimType = x.AimType,
-                                                     AimSeqNumber = (byte) x.AimSeqNumber,
-                                                     LearnStartDate = x.LearnStartDate,
-                                                     OrigLearnStartDate = x.OrigLearnStartDate,
-                                                     LearnPlanEndDate = x.LearnPlanEndDate,
-                                                     FundModel = x.FundModel,
-                                                     ProgType = x.ProgType,
-                                                     StdCode = x.StdCode,
-                                                     FworkCode = x.FworkCode,
-                                                     PwayCode = x.PwayCode,
-                                                     PartnerUkprn = x.PartnerUKPRN,
-                                                     ConRefNumber = x.ConRefNumber,
-                                                     EpaOrgId = x.EPAOrgID,
-                                                     SwSupAimId = x.SWSupAimId,
-                                                     CompStatus = x.CompStatus,
-                                                     LearnActEndDate = x.LearnActEndDate,
-                                                     Outcome = x.Outcome,
-                                                     AchDate = x.AchDate,
+                        var learnerInfo = new AppsMonthlyPaymentLearnerModel
+                        {
+                            Ukprn = learner.UKPRN,
+                            LearnRefNumber = learner.LearnRefNumber,
+                            UniqueLearnerNumber = learner.ULN,
+                            CampId = learner.CampId,
+                            LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                                                     new AppsMonthlyPaymentLearningDeliveryModel
+                                                     {
+                                                         Ukprn = x.UKPRN,
+                                                         LearnRefNumber = x.LearnRefNumber,
+                                                         LearnAimRef = x.LearnAimRef,
+                                                         AimType = x.AimType,
+                                                         AimSeqNumber = (byte) x.AimSeqNumber,
+                                                         LearnStartDate = x.LearnStartDate,
+                                                         OrigLearnStartDate = x.OrigLearnStartDate,
+                                                         LearnPlanEndDate = x.LearnPlanEndDate,
+                                                         FundModel = x.FundModel,
+                                                         ProgType = x.ProgType,
+                                                         StdCode = x.StdCode,
+                                                         FworkCode = x.FworkCode,
+                                                         PwayCode = x.PwayCode,
+                                                         PartnerUkprn = x.PartnerUKPRN,
+                                                         ConRefNumber = x.ConRefNumber,
+                                                         EpaOrgId = x.EPAOrgID,
+                                                         SwSupAimId = x.SWSupAimId,
+                                                         CompStatus = x.CompStatus,
+                                                         LearnActEndDate = x.LearnActEndDate,
+                                                         Outcome = x.Outcome,
+                                                         AchDate = x.AchDate,
 
-                                                     ProviderSpecDeliveryMonitorings = x
-                                                         .ProviderSpecDeliveryMonitorings
-                                                         .Select(y =>
-                                                             new
-                                                                 AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
-                                                                 {
-                                                                     Ukprn = y.UKPRN,
-                                                                     LearnRefNumber = y.LearnRefNumber,
-                                                                     AimSeqNumber = (byte?) y.AimSeqNumber,
-                                                                     ProvSpecDelMon = y.ProvSpecDelMon,
-                                                                     ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
-                                                                 }).ToList(),
-                                                     LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y =>
-                                                         new AppsMonthlyPaymentLearningDeliveryFAMInfo
-                                                         {
-                                                             Ukprn = y.UKPRN,
-                                                             LearnRefNumber = y.LearnRefNumber,
-                                                             AimSeqNumber = (byte?) y.AimSeqNumber,
-                                                             LearnDelFAMType = y.LearnDelFAMType,
-                                                             LearnDelFAMCode = y.LearnDelFAMCode
-                                                         }).ToList(),
-                                                 }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryModel>(),
-                        ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
-                            new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
-                            {
-                                Ukprn = x.UKPRN,
-                                LearnRefNumber = x.LearnRefNumber,
-                                ProvSpecLearnMon = x.ProvSpecLearnMon,
-                                ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
-                            }).ToList(),
-                    };
+                                                         ProviderSpecDeliveryMonitorings = x
+                                                             .ProviderSpecDeliveryMonitorings
+                                                             .Select(y =>
+                                                                 new
+                                                                     AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
+                                                                     {
+                                                                         Ukprn = y.UKPRN,
+                                                                         LearnRefNumber = y.LearnRefNumber,
+                                                                         AimSeqNumber = (byte?) y.AimSeqNumber,
+                                                                         ProvSpecDelMon = y.ProvSpecDelMon,
+                                                                         ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
+                                                                     }).ToList(),
+                                                         LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y =>
+                                                             new AppsMonthlyPaymentLearningDeliveryFAMInfo
+                                                             {
+                                                                 Ukprn = y.UKPRN,
+                                                                 LearnRefNumber = y.LearnRefNumber,
+                                                                 AimSeqNumber = (byte?) y.AimSeqNumber,
+                                                                 LearnDelFAMType = y.LearnDelFAMType,
+                                                                 LearnDelFAMCode = y.LearnDelFAMCode
+                                                             }).ToList(),
+                                                     }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryModel>(),
+                            ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                                new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
+                                {
+                                    Ukprn = x.UKPRN,
+                                    LearnRefNumber = x.LearnRefNumber,
+                                    ProvSpecLearnMon = x.ProvSpecLearnMon,
+                                    ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
+                                }).ToList(),
+                        };
 
-                    appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);
+                        appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);
+                    }
                 }
             }
             catch (Exception e)
@@ -665,8 +700,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 _logger.LogError("Failed to get ILR data", e);
                 throw;
             }
-
-            return appsMonthlyPaymentIlrInfo;
         }
     }
 }

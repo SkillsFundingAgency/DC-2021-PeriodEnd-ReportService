@@ -98,7 +98,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .Select(s => new EasSubmissionInfo
                         {
                             SubmissionId = s.SubmissionId,
-                            UKPRN = s.Ukprn,
+                            Ukprn = s.Ukprn,
                             CollectionPeriod = (byte?)s.CollectionPeriod
                         })
                         .ToListAsync(cancellationToken);

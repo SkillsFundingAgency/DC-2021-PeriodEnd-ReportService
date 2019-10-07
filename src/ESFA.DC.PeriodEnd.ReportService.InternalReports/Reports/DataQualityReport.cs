@@ -20,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
     public class DataQualityReport : AbstractInternalReport, IInternalReport
     {
         private const string TemplateName = "ILRDataQualityReportTemplate.xlsx";
-        private const string DataQualityTabName = "ILR Data Quality Reports";
+        private const string DataQualityTabName = "Data Quality";
 
         private readonly ILogger _logger;
         private readonly IDateTimeProvider _dateTimeProvider;

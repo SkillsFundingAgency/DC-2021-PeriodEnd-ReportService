@@ -377,11 +377,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToList();
             }
 
-            List<Top10ProvidersWithInvalidLearnersValidLearners> top10ProvidersWithInvalidLearnersValid;
+            List<Top10ProvidersWithInvalidLearnersValidLearners> validLearnersForUkprns;
             List<long> ukPrns = top10ProvidersWithInvalidLearnersInvalid.Select(x => x.Ukprn).ToList();
             using (var ilrContext = _ilrValidContextFactory())
             {
-                top10ProvidersWithInvalidLearnersValid = (await ilrContext.Learners
+                validLearnersForUkprns = (await ilrContext.Learners
                         .Where(x => ukPrns.Contains(x.UKPRN))
                         .GroupBy(x => x.UKPRN)
                         .ToListAsync(cancellationToken))
@@ -393,10 +393,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToList();
             }
 
-            List<Top10ProvidersWithInvalidLearners> top10ProvidersWithInvalidLearners;
+            List<Top10ProvidersWithInvalidLearners> fileDetailsForUkprns;
             using (var ilrContext = _ilrContextFactory())
             {
-                top10ProvidersWithInvalidLearners = (await ilrContext.FileDetails
+                fileDetailsForUkprns = (await ilrContext.FileDetails
                         .Where(x => ukPrns.Contains(x.UKPRN))
                         .GroupBy(x => x.UKPRN)
                         .Select(x => x.OrderByDescending(y => y.SubmittedTime).First())
@@ -411,15 +411,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToList();
             }
 
-            foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in top10ProvidersWithInvalidLearners)
+            foreach (Top10ProvidersWithInvalidLearners fileDetailsForUkprn in fileDetailsForUkprns)
             {
-                top10ProvidersWithInvalidLearner.NoOfInvalidLearners =
-                    top10ProvidersWithInvalidLearnersInvalid.SingleOrDefault(x => x.Ukprn == top10ProvidersWithInvalidLearner.Ukprn)?.NoOfInvalidLearners ?? 0;
-                top10ProvidersWithInvalidLearner.NoOfValidLearners =
-                    top10ProvidersWithInvalidLearnersValid.SingleOrDefault(x => x.Ukprn == top10ProvidersWithInvalidLearner.Ukprn)?.NoOfValidLearners ?? 0;
+                fileDetailsForUkprn.NoOfInvalidLearners =
+                    top10ProvidersWithInvalidLearnersInvalid.SingleOrDefault(x => x.Ukprn == fileDetailsForUkprn.Ukprn)?.NoOfInvalidLearners ?? 0;
+                fileDetailsForUkprn.NoOfValidLearners =
+                    validLearnersForUkprns.SingleOrDefault(x => x.Ukprn == fileDetailsForUkprn.Ukprn)?.NoOfValidLearners ?? 0;
             }
 
-            return top10ProvidersWithInvalidLearners;
+            return fileDetailsForUkprns;
         }
 
         public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)

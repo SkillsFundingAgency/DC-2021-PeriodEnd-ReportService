@@ -1,11 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Aspose.Cells;
-using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
@@ -56,7 +54,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             List<long> ukprns = new List<long>();
 
             var externalFileName = GetFilename(reportServiceContext);
-            IEnumerable<FileDetail> fileDetails = await _ilrPeriodEndProviderService.GetFileDetailsAsync(CancellationToken.None);
+            List<FileDetail> fileDetails = (await _ilrPeriodEndProviderService.GetFileDetailsAsync(CancellationToken.None)).ToList();
 
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
                 reportServiceContext.CollectionYear,
@@ -66,30 +64,32 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             IEnumerable<RuleViolationsInfo> ruleViolations = await _ilrPeriodEndProviderService.GetTop20RuleViolationsAsync(CancellationToken.None);
 
-            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = await
-                _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(fileDetails, CancellationToken.None);
+            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = (await
+                _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(fileDetails, CancellationToken.None)).ToList();
             ukprns.AddRange(providersWithoutValidLearners.Select(x => (long)x.Ukprn));
 
-            IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = await
+            IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = (await
                 _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
                 reportServiceContext.CollectionYear,
                 reportServiceContext.ILRPeriods,
                 fileDetails,
-                CancellationToken.None);
+                CancellationToken.None)).ToList();
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
 
             IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);
             foreach (var org in orgDetails)
             {
-                if (providersWithoutValidLearners.Any(p => p.Ukprn == org.Ukprn))
+                var valid = providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn);
+                if (valid != null)
                 {
-                    providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Name = org.Name;
+                    valid.Name = org.Name;
                 }
 
-                if (providersWithInvalidLearners.Any(p => p.Ukprn == org.Ukprn))
+                var invalid = providersWithInvalidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn);
+                if (invalid != null)
                 {
-                    providersWithInvalidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Name = org.Name;
-                    providersWithInvalidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn).Status = org.Status;
+                    invalid.Name = org.Name;
+                    invalid.Status = org.Status;
                 }
             }
 

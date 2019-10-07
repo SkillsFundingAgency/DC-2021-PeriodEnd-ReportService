@@ -244,13 +244,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             fd = fileDetails
                 .Where(x => x.Success == true)
-                .Select(f => new FilePeriodInfo()
+                .Select(f => new FilePeriodInfo
                 {
                     UKPRN = f.UKPRN,
                     Filename = f.Filename,
-                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods),
-                    SubmittedTime = f.SubmittedTime,
-                    Success = f.Success
+                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods)
                 }).ToList();
 
             var fds = fd.GroupBy(x => x.UKPRN)
@@ -273,12 +271,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .GroupBy(x => new { x.PeriodNumber })
                 .Select(x => new
                 {
-                    Collection = x.Key.PeriodNumber == 99 ? string.Empty : $"R{x.Key.PeriodNumber.ToString("D2")}",
-                    Files = x.Count(),
+                    PeriodNumber = x.Key.PeriodNumber,
+                    Collection = $"R{x.Key.PeriodNumber:D2}",
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
-                    Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
+                    Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue),
+                    Providers = x.Select(y => y.UKPRN).Distinct().Count(),
+                    Valid = x.Count()
                 })
-                .OrderByDescending(x => x.Latest);
+                .OrderByDescending(x => x.PeriodNumber);
 
             foreach (var f in fdCs)
             {
@@ -286,8 +286,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 {
                     Description = "Returning Providers per Period",
                     Collection = f.Collection,
-                    NoOfProviders = fds.Count(),
-                    NoOfValidFilesSubmitted = fd.Count,
+                    NoOfProviders = f.Providers,
+                    NoOfValidFilesSubmitted = f.Valid,
                     EarliestValidSubmission = f.Earliest,
                     LastValidSubmission = f.Latest
                 });
@@ -378,12 +378,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             List<Top10ProvidersWithInvalidLearnersValidLearners> top10ProvidersWithInvalidLearnersValid;
+            List<long> ukPrns = top10ProvidersWithInvalidLearnersInvalid.Select(x => x.Ukprn).ToList();
             using (var ilrContext = _ilrValidContextFactory())
             {
                 top10ProvidersWithInvalidLearnersValid = (await ilrContext.Learners
-                    .Join(top10ProvidersWithInvalidLearnersInvalid, l => l.UKPRN, t => t.Ukprn, (lrn, top) => top)
-                    .GroupBy(x => x.Ukprn)
-                    .ToListAsync(cancellationToken))
+                        .Where(x => ukPrns.Contains(x.UKPRN))
+                        .GroupBy(x => x.UKPRN)
+                        .ToListAsync(cancellationToken))
                     .Select(x => new Top10ProvidersWithInvalidLearnersValidLearners
                     {
                         Ukprn = x.Key,
@@ -393,25 +394,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             List<Top10ProvidersWithInvalidLearners> top10ProvidersWithInvalidLearners;
-
-            var fileDetailsforUKPRNs = from p in fileDetails
-                                            join ukpr in top10ProvidersWithInvalidLearnersInvalid on p.UKPRN equals ukpr.Ukprn into pukpr
-                                            group p by p.UKPRN into op
-                                            select new
-                                            {
-                                                UKPRN = op.Key,
-                                                ID = op.Max(x => x.ID)
-                                            };
-
-            top10ProvidersWithInvalidLearners = fileDetails
-                    .Join(fileDetailsforUKPRNs, fd => fd.ID, f => f.ID, (fDetail, fLatest) => fDetail)
+            using (var ilrContext = _ilrContextFactory())
+            {
+                top10ProvidersWithInvalidLearners = (await ilrContext.FileDetails
+                        .Where(x => ukPrns.Contains(x.UKPRN))
+                        .GroupBy(x => x.UKPRN)
+                        .Select(x => x.OrderByDescending(y => y.SubmittedTime).First())
+                        .ToListAsync(cancellationToken))
                     .Select(x => new Top10ProvidersWithInvalidLearners
                     {
                         Ukprn = x.UKPRN,
                         SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
                         LatestFileName = x.Filename,
                         LatestReturn = $"R{GetPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods):D2}",
-                    }).ToList();
+                    })
+                    .ToList();
+            }
 
             foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in top10ProvidersWithInvalidLearners)
             {

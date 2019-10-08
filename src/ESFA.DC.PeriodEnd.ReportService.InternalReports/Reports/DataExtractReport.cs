@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using System.IO;
-using System.IO.Compression;
 using System.Linq;
 using System.Text;
 using System.Threading;
@@ -52,6 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             var externalFileName = GetFilename(reportServiceContext);
 
             IEnumerable<DataExtractModel> summarisationInfo = (await _summarisationProviderService.GetSummarisedActualsForDataExtractReport(
+                reportServiceContext.CollectionName,
                 new[] { reportServiceContext.CollectionReturnCodeApp, reportServiceContext.CollectionReturnCodeDC, reportServiceContext.CollectionReturnCodeESF },
                 cancellationToken)).ToList();
             IEnumerable<string> organisationIds = summarisationInfo?.Select(x => x.OrganisationId).Distinct();

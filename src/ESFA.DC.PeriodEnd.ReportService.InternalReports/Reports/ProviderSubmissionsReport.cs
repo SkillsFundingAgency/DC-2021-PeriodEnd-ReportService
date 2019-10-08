@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading;
@@ -22,7 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
     public sealed class ProviderSubmissionsReport : AbstractInternalReport, IInternalReport
     {
         private const string TemplateName = "ProviderSubmissionsReportTemplate.xlsx";
-        private const string ProviderSubmissionTabName = "ILR Provider Submissions Report";
+        private const string ProviderSubmissionTabName = "Provider Submissions";
 
         private readonly ILogger _logger;
         private readonly IDateTimeProvider _dateTimeProvider;

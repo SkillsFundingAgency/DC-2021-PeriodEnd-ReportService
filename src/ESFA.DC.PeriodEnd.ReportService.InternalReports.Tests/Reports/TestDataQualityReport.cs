@@ -106,7 +106,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             Workbook wb = new Workbook(stream);
             wb.Should().NotBeNull();
             wb.Worksheets.Count().Should().BeGreaterThan(0);
-            wb.Worksheets[0].Name.Should().Be("ILR Data Quality Reports");
+            wb.Worksheets[0].Name.Should().Be("Data Quality");
         }
 
         private IEnumerable<FileDetail> BuildFileDetailsModel()

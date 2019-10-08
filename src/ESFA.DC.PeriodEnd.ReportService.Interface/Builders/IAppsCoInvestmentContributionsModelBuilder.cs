@@ -8,6 +8,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
         IEnumerable<AppsCoInvestmentContributionsModel> BuildModel(
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             AppsCoInvestmentRulebaseInfo appsCoInvestmentRulebaseInfo,
-            AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo);
+            AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo,
+            long jobId);
     }
 }

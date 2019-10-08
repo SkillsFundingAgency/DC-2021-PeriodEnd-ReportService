@@ -468,10 +468,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             AimType = x.AimType,
                             AimSeqNumber = x.AimSeqNumber,
                             LearnStartDate = x.LearnStartDate,
-                            ProgType = x.ProgType,
-                            StdCode = x.StdCode,
-                            FworkCode = x.FworkCode,
-                            PwayCode = x.PwayCode,
+                            // Note: Payments default to zero instead of null for no value so we need to cater for that here so that joins work correctly
+                            ProgType = x.ProgType ?? 0,
+                            StdCode = x.StdCode ?? 0,
+                            FworkCode = x.FworkCode ?? 0,
+                            PwayCode = x.PwayCode ?? 0,
                             SWSupAimId = x.SWSupAimId,
                             AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
                             {

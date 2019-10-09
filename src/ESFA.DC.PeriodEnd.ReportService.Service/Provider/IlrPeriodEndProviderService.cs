@@ -130,13 +130,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                          .Select(y =>
                                                              new
                                                                  AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
-                                                                 {
-                                                                     Ukprn = y.UKPRN,
-                                                                     LearnRefNumber = y.LearnRefNumber,
-                                                                     AimSeqNumber = (byte?)y.AimSeqNumber,
-                                                                     ProvSpecDelMon = y.ProvSpecDelMon,
-                                                                     ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
-                                                                 }).ToList(),
+                                                             {
+                                                                 Ukprn = y.UKPRN,
+                                                                 LearnRefNumber = y.LearnRefNumber,
+                                                                 AimSeqNumber = (byte?)y.AimSeqNumber,
+                                                                 ProvSpecDelMon = y.ProvSpecDelMon,
+                                                                 ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
+                                                             }).ToList(),
                                                      LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y =>
                                                          new AppsMonthlyPaymentLearningDeliveryFAMInfo
                                                          {
@@ -434,56 +434,62 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             using (var ilrContext = _ilrValidContextFactory())
             {
-                var learnersList = await ilrContext.Learners
-                                                .Include(x => x.LearningDeliveries).ThenInclude(y => y.AppFinRecords)
-                                                .Include(x => x.LearnerEmploymentStatuses)
-                                                .Where(x => x.UKPRN == ukPrn &&
-                                                            x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel) &&
-                                                            x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.Equals(Constants.Generics.PMR) &&
-                                                                                                                   z.LearnRefNumber.Equals(x.LearnRefNumber))))
-                    .Select(learner => new LearnerInfo()
-                    {
-                        LearnRefNumber = learner.LearnRefNumber,
-                        LearningDeliveries = learner.LearningDeliveries.Select(x => new LearningDeliveryInfo()
+                var learners = await ilrContext
+                    .Learners
+                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(ld => ld.FundModel == 36))
+                    .Select(learner =>
+                        new LearnerInfo()
                         {
-                            UKPRN = ukPrn,
-                            LearnRefNumber = x.LearnRefNumber,
-                            LearnAimRef = x.LearnAimRef,
-                            AimType = x.AimType,
-                            AimSeqNumber = x.AimSeqNumber,
-                            LearnStartDate = x.LearnStartDate,
-                            // Note: Payments default to zero instead of null for no value so we need to cater for that here so that joins work correctly
-                            ProgType = x.ProgType ?? 0,
-                            StdCode = x.StdCode ?? 0,
-                            FworkCode = x.FworkCode ?? 0,
-                            PwayCode = x.PwayCode ?? 0,
-                            SWSupAimId = x.SWSupAimId,
-                            AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
+                            LearnRefNumber = learner.LearnRefNumber,
+                            LearningDeliveries = learner
+                                .LearningDeliveries
+                                .Where(ld => ld.FundModel == 36)
+                                .Select(x => new LearningDeliveryInfo()
+                                {
+                                    UKPRN = ukPrn,
+                                    LearnRefNumber = x.LearnRefNumber,
+                                    LearnAimRef = x.LearnAimRef,
+                                    AimType = x.AimType,
+                                    AimSeqNumber = x.AimSeqNumber,
+                                    LearnStartDate = x.LearnStartDate,
+                                    FundModel = x.FundModel,
+                                    // Note: Payments default to zero instead of null for no value so we need to cater for that here so that joins work correctly
+                                    ProgType = x.ProgType ?? 0,
+                                    StdCode = x.StdCode ?? 0,
+                                    FworkCode = x.FworkCode ?? 0,
+                                    PwayCode = x.PwayCode ?? 0,
+                                    SWSupAimId = x.SWSupAimId,
+                                    AppFinRecords = x.AppFinRecords
+                                        .Where(afr => afr.AFinType == "PMR")
+                                        .Select(y => new AppFinRecordInfo()
+                                        {
+                                            LearnRefNumber = y.LearnRefNumber,
+                                            AimSeqNumber = y.AimSeqNumber,
+                                            AFinType = y.AFinType,
+                                            AFinCode = y.AFinCode,
+                                            AFinDate = y.AFinDate,
+                                            AFinAmount = y.AFinAmount
+                                        }).ToList(),
+                                    LearningDeliveryFAMs = x.LearningDeliveryFAMs
+                                        .Where(fam => fam.LearnDelFAMType == "LDM")
+                                        .Select(y => new LearningDeliveryFAM()
+                                        {
+                                            UKPRN = y.UKPRN,
+                                            LearnRefNumber = y.LearnRefNumber,
+                                            AimSeqNumber = y.AimSeqNumber,
+                                            LearnDelFAMType = y.LearnDelFAMType,
+                                            LearnDelFAMCode = y.LearnDelFAMCode
+                                        }).ToList(),
+                                }).ToList(),
+                            LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
                             {
-                                LearnRefNumber = y.LearnRefNumber,
-                                AimSeqNumber = y.AimSeqNumber,
-                                AFinType = y.AFinType,
-                                AFinCode = y.AFinCode,
-                                AFinDate = y.AFinDate,
-                                AFinAmount = y.AFinAmount
-                            }).ToList(),
-                            LearningDeliveryFAMs = x.LearningDeliveryFAMs.Select(y => new LearningDeliveryFAM()
-                            {
-                                UKPRN = y.UKPRN,
-                                LearnRefNumber = y.LearnRefNumber,
-                                AimSeqNumber = y.AimSeqNumber,
-                                LearnDelFAMType = y.LearnDelFAMType,
-                                LearnDelFAMCode = y.LearnDelFAMCode
-                            }).ToList(),
-                        }).ToList(),
-                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
-                        {
-                            LearnRefNumber = x.LearnRefNumber,
-                            DateEmpStatApp = x.DateEmpStatApp,
-                            EmpId = x.EmpId
-                        }).ToList()
-                    }).ToListAsync(cancellationToken);
-                appsCoInvestmentIlrInfo.Learners.AddRange(learnersList);
+                                LearnRefNumber = x.LearnRefNumber,
+                                DateEmpStatApp = x.DateEmpStatApp,
+                                EmpId = x.EmpId
+                            }).ToList()
+                        }).ToListAsync(cancellationToken);
+
+                appsCoInvestmentIlrInfo.Learners = learners;
             }
 
             return appsCoInvestmentIlrInfo;

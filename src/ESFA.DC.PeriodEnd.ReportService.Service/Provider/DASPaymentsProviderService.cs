@@ -201,6 +201,36 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsMonthlyPaymentDasEarningsInfo;
         }
 
+        public async Task<List<AppsCoInvestmentRecordKey>> GetUniqueCombinationsOfKeyFromPaymentsAsync(int ukprn, CancellationToken cancellationToken)
+        {
+            using (IDASPaymentsContext context = _dasPaymentsContextFactory())
+            {
+                return await context.Payments
+                    .Where(p => p.Ukprn == ukprn)
+                    .GroupBy(p =>
+                    new
+                    {
+                        p.LearnerReferenceNumber,
+                        p.LearningStartDate,
+                        p.LearningAimProgrammeType,
+                        p.LearningAimStandardCode,
+                        p.LearningAimFrameworkCode,
+                        p.LearningAimPathwayCode,
+                    })
+                    .Select(
+                        g =>
+                        new AppsCoInvestmentRecordKey()
+                        {
+                            LearnerReferenceNumber = g.Key.LearnerReferenceNumber,
+                            LearningStartDate = g.Key.LearningStartDate,
+                            LearningAimProgrammeType = g.Key.LearningAimProgrammeType,
+                            LearningAimStandardCode = g.Key.LearningAimStandardCode,
+                            LearningAimFrameworkCode = g.Key.LearningAimFrameworkCode,
+                            LearningAimPathwayCode = g.Key.LearningAimPathwayCode,
+                        }).ToListAsync(cancellationToken);
+            }
+        }
+
         public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo

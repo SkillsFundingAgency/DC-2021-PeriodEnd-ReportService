@@ -1,8 +1,13 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport.PeriodisedValues
 {
-    public class PeriodisedValue
+    public class LearnerPeriodisedValue : PeriodisedValue
     {
-        public PeriodisedValue(
+        public LearnerPeriodisedValue()
+        {
+        }
+
+        public LearnerPeriodisedValue(
+            string learnRefNumber,
             string attributeName,
             decimal? period1,
             decimal? period2,
@@ -15,9 +20,23 @@
             decimal? period9,
             decimal? period10,
             decimal? period11,
-            decimal? period12
-        )
+            decimal? period12)
+            : base(
+                attributeName,
+                period1,
+                period2,
+                period3,
+                period4,
+                period5,
+                period6,
+                period7,
+                period8,
+                period9,
+                period10,
+                period11,
+                period12)
         {
+            LearnRefNumber = learnRefNumber;
             AttributeName = attributeName;
             Period1 = period1;
             Period2 = period2;
@@ -33,19 +52,32 @@
             Period12 = period12;
         }
 
+        public string LearnRefNumber { get; set; }
 
         public string AttributeName { get; set; }
+
         public decimal? Period1 { get; set; }
+
         public decimal? Period2 { get; set; }
+
         public decimal? Period3 { get; set; }
+
         public decimal? Period4 { get; set; }
+
         public decimal? Period5 { get; set; }
+
         public decimal? Period6 { get; set; }
+
         public decimal? Period7 { get; set; }
+
         public decimal? Period8 { get; set; }
+
         public decimal? Period9 { get; set; }
+
         public decimal? Period10 { get; set; }
+
         public decimal? Period11 { get; set; }
+
         public decimal? Period12 { get; set; }
     }
 }

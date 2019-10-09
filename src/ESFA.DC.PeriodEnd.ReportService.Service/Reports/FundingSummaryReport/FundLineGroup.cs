@@ -86,7 +86,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             return this;
         }
 
-        public IFundLine BuildFundLine(string title, IEnumerable<string> attributes, IEnumerable<string> fundLines = null, bool includeInTotals = true)
+        public FundLine BuildFundLine(string title, IEnumerable<string> attributes, IEnumerable<string> fundLines = null, bool includeInTotals = true)
         {
             var periodisedValuesList = _periodisedValues.GetPeriodisedValues(_fundModel, fundLines ?? _fundLines, attributes);
 
@@ -113,8 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             }
             else
             {
-                fundLine = new FundLine(CurrentPeriod, ContractAllocationNumber, title, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                    0);
+                fundLine = new FundLine(CurrentPeriod, ContractAllocationNumber, title, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0);
             }
 
             return fundLine;

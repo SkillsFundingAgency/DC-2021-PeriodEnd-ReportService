@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport.Eas
 {
     public struct EasPaymentValue
     {
@@ -9,6 +9,7 @@
         }
 
         public decimal? PaymentValue { get; set; }
+
         public int? DevolvedAreaSof { get; set; }
     }
 }

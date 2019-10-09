@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport.Eas
 {
     public struct EasUploadDateTime
     {

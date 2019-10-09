@@ -1,9 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -16,7 +13,6 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
@@ -95,10 +91,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var fileName = GetZipFilename(reportServiceContext);
 
             // get the DAS payments data
-            var fm35LearningDeliveryPeriodisedValues = _ilrRulebaseProviderService.GetFM35LearningDeliveryPerioisedValues(reportServiceContext.Ukprn);
+            var fm35LearningDeliveryPeriodisedValues = _ilrRulebaseProviderService.GetFm35LearningDeliveryPeriodisedValues(reportServiceContext.Ukprn);
 
             // get the EAS data
-            ProviderEasInfo providerEasInfo =
+            var providerEasInfo =
                 await _easProviderService.GetProviderEasInfoForFundingSummaryReport(reportServiceContext.Ukprn, cancellationToken);
 
             // Get the Fcs Contract data
@@ -108,10 +104,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                     cancellationToken);
 
             // Build the Report
-            var fundingSummaryReportModel = _modelBuilder.BuildFundingSummaryReportModel(
-                fm35LearningDeliveryPeriodisedValues,
-                providerEasInfo,
-                appsMonthlyPaymentFcsInfo);
+            //var fundingSummaryReportModel = _modelBuilder.BuildFundingSummaryReportModel(
+            //    fm35LearningDeliveryPeriodisedValues,
+            //    providerEasInfo,
+            //    appsMonthlyPaymentFcsInfo);
 
             //using (var workbook = _excelService.NewWorkbook())
             //{

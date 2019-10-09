@@ -6,6 +6,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
     public class FM81Learner
     {
         public string LearnRefNumber { get; set; }
+
         public List<LearningDelivery> LearningDeliveries { get; set; }
     }
 }

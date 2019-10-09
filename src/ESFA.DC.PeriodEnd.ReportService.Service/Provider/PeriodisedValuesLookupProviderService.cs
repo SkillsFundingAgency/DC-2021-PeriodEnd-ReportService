@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.Output;
@@ -13,8 +14,10 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
-    public class PeriodisedValuesLookupProviderService : IPeriodisedValuesLookupProviderService
+    public class PeriodisedValuesLookupProviderService //: IPeriodisedValuesLookupProviderService
     {
+        //IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSource> fundingDataSources, IReportServiceDependentData reportServiceDependentData);
+
         public IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSource> fundingDataSources, IReportServiceDependentData reportServiceDependentData)
         {
             var periodisedValuesLookup = new PeriodisedValuesLookup();

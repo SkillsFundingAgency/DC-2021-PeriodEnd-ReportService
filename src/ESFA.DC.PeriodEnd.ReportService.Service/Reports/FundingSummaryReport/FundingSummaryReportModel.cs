@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingSummaryReportModel : IFundingSummaryReport
     {

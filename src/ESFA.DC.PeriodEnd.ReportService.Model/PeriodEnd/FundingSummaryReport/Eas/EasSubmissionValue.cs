@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
+namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport.Eas
 {
     public class EasSubmissionValue
     {
@@ -13,7 +13,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
         public decimal? PaymentValue { get; set; }
 
         public int? DevolvedAreaSoF { get; set; }
-
 
         //public string PaymentName { get; set; }
         //public string AdjustmentTypeName { get; set; }

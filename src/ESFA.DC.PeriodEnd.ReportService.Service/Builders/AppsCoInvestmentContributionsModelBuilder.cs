@@ -84,9 +84,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     var filteredPaymentRecords = FundingSourceAndTransactionTypeFilter(paymentRecords).ToList();
                     var rulebaseLearningDelivery = GetRulebaseLearningDelivery(appsCoInvestmentRulebaseInfo, learningDelivery);
                     var isEarliestStartDate = IsEarliestLearningStartDate(filteredRecordKeys, record);
-                    var completedPaymentRecordsInCurrentYear = paymentRecords?.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 3).ToList();
+                    var completedPaymentRecordsInCurrentYear = paymentRecords?.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 2).ToList();
                     var totalsByPeriodDictionary = BuildCoinvestmentPaymentsPerPeriodDictionary(filteredPaymentRecords);
-                    //var rulebasePriceEpisode = GetRulebasePriceEpisodeForLearningDeliveryForCompletionPayment(appsCoInvestmentRulebaseInfo, paym learningDelivery).ToList();
 
                     var totalDueCurrentYear = totalsByPeriodDictionary.Sum(d => d.Value);
                     var totalDuePreviousYear = isEarliestStartDate ? filteredPaymentRecords?.Where(p => p.AcademicYear < 1920).Sum(p => p.Amount) : null;
@@ -114,7 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         TotalCoInvestmentDueFromEmployerThisFundingYear = totalDueCurrentYear,
                         PercentageOfCoInvestmentCollected = GetPercentageOfInvestmentCollected(totalDueCurrentYear, totalDuePreviousYear, totalCollectedCurrentYear, totalCollectedPreviousYear),
                         LDM356Or361 = HasLdm356Or361(learningDelivery) ? "Yes" : "No",
-                        //model.CompletionEarningThisFundingYear = rulebasePriceEpisode?.Periods.Sum;
+                        CompletionEarningThisFundingYear = CalculateCompletionEarningsThisFundingYear(appsCoInvestmentRulebaseInfo, paymentRecords),
                         CompletionPaymentsThisFundingYear = completedPaymentRecordsInCurrentYear.Sum(r => r.Amount),
                         CoInvestmentDueFromEmployerForAugust = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 1),
                         CoInvestmentDueFromEmployerForSeptember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 2),
@@ -168,15 +167,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .ToDictionary(p => p.Key, p => p.Sum(i => i.Amount));
         }
 
-        public AECApprenticeshipPriceEpisodePeriodisedValuesInfo GetRulebasePriceEpisodeForLearningDeliveryForCompletionPayment(AppsCoInvestmentRulebaseInfo rulebaseInfo, PaymentInfo paymentInfo)
+        public decimal CalculateCompletionEarningsThisFundingYear(AppsCoInvestmentRulebaseInfo rulebaseInfo, IEnumerable<PaymentInfo> paymentInfos)
         {
+            var priceEpisodeIdentifiers = new HashSet<string>(paymentInfos?.Select(p => p.PriceEpisodeIdentifier) ?? Enumerable.Empty<string>());
+
             return rulebaseInfo?
                 .AECApprenticeshipPriceEpisodePeriodisedValues?
-                .FirstOrDefault(
-                    p =>
-                    p.LearnRefNumber.CaseInsensitiveEquals(paymentInfo.LearnerReferenceNumber)
-                    && p.PriceEpisodeIdentifier.CaseInsensitiveEquals(paymentInfo.PriceEpisodeIdentifier)
-                    && p.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeCompletionPaymentAttributeName));
+                .Where(p => priceEpisodeIdentifiers.Contains(p.PriceEpisodeIdentifier))
+                .Where(p => p.Periods != null)
+                .SelectMany(p => p.Periods)
+                .Sum()
+                ?? 0;
         }
 
         public bool HasLdm356Or361(LearningDeliveryInfo learningDelivery)
@@ -304,21 +305,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     && learningDelivery.LearnAimRef.CaseInsensitiveEquals(record.LearningAimReference);
         }
 
-        //public IEnumerable<AppFinRecordInfo> GetAppFinForRecord(AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentRecordKey record)
-        //{
-        //    return ilrInfo
-        //        .Learners
-        //        .FirstOrDefault(l => l.LearnRefNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber))?
-        //        .LearningDeliveries
-        //        .Where(ld =>
-        //            ld.LearnStartDate == record.LearningStartDate
-        //            && ld.ProgType == record.LearningAimProgrammeType
-        //            && ld.StdCode == record.LearningAimStandardCode
-        //            && ld.FworkCode == record.LearningAimFrameworkCode
-        //            && ld.PwayCode == record.LearningAimPathwayCode).Select(fin)
-        //        //?? Enumerable.Empty<AppFinRecordInfo>();
-        //}
-
         public T? GetUniqueOrEmpty<TIn, T>(IEnumerable<TIn> input, Func<TIn, T> selector)
             where T : struct
         {
@@ -330,13 +316,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             }
 
             return distinct.FirstOrDefault();
-        }
-
-        public decimal CalculateCoInvestmentDueForPeriod(bool flag, IEnumerable<PaymentInfo> paymentInfoList, int collectionPeriod)
-        {
-            return flag
-                ? paymentInfoList.Where(x => x.CollectionPeriod == collectionPeriod).Sum(x => x.Amount)
-                : 0;
         }
 
         // BR1

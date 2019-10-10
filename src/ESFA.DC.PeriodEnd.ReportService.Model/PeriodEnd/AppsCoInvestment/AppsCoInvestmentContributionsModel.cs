@@ -27,15 +27,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public string EmployerNameFromApprenticeshipService { get; set; }
 
-        public decimal TotalPMRPreviousFundingYears { get; set; }
+        public decimal? TotalPMRPreviousFundingYears { get; set; }
 
-        public decimal TotalCoInvestmentDueFromEmployerInPreviousFundingYears { get; set; }
+        public decimal? TotalCoInvestmentDueFromEmployerInPreviousFundingYears { get; set; }
 
-        public decimal TotalPMRThisFundingYear { get; set; }
+        public decimal? TotalPMRThisFundingYear { get; set; }
 
-        public decimal TotalCoInvestmentDueFromEmployerThisFundingYear { get; set; }
+        public decimal? TotalCoInvestmentDueFromEmployerThisFundingYear { get; set; }
 
-        public int PercentageOfCoInvestmentCollected { get; set; }
+        public decimal PercentageOfCoInvestmentCollected { get; set; }
 
         public string LDM356Or361 { get; set; }
 

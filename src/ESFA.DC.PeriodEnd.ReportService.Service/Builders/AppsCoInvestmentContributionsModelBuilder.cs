@@ -4,6 +4,7 @@ using System.Linq;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
@@ -18,6 +19,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             Constants.DASPayments.TransactionType.Completion,
             Constants.DASPayments.TransactionType.Balancing,
         };
+
+        private readonly DateTime _academicYearStart = new DateTime(2019, 8, 1);
+        private readonly DateTime _nextAcademicYearStart = new DateTime(2020, 8, 1);
 
         private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
         private readonly ILogger _logger;
@@ -76,33 +80,162 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     var paymentRecords = GetPaymentInfosForRecord(appsCoInvestmentPaymentsInfo, record).ToList();
                     var learner = GetLearnerForRecord(appsCoInvestmentIlrInfo, record);
-                    var learningDeliveries = GetLearningDeliveriesForRecord(learner, record).ToList();
+                    var learningDelivery = GetLearningDeliveryForRecord(learner, record);
                     var filteredPaymentRecords = FundingSourceAndTransactionTypeFilter(paymentRecords).ToList();
+                    var rulebaseLearningDelivery = GetRulebaseLearningDelivery(appsCoInvestmentRulebaseInfo, learningDelivery);
+                    var isEarliestStartDate = IsEarliestLearningStartDate(filteredRecordKeys, record);
+                    var completedPaymentRecordsInCurrentYear = paymentRecords?.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 3).ToList();
+                    var totalsByPeriodDictionary = BuildCoinvestmentPaymentsPerPeriodDictionary(filteredPaymentRecords);
+                    //var rulebasePriceEpisode = GetRulebasePriceEpisodeForLearningDeliveryForCompletionPayment(appsCoInvestmentRulebaseInfo, paym learningDelivery).ToList();
 
-                    var model = new AppsCoInvestmentContributionsModel();
+                    var totalDueCurrentYear = totalsByPeriodDictionary.Sum(d => d.Value);
+                    var totalDuePreviousYear = isEarliestStartDate ? filteredPaymentRecords?.Where(p => p.AcademicYear < 1920).Sum(p => p.Amount) : null;
+                    var totalCollectedCurrentYear = isEarliestStartDate ? GetTotalPMRBetweenDates(learningDelivery, _academicYearStart, _nextAcademicYearStart) : null;
+                    var totalCollectedPreviousYear = isEarliestStartDate ? GetTotalPMRBetweenDates(learningDelivery, null, _academicYearStart) : null;
 
-                    model.LearnRefNumber = record.LearnerReferenceNumber;
-                    model.UniqueLearnerNumber = GetUniqueOrEmpty(paymentRecords, p => p.LearnerUln);
-                    model.LearningStartDate = record.LearningStartDate;
-                    model.ProgType = record.LearningAimProgrammeType;
-                    model.StandardCode = record.LearningAimStandardCode;
-                    model.FrameworkCode = record.LearningAimFrameworkCode;
-                    model.ApprenticeshipPathway = record.LearningAimPathwayCode;
-                    model.SoftwareSupplierAimIdentifier = learningDeliveries.FirstOrDefault(ld => ld.LearnAimRef.CaseInsensitiveEquals("ZPROG001"))?.SWSupAimId;
-                    model.LearningDeliveryFAMTypeApprenticeshipContractType = GetUniqueOrEmpty(paymentRecords, p => p.ContractType);
-                    model.EmployerIdentifierAtStartOfLearning = learner?.LearnerEmploymentStatus.Where(w => w.DateEmpStatApp <= record.LearningStartDate).OrderByDescending(o => o.DateEmpStatApp).FirstOrDefault()?.EmpId;
-                    model.EmployerNameFromApprenticeshipService = GetEarliestPaymentInfo(paymentRecords)?.LegalEntityName;
-                    model.EmployerCoInvestmentPercentage = (1 - filteredPaymentRecords
-                                                                .GroupBy(g => new { g.DeliveryPeriod, g.AcademicYear })
-                                                                .Select(s => new { AggAmount = s.Sum(a => a.Amount), SFaContrib = s.Min(m => m.SfaContributionPercentage) })
-                                                                .Where(w => w.AggAmount != 0)
-                                                                .Select(s => s.SFaContrib)
-                                                                .DefaultIfEmpty()
-                                                                .Min()) * 100;
-                    //model.ApplicableProgrammeStartDate
+                    var model = new AppsCoInvestmentContributionsModel
+                    {
+                        LearnRefNumber = record.LearnerReferenceNumber,
+                        UniqueLearnerNumber = GetUniqueOrEmpty(paymentRecords, p => p.LearnerUln),
+                        LearningStartDate = record.LearningStartDate,
+                        ProgType = record.LearningAimProgrammeType,
+                        StandardCode = record.LearningAimStandardCode,
+                        FrameworkCode = record.LearningAimFrameworkCode,
+                        ApprenticeshipPathway = record.LearningAimPathwayCode,
+                        SoftwareSupplierAimIdentifier = learningDelivery?.SWSupAimId,
+                        LearningDeliveryFAMTypeApprenticeshipContractType = GetUniqueOrEmpty(paymentRecords, p => p.ContractType),
+                        EmployerIdentifierAtStartOfLearning = learner?.LearnerEmploymentStatus.Where(w => w.DateEmpStatApp <= record.LearningStartDate).OrderByDescending(o => o.DateEmpStatApp).FirstOrDefault()?.EmpId,
+                        EmployerNameFromApprenticeshipService = GetEarliestPaymentInfo(paymentRecords)?.LegalEntityName,
+                        EmployerCoInvestmentPercentage = GetEmployerCoInvestmentPercentage(filteredPaymentRecords),
+                        ApplicableProgrammeStartDate = rulebaseLearningDelivery?.AppAdjLearnStartDate,
+                        TotalPMRPreviousFundingYears = totalCollectedPreviousYear,
+                        TotalCoInvestmentDueFromEmployerInPreviousFundingYears = totalDuePreviousYear,
+                        TotalPMRThisFundingYear = totalCollectedCurrentYear,
+                        TotalCoInvestmentDueFromEmployerThisFundingYear = totalDueCurrentYear,
+                        PercentageOfCoInvestmentCollected = GetPercentageOfInvestmentCollected(totalDueCurrentYear, totalDuePreviousYear, totalCollectedCurrentYear, totalCollectedPreviousYear),
+                        LDM356Or361 = HasLdm356Or361(learningDelivery) ? "Yes" : "No",
+                        //model.CompletionEarningThisFundingYear = rulebasePriceEpisode?.Periods.Sum;
+                        CompletionPaymentsThisFundingYear = completedPaymentRecordsInCurrentYear.Sum(r => r.Amount),
+                        CoInvestmentDueFromEmployerForAugust = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 1),
+                        CoInvestmentDueFromEmployerForSeptember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 2),
+                        CoInvestmentDueFromEmployerForOctober = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 3),
+                        CoInvestmentDueFromEmployerForNovember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 4),
+                        CoInvestmentDueFromEmployerForDecember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 5),
+                        CoInvestmentDueFromEmployerForJanuary = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 6),
+                        CoInvestmentDueFromEmployerForFebruary = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 7),
+                        CoInvestmentDueFromEmployerForMarch = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 8),
+                        CoInvestmentDueFromEmployerForApril = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 9),
+                        CoInvestmentDueFromEmployerForMay = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 10),
+                        CoInvestmentDueFromEmployerForJune = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 11),
+                        CoInvestmentDueFromEmployerForJuly = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 12),
+                        CoInvestmentDueFromEmployerForR13 = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 13),
+                        CoInvestmentDueFromEmployerForR14 = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 14)
+                    };
 
                     return model;
                 });
+        }
+
+        public decimal GetPercentageOfInvestmentCollected(decimal? totalDueCurrentYear, decimal? totalDuePreviousYear, decimal? totalCollectedCurrentYear, decimal? totalCollectedPreviousYear)
+        {
+            var totalDue = totalDuePreviousYear ?? 0 + totalDueCurrentYear ?? 0;
+
+            if (totalDue == 0)
+            {
+                return 0;
+            }
+
+            var totalCollected = totalCollectedPreviousYear ?? 0 + totalCollectedCurrentYear ?? 0;
+
+            return (totalCollected / totalDue) * 100;
+        }
+
+        public decimal GetPeriodisedValueFromDictionaryForPeriod(IDictionary<byte, decimal> periodisedDictionary, byte period)
+        {
+            if (periodisedDictionary.TryGetValue(period, out decimal value))
+            {
+                return value;
+            }
+
+            return decimal.Zero;
+        }
+
+        public Dictionary<byte, decimal> BuildCoinvestmentPaymentsPerPeriodDictionary(IEnumerable<PaymentInfo> paymentInfos)
+        {
+            return paymentInfos?
+                .Where(p => p.AcademicYear == Generics.AcademicYear)
+                .GroupBy(p => p.CollectionPeriod)
+                .ToDictionary(p => p.Key, p => p.Sum(i => i.Amount));
+        }
+
+        public AECApprenticeshipPriceEpisodePeriodisedValuesInfo GetRulebasePriceEpisodeForLearningDeliveryForCompletionPayment(AppsCoInvestmentRulebaseInfo rulebaseInfo, PaymentInfo paymentInfo)
+        {
+            return rulebaseInfo?
+                .AECApprenticeshipPriceEpisodePeriodisedValues?
+                .FirstOrDefault(
+                    p =>
+                    p.LearnRefNumber.CaseInsensitiveEquals(paymentInfo.LearnerReferenceNumber)
+                    && p.PriceEpisodeIdentifier.CaseInsensitiveEquals(paymentInfo.PriceEpisodeIdentifier)
+                    && p.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeCompletionPaymentAttributeName));
+        }
+
+        public bool HasLdm356Or361(LearningDeliveryInfo learningDelivery)
+        {
+            return learningDelivery?
+                .LearningDeliveryFAMs?
+                .Any(
+                    fam =>
+                    fam.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)
+                    && (fam.LearnDelFAMCode == Generics.LearningDeliveryFAMCode356 || fam.LearnDelFAMCode == Generics.LearningDeliveryFAMCode361))
+            ?? false;
+        }
+
+        public decimal? GetTotalPMRBetweenDates(LearningDeliveryInfo learningDelivery, DateTime? startDate, DateTime? endDate)
+        {
+            var pmrsQuery = learningDelivery?.AppFinRecords ?? Enumerable.Empty<AppFinRecordInfo>();
+
+            if (startDate.HasValue)
+            {
+                pmrsQuery = pmrsQuery.Where(r => r.AFinDate >= startDate);
+            }
+
+            if (endDate.HasValue)
+            {
+                pmrsQuery = pmrsQuery.Where(r => r.AFinDate < endDate);
+            }
+
+            pmrsQuery = pmrsQuery.Where(r => r.AFinType.CaseInsensitiveEquals(Generics.PMR));
+
+            var pmrs = pmrsQuery.ToList();
+
+            var positive = pmrs.Where(p => p.AFinCode == 1 || p.AFinCode == 2).Sum(p => p.AFinAmount);
+            var negative = pmrs.Where(p => p.AFinCode == 3).Sum(p => p.AFinAmount);
+
+            return positive - negative;
+        }
+
+        public bool IsEarliestLearningStartDate(IEnumerable<AppsCoInvestmentRecordKey> recordKeys, AppsCoInvestmentRecordKey recordKey)
+        {
+            return recordKeys
+                .Where(r =>
+                    r.LearnerReferenceNumber.CaseInsensitiveEquals(recordKey.LearnerReferenceNumber)
+                    && r.LearningAimProgrammeType == recordKey.LearningAimProgrammeType
+                    && r.LearningAimStandardCode == recordKey.LearningAimStandardCode
+                    && r.LearningAimFrameworkCode == recordKey.LearningAimFrameworkCode
+                    && r.LearningAimPathwayCode == recordKey.LearningAimPathwayCode)
+                    .Min(r => r.LearningStartDate) == recordKey.LearningStartDate;
+        }
+
+        public decimal GetEmployerCoInvestmentPercentage(IEnumerable<PaymentInfo> paymentInfos)
+        {
+            return (1 - paymentInfos
+                        .GroupBy(g => new { g.DeliveryPeriod, g.AcademicYear })
+                        .Select(s => new { AggAmount = s.Sum(a => a.Amount), SFaContrib = s.Min(m => m.SfaContributionPercentage) })
+                        .Where(w => w.AggAmount != 0)
+                        .Select(s => s.SFaContrib)
+                        .DefaultIfEmpty()
+                        .Min())
+                        * 100;
         }
 
         public IEnumerable<PaymentInfo> FundingSourceAndTransactionTypeFilter(IEnumerable<PaymentInfo> paymentInfos)
@@ -117,6 +250,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .ThenBy(p => p.DeliveryPeriod)
                 .ThenBy(p => p.CollectionPeriod)
                 .FirstOrDefault();
+        }
+
+        public AECLearningDeliveryInfo GetRulebaseLearningDelivery(AppsCoInvestmentRulebaseInfo rulebaseInfo, LearningDeliveryInfo learningDelivery)
+        {
+            if (learningDelivery == null)
+            {
+                return null;
+            }
+
+            return rulebaseInfo
+                .AECLearningDeliveries
+                .FirstOrDefault(ld => ld.LearnRefNumber.CaseInsensitiveEquals(learningDelivery.LearnRefNumber) && ld.AimSeqNumber == learningDelivery.AimSeqNumber);
         }
 
         public IEnumerable<PaymentInfo> GetPaymentInfosForRecord(AppsCoInvestmentPaymentsInfo paymentsInfo, AppsCoInvestmentRecordKey record)
@@ -134,12 +279,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 ?? Enumerable.Empty<PaymentInfo>();
         }
 
-        public IEnumerable<LearningDeliveryInfo> GetLearningDeliveriesForRecord(LearnerInfo learner, AppsCoInvestmentRecordKey record)
+        public LearningDeliveryInfo GetLearningDeliveryForRecord(LearnerInfo learner, AppsCoInvestmentRecordKey record)
         {
             return learner?
                 .LearningDeliveries
-                .Where(ld => IlrLearningDeliveryRecordMatch(ld, record))
-                ?? Enumerable.Empty<LearningDeliveryInfo>();
+                .FirstOrDefault(ld => IlrLearningDeliveryRecordMatch(ld, record));
         }
 
         public LearnerInfo GetLearnerForRecord(AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentRecordKey record)

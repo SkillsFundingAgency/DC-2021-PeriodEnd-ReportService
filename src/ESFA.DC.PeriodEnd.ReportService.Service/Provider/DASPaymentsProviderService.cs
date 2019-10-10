@@ -242,13 +242,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             cancellationToken.ThrowIfCancellationRequested();
             using (IDASPaymentsContext context = _dasPaymentsContextFactory())
             {
-                var paymentsList =
+                appsCoInvestmentPaymentsInfo.Payments =
                     await (from payment in context.Payments
                            join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id into groupjoin
                            from subapps in groupjoin.DefaultIfEmpty()
                            where payment.Ukprn == ukPrn &&
-                                 payment.FundingSource == AppsCoInvestmentFundingType &&
-                                 _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType)
+                                 (payment.FundingSource == AppsCoInvestmentFundingType ||
+                                 _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType))
                            select new PaymentInfo()
                            {
                                FundingSource = payment.FundingSource,
@@ -272,8 +272,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                LegalEntityName = subapps.LegalEntityName,
                                EmployerName = subapps.LegalEntityName ?? string.Empty
                            }).ToListAsync(cancellationToken);
-
-                appsCoInvestmentPaymentsInfo.Payments.AddRange(paymentsList);
             }
 
             return appsCoInvestmentPaymentsInfo;

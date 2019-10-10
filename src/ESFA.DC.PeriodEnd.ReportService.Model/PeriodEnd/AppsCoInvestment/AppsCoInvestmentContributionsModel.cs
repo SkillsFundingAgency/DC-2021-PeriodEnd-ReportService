@@ -9,7 +9,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public long? UniqueLearnerNumber { get; set; }
 
-        public string LearningStartDate { get; set; }
+        public DateTime? LearningStartDate { get; set; }
 
         public int? ProgType { get; set; }
 

@@ -112,10 +112,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                      OrigLearnStartDate = x.OrigLearnStartDate,
                                                      LearnPlanEndDate = x.LearnPlanEndDate,
                                                      FundModel = x.FundModel,
-                                                     ProgType = x.ProgType,
-                                                     StdCode = x.StdCode,
-                                                     FworkCode = x.FworkCode,
-                                                     PwayCode = x.PwayCode,
+                                                     ProgType = x.ProgType ?? 0,
+                                                     StdCode = x.StdCode ?? 0,
+                                                     FworkCode = x.FworkCode ?? 0,
+                                                     PwayCode = x.PwayCode ?? 0,
                                                      PartnerUkprn = x.PartnerUKPRN,
                                                      ConRefNumber = x.ConRefNumber,
                                                      EpaOrgId = x.EPAOrgID,
@@ -493,6 +493,37 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsCoInvestmentIlrInfo;
+        }
+
+        public async Task<List<AppsCoInvestmentRecordKey>> GetUniqueAppsCoInvestmentRecordKeysAsync(int ukprn, CancellationToken cancellationToken)
+        {
+            using (var context = _ilrValidContextFactory())
+            {
+                return await context
+                    .LearningDeliveries
+                    .Where(ld => ld.UKPRN == ukprn)
+                    .GroupBy(ld =>
+                    new
+                    {
+                        ld.LearnRefNumber,
+                        ld.LearnStartDate,
+                        ld.ProgType,
+                        ld.StdCode,
+                        ld.FworkCode,
+                        ld.PwayCode,
+                    })
+                    .Select(
+                        g =>
+                        new AppsCoInvestmentRecordKey()
+                        {
+                            LearnerReferenceNumber = g.Key.LearnRefNumber,
+                            LearningStartDate = g.Key.LearnStartDate,
+                            LearningAimProgrammeType = g.Key.ProgType ?? 0,
+                            LearningAimStandardCode = g.Key.StdCode ?? 0,
+                            LearningAimFrameworkCode = g.Key.FworkCode ?? 0,
+                            LearningAimPathwayCode = g.Key.PwayCode ?? 0,
+                        }).ToListAsync(cancellationToken);
+            }
         }
 
         public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)

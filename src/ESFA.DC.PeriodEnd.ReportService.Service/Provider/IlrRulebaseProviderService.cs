@@ -209,11 +209,49 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public Dictionary<string, Dictionary<string, decimal?[][]>> GetFm25LearnerPeriodisedValues(int ukprn)
+        {
+            using (var context = _ilrRulebaseContextFactory())
+            {
+                var fm25LearnerPeriodisedValues = context.FM25_Learners
+                                                               .Where(ld => ld.UKPRN == ukprn)
+                                                               .GroupBy(ld => ld.FundLine,
+                                                                   StringComparer.OrdinalIgnoreCase)
+                                                               .ToDictionary(k => k.Key,
+                                                                   v => v.SelectMany(ld =>
+                                                                           ld.FM35_LearningDelivery_PeriodisedValues)
+                                                                       .GroupBy(ldpv => ldpv.AttributeName,
+                                                                           StringComparer.OrdinalIgnoreCase)
+                                                                       .ToDictionary(k => k.Key, value =>
+                                                                               value.Select(pvGroup => new decimal?[]
+                                                                               {
+                                                                                   pvGroup.Period_1,
+                                                                                   pvGroup.Period_2,
+                                                                                   pvGroup.Period_3,
+                                                                                   pvGroup.Period_4,
+                                                                                   pvGroup.Period_5,
+                                                                                   pvGroup.Period_6,
+                                                                                   pvGroup.Period_7,
+                                                                                   pvGroup.Period_8,
+                                                                                   pvGroup.Period_9,
+                                                                                   pvGroup.Period_10,
+                                                                                   pvGroup.Period_11,
+                                                                                   pvGroup.Period_12,
+                                                                               }).ToArray(),
+                                                                           StringComparer.OrdinalIgnoreCase),
+                                                                   StringComparer.OrdinalIgnoreCase)
+                                                           ?? new Dictionary<string, Dictionary<string, decimal?[][]>>();
+
+                return fm25LearnerPeriodisedValues;
+            }
+        }
+
+
         public Dictionary<string, Dictionary<string, decimal?[][]>> GetFm35LearningDeliveryPeriodisedValues(int ukprn)
         {
-            using (var ilrContext = _ilrRulebaseContextFactory())
+            using (var context = _ilrRulebaseContextFactory())
             {
-                var fm35LearningDeliveryPeriodisedValues = ilrContext.FM35_LearningDeliveries
+                var fm35LearningDeliveryPeriodisedValues = context.FM35_LearningDeliveries
                                                                .Where(ld => ld.UKPRN == ukprn)
                                                                .GroupBy(ld => ld.FundLine,
                                                                    StringComparer.OrdinalIgnoreCase)

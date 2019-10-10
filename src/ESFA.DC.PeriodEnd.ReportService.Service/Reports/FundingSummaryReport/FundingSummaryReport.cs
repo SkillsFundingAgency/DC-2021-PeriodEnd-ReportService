@@ -13,6 +13,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
@@ -23,6 +24,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
     public class FundingSummaryReport : AbstractReport
     {
         #region Member variable initialisation
+
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
         private readonly IlrRulebaseProviderService _ilrRulebaseProviderService;
         private readonly IEasProviderService _easProviderService;
@@ -32,9 +34,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private readonly IExcelService _excelService;
         private readonly IRenderService<IFundingSummaryReport> _fundingSummaryReportRenderService;
         private readonly IFundingSummaryReportModelBuilder _modelBuilder;
+
         #endregion Member variable initialisation
 
         #region Constructors
+
         public FundingSummaryReport(
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
@@ -47,15 +51,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             // IAppsMonthlyPaymentModelBuilder modelBuilder)
             IFundingSummaryReportModelBuilder modelBuilder,
 
-        //IFileNameService fileNameService,
-        //IModelBuilder<IFundingSummaryReport> fundingSummaryReportModelBuilder,
-        IExcelService excelService,
-        IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService)
-        : base(
-            dateTimeProvider,
-            valueProvider,
-            streamableKeyValuePersistenceService,
-            logger)
+            //IFileNameService fileNameService,
+            //IModelBuilder<IFundingSummaryReport> fundingSummaryReportModelBuilder,
+            IExcelService excelService,
+            IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService)
+            : base(
+                dateTimeProvider,
+                valueProvider,
+                streamableKeyValuePersistenceService,
+                logger)
         {
             _dasPaymentsProviderService = dasPaymentsProviderService;
             _ilrRulebaseProviderService = ilrRulebaseProviderService;
@@ -67,35 +71,42 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             _excelService = excelService;
             _fundingSummaryReportRenderService = fundingSummaryReportRenderService;
         }
+
         #endregion Constructors
 
         #region Base class property initialisation
+
         public override string ReportFileName => "Funding Summary Report";
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsMonthlyPaymentReport;
+
         #endregion Base class property initialisation
 
         // Base class method overrides/implementation
         public override void CsvWriterConfiguration(CsvWriter csvWriter)
         {
-            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats = new[] { "############0.00" };
+            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats =
+                new[] {"############0.00"};
         }
 
         public override async Task GenerateReport(
-             IReportServiceContext reportServiceContext,
-             ZipArchive archive,
-             bool isFis,
-             CancellationToken cancellationToken)
+            IReportServiceContext reportServiceContext,
+            ZipArchive archive,
+            bool isFis,
+            CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
+            var fundingSummaryReportData = GetFundingSummaryReportData(reportServiceContext);
 
             // get the DAS payments data
-            var fm35LearningDeliveryPeriodisedValues = _ilrRulebaseProviderService.GetFm35LearningDeliveryPeriodisedValues(reportServiceContext.Ukprn);
+            var fm35LearningDeliveryPeriodisedValues =
+                _ilrRulebaseProviderService.GetFm35LearningDeliveryPeriodisedValues(reportServiceContext.Ukprn);
 
             // get the EAS data
             var providerEasInfo =
-                await _easProviderService.GetProviderEasInfoForFundingSummaryReport(reportServiceContext.Ukprn, cancellationToken);
+                await _easProviderService.GetProviderEasInfoForFundingSummaryReport(reportServiceContext.Ukprn,
+                    cancellationToken);
 
             // Get the Fcs Contract data
             var appsMonthlyPaymentFcsInfo =
@@ -125,7 +136,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             //await WriteZipEntry(archive, $"{fileName}.csv", csv);
         }
 
-        private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
+        private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel,
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -136,7 +148,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                 {
                     using (CsvWriter csvWriter = new CsvWriter(textWriter))
                     {
-                        WriteCsvRecords<AppsMonthlyPaymentMapper, AppsMonthlyPaymentModel>(csvWriter, appsMonthlyPaymentsModel);
+                        WriteCsvRecords<AppsMonthlyPaymentMapper, AppsMonthlyPaymentModel>(csvWriter,
+                            appsMonthlyPaymentsModel);
 
                         csvWriter.Flush();
                         textWriter.Flush();
@@ -144,6 +157,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                     }
                 }
             }
+        }
+
+        private FundingSummaryReportData GetFundingSummaryReportData(IReportServiceContext reportServiceContext)
+        {
+            FundingSummaryReportData fundingSummaryReportData = new FundingSummaryReportData();
+
+            var fm25LearnerPeriodisedValues = _ilrRulebaseProviderService.GetFm25LearnerPeriodisedValues(reportServiceContext.Ukprn);
+
+            var fm35LearningDeliveryPeriodisedValues = _ilrRulebaseProviderService.GetFm35LearningDeliveryPeriodisedValues(reportServiceContext.Ukprn);
+
+            return fundingSummaryReportData;
         }
     }
 

@@ -51,14 +51,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
                 foreach (var learner in appsAdditionalPaymentIlrInfo.Learners)
                 {
                     var appsAdditionalPaymentLearningDeliveryInfo = learner.LearningDeliveries.SingleOrDefault(x => x.UKPRN == paymentInfo.UkPrn &&
-                                                                                                                 x.LearnRefNumber.Equals(
-                                                                                                                 paymentInfo.LearnerReferenceNumber, StringComparison.OrdinalIgnoreCase) &&
-                                                                                                                 x.LearnAimRef.Equals(paymentInfo.LearningAimReference, StringComparison.OrdinalIgnoreCase) &&
-                                                                                                                 x.LearnStartDate == paymentInfo.LearningStartDate &&
-                                                                                                                 x.ProgType == paymentInfo.LearningAimProgrammeType &&
-                                                                                                                 x.StdCode == paymentInfo.LearningAimStandardCode &&
-                                                                                                                 x.FworkCode == paymentInfo.LearningAimFrameworkCode &&
-                                                                                                                 x.PwayCode == paymentInfo.LearningAimPathwayCode);
+                                                                                                                    x.LearnRefNumber.CaseInsensitiveEquals(paymentInfo.LearnerReferenceNumber) &&
+                                                                                                                    x.LearnAimRef.CaseInsensitiveEquals(paymentInfo.LearningAimReference) &&
+                                                                                                                    x.LearnStartDate == paymentInfo.LearningStartDate &&
+                                                                                                                    x.ProgType == paymentInfo.LearningAimProgrammeType &&
+                                                                                                                    x.StdCode == paymentInfo.LearningAimStandardCode &&
+                                                                                                                    x.FworkCode == paymentInfo.LearningAimFrameworkCode &&
+                                                                                                                    x.PwayCode == paymentInfo.LearningAimPathwayCode);
                     var aecLearningDeliveryInfo = appsAdditionalPaymentLearningDeliveryInfo == null ? null
                         : appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.SingleOrDefault(x =>
                         x.UKPRN == appsAdditionalPaymentLearningDeliveryInfo.UKPRN &&

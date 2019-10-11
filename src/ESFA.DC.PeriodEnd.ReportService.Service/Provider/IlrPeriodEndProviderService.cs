@@ -501,28 +501,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 return await context
                     .LearningDeliveries
-                    .Where(ld => ld.UKPRN == ukprn)
+                    .Where(ld => ld.UKPRN == ukprn && ld.LearnAimRef == "ZPROG001")
                     .GroupBy(ld =>
                     new
                     {
                         ld.LearnRefNumber,
                         ld.LearnStartDate,
-                        ld.ProgType,
-                        ld.StdCode,
-                        ld.FworkCode,
-                        ld.PwayCode,
+                        ProgType = ld.ProgType ?? 0,
+                        StdCode = ld.StdCode ?? 0,
+                        FworkCode = ld.FworkCode ?? 0,
+                        PwayCode = ld.PwayCode ?? 0,
                     })
                     .Select(
                         g =>
-                        new AppsCoInvestmentRecordKey()
-                        {
-                            LearnerReferenceNumber = g.Key.LearnRefNumber,
-                            LearningStartDate = g.Key.LearnStartDate,
-                            LearningAimProgrammeType = g.Key.ProgType ?? 0,
-                            LearningAimStandardCode = g.Key.StdCode ?? 0,
-                            LearningAimFrameworkCode = g.Key.FworkCode ?? 0,
-                            LearningAimPathwayCode = g.Key.PwayCode ?? 0,
-                        }).ToListAsync(cancellationToken);
+                        new AppsCoInvestmentRecordKey(
+                            g.Key.LearnRefNumber,
+                            g.Key.LearnStartDate,
+                            g.Key.ProgType,
+                            g.Key.StdCode,
+                            g.Key.FworkCode,
+                            g.Key.PwayCode))
+                    .ToListAsync(cancellationToken);
             }
         }
 

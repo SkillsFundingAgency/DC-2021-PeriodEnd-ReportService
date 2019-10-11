@@ -219,15 +219,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     })
                     .Select(
                         g =>
-                        new AppsCoInvestmentRecordKey()
-                        {
-                            LearnerReferenceNumber = g.Key.LearnerReferenceNumber,
-                            LearningStartDate = g.Key.LearningStartDate,
-                            LearningAimProgrammeType = g.Key.LearningAimProgrammeType,
-                            LearningAimStandardCode = g.Key.LearningAimStandardCode,
-                            LearningAimFrameworkCode = g.Key.LearningAimFrameworkCode,
-                            LearningAimPathwayCode = g.Key.LearningAimPathwayCode,
-                        }).ToListAsync(cancellationToken);
+                        new AppsCoInvestmentRecordKey(
+                            g.Key.LearnerReferenceNumber,
+                            g.Key.LearningStartDate,
+                            g.Key.LearningAimProgrammeType,
+                            g.Key.LearningAimStandardCode,
+                            g.Key.LearningAimFrameworkCode,
+                            g.Key.LearningAimPathwayCode))
+                    .ToListAsync(cancellationToken);
             }
         }
 
@@ -243,39 +242,84 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (IDASPaymentsContext context = _dasPaymentsContextFactory())
             {
                 appsCoInvestmentPaymentsInfo.Payments =
-                    await (from payment in context.Payments
-                           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id into groupjoin
-                           from subapps in groupjoin.DefaultIfEmpty()
-                           where payment.Ukprn == ukPrn &&
-                                 (payment.FundingSource == AppsCoInvestmentFundingType ||
-                                 _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType))
-                           select new PaymentInfo()
-                           {
-                               FundingSource = payment.FundingSource,
-                               TransactionType = payment.TransactionType,
-                               AcademicYear = payment.AcademicYear,
-                               CollectionPeriod = payment.CollectionPeriod,
-                               ContractType = payment.ContractType,
-                               DeliveryPeriod = payment.DeliveryPeriod,
-                               LearnerReferenceNumber = payment.LearnerReferenceNumber,
-                               LearnerUln = payment.LearnerUln,
-                               LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-                               LearningAimPathwayCode = payment.LearningAimPathwayCode,
-                               LearningAimProgrammeType = payment.LearningAimProgrammeType,
-                               LearningAimReference = payment.LearningAimReference,
-                               LearningAimStandardCode = payment.LearningAimStandardCode,
-                               LearningStartDate = payment.LearningStartDate,
-                               UkPrn = payment.Ukprn,
-                               Amount = payment.Amount,
-                               PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
-                               SfaContributionPercentage = payment.SfaContributionPercentage,
-                               LegalEntityName = subapps.LegalEntityName,
-                               EmployerName = subapps.LegalEntityName ?? string.Empty
-                           }).ToListAsync(cancellationToken);
+                    await context.Payments
+                    .Where(p =>
+                        p.Ukprn == ukPrn
+                        && (p.FundingSource == AppsCoInvestmentFundingType
+                        || _appsAdditionalPaymentsTransactionTypes.Contains(p.TransactionType)))
+                    .Select(payment =>
+                        new PaymentInfo()
+                        {
+                            FundingSource = payment.FundingSource,
+                            TransactionType = payment.TransactionType,
+                            AcademicYear = payment.AcademicYear,
+                            CollectionPeriod = payment.CollectionPeriod,
+                            ContractType = payment.ContractType,
+                            DeliveryPeriod = payment.DeliveryPeriod,
+                            LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                            LearnerUln = payment.LearnerUln,
+                            LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                            LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                            LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                            LearningAimReference = payment.LearningAimReference,
+                            LearningAimStandardCode = payment.LearningAimStandardCode,
+                            LearningStartDate = payment.LearningStartDate,
+                            UkPrn = payment.Ukprn,
+                            Amount = payment.Amount,
+                            PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+                            SfaContributionPercentage = payment.SfaContributionPercentage,
+                           // LegalEntityName = subapps.LegalEntityName,
+                        }).ToListAsync(cancellationToken);
             }
 
             return appsCoInvestmentPaymentsInfo;
         }
+
+        //public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        //{
+        //    var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo
+        //    {
+        //        UkPrn = ukPrn,
+        //        Payments = new List<PaymentInfo>()
+        //    };
+
+        //    cancellationToken.ThrowIfCancellationRequested();
+        //    using (IDASPaymentsContext context = _dasPaymentsContextFactory())
+        //    {
+        //        appsCoInvestmentPaymentsInfo.Payments =
+        //            await (from payment in context.Payments
+        //                   join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id into groupjoin
+        //                   from subapps in groupjoin.DefaultIfEmpty()
+        //                   where payment.Ukprn == ukPrn &&
+        //                         (payment.FundingSource == AppsCoInvestmentFundingType ||
+        //                         _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType))
+        //                   select new PaymentInfo()
+        //                   {
+        //                       FundingSource = payment.FundingSource,
+        //                       TransactionType = payment.TransactionType,
+        //                       AcademicYear = payment.AcademicYear,
+        //                       CollectionPeriod = payment.CollectionPeriod,
+        //                       ContractType = payment.ContractType,
+        //                       DeliveryPeriod = payment.DeliveryPeriod,
+        //                       LearnerReferenceNumber = payment.LearnerReferenceNumber,
+        //                       LearnerUln = payment.LearnerUln,
+        //                       LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+        //                       LearningAimPathwayCode = payment.LearningAimPathwayCode,
+        //                       LearningAimProgrammeType = payment.LearningAimProgrammeType,
+        //                       LearningAimReference = payment.LearningAimReference,
+        //                       LearningAimStandardCode = payment.LearningAimStandardCode,
+        //                       LearningStartDate = payment.LearningStartDate,
+        //                       UkPrn = payment.Ukprn,
+        //                       Amount = payment.Amount,
+        //                       PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+        //                       SfaContributionPercentage = payment.SfaContributionPercentage,
+        //                       LegalEntityName = subapps.LegalEntityName,
+        //                       EmployerName = subapps.LegalEntityName ?? string.Empty
+        //                   }).ToListAsync(cancellationToken);
+        //    }
+
+        //    return appsCoInvestmentPaymentsInfo;
+        //}
 
         private string GetTypeOfAdditionalPayment(byte transactionType)
         {

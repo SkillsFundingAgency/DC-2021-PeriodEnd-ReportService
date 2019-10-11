@@ -67,15 +67,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
             List<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels = new List<AppsCoInvestmentContributionsModel>();
 
-            var learnRefNumbers = GetRelevantLearners(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo);
+            var learnRefNumbers = GetRelevantLearners(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo).ToList();
 
-            var uniqueKeys = paymentsAppsCoInvestmentUniqueKeys.Union(ilrAppsCoInvestmentUniqueKeys);
+            var uniqueKeys = UnionKeys(ilrAppsCoInvestmentUniqueKeys, paymentsAppsCoInvestmentUniqueKeys).ToList();
 
-            var filteredRecordKeys = FilterRelevantLearnersFromPaymentsRecordKeys(learnRefNumbers, uniqueKeys);
+            var filteredRecordKeys = FilterRelevantLearnersFromPaymentsRecordKeys(learnRefNumbers, uniqueKeys).ToList();
 
-            var filterReportRows = filteredRecordKeys.Where(r => FilterReportRows(appsCoInvestmentPaymentsInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentIlrInfo, r));
+            var filterReportRows = filteredRecordKeys.Where(r => FilterReportRows(appsCoInvestmentPaymentsInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentIlrInfo, r)).ToList();
 
-            return filteredRecordKeys
+            return filterReportRows
                 .Select(record =>
                 {
                     var paymentRecords = GetPaymentInfosForRecord(appsCoInvestmentPaymentsInfo, record).ToList();
@@ -133,6 +133,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     return model;
                 });
+        }
+
+        public IEnumerable<AppsCoInvestmentRecordKey> UnionKeys(ICollection<AppsCoInvestmentRecordKey> ilrRecords, ICollection<AppsCoInvestmentRecordKey> paymentsRecords)
+        {
+            return ilrRecords.Concat(paymentsRecords).Distinct();
         }
 
         public decimal GetPercentageOfInvestmentCollected(decimal? totalDueCurrentYear, decimal? totalDuePreviousYear, decimal? totalCollectedCurrentYear, decimal? totalCollectedPreviousYear)

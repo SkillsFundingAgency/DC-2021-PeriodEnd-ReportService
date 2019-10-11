@@ -4,9 +4,26 @@ using System.Text;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
-    public class AppsCoInvestmentRecordKey
+    public struct AppsCoInvestmentRecordKey
     {
-        private const string ZPROG001 = "ZPROG001";
+        public AppsCoInvestmentRecordKey(
+            string learnRefNumber,
+            DateTime? learnStartDate,
+            int progType,
+            int stdCode,
+            int fworkCode,
+            int pwayCode)
+        {
+            LearningAimReference = "ZPROG001";
+            LearnerReferenceNumber = learnRefNumber;
+            LearningStartDate = learnStartDate;
+            LearningAimProgrammeType = progType;
+            LearningAimStandardCode = stdCode;
+            LearningAimFrameworkCode = fworkCode;
+            LearningAimPathwayCode = pwayCode;
+        }
+
+        public string LearningAimReference { get; set; }
 
         public string LearnerReferenceNumber { get; set; }
 
@@ -19,7 +36,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public int LearningAimFrameworkCode { get; set; }
 
         public int LearningAimPathwayCode { get; set; }
-
-        public string LearningAimReference => ZPROG001;
     }
 }

@@ -109,6 +109,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
+        [Fact]
+        public void RecordKeysUnion_Test()
+        {
+            List<AppsCoInvestmentRecordKey> appsKeys = new List<AppsCoInvestmentRecordKey>()
+            {
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 466, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
+            };
+
+            List<AppsCoInvestmentRecordKey> ilrKeys = new List<AppsCoInvestmentRecordKey>()
+            {
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 }
+            };
+
+            Mock<ILogger> logger = new Mock<ILogger>();
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(logger.Object);
+
+            var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(ilrKeys, appsKeys);
+
+            result.Count().Should().Be(3);
+        }
+
         private AppsCoInvestmentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, int aimSeqNumber)
         {
             return new AppsCoInvestmentILRInfo()
@@ -241,7 +264,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         ContractType = 2,
                         CollectionPeriod = 1,
                         DeliveryPeriod = 1,
-                        EmployerName = employerName,
+                        LegalEntityName = employerName,
                         SfaContributionPercentage = new decimal(0.9D),
                         PriceEpisodeIdentifier = "ABC-123"
                     },
@@ -263,7 +286,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         ContractType = 2,
                         CollectionPeriod = 1,
                         DeliveryPeriod = 1,
-                        EmployerName = employerName,
+                        LegalEntityName = employerName,
                         SfaContributionPercentage = new decimal(0.95D),
                         PriceEpisodeIdentifier = "ABC-234"
                     }

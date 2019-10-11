@@ -41,7 +41,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public string PriceEpisodeIdentifier { get; set; }
 
         public decimal SfaContributionPercentage { get; set; }
-
-        public string EmployerName { get; set; }
     }
 }

@@ -436,14 +436,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 var learners = await ilrContext
                     .Learners
-                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(ld => ld.FundModel == 36))
+                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(ld => ld.FundModel == 36 && ld.LearnAimRef == "ZPROG001"))
                     .Select(learner =>
                         new LearnerInfo()
                         {
                             LearnRefNumber = learner.LearnRefNumber,
                             LearningDeliveries = learner
                                 .LearningDeliveries
-                                .Where(ld => ld.FundModel == 36)
+                                .Where(ld => ld.FundModel == 36 && ld.LearnAimRef == "ZPROG001")
                                 .Select(x => new LearningDeliveryInfo()
                                 {
                                     UKPRN = ukPrn,

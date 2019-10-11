@@ -146,7 +146,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public IEnumerable<AppsCoInvestmentRecordKey> UnionKeys(ICollection<AppsCoInvestmentRecordKey> ilrRecords, ICollection<AppsCoInvestmentRecordKey> paymentsRecords)
         {
-            return ilrRecords.Concat(paymentsRecords).Distinct();
+            return ilrRecords.Union(paymentsRecords);
         }
 
         public decimal GetPercentageOfInvestmentCollected(decimal? totalDueCurrentYear, decimal? totalDuePreviousYear, decimal? totalCollectedCurrentYear, decimal? totalCollectedPreviousYear)

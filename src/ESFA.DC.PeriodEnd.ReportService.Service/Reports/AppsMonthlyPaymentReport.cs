@@ -60,7 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override void ApplyConfiguration(CsvWriter csvWriter)
         {
-            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats = new[] { "############0.00" };
+            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats = new[] { "############0.00000" };
         }
 
         public override async Task GenerateReport(

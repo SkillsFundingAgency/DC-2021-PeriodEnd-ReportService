@@ -82,7 +82,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                Amount = payment.Amount,
                                LearningAimFundingLineType = payment.LearningAimFundingLineType,
                                TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                               EmployerName = payment_apprenticeship.LegalEntityName ?? string.Empty
+                               EmployerName = payment_apprenticeship.LegalEntityName ?? string.Empty,
+                               LearningStartDate = payment.LearningStartDate
                            }).ToListAsync(cancellationToken);
 
                 appsAdditionalPaymentDasPaymentsInfo.Payments.AddRange(paymentsList);

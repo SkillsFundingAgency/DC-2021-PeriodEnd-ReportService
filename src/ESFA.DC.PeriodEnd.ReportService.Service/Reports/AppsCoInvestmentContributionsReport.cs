@@ -58,8 +58,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var appsCoInvestmentPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var paymentsAppsCoInvestmentUniqueKeys = await _dasPaymentsProviderService.GetUniqueCombinationsOfKeyFromPaymentsAsync(reportServiceContext.Ukprn, cancellationToken);
             var ilrAppsCoInvestmentUniqueKeys = await _ilrPeriodEndProviderService.GetUniqueAppsCoInvestmentRecordKeysAsync(reportServiceContext.Ukprn, cancellationToken);
+            var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsCoInvestmentPaymentsInfo, cancellationToken);
 
-            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, paymentsAppsCoInvestmentUniqueKeys, ilrAppsCoInvestmentUniqueKeys, reportServiceContext.JobId);
+            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, paymentsAppsCoInvestmentUniqueKeys, ilrAppsCoInvestmentUniqueKeys, apprenticeshipIdLegalEntityNameDictionary, reportServiceContext.JobId);
 
             string csv = await GetCsv(appsCoInvestmentContributionsModels, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);

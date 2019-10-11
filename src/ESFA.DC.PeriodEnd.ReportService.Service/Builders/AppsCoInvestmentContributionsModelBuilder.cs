@@ -37,6 +37,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo,
             List<AppsCoInvestmentRecordKey> paymentsAppsCoInvestmentUniqueKeys,
             List<AppsCoInvestmentRecordKey> ilrAppsCoInvestmentUniqueKeys,
+            IDictionary<long, string> apprenticeshipIdLegalEntityNameDictionary,
             long jobId)
         {
             string errorMessage = string.Empty;
@@ -86,6 +87,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     var isEarliestStartDate = IsEarliestLearningStartDate(filteredRecordKeys, record);
                     var completedPaymentRecordsInCurrentYear = paymentRecords?.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 2).ToList();
                     var totalsByPeriodDictionary = BuildCoinvestmentPaymentsPerPeriodDictionary(filteredPaymentRecords);
+                    var earliestPaymentInfo = GetEarliestPaymentInfo(paymentRecords);
+
+                    string legalEntityName = null;
+
+                    if (earliestPaymentInfo != null && earliestPaymentInfo.ApprenticeshipId.HasValue)
+                    {
+                        apprenticeshipIdLegalEntityNameDictionary.TryGetValue(earliestPaymentInfo.ApprenticeshipId.Value, out legalEntityName);
+                    }
 
                     var totalDueCurrentYear = totalsByPeriodDictionary.Sum(d => d.Value);
                     var totalDuePreviousYear = isEarliestStartDate ? filteredPaymentRecords?.Where(p => p.AcademicYear < 1920).Sum(p => p.Amount) : null;
@@ -104,7 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         SoftwareSupplierAimIdentifier = learningDelivery?.SWSupAimId,
                         LearningDeliveryFAMTypeApprenticeshipContractType = GetUniqueOrEmpty(paymentRecords, p => p.ContractType),
                         EmployerIdentifierAtStartOfLearning = learner?.LearnerEmploymentStatus.Where(w => w.DateEmpStatApp <= record.LearningStartDate).OrderByDescending(o => o.DateEmpStatApp).FirstOrDefault()?.EmpId,
-                        EmployerNameFromApprenticeshipService = GetEarliestPaymentInfo(paymentRecords)?.LegalEntityName,
+                        EmployerNameFromApprenticeshipService = legalEntityName,
                         EmployerCoInvestmentPercentage = GetEmployerCoInvestmentPercentage(filteredPaymentRecords),
                         ApplicableProgrammeStartDate = rulebaseLearningDelivery?.AppAdjLearnStartDate,
                         TotalPMRPreviousFundingYears = totalCollectedPreviousYear,

@@ -268,11 +268,38 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             Amount = payment.Amount,
                             PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
                             SfaContributionPercentage = payment.SfaContributionPercentage,
+                            ApprenticeshipId = payment.ApprenticeshipId,
                            // LegalEntityName = subapps.LegalEntityName,
                         }).ToListAsync(cancellationToken);
             }
 
             return appsCoInvestmentPaymentsInfo;
+        }
+
+        public async Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(AppsCoInvestmentPaymentsInfo paymentInfo, CancellationToken cancellationToken)
+        {
+            var uniqueApprenticeshipIds = paymentInfo.Payments.Select(p => p.ApprenticeshipId).Distinct().OrderBy(a => a).ToList();
+
+            List<Tuple<long, string>> apprenticeshipIdLegalEntityNameCollection = new List<Tuple<long, string>>();
+
+            var count = uniqueApprenticeshipIds.Count;
+            var pageSize = 1000;
+
+            using (IDASPaymentsContext context = _dasPaymentsContextFactory())
+            {
+                for (var i = 0; i < count; i += pageSize)
+                {
+                    var page = await context
+                        .Apprenticeships
+                        .Where(a => uniqueApprenticeshipIds.Skip(i).Take(pageSize).Contains(a.Id))
+                        .Select(a => new Tuple<long, string>(a.Id, a.LegalEntityName))
+                        .ToListAsync(cancellationToken);
+
+                    apprenticeshipIdLegalEntityNameCollection.AddRange(page);
+                }
+
+                return apprenticeshipIdLegalEntityNameCollection.ToDictionary(a => a.Item1, a => a.Item2);
+            }
         }
 
         //public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)

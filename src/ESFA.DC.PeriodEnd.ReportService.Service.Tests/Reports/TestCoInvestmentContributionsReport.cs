@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
-            string filename = $"R01_10036143_Apps Co-Investment Contributions Report {dateTime:yyyyMMdd-HHmmss}";
+            string filename = $"10036143 Apps Co-Investment Contributions Report {dateTime:yyyyMMdd-HHmmss}";
             int ukPrn = 10036143;
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);

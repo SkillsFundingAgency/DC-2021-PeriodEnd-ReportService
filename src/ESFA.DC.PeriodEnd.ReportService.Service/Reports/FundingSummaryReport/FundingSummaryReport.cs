@@ -28,14 +28,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IDateTimeProvider dateTimeProvider,
-            IValueProvider valueProvider,
             IFundingSummaryReportModelBuilder modelBuilder,
             IExcelService excelService,
             IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService,
             IPeriodisedValuesLookupProviderService periodisedValuesLookupProvider)
             : base(
                 dateTimeProvider,
-                valueProvider,
+                null,
                 streamableKeyValuePersistenceService,
                 logger)
         {
@@ -63,9 +62,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
             using (var workbook = _excelService.NewWorkbook())
             {
+                workbook.Worksheets.Clear();
+
                 _fundingSummaryReportRenderService.Render(model, _excelService.GetWorksheetFromWorkbook(workbook, "Funding Summary"));
 
-                await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", workbook.SaveToStream(), cancellationToken);
+                await _excelService.SaveWorkbookAsync(workbook, $"{externalFileName}.xlsx", reportServiceContext.Container, cancellationToken);
+
+                //await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", workbook.SaveToStream(), cancellationToken);
                 //await WriteZipEntry(archive, $"{fileName}.csv", csv);
             }
         }

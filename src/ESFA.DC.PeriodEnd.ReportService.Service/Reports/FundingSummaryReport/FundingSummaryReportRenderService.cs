@@ -14,7 +14,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private const string DecimalFormat = "#,##0.00";
 
         private const int StartColumn = 0;
-        private const int ColumnCount = 17;
+        private const int ColumnCount = 18;
 
         private readonly Style _defaultStyle;
         private readonly Style _textWrappedStyle;
@@ -59,6 +59,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             }
 
             worksheet.AutoFitColumn(0);
+            worksheet.AutoFitColumn(1);
 
             return worksheet;
         }
@@ -67,7 +68,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         {
             var row = NextRow(worksheet) + 1;
 
-            worksheet.Cells.ImportObjectArray(new object[] { fundingCategory.FundingCategoryTitle }, row, 0, false);
+            worksheet.Cells.ImportObjectArray(new object[] { "Contract No.", fundingCategory.FundingCategoryTitle }, row, 0, false);
             ApplyStyleToRow(worksheet, row, _fundingCategoryStyle);
 
             foreach (var fundingSubCategory in fundingCategory.FundingSubCategories)
@@ -85,6 +86,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             (
                 new object[]
                 {
+                    fundingCategory.ContractAllocationNumber,
                     fundingCategory.CumulativeFundingCategoryTitle,
                     fundingCategory.CumulativePeriod1,
                     fundingCategory.CumulativePeriod2,
@@ -112,7 +114,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             if (!string.IsNullOrWhiteSpace(fundingCategory.Note))
             {
                 row = NextRow(worksheet);
-                worksheet.Cells[row, 0].PutValue(fundingCategory.Note);
+                worksheet.Cells[row, 1].PutValue(fundingCategory.Note);
                 ApplyStyleToRow(worksheet, row, _textWrappedStyle);
             }
 
@@ -124,6 +126,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             worksheet.Cells.ImportObjectArray(
             new object[]
             {
+                fundingSummaryReportRow.ContractAllocationNumber,
                 fundingSummaryReportRow.Title,
                 fundingSummaryReportRow.Period1,
                 fundingSummaryReportRow.Period2,
@@ -170,7 +173,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                 "Apr - Jul",
                 "Year To Date",
                 "Total",
-            }, row, 0, false);
+            }, row, 1, false);
             ApplyStyleToRow(worksheet, row, _fundingSubCategoryStyle);
 
             var renderFundLineGroupTotals = fundingSubCategory.FundLineGroups.Count > 1;
@@ -230,9 +233,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         {
             var columnCount = 12 - currentPeriod;
 
+            var column = 2 + currentPeriod;
+
             if (columnCount > 0)
             {
-                worksheet.Cells.CreateRange(row, currentPeriod + 1, 1, 12 - currentPeriod).ApplyStyle(_futureMonthStyle, _italicStyleFlag);
+                worksheet.Cells.CreateRange(row, column, 1, columnCount).ApplyStyle(_futureMonthStyle, _italicStyleFlag);
             }
         }
 

@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Providers
 {
     public class PeriodisedValueLookupProviderTests
     {
-        private const string ConnectionString = string.Empty;
+        private const string ConnectionString = "";
 
         [Fact]
         public async Task BuildFm35Dictionary()

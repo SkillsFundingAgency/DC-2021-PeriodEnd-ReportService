@@ -1,56 +1,18 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Model;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport.Eas;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
-    public class FundingSummaryReportModelBuilder //: IFundingSummaryReportModelBuilder
-    //    public class FundingSummaryReportModelBuilder : IModelBuilder<FundingSummaryReportModel>
+    public class FundingSummaryReportModelBuilder : IFundingSummaryReportModelBuilder
     {
         private string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
-        private readonly IPeriodisedValuesLookupProviderService _periodisedValuesLookupProvider;
-
-        public FundingSummaryReportModelBuilder(
-            IPeriodisedValuesLookupProviderService periodisedValuesLookupProvider)
+        public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues)
         {
-            _periodisedValuesLookupProvider = periodisedValuesLookupProvider;
-
-            FundingDataSources = new[]
-            {
-                Interface.Model.FundingSummaryReport.FundingDataSource.FM25,
-                Interface.Model.FundingSummaryReport.FundingDataSource.FM35,
-                Interface.Model.FundingSummaryReport.FundingDataSource.FM36,
-                Interface.Model.FundingSummaryReport.FundingDataSource.FM81,
-                Interface.Model.FundingSummaryReport.FundingDataSource.FM99,
-                Interface.Model.FundingSummaryReport.FundingDataSource.EAS,
-            };
-        }
-
-        protected IEnumerable<FundingDataSource> FundingDataSources { private get; set; }
-
-        public FundingSummaryReportModel BuildFundingSummaryReportModel
-        (
-            IReportServiceContext reportServiceContext,
-            IReportServiceDependentData reportServiceDependentData,
-            Dictionary<string, Dictionary<string, decimal?[][]>> fm35LearningDeliveryPeriodisedValues,
-            IList<ProviderEasInfo> providerEasInfo,
-            AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo
-
-        )
-        {
-            var periodisedValues = _periodisedValuesLookupProvider.Provide(FundingDataSources, reportServiceDependentData);
-
             byte reportCurrentPeriod = (byte)reportServiceContext.ReturnPeriod > 12 ? (byte)12 : (byte)reportServiceContext.ReturnPeriod;
 
             var fundingSummaryReportModel = new FundingSummaryReportModel(

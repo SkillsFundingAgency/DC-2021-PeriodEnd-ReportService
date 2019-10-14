@@ -18,40 +18,40 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
     {
         //IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSource> fundingDataSources, IReportServiceDependentData reportServiceDependentData);
 
-        public IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSource> fundingDataSources, IReportServiceDependentData reportServiceDependentData)
+        public IPeriodisedValuesLookup Provide(IEnumerable<FundingDataSource> fundingDataSources)
         {
             var periodisedValuesLookup = new PeriodisedValuesLookup();
 
-            if (fundingDataSources.Contains(FundingDataSource.FM35))
-            {
-                periodisedValuesLookup[FundingDataSource.FM35] = BuildFm35Dictionary(reportServiceDependentData.Get<FM35Global>());
-            }
+            //if (fundingDataSources.Contains(FundingDataSource.FM35))
+            //{
+            //    periodisedValuesLookup[FundingDataSource.FM35] = BuildFm35Dictionary(reportServiceDependentData.Get<FM35Global>());
+            //}
 
-            if (fundingDataSources.Contains(FundingDataSource.FM81))
-            {
-                periodisedValuesLookup[FundingDataSource.FM81] = BuildFm81Dictionary(reportServiceDependentData.Get<FM81Global>());
-            }
+            //if (fundingDataSources.Contains(FundingDataSource.FM81))
+            //{
+            //    periodisedValuesLookup[FundingDataSource.FM81] = BuildFm81Dictionary(reportServiceDependentData.Get<FM81Global>());
+            //}
 
-            if (fundingDataSources.Contains(FundingDataSource.FM25))
-            {
-                periodisedValuesLookup[FundingDataSource.FM25] =
-                    BuildFm25Dictionary(reportServiceDependentData.Get<FM25Global>());
-            }
+            //if (fundingDataSources.Contains(FundingDataSource.FM25))
+            //{
+            //    periodisedValuesLookup[FundingDataSource.FM25] =
+            //        BuildFm25Dictionary(reportServiceDependentData.Get<FM25Global>());
+            //}
 
-            if (fundingDataSources.Contains(FundingDataSource.FM36))
-            {
-                periodisedValuesLookup[FundingDataSource.FM36] = BuildFm36Dictionary(reportServiceDependentData.Get<FM36Global>());
-            }
+            //if (fundingDataSources.Contains(FundingDataSource.FM36))
+            //{
+            //    periodisedValuesLookup[FundingDataSource.FM36] = BuildFm36Dictionary(reportServiceDependentData.Get<FM36Global>());
+            //}
 
-            if (fundingDataSources.Contains(FundingDataSource.FM99))
-            {
-                periodisedValuesLookup[FundingDataSource.FM99] = BuildFm99Dictionary(reportServiceDependentData.Get<ALBGlobal>());
-            }
+            //if (fundingDataSources.Contains(FundingDataSource.FM99))
+            //{
+            //    periodisedValuesLookup[FundingDataSource.FM99] = BuildFm99Dictionary(reportServiceDependentData.Get<ALBGlobal>());
+            //}
 
-            if (fundingDataSources.Contains(FundingDataSource.EAS))
-            {
-                periodisedValuesLookup[FundingDataSource.EAS] = BuildEASDictionary(reportServiceDependentData.Get<ReferenceDataRoot>());
-            }
+            //if (fundingDataSources.Contains(FundingDataSource.EAS))
+            //{
+            //    periodisedValuesLookup[FundingDataSource.EAS] = BuildEASDictionary(reportServiceDependentData.Get<ReferenceDataRoot>());
+            //}
 
             return periodisedValuesLookup;
         }

@@ -87,7 +87,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 fm36ProviderServiceMock.Object,
                 appsCoInvestmentContributionsModelBuilder);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             File.WriteAllText($"{filename}.csv", csv);

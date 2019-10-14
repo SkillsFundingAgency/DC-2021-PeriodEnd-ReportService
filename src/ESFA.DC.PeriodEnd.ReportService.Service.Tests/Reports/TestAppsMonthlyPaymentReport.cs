@@ -107,7 +107,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 valueProvider,
                 appsMonthlyPaymentModelBuilder);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             File.WriteAllText($"{filename}.csv", csv);

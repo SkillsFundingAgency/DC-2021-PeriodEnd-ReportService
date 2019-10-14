@@ -92,7 +92,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 dasPaymentProviderMock.Object,
                 appsAdditionalPaymentsModelBuilder);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             TestCsvHelper.CheckCsv(csv, new CsvEntry(new AppsAdditionalPaymentsMapper(), 1));

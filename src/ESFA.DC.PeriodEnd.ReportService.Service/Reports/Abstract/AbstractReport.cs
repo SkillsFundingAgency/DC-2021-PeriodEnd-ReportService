@@ -60,7 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             return $"{ReportFileName} {dateTime:yyyyMMdd-HHmmss}";
         }
 
-        public abstract Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken);
+        public abstract Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, CancellationToken cancellationToken);
 
         public bool IsMatch(string reportTaskName)
         {

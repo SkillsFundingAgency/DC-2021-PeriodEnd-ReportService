@@ -94,7 +94,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
                 _logger.LogDebug($"Attempting to generate {report.GetType().Name}");
-                await report.GenerateReport(reportServiceContext, archive, false, cancellationToken);
+                await report.GenerateReport(reportServiceContext, archive, cancellationToken);
                 stopWatch.Stop();
                 _logger.LogDebug($"Persisted {report.GetType().Name} to csv/json in: {stopWatch.ElapsedMilliseconds}");
 

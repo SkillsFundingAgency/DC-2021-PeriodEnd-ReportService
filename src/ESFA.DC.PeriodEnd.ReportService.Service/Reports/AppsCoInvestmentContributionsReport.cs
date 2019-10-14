@@ -48,7 +48,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsCoInvestmentContributionsReport;
 
-        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken)
+        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);

@@ -141,7 +141,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     };
 
                     return model;
-                });
+                })
+                .OrderBy(l => l.LearnRefNumber)
+                .ThenBy(t => t.LearningDeliveryFAMTypeApprenticeshipContractType);
         }
 
         public IEnumerable<AppsCoInvestmentRecordKey> UnionKeys(ICollection<AppsCoInvestmentRecordKey> ilrRecords, ICollection<AppsCoInvestmentRecordKey> paymentsRecords)

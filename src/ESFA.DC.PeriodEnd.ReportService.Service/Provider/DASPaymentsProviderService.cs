@@ -302,52 +302,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
-        //public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
-        //{
-        //    var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo
-        //    {
-        //        UkPrn = ukPrn,
-        //        Payments = new List<PaymentInfo>()
-        //    };
-
-        //    cancellationToken.ThrowIfCancellationRequested();
-        //    using (IDASPaymentsContext context = _dasPaymentsContextFactory())
-        //    {
-        //        appsCoInvestmentPaymentsInfo.Payments =
-        //            await (from payment in context.Payments
-        //                   join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id into groupjoin
-        //                   from subapps in groupjoin.DefaultIfEmpty()
-        //                   where payment.Ukprn == ukPrn &&
-        //                         (payment.FundingSource == AppsCoInvestmentFundingType ||
-        //                         _appsCoInvestmentTransactionTypes.Contains(payment.TransactionType))
-        //                   select new PaymentInfo()
-        //                   {
-        //                       FundingSource = payment.FundingSource,
-        //                       TransactionType = payment.TransactionType,
-        //                       AcademicYear = payment.AcademicYear,
-        //                       CollectionPeriod = payment.CollectionPeriod,
-        //                       ContractType = payment.ContractType,
-        //                       DeliveryPeriod = payment.DeliveryPeriod,
-        //                       LearnerReferenceNumber = payment.LearnerReferenceNumber,
-        //                       LearnerUln = payment.LearnerUln,
-        //                       LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-        //                       LearningAimPathwayCode = payment.LearningAimPathwayCode,
-        //                       LearningAimProgrammeType = payment.LearningAimProgrammeType,
-        //                       LearningAimReference = payment.LearningAimReference,
-        //                       LearningAimStandardCode = payment.LearningAimStandardCode,
-        //                       LearningStartDate = payment.LearningStartDate,
-        //                       UkPrn = payment.Ukprn,
-        //                       Amount = payment.Amount,
-        //                       PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
-        //                       SfaContributionPercentage = payment.SfaContributionPercentage,
-        //                       LegalEntityName = subapps.LegalEntityName,
-        //                       EmployerName = subapps.LegalEntityName ?? string.Empty
-        //                   }).ToListAsync(cancellationToken);
-        //    }
-
-        //    return appsCoInvestmentPaymentsInfo;
-        //}
-
         private string GetTypeOfAdditionalPayment(byte transactionType)
         {
             switch (transactionType)

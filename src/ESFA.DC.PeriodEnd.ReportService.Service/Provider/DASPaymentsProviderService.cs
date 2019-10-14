@@ -269,7 +269,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
                             SfaContributionPercentage = payment.SfaContributionPercentage,
                             ApprenticeshipId = payment.ApprenticeshipId,
-                           // LegalEntityName = subapps.LegalEntityName,
                         }).ToListAsync(cancellationToken);
             }
 

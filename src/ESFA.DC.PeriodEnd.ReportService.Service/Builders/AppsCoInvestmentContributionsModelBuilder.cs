@@ -40,7 +40,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             IDictionary<long, string> apprenticeshipIdLegalEntityNameDictionary,
             long jobId)
         {
-            string errorMessage = string.Empty;
+            string errorMessage;
 
             if (appsCoInvestmentIlrInfo == null || appsCoInvestmentIlrInfo.Learners == null)
             {
@@ -66,8 +66,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 throw new Exception(errorMessage);
             }
 
-            List<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels = new List<AppsCoInvestmentContributionsModel>();
-
             var learnRefNumbers = GetRelevantLearners(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo).ToList();
 
             var uniqueKeys = UnionKeys(ilrAppsCoInvestmentUniqueKeys, paymentsAppsCoInvestmentUniqueKeys).ToList();
@@ -85,7 +83,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     var filteredPaymentRecords = FundingSourceAndTransactionTypeFilter(paymentRecords).ToList();
                     var rulebaseLearningDelivery = GetRulebaseLearningDelivery(appsCoInvestmentRulebaseInfo, learningDelivery);
                     var isEarliestStartDate = IsEarliestLearningStartDate(filteredRecordKeys, record);
-                    var completedPaymentRecordsInCurrentYear = paymentRecords?.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 2).ToList();
+                    var completedPaymentRecordsInCurrentYear = paymentRecords.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 2).ToList();
                     var totalsByPeriodDictionary = BuildCoinvestmentPaymentsPerPeriodDictionary(filteredPaymentRecords);
                     var earliestPaymentInfo = GetEarliestPaymentInfo(paymentRecords);
 
@@ -97,7 +95,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     }
 
                     var totalDueCurrentYear = totalsByPeriodDictionary.Sum(d => d.Value);
-                    var totalDuePreviousYear = isEarliestStartDate ? filteredPaymentRecords?.Where(p => p.AcademicYear < 1920).Sum(p => p.Amount) : null;
+                    var totalDuePreviousYear = isEarliestStartDate ? filteredPaymentRecords.Where(p => p.AcademicYear < 1920).Sum(p => p.Amount) : (decimal?)null;
                     var totalCollectedCurrentYear = isEarliestStartDate ? GetTotalPMRBetweenDates(learningDelivery, _academicYearStart, _nextAcademicYearStart) : null;
                     var totalCollectedPreviousYear = isEarliestStartDate ? GetTotalPMRBetweenDates(learningDelivery, null, _academicYearStart) : null;
 
@@ -389,6 +387,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .Any(
                     p =>
                         p.AttributeName == "PriceEpisodeCompletionPayment"
+                        && p.LearnRefNumber.CaseInsensitiveEquals(learnRefNumber)
                         && (p.Periods?.Any(v => v.HasValue && v != 0) ?? false))
                 ?? false;
         }

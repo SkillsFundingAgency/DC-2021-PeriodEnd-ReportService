@@ -56,15 +56,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             using (var context = _dasPaymentsContextFactory())
             {
-                var paymentsList =
-                    await (from payment in context.Payments
-                           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
-                           into payment_apprenticeship_join
-                           from payment_apprenticeship in payment_apprenticeship_join.DefaultIfEmpty()
-                           where payment.Ukprn == ukPrn &&
-                                 payment.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
-                                 _appsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
-                           select new DASPaymentInfo()
+                //var paymentsList =
+                //    await (from payment in context.Payments
+                //           join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals apprenticeships.Id
+                //           into payment_apprenticeship_join
+                //           from payment_apprenticeship in payment_apprenticeship_join.DefaultIfEmpty()
+                //           where payment.Ukprn == ukPrn &&
+                //                 payment.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
+                //                 _appsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
+
+                var paymentsList = await context.Payments
+                        .Where(x => x.Ukprn == ukPrn && x.AcademicYear == 1920)
+
+                        .Select(payment => new DASPaymentInfo()
                            {
                                FundingSource = payment.FundingSource,
                                TransactionType = payment.TransactionType,
@@ -82,7 +86,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                Amount = payment.Amount,
                                LearningAimFundingLineType = payment.LearningAimFundingLineType,
                                TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                               EmployerName = payment_apprenticeship.LegalEntityName ?? string.Empty,
+                               //EmployerName = payment_apprenticeship.LegalEntityName ?? string.Empty,
                                LearningStartDate = payment.LearningStartDate
                            }).ToListAsync(cancellationToken);
 

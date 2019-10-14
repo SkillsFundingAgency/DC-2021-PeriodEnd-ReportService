@@ -18,6 +18,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
+using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Providers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Stubs;
 using FluentAssertions;
 using Moq;
@@ -74,16 +75,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var container = "Output";
             var cancellationToken = CancellationToken.None;
 
-            var periodisedValuesLookupProvider = new Mock<IPeriodisedValuesLookupProviderService>();
+            var reportServiceContextMock = new Mock<IReportServiceContext>();
+            var periodisedValuesLookupProvider = PeriodisedValueLookupProviderTests.NewService(); //new Mock<IPeriodisedValuesLookupProviderService>();
 
-            periodisedValuesLookupProvider.Setup(p => p.ProvideAsync(cancellationToken)).ReturnsAsync(new PeriodisedValuesLookup());
+            //periodisedValuesLookupProvider.Setup(p => p.ProvideAsync(reportServiceContextMock.Object, cancellationToken)).ReturnsAsync(new PeriodisedValuesLookup());
 
             var fundingSummaryReportModelBuilder = new FundingSummaryReportModelBuilder();
 
-            var reportServiceContextMock = new Mock<IReportServiceContext>();
-
             var submissionDateTime = new DateTime(2019, 3, 1);
 
+            reportServiceContextMock.Setup(c => c.Ukprn).Returns(10005788);
             reportServiceContextMock.Setup(c => c.Container).Returns(container);
             reportServiceContextMock.Setup(c => c.SubmissionDateTimeUtc).Returns(submissionDateTime);
 
@@ -92,11 +93,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
             dateTimeProviderMock.Setup(p => p.ConvertUtcToUk(submissionDateTime)).Returns(submissionDateTime);
-
-            var fileNameServiceMock = new Mock<IFileNameService>();
-
-            var fileName = "FundingSummaryReport.xlsx";
-            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContextMock.Object, "Funding Summary Report", OutputTypes.Excel, true)).Returns(fileName);
 
             var fundingSummaryReportRenderService = new FundingSummaryReportRenderService();
 
@@ -107,7 +103,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 fundingSummaryReportModelBuilder,
                 excelService,
                 fundingSummaryReportRenderService,
-                periodisedValuesLookupProvider.Object);
+                periodisedValuesLookupProvider);
 
             excelService.ApplyLicense();
 

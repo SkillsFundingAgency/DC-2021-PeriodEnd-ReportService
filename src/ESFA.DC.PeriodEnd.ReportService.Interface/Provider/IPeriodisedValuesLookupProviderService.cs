@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
     public interface IPeriodisedValuesLookupProviderService
     {
-        Task<IPeriodisedValuesLookup> ProvideAsync(CancellationToken cancellationToken);
+        Task<IPeriodisedValuesLookup> ProvideAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

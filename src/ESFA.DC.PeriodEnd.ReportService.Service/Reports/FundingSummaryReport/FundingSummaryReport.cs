@@ -18,7 +18,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingSummaryReport : AbstractReport
     {
-        private readonly IFileNameService _fileNameService;
         private readonly IExcelService _excelService;
         private readonly IRenderService<IFundingSummaryReport> _fundingSummaryReportRenderService;
         private readonly IPeriodisedValuesLookupProviderService _periodisedValuesLookupProvider;
@@ -56,7 +55,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
-            var periodisedValuesLookup = await _periodisedValuesLookupProvider.ProvideAsync(cancellationToken);
+            var periodisedValuesLookup = await _periodisedValuesLookupProvider.ProvideAsync(reportServiceContext, cancellationToken);
 
             var model = _modelBuilder.BuildFundingSummaryReportModel(reportServiceContext, periodisedValuesLookup);
 

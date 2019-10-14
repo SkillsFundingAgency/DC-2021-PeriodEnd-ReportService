@@ -32,5 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(int collectionYear, IEnumerable<ReturnPeriod> returnPeriods, IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken);
 
         Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken);
+
+        Task<List<AppsCoInvestmentRecordKey>> GetUniqueAppsCoInvestmentRecordKeysAsync(int ukprn, CancellationToken cancellationToken);
     }
 }

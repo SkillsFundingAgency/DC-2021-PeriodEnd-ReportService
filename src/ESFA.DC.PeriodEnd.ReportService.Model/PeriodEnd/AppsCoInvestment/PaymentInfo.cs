@@ -26,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public short AcademicYear { get; set; }
 
-        public byte TransactionType { get; set; }
+        public int TransactionType { get; set; }
 
         public byte FundingSource { get; set; }
 
@@ -42,6 +42,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public decimal SfaContributionPercentage { get; set; }
 
-        public string EmployerName { get; set; }
+        public long? ApprenticeshipId { get; set; }
     }
 }

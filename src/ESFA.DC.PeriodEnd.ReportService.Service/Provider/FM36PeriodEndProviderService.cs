@@ -11,6 +11,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
 
@@ -171,64 +172,44 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<AEC_ApprenticeshipPriceEpisode> aecApprenticeshipPriceEpisodes;
-            List<AEC_LearningDelivery> aecLearningDeliveries;
-
             using (var ilrContext = _ilrRulebaseContextFactory())
             {
-                aecApprenticeshipPriceEpisodes = await ilrContext.AEC_ApprenticeshipPriceEpisodes.Include(x => x.AEC_ApprenticeshipPriceEpisode_PeriodisedValues).Where(x => x.UKPRN == ukPrn).ToListAsync(cancellationToken);
-                aecLearningDeliveries = await ilrContext.AEC_LearningDeliveries.Where(x => x.UKPRN == ukPrn).ToListAsync(cancellationToken);
-            }
-
-            foreach (var aecApprenticeshipPriceEpisode in aecApprenticeshipPriceEpisodes)
-            {
-                foreach (var aecApprenticeshipPriceEpisodePeriodisedValue in aecApprenticeshipPriceEpisode
-                    .AEC_ApprenticeshipPriceEpisode_PeriodisedValues)
-                {
-                    var periodisedValue = new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues = await ilrContext
+                    .AEC_ApprenticeshipPriceEpisode_PeriodisedValues
+                    .Where(x => x.UKPRN == ukPrn && x.AttributeName == Generics.Fm36PriceEpisodeCompletionPaymentAttributeName)
+                    .Select(p => new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
                     {
                         UKPRN = ukPrn,
-                        LearnRefNumber = aecApprenticeshipPriceEpisodePeriodisedValue.LearnRefNumber,
-                        AimSeqNumber = aecApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber.GetValueOrDefault(),
-                        AttributeName = aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName,
+                        LearnRefNumber = p.LearnRefNumber,
+                        AimSeqNumber = p.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber ?? 0,
+                        AttributeName = p.AttributeName,
                         Periods = new[]
                         {
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_1,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_2,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_3,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_4,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_5,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_6,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_7,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_8,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_9,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_10,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_11,
-                            aecApprenticeshipPriceEpisodePeriodisedValue.Period_12
+                            p.Period_1,
+                            p.Period_2,
+                            p.Period_3,
+                            p.Period_4,
+                            p.Period_5,
+                            p.Period_6,
+                            p.Period_7,
+                            p.Period_8,
+                            p.Period_9,
+                            p.Period_10,
+                            p.Period_11,
+                            p.Period_12
                         }
-                    };
+                    }).ToListAsync(cancellationToken);
 
-                    appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues.Add(periodisedValue);
-                }
-            }
-
-            foreach (var aecLearningDelivery in aecLearningDeliveries)
-            {
-                var aecLearningDeliveryInfo = new AECLearningDeliveryInfo()
-                {
-                    UKPRN = ukPrn,
-                    LearnRefNumber = aecLearningDelivery.LearnRefNumber,
-                    AimSeqNumber = aecLearningDelivery.AimSeqNumber,
-                    LearnDelEmpIdFirstAdditionalPaymentThreshold = aecLearningDelivery.LearnDelEmpIdFirstAdditionalPaymentThreshold,
-                    LearnDelEmpIdSecondAdditionalPaymentThreshold = aecLearningDelivery.LearnDelEmpIdSecondAdditionalPaymentThreshold,
-                    AppAdjLearnStartDate = aecLearningDelivery.AppAdjLearnStartDate,
-                    LearningDeliveryValues = new AECLearningDeliveryValuesInfo()
+                appsCoInvestmentRulebaseInfo.AECLearningDeliveries = await ilrContext
+                    .AEC_LearningDeliveries
+                    .Where(x => x.UKPRN == ukPrn)
+                    .Select(ld => new AECLearningDeliveryInfo()
                     {
-                        LearnDelMathEng = aecLearningDelivery.LearnDelMathEng.GetValueOrDefault(),
-                    },
-                };
-
-                appsCoInvestmentRulebaseInfo.AECLearningDeliveries.Add(aecLearningDeliveryInfo);
+                        UKPRN = ukPrn,
+                        LearnRefNumber = ld.LearnRefNumber,
+                        AimSeqNumber = ld.AimSeqNumber,
+                        AppAdjLearnStartDate = ld.AppAdjLearnStartDate,
+                    }).ToListAsync(cancellationToken);
             }
 
             return appsCoInvestmentRulebaseInfo;

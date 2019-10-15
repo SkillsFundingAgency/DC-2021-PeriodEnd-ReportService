@@ -43,19 +43,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         {
             var ukprn = reportServiceContext.Ukprn;
 
-            var fm35 = await BuildFm35DictionaryAsync(ukprn, cancellationToken);
-            var fm25 = await BuildFm25DictionaryAsync(ukprn, cancellationToken);
-            var fm81 = await BuildFm81DictionaryAsync(ukprn, cancellationToken);
-            var fm99 = await BuildFm99DictionaryAsync(ukprn, cancellationToken);
-            var eas = await BuildEasDictionaryAsync(ukprn, cancellationToken);
+            var fm35 = BuildFm35DictionaryAsync(ukprn, cancellationToken);
+            var fm25 = BuildFm25DictionaryAsync(ukprn, cancellationToken);
+            var fm81 = BuildFm81DictionaryAsync(ukprn, cancellationToken);
+            var fm99 = BuildFm99DictionaryAsync(ukprn, cancellationToken);
+            var eas = BuildEasDictionaryAsync(ukprn, cancellationToken);
+            var das = BuildDasDictionaryAsync(ukprn, cancellationToken);
+
+            await Task.WhenAll(fm35, fm25, fm81, fm99, eas, das);
 
             var periodisedValuesLookup = new PeriodisedValuesLookup();
 
-            periodisedValuesLookup[FundingDataSource.FM35] = fm35;
-            periodisedValuesLookup[FundingDataSource.FM25] = fm25;
-            periodisedValuesLookup[FundingDataSource.FM81] = fm81;
-            periodisedValuesLookup[FundingDataSource.FM99] = fm99;
-            periodisedValuesLookup[FundingDataSource.EAS] = eas;
+            periodisedValuesLookup.Add(FundingDataSource.FM35, fm35.Result);
+            periodisedValuesLookup.Add(FundingDataSource.FM25, fm25.Result);
+            periodisedValuesLookup.Add(FundingDataSource.FM81, fm81.Result);
+            periodisedValuesLookup.Add(FundingDataSource.FM99, fm99.Result);
+            periodisedValuesLookup.Add(FundingDataSource.EAS, eas.Result);
+            periodisedValuesLookup.Add(FundingDataSource.DAS, das.Result);
 
             return periodisedValuesLookup;
         }

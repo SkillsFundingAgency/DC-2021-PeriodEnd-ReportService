@@ -8,6 +8,7 @@
         FM81,   // Other Adult
         FM99,   // Non-funded (No ESFA funding for this learning aim)
         EAS,    // Earnings Adjustment Statement
-        AEC // Apprenticeship Earning Calculation (Learning Delivery)
+        AEC,    // Apprenticeship Earning Calculation (Learning Delivery)
+        DAS,    // DAS Payments
     }
 }

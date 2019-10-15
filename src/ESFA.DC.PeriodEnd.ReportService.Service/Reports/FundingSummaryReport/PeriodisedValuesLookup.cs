@@ -3,8 +3,17 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
 {
-    public class PeriodisedValuesLookup : Dictionary<FundingDataSource, Dictionary<string, Dictionary<string, decimal?[][]>>>, IPeriodisedValuesLookup
+    public class PeriodisedValuesLookup : IPeriodisedValuesLookup
     {
+        private readonly Dictionary<FundingDataSource, Dictionary<string, Dictionary<string, decimal?[][]>>> _fundLineAttributeDictionary = new Dictionary<FundingDataSource, Dictionary<string, Dictionary<string, decimal?[][]>>>();
+
+        private readonly
+            Dictionary<FundingDataSource, Dictionary<string, Dictionary<int, Dictionary<int, decimal?[][]>>>> _fundlineFundingSourceTransactionTypeDictionary = new Dictionary<FundingDataSource, Dictionary<string, Dictionary<int, Dictionary<int, decimal?[][]>>>>();
+
+        public void Add(FundingDataSource fundingDataSource, Dictionary<string, Dictionary<string, decimal?[][]>> dictionary) => _fundLineAttributeDictionary.Add(fundingDataSource, dictionary);
+
+        public void Add(FundingDataSource fundingDataSource, Dictionary<string, Dictionary<int, Dictionary<int, decimal?[][]>>> dictionary) => _fundlineFundingSourceTransactionTypeDictionary.Add(fundingDataSource, dictionary);
+
         public IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource fundModel, IEnumerable<string> fundLines, IEnumerable<string> attributes)
         {
             var periodisedValuesList = new List<decimal?[]>();
@@ -14,7 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
                 return periodisedValuesList;
             }
 
-            if (TryGetValue(fundModel, out var fundLineDictionary))
+            if (_fundLineAttributeDictionary.TryGetValue(fundModel, out var fundLineDictionary))
             {
                 foreach (var fundLine in fundLines)
                 {
@@ -27,6 +36,44 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.FundingSummaryReport
                                 if (attributePeriodisedValues != null)
                                 {
                                     periodisedValuesList.AddRange(attributePeriodisedValues);
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+
+            return periodisedValuesList;
+        }
+
+        public IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource dataSource, IEnumerable<string> fundLines, IEnumerable<int> fundingSources, IEnumerable<int> transactionTypes)
+        {
+            var periodisedValuesList = new List<decimal?[]>();
+
+            if (fundLines == null || fundingSources == null || transactionTypes == null)
+            {
+                return periodisedValuesList;
+            }
+
+            if (_fundlineFundingSourceTransactionTypeDictionary.TryGetValue(dataSource, out var fundLineDictionary))
+            {
+                foreach (var fundLine in fundLines)
+                {
+                    if (fundLineDictionary.TryGetValue(fundLine, out var fundingSourcesDictionary))
+                    {
+                        foreach (var fundingSource in fundingSources)
+                        {
+                            if (fundingSourcesDictionary.TryGetValue(fundingSource, out var transactionTypesDictionary))
+                            {
+                                foreach (var transactionType in transactionTypes)
+                                {
+                                    if (transactionTypesDictionary.TryGetValue(transactionType, out var periodisedValues))
+                                    {
+                                        if (periodisedValues != null)
+                                        {
+                                            periodisedValuesList.AddRange(periodisedValues);
+                                        }
+                                    }
                                 }
                             }
                         }

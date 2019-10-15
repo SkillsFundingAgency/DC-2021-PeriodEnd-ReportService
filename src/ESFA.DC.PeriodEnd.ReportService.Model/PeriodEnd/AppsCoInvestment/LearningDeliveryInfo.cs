@@ -18,6 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public DateTime LearnStartDate { get; set; }
 
+        public int FundModel { get; set; }
+
         public int? ProgType { get; set; }
 
         public int? StdCode { get; set; }

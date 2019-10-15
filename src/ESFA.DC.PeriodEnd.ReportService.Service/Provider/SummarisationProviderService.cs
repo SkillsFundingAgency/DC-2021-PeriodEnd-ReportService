@@ -20,6 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         }
 
         public async Task<IEnumerable<DataExtractModel>> GetSummarisedActualsForDataExtractReport(
+            string collectionType,
             IReadOnlyCollection<string> collectionReturnCodes,
             CancellationToken cancellationToken)
         {
@@ -27,7 +28,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 return await summarisationContext.SummarisedActuals
                     .Include(x => x.CollectionReturn)
-                    .Where(x => collectionReturnCodes.Contains(x.CollectionReturn.CollectionReturnCode))
+                    .Where(x => (x.CollectionReturn.CollectionType == collectionType || x.CollectionReturn.CollectionType == "ESF" || x.CollectionReturn.CollectionType == "APPS")
+                                && collectionReturnCodes.Contains(x.CollectionReturn.CollectionReturnCode))
                     .Select(x => new DataExtractModel
                     {
                         Id = x.ID,

@@ -114,7 +114,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             Workbook wb = new Workbook(stream);
             wb.Should().NotBeNull();
             wb.Worksheets.Count().Should().BeGreaterThan(0);
-            wb.Worksheets[0].Name.Should().Be("ILR Provider Submissions Report");
+            wb.Worksheets[0].Name.Should().Be("Provider Submissions");
         }
 
         private IEnumerable<FileDetail> BuildFileDetailsModel()

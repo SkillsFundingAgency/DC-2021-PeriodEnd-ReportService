@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
@@ -22,7 +21,7 @@ using FluentAssertions;
 using Moq;
 using Xunit;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
+namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 {
     public sealed class TestDataExtractReport
     {
@@ -34,7 +33,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             int collectionYear = 1920;
             int returnPeriod = 1;
             DateTime dateTime = DateTime.UtcNow;
-            
+
+            string collectionName = "ILR1920";
             string collectionReturnCodeApp = "APPS01";
             string collectionReturnCodeDC = "R01";
             string collectionReturnCodeESF = "ESF01";
@@ -50,6 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             reportServiceContextMock.SetupGet(x => x.CollectionReturnCodeApp).Returns(collectionReturnCodeApp);
             reportServiceContextMock.SetupGet(x => x.CollectionReturnCodeDC).Returns(collectionReturnCodeDC);
             reportServiceContextMock.SetupGet(x => x.CollectionReturnCodeESF).Returns(collectionReturnCodeESF);
+            reportServiceContextMock.SetupGet(x => x.CollectionName).Returns(collectionName);
 
             Mock<ILogger> logger = new Mock<ILogger>();
             IValueProvider valueProvider = new ValueProvider();
@@ -63,11 +64,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Returns(Task.CompletedTask);
 
             var summarisationInfo = BuildSummarisationModel(collectionReturnCodeApp, collectionReturnCodeDC, collectionReturnCodeESF);
-            IEnumerable<string> organisationIDs = new List<string>() { "ORG000001" };
+            IEnumerable<string> organisationIDs = new List<string> { "ORG000001" };
             var fcsInfo = BuildFCSModel(organisationIDs);
 
             summarisationProviderServiceMock.Setup(x => x
-            .GetSummarisedActualsForDataExtractReport(new List<string>() { collectionReturnCodeApp, collectionReturnCodeDC, collectionReturnCodeESF }, CancellationToken.None))
+            .GetSummarisedActualsForDataExtractReport(collectionName, new List<string> { collectionReturnCodeApp, collectionReturnCodeDC, collectionReturnCodeESF }, CancellationToken.None))
                 .ReturnsAsync(summarisationInfo);
             fcsProviderServiceMock.Setup(x => x.GetFCSForDataExtractReport(organisationIDs, CancellationToken.None))
                 .ReturnsAsync(fcsInfo);

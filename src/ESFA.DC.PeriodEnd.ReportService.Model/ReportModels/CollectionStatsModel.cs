@@ -16,6 +16,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
         {
             get
             {
+                if (CountOfComplete > 0 && CountOfFail == 0)
+                {
+                    return 100;
+                }
+
                 if (CountOfComplete == 0 || CountOfFail == 0)
                 {
                     return 0;

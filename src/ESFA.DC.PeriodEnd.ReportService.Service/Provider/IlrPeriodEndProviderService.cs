@@ -114,10 +114,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                      OrigLearnStartDate = x.OrigLearnStartDate,
                                                      LearnPlanEndDate = x.LearnPlanEndDate,
                                                      FundModel = x.FundModel,
-                                                     ProgType = x.ProgType,
-                                                     StdCode = x.StdCode,
-                                                     FworkCode = x.FworkCode,
-                                                     PwayCode = x.PwayCode,
+                                                     ProgType = x.ProgType ?? 0,
+                                                     StdCode = x.StdCode ?? 0,
+                                                     FworkCode = x.FworkCode ?? 0,
+                                                     PwayCode = x.PwayCode ?? 0,
                                                      PartnerUkprn = x.PartnerUKPRN,
                                                      ConRefNumber = x.ConRefNumber,
                                                      EpaOrgId = x.EPAOrgID,
@@ -132,13 +132,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                          .Select(y =>
                                                              new
                                                                  AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
-                                                                 {
-                                                                     Ukprn = y.UKPRN,
-                                                                     LearnRefNumber = y.LearnRefNumber,
-                                                                     AimSeqNumber = (byte?)y.AimSeqNumber,
-                                                                     ProvSpecDelMon = y.ProvSpecDelMon,
-                                                                     ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
-                                                                 }).ToList(),
+                                                             {
+                                                                 Ukprn = y.UKPRN,
+                                                                 LearnRefNumber = y.LearnRefNumber,
+                                                                 AimSeqNumber = (byte?)y.AimSeqNumber,
+                                                                 ProvSpecDelMon = y.ProvSpecDelMon,
+                                                                 ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
+                                                             }).ToList(),
                                                      LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y =>
                                                          new AppsMonthlyPaymentLearningDeliveryFAMInfo
                                                          {
@@ -250,13 +250,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             fd = fileDetails
                 .Where(x => x.Success == true)
-                .Select(f => new FilePeriodInfo()
+                .Select(f => new FilePeriodInfo
                 {
                     UKPRN = f.UKPRN,
                     Filename = f.Filename,
-                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods),
-                    SubmittedTime = f.SubmittedTime,
-                    Success = f.Success
+                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods)
                 }).ToList();
 
             var fds = fd.GroupBy(x => x.UKPRN)
@@ -279,12 +277,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .GroupBy(x => new {x.PeriodNumber})
                 .Select(x => new
                 {
-                    Collection = x.Key.PeriodNumber == 99 ? string.Empty : $"R{x.Key.PeriodNumber.ToString("D2")}",
-                    Files = x.Count(),
+                    PeriodNumber = x.Key.PeriodNumber,
+                    Collection = $"R{x.Key.PeriodNumber:D2}",
                     Earliest = x.Min(y => y.SubmittedTime ?? DateTime.MaxValue),
-                    Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue)
+                    Latest = x.Max(y => y.SubmittedTime ?? DateTime.MinValue),
+                    Providers = x.Select(y => y.UKPRN).Distinct().Count(),
+                    Valid = x.Count()
                 })
-                .OrderByDescending(x => x.Latest);
+                .OrderByDescending(x => x.PeriodNumber);
 
             foreach (var f in fdCs)
             {
@@ -292,8 +292,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 {
                     Description = "Returning Providers per Period",
                     Collection = f.Collection,
-                    NoOfProviders = fds.Count(),
-                    NoOfValidFilesSubmitted = fd.Count,
+                    NoOfProviders = f.Providers,
+                    NoOfValidFilesSubmitted = f.Valid,
                     EarliestValidSubmission = f.Earliest,
                     LastValidSubmission = f.Latest
                 });
@@ -385,12 +385,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToList();
             }
 
-            List<Top10ProvidersWithInvalidLearnersValidLearners> top10ProvidersWithInvalidLearnersValid;
+            List<Top10ProvidersWithInvalidLearnersValidLearners> validLearnersForUkprns;
+            List<long> ukPrns = top10ProvidersWithInvalidLearnersInvalid.Select(x => x.Ukprn).ToList();
             using (var ilrContext = _ilrValidContextFactory())
             {
-                top10ProvidersWithInvalidLearnersValid = (await ilrContext.Learners
-                        .Join(top10ProvidersWithInvalidLearnersInvalid, l => l.UKPRN, t => t.Ukprn, (lrn, top) => top)
-                        .GroupBy(x => x.Ukprn)
+                validLearnersForUkprns = (await ilrContext.Learners
+                        .Where(x => ukPrns.Contains(x.UKPRN))
+                        .GroupBy(x => x.UKPRN)
                         .ToListAsync(cancellationToken))
                     .Select(x => new Top10ProvidersWithInvalidLearnersValidLearners
                     {
@@ -400,42 +401,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ToList();
             }
 
-            List<Top10ProvidersWithInvalidLearners> top10ProvidersWithInvalidLearners;
-
-            var fileDetailsforUKPRNs = from p in fileDetails
-                join ukpr in top10ProvidersWithInvalidLearnersInvalid on p.UKPRN equals ukpr.Ukprn into pukpr
-                group p by p.UKPRN
-                into op
-                select new
-                {
-                    UKPRN = op.Key,
-                    ID = op.Max(x => x.ID)
-                };
-
-            top10ProvidersWithInvalidLearners = fileDetails
-                .Join(fileDetailsforUKPRNs, fd => fd.ID, f => f.ID, (fDetail, fLatest) => fDetail)
-                .Select(x => new Top10ProvidersWithInvalidLearners
-                {
-                    Ukprn = x.UKPRN,
-                    SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
-                    LatestFileName = x.Filename,
-                    LatestReturn = $"R{GetPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods):D2}",
-                }).ToList();
-
-            foreach (Top10ProvidersWithInvalidLearners top10ProvidersWithInvalidLearner in
-                top10ProvidersWithInvalidLearners)
+            List<Top10ProvidersWithInvalidLearners> fileDetailsForUkprns;
+            using (var ilrContext = _ilrContextFactory())
             {
-                top10ProvidersWithInvalidLearner.NoOfInvalidLearners =
-                    top10ProvidersWithInvalidLearnersInvalid
-                        .SingleOrDefault(x => x.Ukprn == top10ProvidersWithInvalidLearner.Ukprn)?.NoOfInvalidLearners ??
-                    0;
-                top10ProvidersWithInvalidLearner.NoOfValidLearners =
-                    top10ProvidersWithInvalidLearnersValid
-                        .SingleOrDefault(x => x.Ukprn == top10ProvidersWithInvalidLearner.Ukprn)?.NoOfValidLearners ??
-                    0;
+                fileDetailsForUkprns = (await ilrContext.FileDetails
+                        .Where(x => ukPrns.Contains(x.UKPRN))
+                        .GroupBy(x => x.UKPRN)
+                        .Select(x => x.OrderByDescending(y => y.SubmittedTime).First())
+                        .ToListAsync(cancellationToken))
+                    .Select(x => new Top10ProvidersWithInvalidLearners
+                    {
+                        Ukprn = x.UKPRN,
+                        SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
+                        LatestFileName = x.Filename,
+                        LatestReturn = $"R{GetPeriodReturn(x.SubmittedTime.GetValueOrDefault(), returnPeriods):D2}",
+                    })
+                    .ToList();
             }
 
-            return top10ProvidersWithInvalidLearners;
+            foreach (Top10ProvidersWithInvalidLearners fileDetailsForUkprn in fileDetailsForUkprns)
+            {
+                fileDetailsForUkprn.NoOfInvalidLearners =
+                    top10ProvidersWithInvalidLearnersInvalid.SingleOrDefault(x => x.Ukprn == fileDetailsForUkprn.Ukprn)?.NoOfInvalidLearners ?? 0;
+                fileDetailsForUkprn.NoOfValidLearners =
+                    validLearnersForUkprns.SingleOrDefault(x => x.Ukprn == fileDetailsForUkprn.Ukprn)?.NoOfValidLearners ?? 0;
+            }
+
+            return fileDetailsForUkprns;
         }
 
         public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
@@ -450,59 +442,95 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             using (var ilrContext = _ilrValidContextFactory())
             {
-                var learnersList = await ilrContext.Learners
-                                                .Include(x => x.LearningDeliveries).ThenInclude(y => y.AppFinRecords)
-                                                .Include(x => x.LearnerEmploymentStatuses)
-                                                .Where(x => x.UKPRN == ukPrn &&
-                                                            x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel) &&
-                                                            x.LearningDeliveries.Any(y => y.AppFinRecords.Any(z => z.AFinType.Equals(Constants.Generics.PMR) &&
-                                                                                                                   z.LearnRefNumber.Equals(x.LearnRefNumber))))
-                    .Select(learner => new LearnerInfo()
-                    {
-                        LearnRefNumber = learner.LearnRefNumber,
-                        LearningDeliveries = learner.LearningDeliveries.Select(x => new LearningDeliveryInfo()
+                var learners = await ilrContext
+                    .Learners
+                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(ld => ld.FundModel == 36 && ld.LearnAimRef == "ZPROG001"))
+                    .Select(learner =>
+                        new LearnerInfo()
                         {
-                            UKPRN = ukPrn,
-                            LearnRefNumber = x.LearnRefNumber,
-                            LearnAimRef = x.LearnAimRef,
-                            AimType = x.AimType,
-                            AimSeqNumber = x.AimSeqNumber,
-                            LearnStartDate = x.LearnStartDate,
-                            // Note: Payments default to zero instead of null for no value so we need to cater for that here so that joins work correctly
-                            ProgType = x.ProgType ?? 0,
-                            StdCode = x.StdCode ?? 0,
-                            FworkCode = x.FworkCode ?? 0,
-                            PwayCode = x.PwayCode ?? 0,
-                            SWSupAimId = x.SWSupAimId,
-                            AppFinRecords = x.AppFinRecords.Select(y => new AppFinRecordInfo()
+                            LearnRefNumber = learner.LearnRefNumber,
+                            LearningDeliveries = learner
+                                .LearningDeliveries
+                                .Where(ld => ld.FundModel == 36 && ld.LearnAimRef == "ZPROG001")
+                                .Select(x => new LearningDeliveryInfo()
+                                {
+                                    UKPRN = ukPrn,
+                                    LearnRefNumber = x.LearnRefNumber,
+                                    LearnAimRef = x.LearnAimRef,
+                                    AimType = x.AimType,
+                                    AimSeqNumber = x.AimSeqNumber,
+                                    LearnStartDate = x.LearnStartDate,
+                                    FundModel = x.FundModel,
+                                    // Note: Payments default to zero instead of null for no value so we need to cater for that here so that joins work correctly
+                                    ProgType = x.ProgType ?? 0,
+                                    StdCode = x.StdCode ?? 0,
+                                    FworkCode = x.FworkCode ?? 0,
+                                    PwayCode = x.PwayCode ?? 0,
+                                    SWSupAimId = x.SWSupAimId,
+                                    AppFinRecords = x.AppFinRecords
+                                        .Where(afr => afr.AFinType == "PMR")
+                                        .Select(y => new AppFinRecordInfo()
+                                        {
+                                            LearnRefNumber = y.LearnRefNumber,
+                                            AimSeqNumber = y.AimSeqNumber,
+                                            AFinType = y.AFinType,
+                                            AFinCode = y.AFinCode,
+                                            AFinDate = y.AFinDate,
+                                            AFinAmount = y.AFinAmount
+                                        }).ToList(),
+                                    LearningDeliveryFAMs = x.LearningDeliveryFAMs
+                                        .Where(fam => fam.LearnDelFAMType == "LDM")
+                                        .Select(y => new LearningDeliveryFAM()
+                                        {
+                                            UKPRN = y.UKPRN,
+                                            LearnRefNumber = y.LearnRefNumber,
+                                            AimSeqNumber = y.AimSeqNumber,
+                                            LearnDelFAMType = y.LearnDelFAMType,
+                                            LearnDelFAMCode = y.LearnDelFAMCode
+                                        }).ToList(),
+                                }).ToList(),
+                            LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
                             {
-                                LearnRefNumber = y.LearnRefNumber,
-                                AimSeqNumber = y.AimSeqNumber,
-                                AFinType = y.AFinType,
-                                AFinCode = y.AFinCode,
-                                AFinDate = y.AFinDate,
-                                AFinAmount = y.AFinAmount
-                            }).ToList(),
-                            LearningDeliveryFAMs = x.LearningDeliveryFAMs.Select(y => new LearningDeliveryFAM()
-                            {
-                                UKPRN = y.UKPRN,
-                                LearnRefNumber = y.LearnRefNumber,
-                                AimSeqNumber = y.AimSeqNumber,
-                                LearnDelFAMType = y.LearnDelFAMType,
-                                LearnDelFAMCode = y.LearnDelFAMCode
-                            }).ToList(),
-                        }).ToList(),
-                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x => new LearnerEmploymentStatusInfo()
-                        {
-                            LearnRefNumber = x.LearnRefNumber,
-                            DateEmpStatApp = x.DateEmpStatApp,
-                            EmpId = x.EmpId
-                        }).ToList()
-                    }).ToListAsync(cancellationToken);
-                appsCoInvestmentIlrInfo.Learners.AddRange(learnersList);
+                                LearnRefNumber = x.LearnRefNumber,
+                                DateEmpStatApp = x.DateEmpStatApp,
+                                EmpId = x.EmpId
+                            }).ToList()
+                        }).ToListAsync(cancellationToken);
+
+                appsCoInvestmentIlrInfo.Learners = learners;
             }
 
             return appsCoInvestmentIlrInfo;
+        }
+
+        public async Task<List<AppsCoInvestmentRecordKey>> GetUniqueAppsCoInvestmentRecordKeysAsync(int ukprn, CancellationToken cancellationToken)
+        {
+            using (var context = _ilrValidContextFactory())
+            {
+                return await context
+                    .LearningDeliveries
+                    .Where(ld => ld.UKPRN == ukprn && ld.LearnAimRef == "ZPROG001")
+                    .GroupBy(ld =>
+                    new
+                    {
+                        ld.LearnRefNumber,
+                        ld.LearnStartDate,
+                        ProgType = ld.ProgType ?? 0,
+                        StdCode = ld.StdCode ?? 0,
+                        FworkCode = ld.FworkCode ?? 0,
+                        PwayCode = ld.PwayCode ?? 0,
+                    })
+                    .Select(
+                        g =>
+                        new AppsCoInvestmentRecordKey(
+                            g.Key.LearnRefNumber,
+                            g.Key.LearnStartDate,
+                            g.Key.ProgType,
+                            g.Key.StdCode,
+                            g.Key.FworkCode,
+                            g.Key.PwayCode))
+                    .ToListAsync(cancellationToken);
+            }
         }
 
         public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)

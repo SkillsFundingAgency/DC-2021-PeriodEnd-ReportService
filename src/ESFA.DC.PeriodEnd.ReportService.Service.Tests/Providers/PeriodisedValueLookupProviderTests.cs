@@ -56,7 +56,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Providers
             var builder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
             builder.UseSqlServer(ConnectionString);
 
-            return new PeriodisedValuesLookupProviderService(() => new ILR1920_DataStoreEntities(builder.Options));
+            return new PeriodisedValuesLookupProviderService(() => new ILR1920_DataStoreEntities(builder.Options), null, null);
         }
     }
 }

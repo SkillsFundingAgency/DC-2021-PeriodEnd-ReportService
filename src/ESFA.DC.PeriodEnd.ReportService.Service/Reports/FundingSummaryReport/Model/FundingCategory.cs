@@ -6,12 +6,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingCategory : IFundingCategory
     {
-        public FundingCategory(string fundingCategoryTitle, byte currentPeriod, List<IFundingSubCategory>fundingSubCategories, string note = null)
+        public FundingCategory(string fundingCategoryTitle, byte currentPeriod, List<IFundingSubCategory> fundingSubCategories, string contractAllocationNumber, string note = null)
         {
             FundingCategoryTitle = fundingCategoryTitle;
             CurrentPeriod = currentPeriod;
             FundingSubCategories = fundingSubCategories ?? new List<IFundingSubCategory>();
             Note = note;
+            ContractAllocationNumber = contractAllocationNumber;
         }
 
         public List<IFundingSubCategory> FundingSubCategories { get; }
@@ -21,8 +22,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         public string Title => $"Total {FundingCategoryTitle} (£)";
 
         public byte CurrentPeriod { get; }
-
-        public string ContractAllocationNumber { get;  }
 
         public string CumulativeFundingCategoryTitle => $"Total {FundingCategoryTitle} Cumulative (£)";
 
@@ -83,5 +82,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         public decimal CumulativePeriod12 => CumulativePeriod11 + Period12;
 
         public string Note { get; }
+
+        public string ContractAllocationNumber { get; }
     }
 }

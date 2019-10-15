@@ -73,11 +73,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
             foreach (var fundingSubCategory in fundingCategory.FundingSubCategories)
             {
-                RenderFundingSubCategory(worksheet, fundingSubCategory);
+                RenderFundingSubCategory(worksheet, fundingSubCategory, fundingCategory.ContractAllocationNumber);
             }
 
             row = NextRow(worksheet) + 1;
-            RenderFundingSummaryReportRow(worksheet, row, fundingCategory);
+            RenderFundingSummaryReportRow(worksheet, row, fundingCategory, fundingCategory.ContractAllocationNumber);
             ApplyStyleToRow(worksheet, row, _fundingCategoryStyle);
             ApplyFutureMonthStyleToRow(worksheet, row, fundingCategory.CurrentPeriod);
 
@@ -121,12 +121,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             return worksheet;
         }
 
-        private Worksheet RenderFundingSummaryReportRow(Worksheet worksheet, int row, IFundingSummaryReportRow fundingSummaryReportRow)
+        private Worksheet RenderFundingSummaryReportRow(Worksheet worksheet, int row, IFundingSummaryReportRow fundingSummaryReportRow, string contractAllocationNumber)
         {
             worksheet.Cells.ImportObjectArray(
             new object[]
             {
-                fundingSummaryReportRow.ContractAllocationNumber,
+                contractAllocationNumber,
                 fundingSummaryReportRow.Title,
                 fundingSummaryReportRow.Period1,
                 fundingSummaryReportRow.Period2,
@@ -149,7 +149,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             return worksheet;
         }
 
-        private Worksheet RenderFundingSubCategory(Worksheet worksheet, IFundingSubCategory fundingSubCategory)
+        private Worksheet RenderFundingSubCategory(Worksheet worksheet, IFundingSubCategory fundingSubCategory, string contractAllocationNumber)
         {
             var row = NextRow(worksheet) + 1;
 
@@ -180,28 +180,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
             foreach (var fundLineGroup in fundingSubCategory.FundLineGroups)
             {
-                RenderFundLineGroup(worksheet, fundLineGroup, renderFundLineGroupTotals);
+                RenderFundLineGroup(worksheet, fundLineGroup, renderFundLineGroupTotals, contractAllocationNumber);
             }
 
             row = NextRow(worksheet);
-            RenderFundingSummaryReportRow(worksheet, row, fundingSubCategory);
+            RenderFundingSummaryReportRow(worksheet, row, fundingSubCategory, contractAllocationNumber);
             ApplyStyleToRow(worksheet, row, _fundingSubCategoryStyle);
             ApplyFutureMonthStyleToRow(worksheet, row, fundingSubCategory.CurrentPeriod);
 
             return worksheet;
         }
 
-        private Worksheet RenderFundLineGroup(Worksheet worksheet, IFundLineGroup fundLineGroup, bool renderFundLineGroupTotal)
+        private Worksheet RenderFundLineGroup(Worksheet worksheet, IFundLineGroup fundLineGroup, bool renderFundLineGroupTotal, string contractAllocationNumber)
         {
             foreach (var fundLine in fundLineGroup.FundLines)
             {
-                RenderFundLine(worksheet, fundLine);
+                RenderFundLine(worksheet, fundLine, contractAllocationNumber);
             }
 
             if (renderFundLineGroupTotal)
             {
                 var row = NextRow(worksheet);
-                RenderFundingSummaryReportRow(worksheet, row, fundLineGroup);
+                RenderFundingSummaryReportRow(worksheet, row, fundLineGroup, contractAllocationNumber);
                 ApplyStyleToRow(worksheet, row, _fundLineGroupStyle);
                 ApplyFutureMonthStyleToRow(worksheet, row, fundLineGroup.CurrentPeriod);
             }
@@ -209,11 +209,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             return worksheet;
         }
 
-        private Worksheet RenderFundLine(Worksheet worksheet, IFundLine fundLine)
+        private Worksheet RenderFundLine(Worksheet worksheet, IFundLine fundLine, string contractAllocationNumber)
         {
             var row = NextRow(worksheet);
 
-            RenderFundingSummaryReportRow(worksheet, row, fundLine);
+            RenderFundingSummaryReportRow(worksheet, row, fundLine, contractAllocationNumber);
             ApplyFutureMonthStyleToRow(worksheet, row, fundLine.CurrentPeriod);
 
             return worksheet;

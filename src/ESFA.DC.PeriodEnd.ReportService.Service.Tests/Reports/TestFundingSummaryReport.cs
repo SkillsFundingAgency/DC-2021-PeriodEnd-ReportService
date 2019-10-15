@@ -74,11 +74,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         {
             var container = "Output";
             var cancellationToken = CancellationToken.None;
+            var ukprn = 10005788;
+
+            var fcsService = new Mock<IFCSProviderService>();
+            fcsService.Setup(f => f.GetContractAllocationNumberFSPCodeLookupAsync(ukprn, cancellationToken)).ReturnsAsync(new Dictionary<string, string>());
 
             var reportServiceContextMock = new Mock<IReportServiceContext>();
-            var periodisedValuesLookupProvider = PeriodisedValueLookupProviderTests.NewService(); //new Mock<IPeriodisedValuesLookupProviderService>();
-
-            //periodisedValuesLookupProvider.Setup(p => p.ProvideAsync(reportServiceContextMock.Object, cancellationToken)).ReturnsAsync(new PeriodisedValuesLookup());
+            var periodisedValuesLookupProvider = //PeriodisedValueLookupProviderTests.NewService(); new Mock<IPeriodisedValuesLookupProviderService>();
+                new Mock<IPeriodisedValuesLookupProviderService>();
+            periodisedValuesLookupProvider.Setup(p => p.ProvideAsync(reportServiceContextMock.Object, cancellationToken)).ReturnsAsync(new PeriodisedValuesLookup());
 
             var fundingSummaryReportModelBuilder = new FundingSummaryReportModelBuilder();
 
@@ -103,7 +107,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 fundingSummaryReportModelBuilder,
                 excelService,
                 fundingSummaryReportRenderService,
-                periodisedValuesLookupProvider);
+                periodisedValuesLookupProvider.Object,
+                fcsService.Object);
 
             excelService.ApplyLicense();
 
@@ -123,7 +128,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             IFundingSummaryReportModelBuilder fundingSummaryReportModelBuilder = null,
             IExcelService excelService = null,
             IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService = null,
-            IPeriodisedValuesLookupProviderService periodisedValuesLookupProviderService = null)
+            IPeriodisedValuesLookupProviderService periodisedValuesLookupProviderService = null,
+            IFCSProviderService fcsProviderService = null)
         {
             return new FundingSummaryReport(
                 logger,
@@ -132,7 +138,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 fundingSummaryReportModelBuilder,
                 excelService,
                 fundingSummaryReportRenderService,
-                periodisedValuesLookupProviderService);
+                periodisedValuesLookupProviderService,
+                fcsProviderService);
         }
     }
 }

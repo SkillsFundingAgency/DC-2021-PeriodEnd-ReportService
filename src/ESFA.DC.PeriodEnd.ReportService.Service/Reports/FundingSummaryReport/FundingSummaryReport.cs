@@ -21,6 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private readonly IExcelService _excelService;
         private readonly IRenderService<IFundingSummaryReport> _fundingSummaryReportRenderService;
         private readonly IPeriodisedValuesLookupProviderService _periodisedValuesLookupProvider;
+        private readonly IFCSProviderService _fcsProviderService;
         private readonly IFundingSummaryReportModelBuilder _modelBuilder;
 
         public FundingSummaryReport(
@@ -30,7 +31,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             IFundingSummaryReportModelBuilder modelBuilder,
             IExcelService excelService,
             IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService,
-            IPeriodisedValuesLookupProviderService periodisedValuesLookupProvider)
+            IPeriodisedValuesLookupProviderService periodisedValuesLookupProvider,
+            IFCSProviderService fcsProviderService)
             : base(
                 dateTimeProvider,
                 null,
@@ -41,6 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             _excelService = excelService;
             _fundingSummaryReportRenderService = fundingSummaryReportRenderService;
             _periodisedValuesLookupProvider = periodisedValuesLookupProvider;
+            _fcsProviderService = fcsProviderService;
         }
 
         public override string ReportFileName => "Funding Summary Report";
@@ -55,9 +58,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
+            var fcsLookup = await _fcsProviderService.GetContractAllocationNumberFSPCodeLookupAsync(reportServiceContext.Ukprn, cancellationToken);
             var periodisedValuesLookup = await _periodisedValuesLookupProvider.ProvideAsync(reportServiceContext, cancellationToken);
 
-            var model = _modelBuilder.BuildFundingSummaryReportModel(reportServiceContext, periodisedValuesLookup);
+            var model = _modelBuilder.BuildFundingSummaryReportModel(reportServiceContext, periodisedValuesLookup, fcsLookup);
 
             using (var workbook = _excelService.NewWorkbook())
             {

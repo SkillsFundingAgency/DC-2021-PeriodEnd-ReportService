@@ -1,20 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
-    public class JobQueueManagerProviderService : IJobQueueManagerProviderService
+    public sealed class JobQueueManagerProviderService : IJobQueueManagerProviderService
     {
         private readonly Func<IJobQueueDataContext> _jobQueueDataFactory;
 
@@ -38,32 +36,38 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _jobQueueDataFactory = jobQueueDataFactory;
         }
 
-        public async Task<IEnumerable<long>> GetExpectedReturnersUKPRNsAsync(
-            string collectionName,
-            int returnPeriod,
-            IEnumerable<ReturnPeriod> returnPeriods,
+        public async Task<int> GetCollectionIdAsync(string collectionType, CancellationToken cancellationToken)
+        {
+            using (var jobQueueDataContext = _jobQueueDataFactory())
+            {
+                return (await jobQueueDataContext.Collection
+                    .Include(x => x.ReturnPeriod)
+                    .SingleAsync(x => x.Name == collectionType, cancellationToken)).CollectionId;
+            }
+        }
+
+        public async Task<IEnumerable<OrganisationCollectionModel>> GetExpectedReturnersUKPRNsAsync(
+            int collectionId,
             CancellationToken cancellationToken)
         {
-            ReturnPeriod returnPeriodForCollection = returnPeriods.Single(x => x.PeriodNumber == returnPeriod);
-
             using (var jobQueueDataContext = _jobQueueDataFactory())
             {
                 return await jobQueueDataContext.OrganisationCollection
                     .Include(x => x.Organisation)
-                    .Include(x => x.Collection)
-                    .Where(x => x.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase) &&
-                                x.StartDateTimeUtc <= returnPeriodForCollection.StartDateTimeUtc &&
-                                x.EndDateTimeUtc >= returnPeriodForCollection.EndDateTimeUtc)
-                    .Select(x => x.Organisation.Ukprn)
-                    .Distinct()
+                    .Where(x => x.CollectionId == collectionId)
+                    .Select(x => new OrganisationCollectionModel
+                    {
+                        End = x.EndDateTimeUtc,
+                        Start = x.StartDateTimeUtc,
+                        Ukprn = x.Organisation.Ukprn
+                    })
                     .ToListAsync(cancellationToken);
             }
         }
 
         public async Task<IEnumerable<long>> GetActualReturnersUKPRNsAsync(
-            string collectionName,
+            int collectionId,
             int returnPeriod,
-            IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken)
         {
             using (var jobQueueDataContext = _jobQueueDataFactory())
@@ -71,9 +75,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 return await jobQueueDataContext.FileUploadJobMetaData
                     .Include(x => x.Job)
                     .ThenInclude(x => x.Collection)
-                    .Where(x => x.Job.Collection.Name.Equals(collectionName, StringComparison.OrdinalIgnoreCase) &&
-                        x.PeriodNumber == returnPeriod &&
-                        x.Job.Ukprn.HasValue)
+                    .Where(x => x.Job.CollectionId == collectionId
+                                && x.PeriodNumber == returnPeriod
+                                && x.Job.Ukprn.HasValue
+                                && x.Job.Status == 4)
                     .Select(x => x.Job.Ukprn.Value)
                     .Distinct()
                     .ToListAsync(cancellationToken);

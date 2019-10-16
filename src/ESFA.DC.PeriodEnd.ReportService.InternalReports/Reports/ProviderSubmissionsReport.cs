@@ -4,17 +4,16 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using Aspose.Cells;
-using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.ReferenceData.Organisations.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {
@@ -58,34 +57,38 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         public override async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             _logger.LogInfo($"In {ReportFileName} report.");
-            List<long> ukprns = new List<long>();
-
-            IEnumerable<ReturnPeriod> returnPeriodsAdjusted = reportServiceContext.ILRPeriodsAdjustedTimes;
 
             var externalFileName = GetFilename(reportServiceContext);
 
-            IEnumerable<FileDetail> fileDetails = await _ilrPeriodEndProviderService
-                .GetFileDetailsLatestSubmittedAsync(cancellationToken);
+            List<ProviderSubmissionModel> fileDetails = (await _ilrPeriodEndProviderService
+                .GetFileDetailsLatestSubmittedAsync(cancellationToken)).ToList();
 
-            IEnumerable<long> ukPrns = fileDetails.Select(x => (long)x.UKPRN).Distinct();
-            IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukPrns.ToList(), cancellationToken);
+            int collectionId = await _jobQueueManagerProviderService.GetCollectionIdAsync(
+                reportServiceContext.CollectionName,
+                cancellationToken);
 
-            IEnumerable<long> expectedReturners = await _jobQueueManagerProviderService
+            List<OrganisationCollectionModel> expectedReturners = (await _jobQueueManagerProviderService
                 .GetExpectedReturnersUKPRNsAsync(
-                    reportServiceContext.CollectionName,
-                    reportServiceContext.ReturnPeriod,
-                    returnPeriodsAdjusted,
-                    cancellationToken);
+                    collectionId,
+                    cancellationToken)).ToList();
 
             IEnumerable<long> actualReturners = await _jobQueueManagerProviderService
                 .GetActualReturnersUKPRNsAsync(
-                    reportServiceContext.CollectionName,
+                    collectionId,
                     reportServiceContext.ReturnPeriod,
-                    returnPeriodsAdjusted,
                     cancellationToken);
 
+            IEnumerable<long> ukPrns = expectedReturners.Select(x => x.Ukprn).Distinct();
+            IEnumerable<OrgModel> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukPrns.ToList(), cancellationToken);
+
             IEnumerable<ProviderSubmissionModel> providerSubmissionsModel = _providerSubmissionsModelBuilder
-                .BuildModel(fileDetails, orgDetails, expectedReturners, actualReturners, returnPeriodsAdjusted);
+                .BuildModel(
+                    fileDetails,
+                    orgDetails,
+                    expectedReturners,
+                    actualReturners,
+                    reportServiceContext.ILRPeriodsAdjustedTimes,
+                    reportServiceContext.ReturnPeriod);
 
             Workbook providerSubmissionWorkbook = GenerateWorkbook(
                 reportServiceContext.ReturnPeriod,

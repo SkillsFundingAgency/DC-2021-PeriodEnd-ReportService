@@ -8,6 +8,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
@@ -17,7 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 
         Task<IEnumerable<FileDetail>> GetFileDetailsAsync(CancellationToken cancellationToken);
 
-        Task<IEnumerable<FileDetail>> GetFileDetailsLatestSubmittedAsync(CancellationToken cancellationToken);
+        Task<IEnumerable<ProviderSubmissionModel>> GetFileDetailsLatestSubmittedAsync(
+            CancellationToken cancellationToken);
 
         Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 

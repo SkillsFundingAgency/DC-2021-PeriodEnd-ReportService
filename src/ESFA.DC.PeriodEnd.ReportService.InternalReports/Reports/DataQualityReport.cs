@@ -13,7 +13,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
-using ESFA.DC.ReferenceData.Organisations.Model;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {
@@ -76,7 +76,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 CancellationToken.None)).ToList();
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
 
-            IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);
+            IEnumerable<OrgModel> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);
             foreach (var org in orgDetails)
             {
                 var valid = providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn);

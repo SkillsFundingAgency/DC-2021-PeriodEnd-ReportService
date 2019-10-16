@@ -10,7 +10,6 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
-using ESFA.DC.ReferenceData.Organisations.Model;
 using FluentAssertions;
 using Moq;
 using System;
@@ -19,6 +18,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using Xunit;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
@@ -185,11 +185,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             };
         }
 
-        private List<OrgDetail> BuildOrgModel(int ukprn)
+        private List<OrgModel> BuildOrgModel(int ukprn)
         {
-            return new List<OrgDetail>()
+            return new List<OrgModel>()
             {
-                new OrgDetail()
+                new OrgModel()
                 {
                     Ukprn = ukprn,
                     Name = "WOODSPEEN TRAINING LIMITED",

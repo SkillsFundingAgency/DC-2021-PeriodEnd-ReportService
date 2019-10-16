@@ -15,6 +15,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
 
@@ -49,20 +50,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
-        public async Task<IEnumerable<FileDetail>> GetFileDetailsLatestSubmittedAsync(
+        public async Task<IEnumerable<ProviderSubmissionModel>> GetFileDetailsLatestSubmittedAsync(
             CancellationToken cancellationToken)
         {
-            IEnumerable<FileDetail> fileDetails = await GetFileDetailsAsync(cancellationToken);
+            using (var ilrContext = _ilrContextFactory())
+            {
+                List<long> fd = await ilrContext.FileDetails
+                    .Where(x => x.Success == true)
+                    .GroupBy(x => x.UKPRN)
+                    .Select(x => x.Max(y => y.ID))
+                    .ToListAsync(cancellationToken);
 
-            var latestFilesSubmitted = fileDetails
-                .Where(x => x.Success == true)
-                .GroupBy(x => x.UKPRN)
-                .Select(x => x.Max(y => y.ID))
-                .ToList();
-
-            return fileDetails
-                .Join(latestFilesSubmitted, l => l.ID, f => f, (fd, lfs) => fd)
-                .ToList();
+                return await ilrContext.FileDetails.Where(x => fd.Contains(x.ID))
+                    .Select(x => new ProviderSubmissionModel
+                    {
+                        Ukprn = x.UKPRN,
+                        SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
+                        TotalErrors = x.TotalErrorCount.GetValueOrDefault(),
+                        TotalInvalid = x.TotalInvalidLearnersSubmitted.GetValueOrDefault(),
+                        TotalValid = x.TotalValidLearnersSubmitted.GetValueOrDefault(),
+                        TotalWarnings = x.TotalWarningCount.GetValueOrDefault()
+                    })
+                    .ToListAsync(cancellationToken);
+            }
         }
 
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)

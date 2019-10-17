@@ -14,6 +14,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
@@ -29,14 +30,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
     public sealed class TestAppsAdditionalPaymentsReport
     {
         [Theory]
-        [InlineData("employer1", "employer1", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData(null, "", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "A12345", "zprog001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "a12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "zprog001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "ZPROG001", "t180400007")]
+        [InlineData("EMPLOYER2", "EMPLOYER2", "A12345", "ZPROG001", "A12345", "ZPROG001", "T100", "T200")]
         public async Task TestAppsAdditionalPaymentsReportGeneration(
             string employerName,
             string employerNameExpected,
@@ -44,7 +38,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             string ilrLearnAimRef,
             string dasLearnRefNumber,
             string dasLearnAimRef,
-            string provSpecLearnMonOccur)
+            string provSpecLearnMonOccurA,
+            string provSpecLearnMonOccurB)
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
@@ -67,7 +62,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
 
-            var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn, ilrLearnRefNumber, ilrLearnAimRef, provSpecLearnMonOccur);
+            var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn, ilrLearnRefNumber, ilrLearnAimRef, provSpecLearnMonOccurA, provSpecLearnMonOccurB);
             var appsAdditionalPaymentRulebaseInfo = BuildFm36Model(ukPrn);
             var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName, dasLearnRefNumber, dasLearnAimRef);
 
@@ -106,16 +101,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             result.Should().NotBeNullOrEmpty();
             result.Count().Should().Be(1);
-            result.First().AprilEarnings.Should().Be(180);
-            result.First().JulyEarnings.Should().Be(240);
-            result.First().DecemberEarnings.Should().Be(100);
-            result.First().TotalEarnings.Should().Be(1560);
+            result.First().AugustEarnings.Should().Be(40);
+            result.First().JulyEarnings.Should().Be(0);
+            result.First().TotalEarnings.Should().Be(40);
             result.First().TotalPaymentsYearToDate.Should().Be(20);
             result.First().UniqueLearnerNumber.Should().Be(12345);
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
-        private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccur)
+        private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccurA, string provSpecLearnMonOccurB)
         {
             return new AppsAdditionalPaymentILRInfo()
             {
@@ -151,14 +145,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 UKPRN = ukPrn,
                                 LearnRefNumber = "1",
                                 ProvSpecLearnMon = "A",
-                                ProvSpecLearnMonOccur = provSpecLearnMonOccur
+                                ProvSpecLearnMonOccur = provSpecLearnMonOccurA
                             },
                             new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
                             {
                                 UKPRN = ukPrn,
                                 LearnRefNumber = "1",
                                 ProvSpecLearnMon = "B",
-                                ProvSpecLearnMonOccur = "150563"
+                                ProvSpecLearnMonOccur = provSpecLearnMonOccurB
                             }
                         }
                 }
@@ -175,24 +169,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 AECApprenticeshipPriceEpisodePeriodisedValues =
                     new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>()
                     {
-                    new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = "A12345",
-                        AimSeqNumber = 1,
-                        PriceEpisodeIdentifier = "1",
-                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
-                        AttributeName = "PriceEpisodeFirstEmp1618Pay"
-                    },
-                    new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = "A12345",
-                        AimSeqNumber = 1,
-                        PriceEpisodeIdentifier = "1",
-                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
-                        AttributeName = "PriceEpisodeSecondProv1618Pay"
-                    }
+                        new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                        {
+                            UKPRN = ukPrn,
+                            LearnRefNumber = "A12345",
+                            AimSeqNumber = 1,
+                            PriceEpisodeIdentifier = "1",
+                            Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                            AttributeName = "PriceEpisodeFirstEmp1618Pay"
+                        },
+                        new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                        {
+                            UKPRN = ukPrn,
+                            LearnRefNumber = "A12345",
+                            AimSeqNumber = 1,
+                            PriceEpisodeIdentifier = "1",
+                            Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                            AttributeName = "PriceEpisodeSecondProv1618Pay"
+                        }
                     }
             };
         }

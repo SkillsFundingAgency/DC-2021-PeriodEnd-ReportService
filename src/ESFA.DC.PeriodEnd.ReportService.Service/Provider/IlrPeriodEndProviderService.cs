@@ -4,7 +4,6 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CollectionsManagement.Models;
-using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
@@ -23,7 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public sealed class IlrPeriodEndProviderService : AbstractFundModelProviderService, IIlrPeriodEndProviderService
     {
-        private const int ApprentishipsFundModel = 36;
+        private const int ApprenticeshipsFundModel = 36;
         private readonly Func<IIlr1920RulebaseContext> _ilrContextFactory;
         private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
         private readonly Func<IIlr1920InvalidContext> _ilrInValidContextFactory;
@@ -40,12 +39,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _ilrInValidContextFactory = ilrInValidContextFactory;
         }
 
-        public async Task<IEnumerable<FileDetail>> GetFileDetailsAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<FileDetailModel>> GetFileDetailsAsync(CancellationToken cancellationToken)
         {
             using (var ilrContext = _ilrContextFactory())
             {
                 return await ilrContext
                     .FileDetails
+                    .Where(x => x.Success == true)
+                    .Select(x => new FileDetailModel
+                    {
+                        Ukprn = x.UKPRN,
+                        Filename = x.Filename,
+                        SubmittedTime = x.SubmittedTime
+                    })
                     .ToListAsync(cancellationToken);
             }
         }
@@ -98,7 +104,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .Include(x => x.ProviderSpecLearnerMonitorings)
                         .Include(x => x.LearnerEmploymentStatuses)
                         .Where(x => x.UKPRN == ukPrn &&
-                                    x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                                    x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
                         .ToListAsync(cancellationToken);
                 }
 
@@ -205,7 +211,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 learnersList = await ilrContext.Learners
                     .Include(x => x.LearningDeliveries)
                     .Include(x => x.ProviderSpecLearnerMonitorings)
-                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
                     .ToListAsync(cancellationToken);
             }
 
@@ -246,17 +252,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetail> fileDetails,
+            IEnumerable<FileDetailModel> fileDetails,
             CancellationToken cancellationToken)
         {
             List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
             List<FilePeriodInfo> fd;
 
             fd = fileDetails
-                .Where(x => x.Success == true)
                 .Select(f => new FilePeriodInfo
                 {
-                    UKPRN = f.UKPRN,
+                    UKPRN = f.Ukprn,
                     Filename = f.Filename,
                     PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods)
                 }).ToList();
@@ -334,7 +339,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top20RuleViolationsList;
         }
 
-        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetailModel> fileDetails, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -350,8 +355,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             List<ProviderWithoutValidLearners>
                 providersWithoutValidLearnersList = fileDetails
-                    .Where(x => !validLearnerUkprns.Contains(x.UKPRN))
-                    .GroupBy(x => x.UKPRN)
+                    .Where(x => !validLearnerUkprns.Contains(x.Ukprn))
+                    .GroupBy(x => x.Ukprn)
                     .Select(x => new ProviderWithoutValidLearners
                     {
                         Ukprn = x.Key,
@@ -366,7 +371,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetail> fileDetails,
+            IEnumerable<FileDetailModel> fileDetails,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

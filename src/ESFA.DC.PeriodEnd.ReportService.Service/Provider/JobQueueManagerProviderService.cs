@@ -78,7 +78,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Where(x => x.Job.CollectionId == collectionId
                                 && x.PeriodNumber == returnPeriod
                                 && x.Job.Ukprn.HasValue
-                                && x.Job.Status == 4)
+                                && x.Job.Status == JobQueue.Status.Completed)
                     .Select(x => x.Job.Ukprn.Value)
                     .Distinct()
                     .ToListAsync(cancellationToken);

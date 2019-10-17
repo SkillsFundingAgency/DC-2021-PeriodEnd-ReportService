@@ -1,7 +1,6 @@
 ﻿using Aspose.Cells;
 using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -65,7 +64,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                 .Returns(Task.CompletedTask);
 
             var orgInfo = BuildOrgModel(ukPrn);
-            var periodReturnInfo = BuildReturnPeriodsModel();
             var fileDetails = BuildFileDetailsModel();
             var dataQualityReturningInfo = BuilDataQualityReturningModel();
             var top20RuleViolations = BuildTop20RuleViolationModel();
@@ -76,13 +74,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                 .ReturnsAsync(orgInfo);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetFileDetailsAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(fileDetails);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetail>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetailModel>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(dataQualityReturningInfo);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetTop20RuleViolationsAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(top20RuleViolations);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithoutValidLearners(It.IsAny<List<FileDetail>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithoutValidLearners(It.IsAny<List<FileDetailModel>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(providerWithoutValidLearner);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithInvalidLearners(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetail>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithInvalidLearners(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetailModel>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(providerWithInValidLearner);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
@@ -109,15 +107,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             wb.Worksheets[0].Name.Should().Be("Data Quality");
         }
 
-        private IEnumerable<FileDetail> BuildFileDetailsModel()
+        private IEnumerable<FileDetailModel> BuildFileDetailsModel()
         {
-            return new List<FileDetail>()
+            return new List<FileDetailModel>
             {
-                new FileDetail()
+                new FileDetailModel
                 {
-                     ID = 12,
                      Filename = "10006341/ILR-10006341-1920-20190805-110110-35.XML",
-                     Success = true,
                      SubmittedTime = new DateTime(2019, 05, 01)
                 }
             };
@@ -125,9 +121,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private List<RuleViolationsInfo> BuildTop20RuleViolationModel()
         {
-            return new List<RuleViolationsInfo>()
+            return new List<RuleViolationsInfo>
             {
-                new RuleViolationsInfo()
+                new RuleViolationsInfo
                 {
                     RuleName = "LearnStartDate_16",
                     ErrorMessage = "The Learning start date must not be before the start date of the contract",
@@ -140,9 +136,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private IEnumerable<Top10ProvidersWithInvalidLearners> BuildProviderWithInvalidLearnerModel(int ukPrn)
         {
-            return new List<Top10ProvidersWithInvalidLearners>()
+            return new List<Top10ProvidersWithInvalidLearners>
             {
-                new Top10ProvidersWithInvalidLearners()
+                new Top10ProvidersWithInvalidLearners
                 {
                     Ukprn = ukPrn,
                     Name = "AMERSHAM & WYCOMBE COLLEGE",
@@ -158,9 +154,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private IEnumerable<ProviderWithoutValidLearners> BuildProviderWithoutValidLearnerModel(int ukprn)
         {
-            return new List<ProviderWithoutValidLearners>()
+            return new List<ProviderWithoutValidLearners>
             {
-                new ProviderWithoutValidLearners()
+                new ProviderWithoutValidLearners
                 {
                     Ukprn = ukprn,
                     Name = "AMERSHAM & WYCOMBE COLLEGE",
@@ -171,9 +167,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private IEnumerable<DataQualityReturningProviders> BuilDataQualityReturningModel()
         {
-            return new List<DataQualityReturningProviders>()
+            return new List<DataQualityReturningProviders>
             {
-                new DataQualityReturningProviders()
+                new DataQualityReturningProviders
                 {
                     Collection = "R12",
                     Description = "Returning Providers per Period",
@@ -187,9 +183,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private List<OrgModel> BuildOrgModel(int ukprn)
         {
-            return new List<OrgModel>()
+            return new List<OrgModel>
             {
-                new OrgModel()
+                new OrgModel
                 {
                     Ukprn = ukprn,
                     Name = "WOODSPEEN TRAINING LIMITED",
@@ -200,9 +196,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private List<ReturnPeriod> BuildReturnPeriodsModel()
         {
-            return new List<ReturnPeriod>()
+            return new List<ReturnPeriod>
             {
-                new ReturnPeriod()
+                new ReturnPeriod
                     {
                         StartDateTimeUtc = new DateTime(2019, 05, 01, 13, 30, 00),
                         EndDateTimeUtc = new DateTime(2019, 05, 02, 15, 30, 45),

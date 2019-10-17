@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using Autofac;
 using Autofac.Features.AttributeFilters;
-using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.DateTimeProvider.Interface;
@@ -35,9 +34,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.InternalReports;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
@@ -297,6 +294,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<ProviderSubmissionsReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<CollectionStatsReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<ActCountReport>().As<IInternalReport>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)

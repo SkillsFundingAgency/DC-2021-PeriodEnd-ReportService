@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface
 {
@@ -20,6 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
             public const string DataQualityReport = "TaskGenerateDataQualityReport";
             public const string PeriodEndMetricsReport = "TaskGeneratePeriodEndMetricsReport";
             public const string ProviderSubmissionsReport = "TaskGenerateProviderSubmissionsReport";
+            public const string ActCountReport = "TaskGenerateActCountReportReport";
 
             public static IEnumerable<string> TasksList = new List<string>()
             {

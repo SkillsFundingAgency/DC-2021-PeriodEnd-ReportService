@@ -20,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.EmployerIdentifierAtStartOfLearning).Index(i++).Name("Employer identifier (ERN) at start of learning");
             Map(m => m.EmployerNameFromApprenticeshipService).Index(i++).Name("Employer name from apprenticeship service");
             Map(m => m.EmployerCoInvestmentPercentage).Index(i++).Name("Employer co-investment percentage");
-            Map(m => m.LearningStartDate).Index(i++).Name("Applicable programme start date");
+            Map(m => m.ApplicableProgrammeStartDate).Index(i++).Name("Applicable programme start date");
             Map(m => m.TotalPMRPreviousFundingYears).Index(i++).Name("Total employer contribution collected (PMR) in previous funding years");
             Map(m => m.TotalCoInvestmentDueFromEmployerInPreviousFundingYears).Index(i++).Name("Total co-investment (below band upper limit) due from employer in previous funding years");
             Map(m => m.TotalPMRThisFundingYear).Index(i++).Name("Total employer contribution collected (PMR) in this funding year");
@@ -28,7 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.PercentageOfCoInvestmentCollected).Index(i++).Name("Percentage of co-investment collected (for all funding years)");
             Map(m => m.LDM356Or361).Index(i++).Name("LDM 356 or 361?");
             Map(m => m.CompletionEarningThisFundingYear).Index(i++).Name("Completion earnings in this funding year");
-            Map(m => m.CompletionPaymentsThisFundingYear).Index(i++).Name("Completion payments in this funding year");
+            Map(m => m.CompletionPaymentsThisFundingYear).Index(i++).Name("Completion payments in this funding year (including employer co-investment)");
             Map(m => m.CoInvestmentDueFromEmployerForAugust).Index(i++).Name("Co-investment (below band upper limit) due from employer for August (R01)");
             Map(m => m.CoInvestmentDueFromEmployerForSeptember).Index(i++).Name("Co-investment (below band upper limit) due from employer for September (R02)");
             Map(m => m.CoInvestmentDueFromEmployerForOctober).Index(i++).Name("Co-investment (below band upper limit) due from employer for October (R03)");

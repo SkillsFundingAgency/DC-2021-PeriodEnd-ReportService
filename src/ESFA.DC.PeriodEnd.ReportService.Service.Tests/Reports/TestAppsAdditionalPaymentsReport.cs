@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
-            string filename = $"10036143 Apps Additional Payments Report {dateTime:yyyyMMdd-HHmmss}";
+            string filename = $"R01_10036143_10036143 Apps Additional Payments Report {dateTime:yyyyMMdd-HHmmss}";
             int ukPrn = 10036143;
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);
@@ -95,6 +95,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             using (var csvReader = new CsvReader(new StringReader(csv)))
             {
+                csvReader.Configuration.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = new[] { "dd/MM/yyyy" };
+                csvReader.Configuration.TypeConverterOptionsCache.GetOptions<DateTime?>().Formats = new[] { "dd/MM/yyyy" };
+
                 csvReader.Configuration.RegisterClassMap<AppsAdditionalPaymentsMapper>();
                 result = csvReader.GetRecords<AppsAdditionalPaymentsModel>().ToList();
             }

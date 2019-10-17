@@ -4,6 +4,7 @@ using System.Linq;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
@@ -11,13 +12,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 {
     public class AppsCoInvestmentContributionsModelBuilder : IAppsCoInvestmentContributionsModelBuilder
     {
-        private readonly int _fundingSource = 3;
-        private readonly int[] _transactionTypes =
+        private const int _fundingSource = 3;
+        private readonly HashSet<int> _transactionTypes = new HashSet<int>()
         {
             Constants.DASPayments.TransactionType.Learning_On_Programme,
             Constants.DASPayments.TransactionType.Completion,
             Constants.DASPayments.TransactionType.Balancing,
         };
+
+        private readonly DateTime _academicYearStart = new DateTime(2019, 8, 1);
+        private readonly DateTime _nextAcademicYearStart = new DateTime(2020, 8, 1);
 
         private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
         private readonly ILogger _logger;
@@ -31,9 +35,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             AppsCoInvestmentRulebaseInfo appsCoInvestmentRulebaseInfo,
             AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo,
+            List<AppsCoInvestmentRecordKey> paymentsAppsCoInvestmentUniqueKeys,
+            List<AppsCoInvestmentRecordKey> ilrAppsCoInvestmentUniqueKeys,
+            IDictionary<long, string> apprenticeshipIdLegalEntityNameDictionary,
             long jobId)
         {
-            string errorMessage = string.Empty;
+            string errorMessage;
 
             if (appsCoInvestmentIlrInfo == null || appsCoInvestmentIlrInfo.Learners == null)
             {
@@ -59,191 +66,360 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 throw new Exception(errorMessage);
             }
 
-            List<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels = new List<AppsCoInvestmentContributionsModel>();
+            var relevantLearnRefNumbers = GetRelevantLearners(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo).ToList();
 
-            /*
-             * Get a list of all the payments grouped by:
-             *   •	LearnerReferenceNumber
-             *   •	LearningStartDate
-             *   •	LearningAimProgrammeType
-             *   •	LearningAimStandardCode
-             *   •	LearningAimFrameworkCode
-             *   •	LearningAimPathwayCode
-             */
-            var paymentGroups = appsCoInvestmentPaymentsInfo.Payments
-                .GroupBy(x => new
+            var uniqueKeys = UnionKeys(relevantLearnRefNumbers, ilrAppsCoInvestmentUniqueKeys, paymentsAppsCoInvestmentUniqueKeys).ToList();
+
+            return uniqueKeys
+                .Where(r => FilterReportRows(appsCoInvestmentPaymentsInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentIlrInfo, r))
+                .Select(record =>
                 {
-                    x.LearnerReferenceNumber,
-                    x.LearningStartDate,
-                    x.LearningAimProgrammeType,
-                    x.LearningAimStandardCode,
-                    x.LearningAimFrameworkCode,
-                    x.LearningAimPathwayCode
-                }).Select(x => new
-                {
-                    x.Key.LearnerReferenceNumber,
-                    x.Key.LearningStartDate,
-                    x.Key.LearningAimProgrammeType,
-                    x.Key.LearningAimStandardCode,
-                    x.Key.LearningAimFrameworkCode,
-                    x.Key.LearningAimPathwayCode,
-                    PaymentInfoList = x.ToList()
-                })
-                .OrderBy(x => x.LearnerReferenceNumber)
-                .ThenBy(x => x.LearningStartDate)
-                .ThenBy(x => x.LearningAimProgrammeType)
-                .ThenBy(x => x.LearningAimStandardCode)
-                .ThenBy(x => x.LearningAimFrameworkCode)
-                .ThenBy(x => x.LearningAimPathwayCode).ToList();
+                    var paymentRecords = GetPaymentInfosForRecord(appsCoInvestmentPaymentsInfo, record).ToList();
+                    var learner = GetLearnerForRecord(appsCoInvestmentIlrInfo, record);
+                    var learningDelivery = GetLearningDeliveryForRecord(learner, record);
+                    var filteredPaymentRecords = FundingSourceAndTransactionTypeFilter(paymentRecords).ToList();
+                    var rulebaseLearningDelivery = GetRulebaseLearningDelivery(appsCoInvestmentRulebaseInfo, learningDelivery);
+                    var completedPaymentRecordsInCurrentYear = paymentRecords.Where(p => p.AcademicYear == Generics.AcademicYear && p.TransactionType == 2).ToList();
+                    var totalsByPeriodDictionary = BuildCoinvestmentPaymentsPerPeriodDictionary(filteredPaymentRecords);
+                    var earliestPaymentInfo = GetEarliestPaymentInfo(paymentRecords);
 
-            // Iterate through the payments groups calculating the payments and retrieving the related reference data
-            foreach (var paymentGroup in paymentGroups)
-            {
-                // get the payment Programme Aim record associated with this payment (CoInvestment is only recorded against the Programme Aim)
-                var payment = paymentGroup.PaymentInfoList.FirstOrDefault(x => x.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001));
+                    string legalEntityName = null;
 
-                if (payment != null)
-                {
-                    // get the ILR learner data associated with this payment
-                    var learner = appsCoInvestmentIlrInfo.Learners.FirstOrDefault(x => x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber));
-
-                    if (learner != null)
+                    if (earliestPaymentInfo != null && earliestPaymentInfo.ApprenticeshipId.HasValue)
                     {
-                        // get the ILR learning delivery data associated with this payment
-                        var ilrLearningDeliveriesInfos = learner.LearningDeliveries?.Where(x => x.AppFinRecords.Any(y =>
-                            y.AFinType.CaseInsensitiveEquals(Generics.PMR) &&
-                            y.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber))).ToList();
-
-                        if (ilrLearningDeliveriesInfos != null)
-                        {
-                            var learningDelivery = ilrLearningDeliveriesInfos.FirstOrDefault(x =>
-                                x.UKPRN == payment.UkPrn &&
-                                x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
-                                x.LearnAimRef.CaseInsensitiveEquals(payment.LearningAimReference) &&
-                                x.LearnStartDate == payment.LearningStartDate &&
-                                x.ProgType == payment.LearningAimProgrammeType &&
-                                x.StdCode == payment.LearningAimStandardCode &&
-                                x.FworkCode == payment.LearningAimFrameworkCode &&
-                                x.PwayCode == payment.LearningAimPathwayCode);
-
-                            if (learningDelivery != null)
-                            {
-                                // Get the related App Fin data for previous years
-                                var prevYearAppFinData = learningDelivery.AppFinRecords?
-                                    .Where(x => x.AFinDate < Generics.BeginningOfYear &&
-                                                x.AFinType.CaseInsensitiveEquals(Generics.PMR)).ToList();
-
-                                // Get the related App Fin data for the current year
-                                var currentYearAppFinData = learningDelivery.AppFinRecords?
-                                    .Where(x => x.AFinDate >= Generics.BeginningOfYear &&
-                                                x.AFinDate <= Generics.EndOfYear &&
-                                                x.AFinType.CaseInsensitiveEquals(Generics.PMR)).ToList();
-
-                                // Get the related AEC Learning Delivery data
-                                var aecLearningDeliveryInfo =
-                                    appsCoInvestmentRulebaseInfo.AECLearningDeliveries?.SingleOrDefault(x =>
-                                        x.LearnRefNumber.CaseInsensitiveEquals(payment.LearnerReferenceNumber) &&
-                                        x.AimSeqNumber == learningDelivery.AimSeqNumber);
-
-                                // Check if this is a Maths or English aim
-                                bool learnDelMathEng =
-                                    aecLearningDeliveryInfo?.LearningDeliveryValues.LearnDelMathEng ?? false;
-
-                                // Maths and English payments are fully funded by the ESFA so don't include them on the report
-                                bool flagCalculateCoInvestmentAmount =
-                                    !learnDelMathEng &&
-                                    (payment.FundingSource == _fundingSource && _transactionTypes.Any(x => x == payment.TransactionType)) &&
-                                    payment.AcademicYear == Generics.AcademicYear;
-
-                                // get the AEC_ApprenticeshipPriceEpisodePeriodisedValues data associated with this payment
-                                var rulebaseInfo = appsCoInvestmentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues?.Where(x =>
-                                    x.AttributeName.CaseInsensitiveEquals(_priceEpisodeCompletionPayment) &&
-                                    x.Periods.All(p => p != decimal.Zero) &&
-                                    x.LearnRefNumber.CaseInsensitiveEquals(learner.LearnRefNumber)).ToList();
-
-                                var model = new AppsCoInvestmentContributionsModel
-                                {
-                                    LearnRefNumber = payment.LearnerReferenceNumber,
-                                    UniqueLearnerNumber = paymentGroup.PaymentInfoList.Select(x => x.LearnerUln).Distinct().Count() == 1 ? payment.LearnerUln : (long?)null,
-                                    LearningStartDate = payment.LearningStartDate?.ToString("dd/MM/yyyy"),
-                                    ProgType = payment.LearningAimProgrammeType,
-                                    StandardCode = payment.LearningAimStandardCode,
-                                    FrameworkCode = payment.LearningAimFrameworkCode,
-                                    ApprenticeshipPathway = payment.LearningAimPathwayCode,
-                                    SoftwareSupplierAimIdentifier = learningDelivery.SWSupAimId ?? null,
-                                    LearningDeliveryFAMTypeApprenticeshipContractType = !paymentGroup.PaymentInfoList.Select(x => x.ContractType).Distinct().Any() ? payment.ContractType : (byte?)null,
-                                    EmployerIdentifierAtStartOfLearning = learner.LearnerEmploymentStatus.Where(x => x.DateEmpStatApp <= payment.LearningStartDate)
-                                        .OrderByDescending(x => x.DateEmpStatApp).FirstOrDefault()?.EmpId,
-                                    ApplicableProgrammeStartDate = aecLearningDeliveryInfo?.AppAdjLearnStartDate,
-                                    TotalPMRPreviousFundingYears = prevYearAppFinData?.Sum(x => x.AFinCode == 1 || x.AFinCode == 2 ? x.AFinAmount : -x.AFinAmount) ?? 0,
-                                    TotalCoInvestmentDueFromEmployerInPreviousFundingYears = paymentGroup.PaymentInfoList.Where(x => x.FundingSource == _fundingSource &&
-                                        _transactionTypes.Any(y => y == x.TransactionType) && x.AcademicYear != Generics.AcademicYear).Sum(x => x.Amount),
-                                    TotalPMRThisFundingYear = currentYearAppFinData?.Sum(x => x.AFinCode == 1 || x.AFinCode == 2 ? x.AFinAmount : -x.AFinAmount) ?? 0,
-                                    LDM356Or361 = learningDelivery.LearningDeliveryFAMs.Any(
-                                             x => x.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM) &&
-                                             (x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode356) ||
-                                             x.LearnDelFAMCode.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCode361))) ? "Yes" : "No",
-                                    CompletionEarningThisFundingYear = rulebaseInfo.SelectMany(x => x.Periods).Sum() ?? 0,
-                                    CompletionPaymentsThisFundingYear = paymentGroup.PaymentInfoList.Where(x => x.TransactionType == 3 && x.AcademicYear == Generics.AcademicYear).Sum(x => x.Amount),
-                                    CoInvestmentDueFromEmployerForAugust = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 1),
-                                    CoInvestmentDueFromEmployerForSeptember = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 2),
-                                    CoInvestmentDueFromEmployerForOctober = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 3),
-                                    CoInvestmentDueFromEmployerForNovember = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 4),
-                                    CoInvestmentDueFromEmployerForDecember = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 5),
-                                    CoInvestmentDueFromEmployerForJanuary = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 6),
-                                    CoInvestmentDueFromEmployerForFebruary = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 7),
-                                    CoInvestmentDueFromEmployerForMarch = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 8),
-                                    CoInvestmentDueFromEmployerForApril = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 9),
-                                    CoInvestmentDueFromEmployerForMay = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 10),
-                                    CoInvestmentDueFromEmployerForJune = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 11),
-                                    CoInvestmentDueFromEmployerForJuly = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 12),
-                                    CoInvestmentDueFromEmployerForR13 = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 13),
-                                    CoInvestmentDueFromEmployerForR14 = CalculateCoInvestmentDueForMonth(flagCalculateCoInvestmentAmount, paymentGroup.PaymentInfoList, 14),
-                                };
-
-                                model.TotalCoInvestmentDueFromEmployerThisFundingYear =
-                                    model.CoInvestmentDueFromEmployerForAugust + model.CoInvestmentDueFromEmployerForSeptember + model.CoInvestmentDueFromEmployerForOctober +
-                                    model.CoInvestmentDueFromEmployerForNovember + model.CoInvestmentDueFromEmployerForDecember + model.CoInvestmentDueFromEmployerForJanuary +
-                                    model.CoInvestmentDueFromEmployerForFebruary + model.CoInvestmentDueFromEmployerForMarch + model.CoInvestmentDueFromEmployerForApril +
-                                    model.CoInvestmentDueFromEmployerForMay + model.CoInvestmentDueFromEmployerForJune + model.CoInvestmentDueFromEmployerForJuly +
-                                    model.CoInvestmentDueFromEmployerForR13 + model.CoInvestmentDueFromEmployerForR14;
-
-                                model.PercentageOfCoInvestmentCollected =
-                                    (int)(model.TotalCoInvestmentDueFromEmployerInPreviousFundingYears +
-                                    model.TotalCoInvestmentDueFromEmployerThisFundingYear == 0
-                                        ? 0
-                                        : ((model.TotalPMRPreviousFundingYears + model.TotalPMRThisFundingYear) /
-                                           (model.TotalCoInvestmentDueFromEmployerInPreviousFundingYears + model.TotalCoInvestmentDueFromEmployerThisFundingYear)) * 100);
-
-                                var minSfaContributionPercentage = paymentGroup.PaymentInfoList.Where(x =>
-                                        x.FundingSource == _fundingSource && _transactionTypes.Any(y => y == x.TransactionType))
-                                    .GroupBy(x => x.DeliveryPeriod).Select(x => new
-                                    {
-                                        TotalAmount = x.Sum(y => y.Amount),
-                                        SfaContributionPercentage = x.Min(y => y.SfaContributionPercentage)
-                                    }).ToList().Where(x => x.TotalAmount != 0).OrderBy(x => x.SfaContributionPercentage)
-                                    .FirstOrDefault()?.SfaContributionPercentage ?? 0;
-
-                                model.EmployerCoInvestmentPercentage = (1 - minSfaContributionPercentage) * 100;
-
-                                model.EmployerNameFromApprenticeshipService = paymentGroup.PaymentInfoList
-                                    .OrderBy(x => x.DeliveryPeriod).FirstOrDefault()?.EmployerName;
-
-                                appsCoInvestmentContributionsModels.Add(model);
-                            }
-                        }
+                        apprenticeshipIdLegalEntityNameDictionary.TryGetValue(earliestPaymentInfo.ApprenticeshipId.Value, out legalEntityName);
                     }
-                }
-            }
 
-            return appsCoInvestmentContributionsModels;
+                    var totalDueCurrentYear = totalsByPeriodDictionary.Sum(d => d.Value);
+                    var totalDuePreviousYear = filteredPaymentRecords.Where(p => p.AcademicYear < 1920).Sum(p => p.Amount);
+                    var totalCollectedCurrentYear = GetTotalPMRBetweenDates(learningDelivery, _academicYearStart, _nextAcademicYearStart);
+                    var totalCollectedPreviousYear = GetTotalPMRBetweenDates(learningDelivery, null, _academicYearStart);
+
+                    var model = new AppsCoInvestmentContributionsModel
+                    {
+                        LearnRefNumber = record.LearnerReferenceNumber,
+                        UniqueLearnerNumber = GetUniqueOrEmpty(paymentRecords, p => p.LearnerUln),
+                        LearningStartDate = record.LearningStartDate,
+                        ProgType = record.LearningAimProgrammeType,
+                        StandardCode = record.LearningAimStandardCode,
+                        FrameworkCode = record.LearningAimFrameworkCode,
+                        ApprenticeshipPathway = record.LearningAimPathwayCode,
+                        SoftwareSupplierAimIdentifier = learningDelivery?.SWSupAimId,
+                        LearningDeliveryFAMTypeApprenticeshipContractType = GetUniqueOrEmpty(paymentRecords, p => p.ContractType),
+                        EmployerIdentifierAtStartOfLearning = learner?.LearnerEmploymentStatus.Where(w => w.DateEmpStatApp <= record.LearningStartDate).OrderByDescending(o => o.DateEmpStatApp).FirstOrDefault()?.EmpId,
+                        EmployerNameFromApprenticeshipService = legalEntityName,
+                        EmployerCoInvestmentPercentage = GetEmployerCoInvestmentPercentage(filteredPaymentRecords),
+                        ApplicableProgrammeStartDate = rulebaseLearningDelivery?.AppAdjLearnStartDate,
+                        TotalPMRPreviousFundingYears = totalCollectedPreviousYear,
+                        TotalCoInvestmentDueFromEmployerInPreviousFundingYears = totalDuePreviousYear,
+                        TotalPMRThisFundingYear = totalCollectedCurrentYear,
+                        TotalCoInvestmentDueFromEmployerThisFundingYear = totalDueCurrentYear,
+                        PercentageOfCoInvestmentCollected = GetPercentageOfInvestmentCollected(totalDueCurrentYear, totalDuePreviousYear, totalCollectedCurrentYear, totalCollectedPreviousYear),
+                        LDM356Or361 = HasLdm356Or361(learningDelivery) ? "Yes" : "No",
+                        CompletionEarningThisFundingYear = CalculateCompletionEarningsThisFundingYear(learningDelivery, appsCoInvestmentRulebaseInfo),
+                        CompletionPaymentsThisFundingYear = completedPaymentRecordsInCurrentYear.Sum(r => r.Amount),
+                        CoInvestmentDueFromEmployerForAugust = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 1),
+                        CoInvestmentDueFromEmployerForSeptember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 2),
+                        CoInvestmentDueFromEmployerForOctober = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 3),
+                        CoInvestmentDueFromEmployerForNovember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 4),
+                        CoInvestmentDueFromEmployerForDecember = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 5),
+                        CoInvestmentDueFromEmployerForJanuary = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 6),
+                        CoInvestmentDueFromEmployerForFebruary = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 7),
+                        CoInvestmentDueFromEmployerForMarch = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 8),
+                        CoInvestmentDueFromEmployerForApril = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 9),
+                        CoInvestmentDueFromEmployerForMay = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 10),
+                        CoInvestmentDueFromEmployerForJune = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 11),
+                        CoInvestmentDueFromEmployerForJuly = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 12),
+                        CoInvestmentDueFromEmployerForR13 = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 13),
+                        CoInvestmentDueFromEmployerForR14 = GetPeriodisedValueFromDictionaryForPeriod(totalsByPeriodDictionary, 14)
+                    };
+
+                    return model;
+                })
+                .Where(row => !IsExcludedRow(row))
+                .OrderBy(l => l.LearnRefNumber)
+                .ThenBy(t => t.LearningDeliveryFAMTypeApprenticeshipContractType);
         }
 
-        public decimal CalculateCoInvestmentDueForMonth(bool flag, IEnumerable<PaymentInfo> paymentInfoList, int deliveryPeriod)
+        public bool IsExcludedRow(AppsCoInvestmentContributionsModel row)
         {
-            return flag
-                ? paymentInfoList.Where(x => x.DeliveryPeriod == deliveryPeriod).Sum(x => x.Amount)
-                : 0;
+            return IsNullOrZero(row.TotalPMRPreviousFundingYears)
+                && IsNullOrZero(row.TotalPMRThisFundingYear)
+                && IsNullOrZero(row.TotalCoInvestmentDueFromEmployerInPreviousFundingYears)
+                && IsNullOrZero(row.TotalCoInvestmentDueFromEmployerThisFundingYear)
+                && IsNullOrZero(row.CompletionEarningThisFundingYear)
+                && IsNullOrZero(row.CompletionPaymentsThisFundingYear);
+        }
+
+        public bool IsNullOrZero(decimal? value) => !value.HasValue || value == 0;
+
+        public IEnumerable<AppsCoInvestmentRecordKey> UnionKeys(ICollection<string> relevantLearnRefNumbers, ICollection<AppsCoInvestmentRecordKey> ilrRecords, ICollection<AppsCoInvestmentRecordKey> paymentsRecords)
+        {
+            var relevantLearnRefNumbersHashSet = new HashSet<string>(relevantLearnRefNumbers);
+
+            var filteredRecordsHashSet = new HashSet<AppsCoInvestmentRecordKey>(ilrRecords.Where(r => relevantLearnRefNumbersHashSet.Contains(r.LearnerReferenceNumber)));
+
+            var filteredPaymentRecords = paymentsRecords.Where(r => relevantLearnRefNumbersHashSet.Contains(r.LearnerReferenceNumber));
+
+            foreach (var filteredPaymentRecord in filteredPaymentRecords)
+            {
+                filteredRecordsHashSet.Add(filteredPaymentRecord);
+            }
+
+            return filteredRecordsHashSet;
+        }
+
+        public decimal GetPercentageOfInvestmentCollected(decimal? totalDueCurrentYear, decimal? totalDuePreviousYear, decimal? totalCollectedCurrentYear, decimal? totalCollectedPreviousYear)
+        {
+            var totalDue = (totalDuePreviousYear ?? 0) + (totalDueCurrentYear ?? 0);
+
+            if (totalDue == 0)
+            {
+                return 0;
+            }
+
+            var totalCollected = (totalCollectedPreviousYear ?? 0) + (totalCollectedCurrentYear ?? 0);
+
+            return (totalCollected / totalDue) * 100;
+        }
+
+        public decimal GetPeriodisedValueFromDictionaryForPeriod(IDictionary<byte, decimal> periodisedDictionary, byte period)
+        {
+            if (periodisedDictionary.TryGetValue(period, out decimal value))
+            {
+                return value;
+            }
+
+            return decimal.Zero;
+        }
+
+        public Dictionary<byte, decimal> BuildCoinvestmentPaymentsPerPeriodDictionary(IEnumerable<PaymentInfo> paymentInfos)
+        {
+            return paymentInfos?
+                .Where(p => p.AcademicYear == Generics.AcademicYear)
+                .GroupBy(p => p.CollectionPeriod)
+                .ToDictionary(p => p.Key, p => p.Sum(i => i.Amount));
+        }
+
+        public decimal CalculateCompletionEarningsThisFundingYear(LearningDeliveryInfo learningDelivery, AppsCoInvestmentRulebaseInfo rulebaseInfo)
+        {
+            if (learningDelivery != null)
+            {
+                return rulebaseInfo?
+                    .AECApprenticeshipPriceEpisodePeriodisedValues?
+                    .Where(p =>
+                        p.LearnRefNumber == learningDelivery.LearnRefNumber
+                        && p.AimSeqNumber == learningDelivery.AimSeqNumber
+                        && p.Periods != null)
+                    .SelectMany(p => p.Periods)
+                    .Sum()
+                    ?? 0;
+            }
+
+            return 0;
+        }
+
+        public bool HasLdm356Or361(LearningDeliveryInfo learningDelivery)
+        {
+            return learningDelivery?
+                .LearningDeliveryFAMs?
+                .Any(
+                    fam =>
+                    fam.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)
+                    && (fam.LearnDelFAMCode == Generics.LearningDeliveryFAMCode356 || fam.LearnDelFAMCode == Generics.LearningDeliveryFAMCode361))
+            ?? false;
+        }
+
+        public decimal? GetTotalPMRBetweenDates(LearningDeliveryInfo learningDelivery, DateTime? startDate, DateTime? endDate)
+        {
+            var pmrsQuery = learningDelivery?.AppFinRecords ?? Enumerable.Empty<AppFinRecordInfo>();
+
+            if (startDate.HasValue)
+            {
+                pmrsQuery = pmrsQuery.Where(r => r.AFinDate >= startDate);
+            }
+
+            if (endDate.HasValue)
+            {
+                pmrsQuery = pmrsQuery.Where(r => r.AFinDate < endDate);
+            }
+
+            pmrsQuery = pmrsQuery.Where(r => r.AFinType.CaseInsensitiveEquals(Generics.PMR));
+
+            var pmrs = pmrsQuery.ToList();
+
+            var positive = pmrs.Where(p => p.AFinCode == 1 || p.AFinCode == 2).Sum(p => p.AFinAmount);
+            var negative = pmrs.Where(p => p.AFinCode == 3).Sum(p => p.AFinAmount);
+
+            return positive - negative;
+        }
+
+        public decimal? GetEmployerCoInvestmentPercentage(IEnumerable<PaymentInfo> paymentInfos)
+        {
+            if (!paymentInfos.Any() || paymentInfos.All(p => p.Amount == 0))
+            {
+                return null;
+            }
+
+            return (1 - paymentInfos
+                        .GroupBy(g => new { g.DeliveryPeriod, g.AcademicYear })
+                        .Select(s => new { AggAmount = s.Sum(a => a.Amount), SFaContrib = s.Min(m => m.SfaContributionPercentage) })
+                        .Where(w => w.AggAmount != 0)
+                        .Select(s => s.SFaContrib)
+                        .DefaultIfEmpty()
+                        .Min())
+                        * 100;
+        }
+
+        public IEnumerable<PaymentInfo> FundingSourceAndTransactionTypeFilter(IEnumerable<PaymentInfo> paymentInfos)
+        {
+            return paymentInfos.Where(p => p.FundingSource == _fundingSource && _transactionTypes.Contains(p.TransactionType));
+        }
+
+        public PaymentInfo GetEarliestPaymentInfo(IEnumerable<PaymentInfo> paymentInfos)
+        {
+            return paymentInfos?
+                .OrderBy(p => p.AcademicYear)
+                .ThenBy(p => p.DeliveryPeriod)
+                .ThenBy(p => p.CollectionPeriod)
+                .FirstOrDefault();
+        }
+
+        public AECLearningDeliveryInfo GetRulebaseLearningDelivery(AppsCoInvestmentRulebaseInfo rulebaseInfo, LearningDeliveryInfo learningDelivery)
+        {
+            if (learningDelivery == null)
+            {
+                return null;
+            }
+
+            return rulebaseInfo
+                .AECLearningDeliveries
+                .FirstOrDefault(ld => ld.LearnRefNumber.CaseInsensitiveEquals(learningDelivery.LearnRefNumber) && ld.AimSeqNumber == learningDelivery.AimSeqNumber);
+        }
+
+        public IEnumerable<PaymentInfo> GetPaymentInfosForRecord(AppsCoInvestmentPaymentsInfo paymentsInfo, AppsCoInvestmentRecordKey record)
+        {
+            return paymentsInfo
+                .Payments?
+                .Where(p =>
+                    p.LearningAimProgrammeType == record.LearningAimProgrammeType
+                    && p.LearningAimStandardCode == record.LearningAimStandardCode
+                    && p.LearningAimFrameworkCode == record.LearningAimFrameworkCode
+                    && p.LearningAimPathwayCode == record.LearningAimPathwayCode
+                    && p.LearningStartDate == record.LearningStartDate
+                    && p.LearnerReferenceNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber)
+                    && p.LearningAimReference.CaseInsensitiveEquals(record.LearningAimReference))
+                ?? Enumerable.Empty<PaymentInfo>();
+        }
+
+        public LearningDeliveryInfo GetLearningDeliveryForRecord(LearnerInfo learner, AppsCoInvestmentRecordKey record)
+        {
+            return learner?
+                .LearningDeliveries
+                .FirstOrDefault(ld => IlrLearningDeliveryRecordMatch(ld, record));
+        }
+
+        public LearnerInfo GetLearnerForRecord(AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentRecordKey record)
+        {
+            return ilrInfo
+                .Learners?
+                .FirstOrDefault(l => l.LearnRefNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber)
+                    && (l.LearningDeliveries?.Any(ld => IlrLearningDeliveryRecordMatch(ld, record)) ?? false));
+        }
+
+        public bool IlrLearningDeliveryRecordMatch(LearningDeliveryInfo learningDelivery, AppsCoInvestmentRecordKey record)
+        {
+            return learningDelivery.ProgType == record.LearningAimProgrammeType
+                    && learningDelivery.StdCode == record.LearningAimStandardCode
+                    && learningDelivery.FworkCode == record.LearningAimFrameworkCode
+                    && learningDelivery.PwayCode == record.LearningAimPathwayCode
+                    && learningDelivery.LearnStartDate == record.LearningStartDate
+                    && learningDelivery.LearnAimRef.CaseInsensitiveEquals(record.LearningAimReference);
+        }
+
+        public T? GetUniqueOrEmpty<TIn, T>(IEnumerable<TIn> input, Func<TIn, T> selector)
+            where T : struct
+        {
+            var distinct = input.Select(selector).Distinct().ToList();
+
+            if (distinct.Count > 1 || distinct.Count == 0)
+            {
+                return null;
+            }
+
+            return distinct.FirstOrDefault();
+        }
+
+        // BR1
+        public IEnumerable<string> GetRelevantLearners(AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentPaymentsInfo paymentsInfo)
+        {
+            var fm36learners = ilrInfo
+                .Learners?
+                .Where(l =>
+                    l.LearningDeliveries?
+                        .Any(ld => ld.FundModel == 36)
+                    ?? false);
+
+            var pmrLearnRefNumbers = fm36learners
+                .Where(l =>
+                    l.LearningDeliveries?
+                        .Any(ld => ld.AppFinRecords?.Any(afr => afr.AFinType == "PMR") ?? false)
+                        ?? false)
+                .Select(l => l.LearnRefNumber).ToList()
+                ?? Enumerable.Empty<string>();
+
+            var fm36LearnRefNumbers = new HashSet<string>(fm36learners.Select(l => l.LearnRefNumber), StringComparer.OrdinalIgnoreCase);
+
+            var paymentLearnRefNumbers = paymentsInfo
+                .Payments
+                .Where(p => p.FundingSource == _fundingSource && fm36LearnRefNumbers.Contains(p.LearnerReferenceNumber))
+                .Select(p => p.LearnerReferenceNumber).ToList();
+
+            return pmrLearnRefNumbers.Union(paymentLearnRefNumbers);
+        }
+
+        // BR2
+        public bool FilterReportRows(AppsCoInvestmentPaymentsInfo paymentInfo, AppsCoInvestmentRulebaseInfo rulebaseInfo, AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentRecordKey recordKey)
+        {
+            return
+                EmployerCoInvestmentPaymentFilter(paymentInfo, recordKey.LearnerReferenceNumber)
+                || CompletionPaymentFilter(paymentInfo, recordKey.LearnerReferenceNumber)
+                || PMRAppFinRecordFilter(ilrInfo, recordKey.LearnerReferenceNumber)
+                || NonZeroCompletionEarningsFilter(rulebaseInfo, recordKey.LearnerReferenceNumber);
+        }
+
+        public bool CompletionPaymentFilter(AppsCoInvestmentPaymentsInfo paymentsInfo, string learnRefNumber)
+        {
+            return paymentsInfo.Payments?.Any(p => p.TransactionType == 3 && p.LearnerReferenceNumber.CaseInsensitiveEquals(learnRefNumber)) ?? false;
+        }
+
+        public bool EmployerCoInvestmentPaymentFilter(AppsCoInvestmentPaymentsInfo paymentsInfo, string learnRefNumber)
+        {
+            return paymentsInfo.Payments?.Any(p => p.FundingSource == 3 && p.LearnerReferenceNumber.CaseInsensitiveEquals(learnRefNumber)) ?? false;
+        }
+
+        public bool NonZeroCompletionEarningsFilter(AppsCoInvestmentRulebaseInfo rulebaseInfo, string learnRefNumber)
+        {
+            return rulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues?
+                .Any(
+                    p =>
+                        p.AttributeName == "PriceEpisodeCompletionPayment"
+                        && p.LearnRefNumber.CaseInsensitiveEquals(learnRefNumber)
+                        && (p.Periods?.Any(v => v.HasValue && v != 0) ?? false))
+                ?? false;
+        }
+
+        public bool PMRAppFinRecordFilter(AppsCoInvestmentILRInfo ilrInfo, string learnRefNumber)
+        {
+            return ilrInfo
+                .Learners?.Any(
+                l =>
+                    l.LearnRefNumber.CaseInsensitiveEquals(learnRefNumber)
+                    && (l.LearningDeliveries?.Any(ld =>
+                        ld.AppFinRecords?.Any(afr => afr.AFinType.CaseInsensitiveEquals(Generics.PMR))
+                        ?? false)
+                    ?? false))
+                ?? false;
         }
     }
 }

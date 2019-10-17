@@ -9,7 +9,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public long? UniqueLearnerNumber { get; set; }
 
-        public string LearningStartDate { get; set; }
+        public DateTime? LearningStartDate { get; set; }
 
         public int? ProgType { get; set; }
 
@@ -27,15 +27,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public string EmployerNameFromApprenticeshipService { get; set; }
 
-        public decimal TotalPMRPreviousFundingYears { get; set; }
+        public decimal? TotalPMRPreviousFundingYears { get; set; }
 
-        public decimal TotalCoInvestmentDueFromEmployerInPreviousFundingYears { get; set; }
+        public decimal? TotalCoInvestmentDueFromEmployerInPreviousFundingYears { get; set; }
 
-        public decimal TotalPMRThisFundingYear { get; set; }
+        public decimal? TotalPMRThisFundingYear { get; set; }
 
-        public decimal TotalCoInvestmentDueFromEmployerThisFundingYear { get; set; }
+        public decimal? TotalCoInvestmentDueFromEmployerThisFundingYear { get; set; }
 
-        public int PercentageOfCoInvestmentCollected { get; set; }
+        public decimal PercentageOfCoInvestmentCollected { get; set; }
 
         public string LDM356Or361 { get; set; }
 
@@ -73,7 +73,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public decimal CompletionPaymentsThisFundingYear { get; set; }
 
-        public decimal EmployerCoInvestmentPercentage { get; set; }
+        public decimal? EmployerCoInvestmentPercentage { get; set; }
 
         public DateTime? ApplicableProgrammeStartDate { get; set; }
     }

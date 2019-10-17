@@ -9,6 +9,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             AppsCoInvestmentRulebaseInfo appsCoInvestmentRulebaseInfo,
             AppsCoInvestmentPaymentsInfo appsCoInvestmentPaymentsInfo,
+            List<AppsCoInvestmentRecordKey> paymensAppCoInvestmentRecordKeys,
+            List<AppsCoInvestmentRecordKey> ilrAppCoInvestmentRecordKeys,
+            IDictionary<long, string> apprenticeshipIdLegalEntityNameDictionary,
             long jobId);
     }
 }

@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
@@ -15,5 +16,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<AppsMonthlyPaymentDasEarningsInfo> GetEarningsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 
         Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken);
+
+        Task<List<AppsCoInvestmentRecordKey>> GetUniqueCombinationsOfKeyFromPaymentsAsync(int ukprn, CancellationToken cancellationToken);
+
+        Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(AppsCoInvestmentPaymentsInfo paymentsInfo, CancellationToken cancellationToken);
     }
 }

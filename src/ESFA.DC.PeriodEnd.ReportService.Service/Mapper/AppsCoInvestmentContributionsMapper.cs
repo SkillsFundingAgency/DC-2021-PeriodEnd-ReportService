@@ -28,7 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.PercentageOfCoInvestmentCollected).Index(i++).Name("Percentage of co-investment collected (for all funding years)");
             Map(m => m.LDM356Or361).Index(i++).Name("LDM 356 or 361?");
             Map(m => m.CompletionEarningThisFundingYear).Index(i++).Name("Completion earnings in this funding year");
-            Map(m => m.CompletionPaymentsThisFundingYear).Index(i++).Name("Completion payments in this funding year");
+            Map(m => m.CompletionPaymentsThisFundingYear).Index(i++).Name("Completion payments in this funding year (including employer co-investment)");
             Map(m => m.CoInvestmentDueFromEmployerForAugust).Index(i++).Name("Co-investment (below band upper limit) due from employer for August (R01)");
             Map(m => m.CoInvestmentDueFromEmployerForSeptember).Index(i++).Name("Co-investment (below band upper limit) due from employer for September (R02)");
             Map(m => m.CoInvestmentDueFromEmployerForOctober).Index(i++).Name("Co-investment (below band upper limit) due from employer for October (R03)");

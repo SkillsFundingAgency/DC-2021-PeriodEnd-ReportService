@@ -100,6 +100,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             using (var csvReader = new CsvReader(new StringReader(csv)))
             {
+                csvReader.Configuration.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = new[] { "dd/MM/yyyy" };
+                csvReader.Configuration.TypeConverterOptionsCache.GetOptions<DateTime?>().Formats = new[] { "dd/MM/yyyy" };
+
                 csvReader.Configuration.RegisterClassMap<AppsAdditionalPaymentsMapper>();
                 result = csvReader.GetRecords<AppsAdditionalPaymentsModel>().ToList();
             }

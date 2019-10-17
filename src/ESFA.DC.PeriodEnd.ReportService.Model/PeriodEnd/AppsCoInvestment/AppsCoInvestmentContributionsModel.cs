@@ -73,7 +73,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 
         public decimal CompletionPaymentsThisFundingYear { get; set; }
 
-        public decimal EmployerCoInvestmentPercentage { get; set; }
+        public decimal? EmployerCoInvestmentPercentage { get; set; }
 
         public DateTime? ApplicableProgrammeStartDate { get; set; }
     }

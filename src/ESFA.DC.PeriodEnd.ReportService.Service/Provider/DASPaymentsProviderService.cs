@@ -247,7 +247,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Where(p =>
                         p.Ukprn == ukPrn
                         && (p.FundingSource == AppsCoInvestmentFundingType
-                        || _appsAdditionalPaymentsTransactionTypes.Contains(p.TransactionType)))
+                        || _appsCoInvestmentTransactionTypes.Contains(p.TransactionType)))
                     .Select(payment =>
                         new PaymentInfo()
                         {
@@ -273,7 +273,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         }).ToListAsync(cancellationToken);
             }
 
-            return appsCoInvestmentPaymentsInfo;
+           return appsCoInvestmentPaymentsInfo;
         }
 
         public async Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(AppsCoInvestmentPaymentsInfo paymentInfo, CancellationToken cancellationToken)

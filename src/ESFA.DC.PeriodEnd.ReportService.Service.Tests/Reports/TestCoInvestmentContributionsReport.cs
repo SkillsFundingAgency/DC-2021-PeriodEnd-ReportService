@@ -112,6 +112,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         [Fact]
         public void RecordKeysUnion_Test()
         {
+            List<string> learnRefNumbers = new List<string>() { "055300807083", "055300807081" };
+
             List<AppsCoInvestmentRecordKey> appsKeys = new List<AppsCoInvestmentRecordKey>()
             {
                new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
@@ -127,7 +129,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<ILogger> logger = new Mock<ILogger>();
             var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(logger.Object);
 
-            var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(ilrKeys, appsKeys);
+            var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(learnRefNumbers, ilrKeys, appsKeys);
 
             result.Count().Should().Be(3);
         }

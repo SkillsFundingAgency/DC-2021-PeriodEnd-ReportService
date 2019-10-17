@@ -57,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
-            IValueProvider valueProvider = new ValueProvider();
+
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
@@ -81,7 +81,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 logger.Object,
                 storage.Object,
                 dateTimeProviderMock.Object,
-                valueProvider,
                 ilrPeriodEndProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
                 fm36ProviderServiceMock.Object,

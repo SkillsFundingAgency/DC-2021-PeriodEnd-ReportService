@@ -35,7 +35,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             IFCSProviderService fcsProviderService)
             : base(
                 dateTimeProvider,
-                null,
                 streamableKeyValuePersistenceService,
                 logger)
         {

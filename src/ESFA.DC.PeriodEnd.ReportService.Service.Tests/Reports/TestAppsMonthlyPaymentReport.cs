@@ -53,7 +53,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
             Mock<IFCSProviderService> fcsProviderServiceMock = new Mock<IFCSProviderService>();
-            IValueProvider valueProvider = new ValueProvider();
+
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
@@ -104,7 +104,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 larsProviderServiceMock.Object,
                 fcsProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
-                valueProvider,
                 appsMonthlyPaymentModelBuilder);
 
             await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);

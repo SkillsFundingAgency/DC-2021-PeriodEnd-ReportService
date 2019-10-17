@@ -42,9 +42,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             ILarsProviderService larsProviderService,
             IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
-            IValueProvider valueProvider,
             IAppsMonthlyPaymentModelBuilder modelBuilder)
-        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
+        : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;

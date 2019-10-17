@@ -66,6 +66,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 throw new Exception(errorMessage);
             }
 
+            var paymentsDictionary = BuildPaymentInfoDictionary(appsCoInvestmentPaymentsInfo);
+            var learnerDictionary = BuildLearnerDictionary(appsCoInvestmentIlrInfo);
+
             var relevantLearnRefNumbers = GetRelevantLearners(appsCoInvestmentIlrInfo, appsCoInvestmentPaymentsInfo).ToList();
 
             var uniqueKeys = UnionKeys(relevantLearnRefNumbers, ilrAppsCoInvestmentUniqueKeys, paymentsAppsCoInvestmentUniqueKeys).ToList();
@@ -74,8 +77,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .Where(r => FilterReportRows(appsCoInvestmentPaymentsInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentIlrInfo, r))
                 .Select(record =>
                 {
-                    var paymentRecords = GetPaymentInfosForRecord(appsCoInvestmentPaymentsInfo, record).ToList();
-                    var learner = GetLearnerForRecord(appsCoInvestmentIlrInfo, record);
+                    var paymentRecords = GetPaymentInfosForRecord(paymentsDictionary, record).ToList();
+                    var learner = GetLearnerForRecord(learnerDictionary, record);
                     var learningDelivery = GetLearningDeliveryForRecord(learner, record);
                     var filteredPaymentRecords = FundingSourceAndTransactionTypeFilter(paymentRecords).ToList();
                     var rulebaseLearningDelivery = GetRulebaseLearningDelivery(appsCoInvestmentRulebaseInfo, learningDelivery);
@@ -139,6 +142,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .Where(row => !IsExcludedRow(row))
                 .OrderBy(l => l.LearnRefNumber)
                 .ThenBy(t => t.LearningDeliveryFAMTypeApprenticeshipContractType);
+        }
+
+        public IDictionary<string, LearnerInfo> BuildLearnerDictionary(AppsCoInvestmentILRInfo ilrInfo)
+        {
+            return ilrInfo
+                .Learners
+                .ToDictionary(k => k.LearnRefNumber, v => v, StringComparer.OrdinalIgnoreCase);
+        }
+
+        public IDictionary<AppsCoInvestmentRecordKey, List<PaymentInfo>> BuildPaymentInfoDictionary(AppsCoInvestmentPaymentsInfo paymentsInfo)
+        {
+            return paymentsInfo
+                .Payments
+                .GroupBy(
+                p => new AppsCoInvestmentRecordKey(p.LearnerReferenceNumber, p.LearningStartDate, p.LearningAimProgrammeType, p.LearningAimStandardCode, p.LearningAimFrameworkCode, p.LearningAimPathwayCode))
+                .ToDictionary(k => k.Key, v => v.ToList());
         }
 
         public bool IsExcludedRow(AppsCoInvestmentContributionsModel row)
@@ -297,19 +316,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .FirstOrDefault(ld => ld.LearnRefNumber.CaseInsensitiveEquals(learningDelivery.LearnRefNumber) && ld.AimSeqNumber == learningDelivery.AimSeqNumber);
         }
 
-        public IEnumerable<PaymentInfo> GetPaymentInfosForRecord(AppsCoInvestmentPaymentsInfo paymentsInfo, AppsCoInvestmentRecordKey record)
+        public IEnumerable<PaymentInfo> GetPaymentInfosForRecord(IDictionary<AppsCoInvestmentRecordKey, List<PaymentInfo>> paymentsDictionary, AppsCoInvestmentRecordKey record)
         {
-            return paymentsInfo
-                .Payments?
-                .Where(p =>
-                    p.LearningAimProgrammeType == record.LearningAimProgrammeType
-                    && p.LearningAimStandardCode == record.LearningAimStandardCode
-                    && p.LearningAimFrameworkCode == record.LearningAimFrameworkCode
-                    && p.LearningAimPathwayCode == record.LearningAimPathwayCode
-                    && p.LearningStartDate == record.LearningStartDate
-                    && p.LearnerReferenceNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber)
-                    && p.LearningAimReference.CaseInsensitiveEquals(record.LearningAimReference))
-                ?? Enumerable.Empty<PaymentInfo>();
+            if (paymentsDictionary.TryGetValue(record, out var result))
+            {
+                return result;
+            }
+
+            return Enumerable.Empty<PaymentInfo>();
         }
 
         public LearningDeliveryInfo GetLearningDeliveryForRecord(LearnerInfo learner, AppsCoInvestmentRecordKey record)
@@ -319,12 +333,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .FirstOrDefault(ld => IlrLearningDeliveryRecordMatch(ld, record));
         }
 
-        public LearnerInfo GetLearnerForRecord(AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentRecordKey record)
+        public LearnerInfo GetLearnerForRecord(IDictionary<string, LearnerInfo> learnerDictionary, AppsCoInvestmentRecordKey record)
         {
-            return ilrInfo
-                .Learners?
-                .FirstOrDefault(l => l.LearnRefNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber)
-                    && (l.LearningDeliveries?.Any(ld => IlrLearningDeliveryRecordMatch(ld, record)) ?? false));
+            if (learnerDictionary.TryGetValue(record.LearnerReferenceNumber, out var result))
+            {
+                return result;
+            }
+
+            return null;
         }
 
         public bool IlrLearningDeliveryRecordMatch(LearningDeliveryInfo learningDelivery, AppsCoInvestmentRecordKey record)

@@ -36,5 +36,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public int LearningAimFrameworkCode { get; set; }
 
         public int LearningAimPathwayCode { get; set; }
+
+        public override int GetHashCode() => (LearningAimReference.ToUpper(), LearnerReferenceNumber.ToUpper(), LearningStartDate, LearningAimProgrammeType, LearningAimStandardCode, LearningAimFrameworkCode, LearningAimPathwayCode).GetHashCode();
     }
 }

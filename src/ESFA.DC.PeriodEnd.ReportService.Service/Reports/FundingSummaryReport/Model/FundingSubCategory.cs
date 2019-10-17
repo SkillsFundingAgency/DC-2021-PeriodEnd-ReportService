@@ -2,7 +2,7 @@
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport.Model
 {
     public class FundingSubCategory : IFundingSubCategory
     {

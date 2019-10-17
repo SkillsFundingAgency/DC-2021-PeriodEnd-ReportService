@@ -16,7 +16,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
-using ReportTaskNameConstants = ESFA.DC.PeriodEnd.ReportService.Interface.ReportTaskNameConstants;
+using ReportTaskNameConstants = ESFA.DC.PeriodEnd.ReportService.Service.Constants.ReportTaskNameConstants;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 {

@@ -1,16 +1,19 @@
 ﻿using System.Collections.Generic;
 
-public static class IDictionaryExtensions
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Extensions
 {
-    public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+    public static class IDictionaryExtensions
     {
-        if (dictionary == null || key == null)
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
         {
-            return default(TValue);
+            if (dictionary == null || key == null)
+            {
+                return default(TValue);
+            }
+
+            dictionary.TryGetValue(key, out var value);
+
+            return value;
         }
-
-        dictionary.TryGetValue(key, out var value);
-
-        return value;
     }
 }

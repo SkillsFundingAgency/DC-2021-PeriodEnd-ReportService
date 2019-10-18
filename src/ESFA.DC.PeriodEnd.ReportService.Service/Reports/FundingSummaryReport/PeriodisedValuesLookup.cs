@@ -46,7 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             return periodisedValuesList;
         }
 
-        public IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource dataSource, IEnumerable<string> fundLines, IEnumerable<int> fundingSources, IEnumerable<int> transactionTypes)
+        public IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource dataSource, IEnumerable<string> fundLines, IEnumerable<byte> fundingSources, IEnumerable<int> transactionTypes)
         {
             var periodisedValuesList = new List<decimal?[]>();
 

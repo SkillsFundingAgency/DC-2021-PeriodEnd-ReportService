@@ -42,14 +42,12 @@
         public const string NonLevyApprenticeship19Plus = "19+ Apprenticeship (From May 2017) Non-Levy Contract";
         public const string NonLevyApprenticeship19PlusNonProcured = "19+ Apprenticeship (From May 2017) Non-Levy Contract (non-procured)";
         public const string NonLevyApprenticeship19PlusProcured = "19+ Apprenticeship Non-Levy Contract (procured)";
-        public const string ApprenticeshipEmployerOnAppService1618 = "16-18 Apprenticeship (Employer on App Service)";
-        public const string ApprenticeshipEmployerOnAppService19Plus = "19+ Apprenticeship (Employer on App Service)";
-        public const string EasLevyApprenticeship1618 = "16-18 Apprenticeship (Employer on App Service) Levy funding";
-        public const string EasLevyApprenticeship19Plus = "19+ Apprenticeship (Employer on App Service) Levy funding";
-        public const string EasNonLevyApprenticeshipEmployerOnAppService1618 = "16-18 Apprenticeship (Employer on App Service) Non-Levy funding";
-        public const string EasNonLevyApprenticeshipEmployerOnAppService19Plus = "19+ Apprenticeship (Employer on App Service) Non-Levy funding";
-
-        public const string ApprenticeshipEmployerOnAppService1618Levy = "16-18 Apprenticeship (Employer on App Service) Levy";
+        public const string LevyApprenticeship1618 = "16-18 Apprenticeship (Employer on App Service) Levy funding";
+        public const string LevyApprenticeship19Plus = "19+ Apprenticeship (Employer on App Service) Levy funding";
+        public const string NonLevyApprenticeshipEmployerOnAppService1618 = "16-18 Apprenticeship (Employer on App Service) Non-Levy funding";
+        public const string NonLevyApprenticeshipEmployerOnAppService19Plus = "19+ Apprenticeship (Employer on App Service) Non-Levy funding";
+        public const string ApprenticeshipEmployerOnAppServiceUnresolvedDataLock1618 = "16-18 Apprenticeship (Employer on App Service) Unresolved data lock";
+        public const string ApprenticeshipEmployerOnAppServiceUnresolvedDataLock19Plus = "19+ Apprenticeship (Employer on App Service) Unresolved data lock";
 
         // FM99 FundLines
         public const string AdvancedLearnerLoansBursary = "Advanced Learner Loans Bursary";

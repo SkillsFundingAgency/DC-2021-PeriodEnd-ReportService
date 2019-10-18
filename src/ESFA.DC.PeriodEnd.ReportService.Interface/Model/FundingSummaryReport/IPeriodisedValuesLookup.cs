@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport
     {
         IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource fundingDataSource, IEnumerable<string> fundLines, IEnumerable<string> attributes);
 
-        IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource dataSource, IEnumerable<string> fundLines, IEnumerable<int> fundingSources, IEnumerable<int> transactionTypes);
+        IReadOnlyCollection<decimal?[]> GetPeriodisedValues(FundingDataSource dataSource, IEnumerable<string> fundLines, IEnumerable<byte> fundingSources, IEnumerable<int> transactionTypes);
     }
 }

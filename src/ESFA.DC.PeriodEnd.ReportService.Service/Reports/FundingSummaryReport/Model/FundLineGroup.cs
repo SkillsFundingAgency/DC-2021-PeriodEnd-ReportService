@@ -85,10 +85,40 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport.M
             return this;
         }
 
+        public FundLineGroup WithFundLine(string title, IEnumerable<byte> fundingSources, IEnumerable<int> transactionTypes)
+        {
+            var fundLine = BuildFundLine(title, fundingSources, transactionTypes);
+
+            FundLines.Add(fundLine);
+
+            return this;
+        }
+
+        public FundLineGroup WithFundLine(string title, IEnumerable<string> fundLines, IEnumerable<byte> fundingSources, IEnumerable<int> transactionTypes)
+        {
+            var fundLine = BuildFundLine(title, fundingSources, transactionTypes, fundLines);
+
+            FundLines.Add(fundLine);
+
+            return this;
+        }
+
+        public FundLine BuildFundLine(string title, IEnumerable<byte> fundingSources, IEnumerable<int> transactionTypes, IEnumerable<string> fundLines = null, bool includeInTotals = true)
+        {
+            var periodisedValuesList = _periodisedValues.GetPeriodisedValues(_fundModel, fundLines ?? _fundLines, fundingSources, transactionTypes);
+
+            return BuildFundLineFromPeriodisedValues(periodisedValuesList, title, includeInTotals);
+        }
+
         public FundLine BuildFundLine(string title, IEnumerable<string> attributes, IEnumerable<string> fundLines = null, bool includeInTotals = true)
         {
             var periodisedValuesList = _periodisedValues.GetPeriodisedValues(_fundModel, fundLines ?? _fundLines, attributes);
 
+            return BuildFundLineFromPeriodisedValues(periodisedValuesList, title, includeInTotals);
+        }
+
+        public FundLine BuildFundLineFromPeriodisedValues(IReadOnlyCollection<decimal?[]> periodisedValuesList, string title, bool includeInTotals)
+        {
             FundLine fundLine = null;
             if (periodisedValuesList != null)
             {

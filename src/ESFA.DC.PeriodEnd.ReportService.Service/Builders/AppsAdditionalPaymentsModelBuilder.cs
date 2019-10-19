@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
@@ -20,14 +21,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         {
             List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModels = new List<AppsAdditionalPaymentsModel>();
 
-            // Create an extended payments model that includes the related ILR data
+            // Create an extended payments model that includes the payment related ILR data
             var extendedPayments = BuildAdditionalPaymentsExtendedPaymentsModel(
                 appsAdditionalPaymentIlrInfo,
                 appsAdditionalPaymentRulebaseInfo,
                 appsAdditionalPaymentDasPaymentsInfo);
 
             /*
-             * Group the payments by BR1:
+             * Group the rows by BR1 for the final report
              *    LearnerReferenceNumber
              *    UniqueLearnerNumber
              *    LearningStartDate
@@ -72,27 +73,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     // period totals
                     AugustEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
                     AugustR01Payments = g.Where(p => PeriodPaymentsPredicate(p, 1)).Sum(c => c.PaymentAmount ?? 0m),
-                    SeptemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    SeptemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 2)).Sum(c => c.EarningAmount ?? 0m),
                     SeptemberR02Payments = g.Where(p => PeriodPaymentsPredicate(p, 2)).Sum(c => c.PaymentAmount ?? 0m),
-                    OctoberEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    OctoberEarnings = g.Where(p => PeriodEarningsPredicate(p, 3)).Sum(c => c.EarningAmount ?? 0m),
                     OctoberR03Payments = g.Where(p => PeriodPaymentsPredicate(p, 3)).Sum(c => c.PaymentAmount ?? 0m),
-                    NovemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    NovemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 4)).Sum(c => c.EarningAmount ?? 0m),
                     NovemberR04Payments = g.Where(p => PeriodPaymentsPredicate(p, 4)).Sum(c => c.PaymentAmount ?? 0m),
-                    DecemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    DecemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 5)).Sum(c => c.EarningAmount ?? 0m),
                     DecemberR05Payments = g.Where(p => PeriodPaymentsPredicate(p, 5)).Sum(c => c.PaymentAmount ?? 0m),
-                    JanuaryEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    JanuaryEarnings = g.Where(p => PeriodEarningsPredicate(p, 6)).Sum(c => c.EarningAmount ?? 0m),
                     JanuaryR06Payments = g.Where(p => PeriodPaymentsPredicate(p, 6)).Sum(c => c.PaymentAmount ?? 0m),
-                    FebruaryEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    FebruaryEarnings = g.Where(p => PeriodEarningsPredicate(p, 7)).Sum(c => c.EarningAmount ?? 0m),
                     FebruaryR07Payments = g.Where(p => PeriodPaymentsPredicate(p, 7)).Sum(c => c.PaymentAmount ?? 0m),
-                    MarchEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    MarchEarnings = g.Where(p => PeriodEarningsPredicate(p, 8)).Sum(c => c.EarningAmount ?? 0m),
                     MarchR08Payments = g.Where(p => PeriodPaymentsPredicate(p, 8)).Sum(c => c.PaymentAmount ?? 0m),
-                    AprilEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    AprilEarnings = g.Where(p => PeriodEarningsPredicate(p, 9)).Sum(c => c.EarningAmount ?? 0m),
                     AprilR09Payments = g.Where(p => PeriodPaymentsPredicate(p, 9)).Sum(c => c.PaymentAmount ?? 0m),
-                    MayEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    MayEarnings = g.Where(p => PeriodEarningsPredicate(p, 10)).Sum(c => c.EarningAmount ?? 0m),
                     MayR10Payments = g.Where(p => PeriodPaymentsPredicate(p, 10)).Sum(c => c.PaymentAmount ?? 0m),
-                    JuneEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    JuneEarnings = g.Where(p => PeriodEarningsPredicate(p, 11)).Sum(c => c.EarningAmount ?? 0m),
                     JuneR11Payments = g.Where(p => PeriodPaymentsPredicate(p, 11)).Sum(c => c.PaymentAmount ?? 0m),
-                    JulyEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
+                    JulyEarnings = g.Where(p => PeriodEarningsPredicate(p, 12)).Sum(c => c.EarningAmount ?? 0m),
                     JulyR12Payments = g.Where(p => PeriodPaymentsPredicate(p, 12)).Sum(c => c.PaymentAmount ?? 0m),
                     R13Payments = g.Where(p => PeriodPaymentsPredicate(p, 13)).Sum(c => c.EarningAmount ?? 0m),
                     R14Payments = g.Where(p => PeriodPaymentsPredicate(p, 14)).Sum(c => c.PaymentAmount ?? 0m),
@@ -107,6 +108,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return appsAdditionalPaymentsModels;
         }
 
+        /// <summary>
+        /// Create an extended payments model that includes the payment related ILR data
+        /// </summary>
+        /// <param name="appsAdditionalPaymentIlrInfo"></param>
+        /// <param name="appsAdditionalPaymentRulebaseInfo"></param>
+        /// <param name="appsAdditionalPaymentDasPaymentsInfo"></param>
+        /// <returns>A list of AppsAdditionalPaymentExtendedPaymentModels.</returns>
         public List<AppsAdditionalPaymentExtendedPaymentModel> BuildAdditionalPaymentsExtendedPaymentsModel(
             AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo,
             AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo,
@@ -123,7 +131,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     .SingleOrDefault(x =>
                         x.LearnRefNumber.CaseInsensitiveEquals(dasPaymentInfo?.LearnerReferenceNumber));
 
-                var appsAdditionalPaymentLearningDeliveryInfo = learner?.LearningDeliveries?.SingleOrDefault(x =>
+                var learningDelivery = learner?.LearningDeliveries?.SingleOrDefault(x =>
                         (x?.LearnRefNumber.CaseInsensitiveEquals(dasPaymentInfo?.LearnerReferenceNumber) ?? false) &&
                         x.LearnAimRef.CaseInsensitiveEquals(dasPaymentInfo?.LearningAimReference) &&
                         x?.LearnStartDate == dasPaymentInfo?.LearningStartDate &&
@@ -132,14 +140,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         (x?.FworkCode == null || x?.FworkCode == dasPaymentInfo?.LearningAimFrameworkCode) &&
                         (x?.PwayCode == null || x?.PwayCode == dasPaymentInfo?.LearningAimPathwayCode));
 
-                var aecLearningDeliveryInfo = appsAdditionalPaymentRulebaseInfo?.AECLearningDeliveries?.SingleOrDefault(x =>
-                        (x?.LearnRefNumber.CaseInsensitiveEquals(appsAdditionalPaymentLearningDeliveryInfo?.LearnRefNumber) ?? false) &&
-                        x?.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo?.AimSeqNumber);
+                var aecLearningDelivery = appsAdditionalPaymentRulebaseInfo?.AECLearningDeliveries?.SingleOrDefault(x =>
+                        x?.UKPRN == learningDelivery?.UKPRN &&
+                        (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
+                        x?.AimSeqNumber == learningDelivery?.AimSeqNumber);
 
-                var aecApprenticeshipPriceEpisodePeriodisedValuesInfos = appsAdditionalPaymentRulebaseInfo
-                        ?.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
-                        (x?.LearnRefNumber.CaseInsensitiveEquals(appsAdditionalPaymentLearningDeliveryInfo?.LearnRefNumber) ?? false) &&
-                        x?.AimSeqNumber == appsAdditionalPaymentLearningDeliveryInfo?.AimSeqNumber).ToList();
+                var aecApprenticeshipPriceEpisodePeriodisedValues = appsAdditionalPaymentRulebaseInfo
+                    ?.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
+                        x?.UKPRN == learningDelivery?.UKPRN &&
+                        (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
+                        x?.AimSeqNumber == learningDelivery?.AimSeqNumber).ToList();
 
                 // copy this payment's fields to the new extended payment model
                 var extendedPayment = new AppsAdditionalPaymentExtendedPaymentModel();
@@ -151,20 +161,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 extendedPayment.PaymentLearningAimFundingLineType = dasPaymentInfo.LearningAimFundingLineType;
                 extendedPayment.PaymentTypeOfAdditionalPayment = dasPaymentInfo.TypeOfAdditionalPayment;
                 extendedPayment.AppsServiceEmployerName = dasPaymentInfo.EmployerName;
-                extendedPayment.ilrEmployerIdentifier = GetEmployerIdentifier(appsAdditionalPaymentLearningDeliveryInfo, aecLearningDeliveryInfo, dasPaymentInfo);
+                extendedPayment.ilrEmployerIdentifier = GetEmployerIdentifier(aecLearningDelivery, dasPaymentInfo);
 
                 // copy the remaining payment fields
+                extendedPayment.PaymentLearningAimProgrammeType = dasPaymentInfo.LearningAimProgrammeType;
+                extendedPayment.PaymentLearningAimStandardCode = dasPaymentInfo.LearningAimStandardCode;
+                extendedPayment.PaymentLearningAimFrameworkCode = dasPaymentInfo.LearningAimFrameworkCode;
+                extendedPayment.PaymentLearningAimPathwayCode = dasPaymentInfo.LearningAimPathwayCode;
                 extendedPayment.PaymentLearningAimReference = dasPaymentInfo.LearningAimReference;
+                extendedPayment.PaymentContractType = dasPaymentInfo.ContractType;
+                extendedPayment.PaymentFundingSource = dasPaymentInfo.FundingSource;
                 extendedPayment.PaymentTransactionType = dasPaymentInfo.TransactionType;
                 extendedPayment.PaymentAcademicYear = dasPaymentInfo.AcademicYear;
                 extendedPayment.PaymentCollectionPeriod = dasPaymentInfo.CollectionPeriod;
+                extendedPayment.PaymentDeliveryPeriod = dasPaymentInfo.DeliveryPeriod;
                 extendedPayment.PaymentAmount = dasPaymentInfo.Amount;
 
                 // copy the ilr fields
                 extendedPayment.ProviderSpecifiedLearnerMonitoringA = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringA);
                 extendedPayment.ProviderSpecifiedLearnerMonitoringB = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringB);
-                extendedPayment.ilrEmployerIdentifier = GetEmployerIdentifier(appsAdditionalPaymentLearningDeliveryInfo, aecLearningDeliveryInfo, dasPaymentInfo);
-                extendedPayment.EarningAmount = GetMonthlyEarnings(dasPaymentInfo, aecApprenticeshipPriceEpisodePeriodisedValuesInfos, dasPaymentInfo.CollectionPeriod);
+                extendedPayment.EarningAmount = GetMonthlyEarnings(dasPaymentInfo, aecApprenticeshipPriceEpisodePeriodisedValues, dasPaymentInfo.CollectionPeriod);
 
                 extendedPayments.Add(extendedPayment);
             }
@@ -213,29 +229,65 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private decimal GetMonthlyEarnings(
             DASPaymentInfo dasPaymentInfo,
-            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValuesInfo,
-            byte month)
+            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
+            byte period)
         {
-            decimal? result = 0;
+            decimal earnings = 0m;
+
             if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive || dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive)
             {
-                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.Where(x => x.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName)).Sum(z => z.Periods[month]) ?? 0 +
-                         aecApprenticeshipPriceEpisodePeriodisedValuesInfo.Where(x => x.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName)).Sum(z => z?.Periods[month]) ?? 0;
+                earnings = GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName, period)
+                             + GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName, period);
             }
             else if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive || dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive)
             {
-                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.Where(x => x.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName)).Sum(z => z?.Periods[month]) ?? 0 +
-                         aecApprenticeshipPriceEpisodePeriodisedValuesInfo.Where(x => x.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName)).Sum(z => z?.Periods[month]) ?? 0;
+                earnings = GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName, period)
+                             + GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName, period);
             }
             else if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Apprenticeship)
             {
-                result = aecApprenticeshipPriceEpisodePeriodisedValuesInfo.Where(x => x.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName))?.Sum(z => z.Periods[month]) ?? 0;
+                earnings = GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName, period);
             }
 
-            return result.GetValueOrDefault();
+            return earnings;
         }
 
-        private string GetEmployerIdentifier(AppsAdditionalPaymentLearningDeliveryInfo appsAdditionalPaymentLearningDeliveryInfo, AECLearningDeliveryInfo aecLearningDeliveryInfo, DASPaymentInfo payment)
+        private decimal GetAECPriceEpisodePeriodisedValue(
+            string learnRefNumber,
+            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
+            string attributeName,
+            byte period)
+        {
+            var amount = aecApprenticeshipPriceEpisodePeriodisedValues
+                             .Where(x =>
+                                 (x?.LearnRefNumber.CaseInsensitiveEquals(learnRefNumber) ?? false) &&
+                                 (x?.AttributeName.CaseInsensitiveEquals(attributeName) ?? false) &&
+                                 GetDateFromPriceEpisodeIdentifier(x?.PriceEpisodeIdentifier) >= Generics.BeginningOfYear)
+                             .Sum(z => z?.Periods[period - 1]) ?? 0;
+
+            return amount;
+        }
+
+        private DateTime GetDateFromPriceEpisodeIdentifier(string priceEpisodeIdentifier)
+        {
+            string dateElement = string.Empty;
+            DateTime priceEpisodeDate = DateTime.MinValue;
+
+            if (priceEpisodeIdentifier != null && priceEpisodeIdentifier.Length >= 10)
+            {
+                dateElement = priceEpisodeIdentifier.Substring(priceEpisodeIdentifier.Length - 10, 10);
+
+                // expecting the last 10 characters of the price episode identifier to be a date in the format dd/mm/yyyy
+                if (dateElement.Length == 10)
+                {
+                    priceEpisodeDate = DateTime.ParseExact(dateElement, "dd/MM/yyyy", CultureInfo.InvariantCulture);
+                }
+            }
+
+            return priceEpisodeDate;
+        }
+
+        private string GetEmployerIdentifier(AECLearningDeliveryInfo aecLearningDeliveryInfo, DASPaymentInfo payment)
         {
             var identifier = 0;
 

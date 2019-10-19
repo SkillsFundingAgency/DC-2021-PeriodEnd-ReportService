@@ -104,9 +104,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             result.Should().NotBeNullOrEmpty();
             result.Count().Should().Be(1);
-            result.First().AugustEarnings.Should().Be(40);
+            result.First().AugustEarnings.Should().Be(0);
             result.First().JulyEarnings.Should().Be(0);
-            result.First().TotalEarnings.Should().Be(40);
+            result.First().TotalEarnings.Should().Be(0);
             result.First().TotalPaymentsYearToDate.Should().Be(20);
             result.First().UniqueLearnerNumber.Should().Be(12345);
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);

@@ -51,8 +51,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public byte PaymentFundingSource { get; set; }
 
-        public string PaymentEmployerName { get; set; }
-
         public string ProviderSpecifiedLearnerMonitoringA { get; set; }
 
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using Autofac;
 using Autofac.Features.AttributeFilters;
 using ESFA.DC.CollectionsManagement.Models;
@@ -31,6 +32,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
@@ -38,8 +40,11 @@ using ESFA.DC.PeriodEnd.ReportService.InternalReports;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
+using ESFA.DC.PeriodEnd.ReportService.Service.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport;
+using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport.Model;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Context;
@@ -116,6 +121,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             RegisterServices(containerBuilder);
             RegisterBuilders(containerBuilder);
             RegisterReports(containerBuilder);
+
+            RegisterFundingSummaryReport(containerBuilder);
 
             return containerBuilder;
         }
@@ -360,6 +367,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
         {
             containerBuilder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>()
                 .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<ExcelService>().As<IExcelService>().InstancePerLifetimeScope();
+        }
+
+        private static void RegisterFundingSummaryReport(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterType<FundingSummaryReport>().As<IReport>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<FundingSummaryReportModelBuilder>().As<IFundingSummaryReportModelBuilder>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<FundingSummaryReportRenderService>().As<IRenderService<IFundingSummaryReport>>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<PeriodisedValuesLookupProviderService>().As<IPeriodisedValuesLookupProviderService>().InstancePerLifetimeScope();
         }
     }
 }

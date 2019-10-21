@@ -12,7 +12,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
             public const byte Co_Invested_SFA = 2;
             public const byte Co_Invested_Employer = 3;
             public const byte Fully_Funded_SFA = 4;
-            public const byte Five = 5;
+            public const byte LevyTransfer = 5;
         }
 
         public static class TransactionType

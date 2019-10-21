@@ -21,6 +21,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Stubs
                 Directory.CreateDirectory(container);
             }
 
+            var directoryFromFileReference = Path.Combine(container, Path.GetDirectoryName(fileReference));
+
+            if (!Directory.Exists(directoryFromFileReference))
+            {
+                Directory.CreateDirectory(directoryFromFileReference);
+            }
+
             return await Task.FromResult(File.OpenWrite(Path.Combine(container, fileReference)) as Stream);
         }
 

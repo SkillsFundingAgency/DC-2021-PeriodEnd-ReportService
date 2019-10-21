@@ -70,10 +70,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
                 _fundingSummaryReportRenderService.Render(model, _excelService.GetWorksheetFromWorkbook(workbook, "Funding Summary"));
 
-                await _excelService.SaveWorkbookAsync(workbook, $"{externalFileName}.xlsx", reportServiceContext.Container, cancellationToken);
+                var replacedFileName = $"{externalFileName}.xlsx".Replace('_', '/');
 
-                //await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", workbook.SaveToStream(), cancellationToken);
-                //await WriteZipEntry(archive, $"{fileName}.csv", csv);
+                await _excelService.SaveWorkbookAsync(workbook, replacedFileName, reportServiceContext.Container, cancellationToken);
+
+                using (var memoryStream = workbook.SaveToStream())
+                {
+                    //await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", workbook.SaveToStream(), cancellationToken);
+                    await WriteZipEntry(archive, $"{fileName}.csv", memoryStream, cancellationToken);
+                }
             }
         }
     }

@@ -109,5 +109,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
                 await sw.WriteAsync(data);
             }
         }
+
+        protected async Task WriteZipEntry(ZipArchive archive, string filename, Stream stream, CancellationToken cancellationToken)
+        {
+            if (archive == null)
+            {
+                return;
+            }
+
+            ZipArchiveEntry entry = archive.GetEntry(filename);
+            entry?.Delete();
+
+            ZipArchiveEntry archivedFile = archive.CreateEntry(filename, CompressionLevel.Optimal);
+
+            using (var zipStream = archivedFile.Open())
+            {
+                await stream.CopyToAsync(zipStream, 81920, cancellationToken);
+            }
+        }
     }
 }

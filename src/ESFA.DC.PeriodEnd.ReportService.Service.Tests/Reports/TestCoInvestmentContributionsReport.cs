@@ -116,14 +116,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             List<AppsCoInvestmentRecordKey> appsKeys = new List<AppsCoInvestmentRecordKey>()
             {
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 466, LearningAimPathwayCode = 1 },
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 466, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
             };
 
             List<AppsCoInvestmentRecordKey> ilrKeys = new List<AppsCoInvestmentRecordKey>()
             {
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 }
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 }
             };
 
             Mock<ILogger> logger = new Mock<ILogger>();
@@ -132,6 +132,58 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(learnRefNumbers, ilrKeys, appsKeys);
 
             result.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void GetLearnerForRecord_Test()
+        {
+            IDictionary<string, LearnerInfo> learnerDictionary = new Dictionary<string, LearnerInfo>(StringComparer.OrdinalIgnoreCase);
+            learnerDictionary.Add("learnref1", new LearnerInfo() { LearnRefNumber = "learnref1" });
+            learnerDictionary.Add("LearnRef2", new LearnerInfo() { LearnRefNumber = "LearnRef2" });
+            learnerDictionary.Add("LEARNREF3", new LearnerInfo() { LearnRefNumber = "LEARNREF3" });
+
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(null);
+
+            var result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LeaRnrEf1" });
+
+            result.LearnRefNumber.Should().Be("learnref1");
+
+            result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LearnRef2" });
+
+            result.LearnRefNumber.Should().Be("LearnRef2");
+
+            result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LEARNREF3" });
+
+            result.LearnRefNumber.Should().Be("LEARNREF3");
+        }
+
+        [Fact]
+        public void BuildPaymentInfoDictionary_MixedCaseLearnRefNumber()
+        {
+            var paymentInfo = new AppsCoInvestmentPaymentsInfo()
+            {
+                Payments = new List<PaymentInfo>()
+                {
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "MiXeD",
+                    },
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "mixed",
+                    },
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "MIXED",
+                    }
+                }
+            };
+
+            var builder = new AppsCoInvestmentContributionsModelBuilder(null);
+
+            var result = builder.BuildPaymentInfoDictionary(paymentInfo);
+
+            result.Should().HaveCount(1);
         }
 
         private AppsCoInvestmentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, int aimSeqNumber)

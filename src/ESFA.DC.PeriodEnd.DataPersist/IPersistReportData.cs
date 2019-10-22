@@ -8,6 +8,6 @@ namespace ESFA.DC.PeriodEnd.DataPersist
 {
     public interface IPersistReportData
     {
-        Task PersistAppsAdditionalPaymentAsync(List<AppsMonthlyPaymentModel> monthlyPaymentModels, int ukPrn, int returnPeriod, SqlConnection connection, SqlTransaction transaction, CancellationToken cancellationToken);
+        Task PersistAppsAdditionalPaymentAsync(List<AppsMonthlyPaymentModel> monthlyPaymentModels, int ukPrn, int returnPeriod, string connectionString, CancellationToken cancellationToken);
     }
 }

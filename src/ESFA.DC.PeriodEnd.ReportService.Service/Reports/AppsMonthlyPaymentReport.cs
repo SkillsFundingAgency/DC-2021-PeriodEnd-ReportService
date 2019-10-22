@@ -123,7 +123,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
 
-            await PersistAppsMonthlyPaymentReport(reportServiceContext, cancellationToken, appsMonthlyPaymentsModel);
+            var connectionString = "data source=(local);initial catalog=ESFA.DC.PeriodEnd.ReportDatabase1920;user id=sa;password=zyxel123$;Connect Timeout=90";
+            await _persistReportData.PersistAppsAdditionalPaymentAsync(
+                                    (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
+                                    reportServiceContext.Ukprn,
+                                    reportServiceContext.ReturnPeriod,
+                                    connectionString,
+                                    cancellationToken);
         }
 
         private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
@@ -147,48 +153,43 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             }
         }
 
-        private async Task PersistAppsMonthlyPaymentReport(
-            IReportServiceContext reportServiceContext,
-            CancellationToken cancellationToken,
-            IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel)
-        {
-            foreach (var appsMonthlyPaymentModel in appsMonthlyPaymentsModel)
-            {
-                appsMonthlyPaymentModel.ReturnPeriod = reportServiceContext.ReturnPeriod;
-            }
+        //private async Task PersistAppsMonthlyPaymentReport(
+        //    IReportServiceContext reportServiceContext,
+        //    CancellationToken cancellationToken,
+        //    IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel)
+        //{
+        //    using (SqlConnection sqlConnection =
+        //        new SqlConnection(
+        //            "data source=(local);initial catalog=ESFA.DC.PeriodEnd.ReportDatabase1920;user id=sa;password=zyxel123$;Connect Timeout=90"))
+        //    {
+        //        await sqlConnection.OpenAsync(cancellationToken);
+        //        cancellationToken.ThrowIfCancellationRequested();
+        //        _logger.LogDebug("Starting Persisting Apps Monthly Payment Report Data");
 
-            using (SqlConnection sqlConnection =
-                new SqlConnection(
-                    "data source=(local);initial catalog=ESFA.DC.PeriodEnd.ReportDatabase1920;user id=sa;password=zyxel123$;Connect Timeout=90"))
-            {
-                await sqlConnection.OpenAsync(cancellationToken);
-                cancellationToken.ThrowIfCancellationRequested();
-                _logger.LogDebug("Starting Persisting Apps Monthly Payment Report Data");
+        //        using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
+        //        {
+        //            try
+        //            {
+        //                await _persistReportData.PersistAppsAdditionalPaymentAsync(
+        //                    (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
+        //                    reportServiceContext.Ukprn,
+        //                    reportServiceContext.ReturnPeriod,
+        //                    sqlConnection,
+        //                    sqlTransaction,
+        //                    cancellationToken);
+        //                sqlTransaction.Commit();
+        //            }
+        //            catch (Exception ex)
+        //            {
+        //                _logger.LogDebug(
+        //                    $"Persisting Apps Monthly Payment Report Data failed attempting to rollback - {ex.Message}");
+        //                sqlTransaction.Rollback();
+        //                _logger.LogDebug(" Persisting Apps Monthly Payment Report Data successfully rolled back");
 
-                using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
-                {
-                    try
-                    {
-                        await _persistReportData.PersistAppsAdditionalPaymentAsync(
-                            (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
-                            reportServiceContext.Ukprn,
-                            reportServiceContext.ReturnPeriod,
-                            sqlConnection,
-                            sqlTransaction,
-                            cancellationToken);
-                        sqlTransaction.Commit();
-                    }
-                    catch (Exception ex)
-                    {
-                        _logger.LogDebug(
-                            $"Persisting Apps Monthly Payment Report Data failed attempting to rollback - {ex.Message}");
-                        sqlTransaction.Rollback();
-                        _logger.LogDebug(" Persisting Apps Monthly Payment Report Data successfully rolled back");
-
-                        throw;
-                    }
-                }
-            }
-        }
+        //                throw;
+        //            }
+        //        }
+        //    }
+        //}
     }
 }

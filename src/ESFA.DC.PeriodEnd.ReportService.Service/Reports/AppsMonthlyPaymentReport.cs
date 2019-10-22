@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -14,8 +12,6 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;

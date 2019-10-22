@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 {
     public class FundingLineTypeToFundingStreamPeriodMap
     {

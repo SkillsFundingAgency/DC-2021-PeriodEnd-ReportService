@@ -2,11 +2,8 @@
 using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
-using System.Linq;
-using System.Reflection;
 using System.Threading;
 using System.Threading.Tasks;
-using Aspose.Cells;
 using CsvHelper;
 using CsvHelper.Configuration;
 using ESFA.DC.DateTimeProvider.Interface;
@@ -14,9 +11,6 @@ using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Model.Generation;
-using ESFA.DC.PeriodEnd.ReportService.Model.Styling;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
 {
@@ -76,7 +70,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             csvWriter.Configuration.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = new[] { "dd/MM/yyyy" };
             csvWriter.Configuration.TypeConverterOptionsCache.GetOptions<DateTime?>().Formats = new[] { "dd/MM/yyyy" };
 
-            ApplyConfiguration(csvWriter);
             CsvWriterConfiguration(csvWriter);
 
             csvWriter.WriteHeader<TModel>();

@@ -12,7 +12,6 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
-using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
 

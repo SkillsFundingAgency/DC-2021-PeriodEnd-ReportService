@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider.Model
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider.Model
 {
     public class PeriodisedValuesFlattened
     {

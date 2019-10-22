@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading;
+﻿using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.PeriodEnd.ReportService.Interface;

@@ -1,14 +1,10 @@
-﻿using System.Collections.Generic;
-using System.IO;
-using System.IO.Compression;
-using System.Text;
+﻿using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;

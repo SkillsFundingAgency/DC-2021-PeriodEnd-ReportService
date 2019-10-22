@@ -14,7 +14,6 @@
 
   <ItemGroup>
     <Folder Include="Configuration\" />
-    <Folder Include="ReportModels\" />
     <Folder Include="Styling\" />
   </ItemGroup>
 

@@ -174,6 +174,9 @@
     <Reference Include="ESFA.DC.Summarisation.Model, Version=0.0.471.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Summarisation.Model.0.0.471\lib\netstandard2.0\ESFA.DC.Summarisation.Model.dll</HintPath>
     </Reference>
+    <Reference Include="FastMember, Version=1.5.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\FastMember.1.5.0\lib\net461\FastMember.dll</HintPath>
+    </Reference>
     <Reference Include="Microsoft.Azure.Amqp, Version=2.4.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Azure.Amqp.2.4.2\lib\net45\Microsoft.Azure.Amqp.dll</HintPath>
     </Reference>
@@ -440,6 +443,10 @@
     <None Include="packages.config" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.DataPersist\ESFA.DC.PeriodEnd.DataPersist.csproj">
+      <Project>{f54c9cd1-97da-4ce2-91f1-2be1cb05ebe5}</Project>
+      <Name>ESFA.DC.PeriodEnd.DataPersist</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.DataAccess\ESFA.DC.PeriodEnd.ReportService.DataAccess.csproj">
       <Project>{7bdf722a-31be-445a-abad-469b90151a62}</Project>
       <Name>ESFA.DC.PeriodEnd.ReportService.DataAccess</Name>

@@ -42,6 +42,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.DataPersist\ESFA.DC.PeriodEnd.DataPersist.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
   </ItemGroup>
 

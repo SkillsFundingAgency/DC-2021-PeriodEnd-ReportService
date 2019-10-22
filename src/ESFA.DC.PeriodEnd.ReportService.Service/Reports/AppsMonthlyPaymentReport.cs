@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
+using System.Data.SqlClient;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,10 +11,10 @@ using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
@@ -32,6 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly ILarsProviderService _larsProviderService;
         private readonly IFCSProviderService _fcsProviderService;
         private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
+        private readonly IPersistReportData _persistReportData;
 
         public AppsMonthlyPaymentReport(
             ILogger logger,
@@ -43,7 +44,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
-            IAppsMonthlyPaymentModelBuilder modelBuilder)
+            IAppsMonthlyPaymentModelBuilder modelBuilder,
+            IPersistReportData persistReportData)
         : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
@@ -52,6 +54,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _larsProviderService = larsProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
+            _persistReportData = persistReportData;
         }
 
         public override string ReportFileName => "Apps Monthly Payment Report";
@@ -119,6 +122,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             string csv = await GetCsv(appsMonthlyPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
+
+            await PersistAppsMonthlyPaymentReport(reportServiceContext, cancellationToken, appsMonthlyPaymentsModel);
         }
 
         private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
@@ -137,6 +142,50 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                         csvWriter.Flush();
                         textWriter.Flush();
                         return Encoding.UTF8.GetString(ms.ToArray());
+                    }
+                }
+            }
+        }
+
+        private async Task PersistAppsMonthlyPaymentReport(
+            IReportServiceContext reportServiceContext,
+            CancellationToken cancellationToken,
+            IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel)
+        {
+            foreach (var appsMonthlyPaymentModel in appsMonthlyPaymentsModel)
+            {
+                appsMonthlyPaymentModel.ReturnPeriod = reportServiceContext.ReturnPeriod;
+            }
+
+            using (SqlConnection sqlConnection =
+                new SqlConnection(
+                    "data source=(local);initial catalog=ESFA.DC.PeriodEnd.ReportDatabase1920;user id=sa;password=zyxel123$;Connect Timeout=90"))
+            {
+                await sqlConnection.OpenAsync(cancellationToken);
+                cancellationToken.ThrowIfCancellationRequested();
+                _logger.LogDebug("Starting Persisting Apps Monthly Payment Report Data");
+
+                using (SqlTransaction sqlTransaction = sqlConnection.BeginTransaction())
+                {
+                    try
+                    {
+                        await _persistReportData.PersistAppsAdditionalPaymentAsync(
+                            (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
+                            reportServiceContext.Ukprn,
+                            reportServiceContext.ReturnPeriod,
+                            sqlConnection,
+                            sqlTransaction,
+                            cancellationToken);
+                        sqlTransaction.Commit();
+                    }
+                    catch (Exception ex)
+                    {
+                        _logger.LogDebug(
+                            $"Persisting Apps Monthly Payment Report Data failed attempting to rollback - {ex.Message}");
+                        sqlTransaction.Rollback();
+                        _logger.LogDebug(" Persisting Apps Monthly Payment Report Data successfully rolled back");
+
+                        throw;
                     }
                 }
             }

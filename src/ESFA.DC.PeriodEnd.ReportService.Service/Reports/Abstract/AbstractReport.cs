@@ -73,6 +73,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
         {
             csvWriter.Configuration.RegisterClassMap<TMapper>();
 
+            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = new[] { "dd/MM/yyyy" };
+            csvWriter.Configuration.TypeConverterOptionsCache.GetOptions<DateTime?>().Formats = new[] { "dd/MM/yyyy" };
+
+            ApplyConfiguration(csvWriter);
             CsvWriterConfiguration(csvWriter);
 
             csvWriter.WriteHeader<TModel>();

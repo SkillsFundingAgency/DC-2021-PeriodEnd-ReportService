@@ -123,7 +123,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
 
-            var connectionString = "data source=(local);initial catalog=ESFA.DC.PeriodEnd.ReportDatabase1920;user id=sa;password=zyxel123$;Connect Timeout=90";
+            var connectionString = reportServiceContext.ReportDataConnectionString;
+            //var connectionString = "data source=(local);initial catalog=ESFA.DC.PeriodEnd.ReportDatabase1920;user id=sa;password=zyxel123$;Connect Timeout=90";
             await _persistReportData.PersistAppsAdditionalPaymentAsync(
                                     (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
                                     reportServiceContext.Ukprn,

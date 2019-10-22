@@ -69,6 +69,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
             var statelessServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
 
+            var dataPersistConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<DataPersistConfiguration>("DataPersistConfiguration");
+            containerBuilder.RegisterInstance(dataPersistConfiguration).As<DataPersistConfiguration>();
+
             var reportServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<ReportServiceConfiguration>("ReportServiceConfiguration");
             containerBuilder.RegisterInstance(reportServiceConfiguration).As<IReportServiceConfiguration>();
 

@@ -34,6 +34,8 @@
     <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- Job Queue Manager -->
     <Parameter Name="JobQueueManagerConnectionString" DefaultValue="" />
+    <!-- Report Data -->
+    <Parameter Name="ReportDataConnectionString" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -73,6 +75,9 @@
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
+          </Section>
+          <Section Name="DataPersistConfiguration">
+            <Parameter Name="ReportDataConnectionString" Value="[ReportDataConnectionString]" />
           </Section>
         </Settings>
       </ConfigOverride>

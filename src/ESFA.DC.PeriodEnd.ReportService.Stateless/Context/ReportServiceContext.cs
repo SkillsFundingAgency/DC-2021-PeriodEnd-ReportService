@@ -6,6 +6,7 @@ using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
+using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
@@ -14,11 +15,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
     {
         private readonly IJobContextMessage _jobContextMessage;
         private readonly ISerializationService _serializationService;
+        private readonly DataPersistConfiguration _dataPersistConfiguration;
 
-        public ReportServiceContext(IJobContextMessage jobContextMessage, ISerializationService serializationService)
+        public ReportServiceContext(IJobContextMessage jobContextMessage, ISerializationService serializationService, DataPersistConfiguration dataPersistConfiguration)
         {
             _jobContextMessage = jobContextMessage;
             _serializationService = serializationService;
+            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
         public string Filename => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString();
@@ -48,6 +51,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
         public IEnumerable<ReturnPeriod> ILRPeriods => (IEnumerable<ReturnPeriod>)_jobContextMessage.KeyValuePairs[MessageKeys.ILRPeriods];
 
         public IEnumerable<ReturnPeriod> ILRPeriodsAdjustedTimes => GetReturnPeriodsWithAdjustedEndTimes((IEnumerable<ReturnPeriod>)_jobContextMessage.KeyValuePairs[MessageKeys.ILRPeriods]);
+
+        public string ReportDataConnectionString => _dataPersistConfiguration.ReportDataConnectionString;
 
         public IEnumerable<ReturnPeriod> GetReturnPeriodsWithAdjustedEndTimes(IEnumerable<ReturnPeriod> returnPeriods)
         {

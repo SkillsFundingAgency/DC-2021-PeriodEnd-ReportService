@@ -31,6 +31,10 @@
     <Parameter Name="JobQueueManagerConnectionString" Value="" />
   </Section>
 
+  <Section Name="DataPersistConfiguration">
+    <Parameter Name="ReportDataConnectionString" Value="" />
+  </Section>
+
   <Section Name="SoftwareLicenceSection">
     <Parameter Name="AsposeLicence" Value="" />
   </Section>

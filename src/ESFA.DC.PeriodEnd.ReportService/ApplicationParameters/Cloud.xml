@@ -27,5 +27,7 @@
     <Parameter Name="FCSConnectionString" Value="__FCSConnectionString__" />
     <!-- JobQueueManager -->
     <Parameter Name="JobQueueManagerConnectionString" Value="__JobQueueManagerConnectionString__" />
+    <!-- ReportDataConnectionString -->
+    <Parameter Name="ReportDataConnectionString" Value="__ReportDataConnectionString__" />
   </Parameters>
 </Application>

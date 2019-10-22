@@ -26,8 +26,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist
                         return;
                     }
 
-                    var columnNames = typeof(T).GetProperties().Where(p => !p.GetMethod.IsVirtual).Select(p => p.Name)
-                        .ToArray();
+                    var columnNames = typeof(T).GetProperties().Where(p => !p.GetMethod.IsVirtual).Select(p => p.Name).ToArray();
 
                     using (var reader = ObjectReader.Create(source, columnNames))
                     {

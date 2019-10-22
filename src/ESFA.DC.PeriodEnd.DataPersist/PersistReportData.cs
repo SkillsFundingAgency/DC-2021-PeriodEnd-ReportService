@@ -34,11 +34,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist
                 {
                     try
                     {
-                        using (SqlCommand command = new SqlCommand($"DELETE FROM AppsMonthlyPayment WHERE ukPrn = {ukPrn} and returnPeriod = {returnPeriod}", sqlConnection, sqlTransaction))
+                        using (SqlCommand command = new SqlCommand($"DELETE FROM {TableNameConstants.AppsMonthlyPayment} WHERE ukPrn = {ukPrn} and returnPeriod = {returnPeriod}", sqlConnection, sqlTransaction))
                         {
                             command.ExecuteNonQuery();
                         }
-                        await _bulkInsert.Insert("AppsMonthlyPayment", monthlyPaymentModels, sqlConnection, sqlTransaction, cancellationToken);
+                        await _bulkInsert.Insert(TableNameConstants.AppsMonthlyPayment, monthlyPaymentModels, sqlConnection, sqlTransaction, cancellationToken);
                         sqlTransaction.Commit();
                     }
                     catch (Exception ex)

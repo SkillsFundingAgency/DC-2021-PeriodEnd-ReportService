@@ -137,14 +137,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         [Fact]
         public void GetLearnerForRecord_Test()
         {
-            IDictionary<string, LearnerInfo> learnerDictionary = new Dictionary<string, LearnerInfo>();
+            IDictionary<string, LearnerInfo> learnerDictionary = new Dictionary<string, LearnerInfo>(StringComparer.OrdinalIgnoreCase);
             learnerDictionary.Add("learnref1", new LearnerInfo() { LearnRefNumber = "learnref1" });
             learnerDictionary.Add("LearnRef2", new LearnerInfo() { LearnRefNumber = "LearnRef2" });
             learnerDictionary.Add("LEARNREF3", new LearnerInfo() { LearnRefNumber = "LEARNREF3" });
 
             var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(null);
 
-            var result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "learnref1" });
+            var result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LeaRnrEf1" });
 
             result.LearnRefNumber.Should().Be("learnref1");
 
@@ -155,6 +155,35 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LEARNREF3" });
 
             result.LearnRefNumber.Should().Be("LEARNREF3");
+        }
+
+        [Fact]
+        public void BuildPaymentInfoDictionary_MixedCaseLearnRefNumber()
+        {
+            var paymentInfo = new AppsCoInvestmentPaymentsInfo()
+            {
+                Payments = new List<PaymentInfo>()
+                {
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "MiXeD",
+                    },
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "mixed",
+                    },
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "MIXED",
+                    }
+                }
+            };
+
+            var builder = new AppsCoInvestmentContributionsModelBuilder(null);
+
+            var result = builder.BuildPaymentInfoDictionary(paymentInfo);
+
+            result.Should().HaveCount(1);
         }
 
         private AppsCoInvestmentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, int aimSeqNumber)

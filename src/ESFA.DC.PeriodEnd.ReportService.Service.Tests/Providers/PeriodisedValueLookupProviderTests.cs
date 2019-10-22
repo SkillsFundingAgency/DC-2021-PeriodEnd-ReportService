@@ -1,5 +1,8 @@
-﻿using System.Threading;
+﻿using System;
+using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.DASPayments.EF;
+using ESFA.DC.EAS1920.EF;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
@@ -49,10 +52,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Providers
 
         public static PeriodisedValuesLookupProviderService NewService()
         {
-            var builder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
-            builder.UseSqlServer(ConnectionString);
+            return new PeriodisedValuesLookupProviderService(
+                () => new ILR1920_DataStoreEntities(NewBuilder<ILR1920_DataStoreEntities>().Options),
+                () => new EasContext(NewBuilder<EasContext>().Options),
+                () => new DASPaymentsContext(NewBuilder<DASPaymentsContext>().Options));
+        }
 
-            return new PeriodisedValuesLookupProviderService(() => new ILR1920_DataStoreEntities(builder.Options), null, null);
+        private static DbContextOptionsBuilder<T> NewBuilder<T>()
+            where T : DbContext
+        {
+            var builder = new DbContextOptionsBuilder<T>();
+            //builder.UseSqlServer(ConnectionString);
+            builder.UseInMemoryDatabase(Guid.NewGuid().ToString());
+
+            return builder;
         }
     }
 }

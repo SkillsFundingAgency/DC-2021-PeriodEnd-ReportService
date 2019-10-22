@@ -252,7 +252,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 var periodisedValues = await context
                     .Payments
-                    .Where(p => p.Ukprn == ukprn)
+                    .Where(p => p.Ukprn == ukprn && p.AcademicYear == Generics.AcademicYear)
                     .GroupBy(pv => new { FundLine = pv.ReportingAimFundingLineType, pv.FundingSource, pv.TransactionType })
                     .Select(
                         pv =>
@@ -263,18 +263,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 pv.Key.TransactionType,
                                 Periods = new decimal?[]
                                 {
-                                    pv.Where(v => v.CollectionPeriod == 1).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 2).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 3).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 4).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 5).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 6).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 7).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 8).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 9).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 10).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 11).Sum(a => a.Amount),
-                                    pv.Where(v => v.CollectionPeriod == 12).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 1).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 2).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 3).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 4).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 5).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 6).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 7).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 8).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 9).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 10).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 11).Sum(a => a.Amount),
+                                    pv.Where(v => v.DeliveryPeriod == 12).Sum(a => a.Amount),
                                 }
                             }).ToListAsync(cancellationToken);
 

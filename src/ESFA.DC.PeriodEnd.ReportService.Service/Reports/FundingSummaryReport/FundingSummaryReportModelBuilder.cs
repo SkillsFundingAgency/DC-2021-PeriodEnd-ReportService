@@ -267,7 +267,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         // -------------------------------------------------------------------------------------------------------------------------------------
         public IFundLineGroup BuildIlrApprenticeshipsFundLineGroup(string ageRange, string description, byte currentPeriod, IEnumerable<string> fundLines, IPeriodisedValuesLookup periodisedValues)
         {
-            var fundLineGroup = new FundLineGroup($"ILR Total {ageRange} {description} (£)", currentPeriod, FundingDataSource.FM36, fundLines, periodisedValues)
+            var fundLineGroup = new FundLineGroup($"ILR Total {ageRange} {description} (£)", currentPeriod, FundingDataSource.DAS, fundLines, periodisedValues)
                 .WithFundLine($"ILR {ageRange} {description} Programme Aim Programme Funding - Levy Funding (£)", new[] { Constants.DASPayments.FundingSource.Levy, Constants.DASPayments.FundingSource.LevyTransfer }, new[] { Constants.DASPayments.TransactionType.Learning_On_Programme, Constants.DASPayments.TransactionType.Completion, Constants.DASPayments.TransactionType.Balancing })
                 .WithFundLine($"ILR {ageRange} {description} Programme Aim Programme Funding - Government Co-Investment (£)", new[] { Constants.DASPayments.FundingSource.Co_Invested_SFA }, new[] { Constants.DASPayments.TransactionType.Learning_On_Programme, Constants.DASPayments.TransactionType.Completion, Constants.DASPayments.TransactionType.Balancing })
                 .WithFundLine($"ILR {ageRange} {description} Maths & English Programme Funding (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.On_Programme_Maths_and_English, Constants.DASPayments.TransactionType.BalancingMathAndEnglish })
@@ -303,7 +303,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         {
             var description = "Apprenticeship (Employer on App Service) Unresolved Data Locks";
 
-            var fundLineGroup = new FundLineGroup($"Total {description} (£)", currentPeriod, FundingDataSource.FM36, null, periodisedValues)
+            var fundLineGroup = new FundLineGroup($"Total {description} (£)", currentPeriod, FundingDataSource.DAS, null, periodisedValues)
                 .WithFundLine($"ILR 16-18 {description} (£)", new[] { FundLineConstants.ApprenticeshipEmployerOnAppServiceUnresolvedDataLock1618 }, new[] { Constants.DASPayments.FundingSource.Levy, Constants.DASPayments.FundingSource.LevyTransfer }, Constants.DASPayments.TransactionType.All)
                 .WithFundLine($"ILR Adult {description} (£)", new[] { FundLineConstants.ApprenticeshipEmployerOnAppServiceUnresolvedDataLock19Plus }, new[] { Constants.DASPayments.FundingSource.Levy, Constants.DASPayments.FundingSource.LevyTransfer }, Constants.DASPayments.TransactionType.All);
 

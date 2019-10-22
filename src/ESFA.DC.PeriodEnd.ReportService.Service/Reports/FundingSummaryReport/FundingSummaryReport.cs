@@ -72,6 +72,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
                 var replacedFileName = $"{externalFileName}.xlsx".Replace('_', '/');
 
+                _excelService.ApplyLicense();
+
                 await _excelService.SaveWorkbookAsync(workbook, replacedFileName, reportServiceContext.Container, cancellationToken);
 
                 using (var memoryStream = workbook.SaveToStream())

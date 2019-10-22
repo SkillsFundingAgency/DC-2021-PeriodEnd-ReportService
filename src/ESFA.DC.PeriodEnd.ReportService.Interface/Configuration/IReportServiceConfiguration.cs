@@ -1,23 +1,21 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Interface.Configuration
 {
     public interface IReportServiceConfiguration
     {
-        string DASPaymentsConnectionString { get; set; }
+        string DASPaymentsConnectionString { get; }
 
-        string FCSConnectionString { get; set; }
+        string FCSConnectionString { get; }
 
-        string ILRDataStoreConnectionString { get; set; }
+        string ILRDataStoreConnectionString { get; }
 
-        string LarsConnectionString { get; set; }
+        string LarsConnectionString { get; }
 
-        string SummarisedActualsConnectionString { get; set; }
+        string OrgConnectionString { get; }
 
-        string JobQueueManagerConnectionString { get; set; }
+        string SummarisedActualsConnectionString { get; }
 
-        string EasConnectionString { get; set; }
+        string JobQueueManagerConnectionString { get; }
+
+        string EasConnectionString { get; }
     }
 }

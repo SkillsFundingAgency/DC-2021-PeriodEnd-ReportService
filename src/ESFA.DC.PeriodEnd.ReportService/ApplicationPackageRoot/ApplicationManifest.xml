@@ -28,8 +28,10 @@
     <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
     <!-- Lars -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
-    <!-- Organsiation -->
+    <!-- Org -->
     <Parameter Name="OrgConnectionString" DefaultValue="" />
+    <!-- Eas -->
+    <Parameter Name="EasConnectionString" DefaultValue="" />
     <!-- Summarised Actuals -->
     <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- Job Queue Manager -->
@@ -62,6 +64,7 @@
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
+            <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
             <Parameter Name="JobQueueManagerConnectionString" Value="[JobQueueManagerConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">

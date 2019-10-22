@@ -7,6 +7,8 @@ using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.EAS1920.EF;
+using ESFA.DC.EAS1920.EF.Interface;
 using ESFA.DC.FileService;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.FileService.Config.Interface;
@@ -127,7 +129,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             return containerBuilder;
         }
 
-        private static void RegisterContexts(ContainerBuilder containerBuilder, ReportServiceConfiguration reportServiceConfiguration)
+        private static void RegisterContexts(ContainerBuilder containerBuilder, IReportServiceConfiguration reportServiceConfiguration)
         {
             // ILR 1920 DataStore
             containerBuilder.RegisterType<ILR1920_DataStoreEntities>().As<IIlr1920RulebaseContext>();
@@ -179,6 +181,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 return optionsBuilder.Options;
             })
                 .As<DbContextOptions<ILR1920_DataStoreEntitiesInvalid>>()
+                .SingleInstance();
+
+            // Eas 1920
+            containerBuilder.RegisterType<EasContext>().As<IEasdbContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<EasContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.EasConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                    return optionsBuilder.Options;
+                })
+                .As<DbContextOptions<EasContext>>()
                 .SingleInstance();
 
             // DAS Payments

@@ -4,14 +4,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Extensions
 {
     public static class IDictionaryExtensions
     {
-        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key)
+        public static TValue GetValueOrDefault<TKey, TValue>(this IDictionary<TKey, TValue> dictionary, TKey key, TValue defaultValue = default(TValue))
         {
-            if (dictionary == null || key == null)
+            if (dictionary == null || key == null || !dictionary.TryGetValue(key, out var value))
             {
-                return default(TValue);
+                return defaultValue;
             }
-
-            dictionary.TryGetValue(key, out var value);
 
             return value;
         }

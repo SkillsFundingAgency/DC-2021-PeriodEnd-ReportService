@@ -15,17 +15,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup)
         {
-            var carryInApprenticeshipBudget = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.APPS1920);
-            var apprenticeshipEmployerOnApprenticeshipServiceLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.LEVY1799);
-            var apprenticeshipEmployersOnApprenticeshipServiceNonLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.NONLEVY2019);
-            var nonFunded = "Non-funded";
-            var nonLevyContractedApprenticeships1618 = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.C1618NLAP2018);
-            var nonLevyContractedApprenticeshipsAdult = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ANLAP2018);
-            var traineeships1618 = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.C1618TRN1920);
-            var traineeships1924NonProcured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEBC19TRN1920);
-            var traineeships1924Procured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEB19TRN1920);
-            var adultEducationBudgetNonProcured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEBCASCL1920);
-            var adultEducationBudgetProcured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEBAS1920);
+            var noContract = "No Contract";
+
+            var carryInApprenticeshipBudget = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.APPS1920, noContract);
+            var apprenticeshipEmployerOnApprenticeshipServiceLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.LEVY1799, noContract);
+            var apprenticeshipEmployersOnApprenticeshipServiceNonLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.NONLEVY2019, noContract);
+            var nonFunded = FundingStreamPeriodCodeConstants.NonFunded;
+            var nonLevyContractedApprenticeships1618 = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.C1618NLAP2018, noContract);
+            var nonLevyContractedApprenticeshipsAdult = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ANLAP2018, noContract);
+            var traineeships1618 = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.C1618TRN1920, noContract);
+            var traineeships1924NonProcured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEBC19TRN1920, noContract);
+            var traineeships1924Procured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEB19TRN1920, noContract);
+            var adultEducationBudgetNonProcured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEBCASCL1920, noContract);
+            var adultEducationBudgetProcured = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.AEBAS1920, noContract);
 
             var advancedLoansBursary =
                 fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ALLB1920)

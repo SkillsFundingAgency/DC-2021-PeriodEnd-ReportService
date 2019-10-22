@@ -15,9 +15,7 @@ using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 using FluentAssertions;
 using System.Linq;
-using CsvHelper;
 using System.IO;
-using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
 using Aspose.Cells;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports

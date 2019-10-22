@@ -280,6 +280,61 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return newFundingLineType;
         }
 
+        public async Task<AppsMonthlyPaymentDASInfo> GetPaymentsInfoForFundingSummaryReportAsync(
+            int ukPrn,
+            CancellationToken cancellationToken)
+        {
+            AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo = null;
+
+            try
+            {
+                appsMonthlyPaymentDasInfo = new AppsMonthlyPaymentDASInfo
+                {
+                    UkPrn = ukPrn,
+                    Payments = new List<AppsMonthlyPaymentDasPaymentModel>()
+                };
+
+                cancellationToken.ThrowIfCancellationRequested();
+
+                using (var context = _dasPaymentsContextFactory())
+                {
+                    appsMonthlyPaymentDasInfo.Payments = await context.Payments
+                        .Where(x => x.Ukprn == ukPrn && x.AcademicYear == 1920)
+                        .Select(payment => new AppsMonthlyPaymentDasPaymentModel
+                        {
+                            Ukprn = (int?)payment.Ukprn,
+                            LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                            LearnerUln = payment.LearnerUln,
+                            LearningAimReference = payment.LearningAimReference,
+                            LearningStartDate = payment.LearningStartDate,
+                            LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                            LearningAimStandardCode = payment.LearningAimStandardCode,
+                            LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                            LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                            LearningAimFundingLineType = payment.LearningAimFundingLineType,
+                            ReportingAimFundingLineType = payment.ReportingAimFundingLineType,
+                            PriceEpisodeIdentifier = payment.PriceEpisodeIdentifier,
+                            FundingSource = payment.FundingSource,
+                            TransactionType = payment.TransactionType,
+                            AcademicYear = payment.AcademicYear,
+                            CollectionPeriod = payment.CollectionPeriod,
+                            ContractType = payment.ContractType,
+                            DeliveryPeriod = payment.DeliveryPeriod,
+                            EarningEventId = payment.EarningEventId,
+                            Amount = payment.Amount
+                        })
+                        .ToListAsync(cancellationToken);
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to get Rulebase data", ex);
+                throw;
+            }
+
+            return appsMonthlyPaymentDasInfo;
+        }
+
         public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo

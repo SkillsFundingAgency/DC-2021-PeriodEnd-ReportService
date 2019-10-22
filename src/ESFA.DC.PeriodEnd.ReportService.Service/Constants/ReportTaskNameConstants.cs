@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Interface
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class ReportTaskNameConstants
     {

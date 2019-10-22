@@ -1,11 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 {
     public class DataExtractModelBuilder : IDataExtractModelBuilder
     {

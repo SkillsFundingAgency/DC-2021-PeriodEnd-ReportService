@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -69,6 +70,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             bool isFis,
             CancellationToken cancellationToken)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
@@ -120,19 +123,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
 
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport before logging took - {stopWatch.ElapsedMilliseconds} ms ");
+
             if (reportServiceContext.DataPersistFeatureEnabled)
             {
+                Stopwatch stopWatchLog = new Stopwatch();
+                stopWatchLog.Start();
                 await _persistReportData.PersistAppsAdditionalPaymentAsync(
                     (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
                     reportServiceContext.Ukprn,
                     reportServiceContext.ReturnPeriod,
                     reportServiceContext.ReportDataConnectionString,
                     cancellationToken);
+                _logger.LogDebug($"Performance-AppsMonthlyPaymentReport logging took - {stopWatchLog.ElapsedMilliseconds} ms ");
+                stopWatchLog.Stop();
             }
             else
             {
                 _logger.LogDebug(" Data Persist Feature is disabled.");
             }
+
+            stopWatch.Stop();
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport Total generation time - {stopWatch.ElapsedMilliseconds} ms ");
         }
 
         private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)

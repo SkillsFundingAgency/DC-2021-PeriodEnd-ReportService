@@ -20,10 +20,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist
         }
         public async Task PersistAppsAdditionalPaymentAsync(List<AppsMonthlyPaymentModel> monthlyPaymentModels,int ukPrn, int returnPeriod, string connectionString, CancellationToken cancellationToken)
         {
-            foreach (var appsMonthlyPaymentModel in monthlyPaymentModels)
-            {
-                appsMonthlyPaymentModel.ReturnPeriod = returnPeriod;
-            }
+            AppsMonthlyPaymentModel.ReturnPeriodSetter = returnPeriod;
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {

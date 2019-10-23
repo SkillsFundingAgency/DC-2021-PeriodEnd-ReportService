@@ -6,6 +6,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 {
     public class AbstractReportModel
     {
-       public virtual string OfficialSensitive { get; set; }
+        public static int? ReturnPeriodSetter;
+
+        public int? ReturnPeriod => ReturnPeriodSetter;
+
+        public virtual string OfficialSensitive { get; set; }
     }
 }

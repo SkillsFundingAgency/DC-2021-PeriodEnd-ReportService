@@ -6,8 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd
     {
         public int? Ukprn { get; set; }
 
-        public int? ReturnPeriod { get; set; }
-
         public string PaymentLearnerReferenceNumber { get; set; }
 
         public long? PaymentUniqueLearnerNumber { get; set; }

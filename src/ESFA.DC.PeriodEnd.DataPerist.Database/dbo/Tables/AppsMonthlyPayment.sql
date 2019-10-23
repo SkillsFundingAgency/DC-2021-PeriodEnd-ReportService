@@ -179,6 +179,5 @@
 	[TotalApprenticeAdditionalPayments] [decimal](15, 5) NULL,
 	[TotalEnglishAndMathsPayments] [decimal](15, 5) NULL,
 	[TotalLearningSupportDisadvantageAndFrameworkUpliftPayments] [decimal](15, 5) NULL,
-	[TotalPayments] [decimal](15, 5) NULL,
-	[OfficialSensitive] [varchar](1) NULL
+	[TotalPayments] [decimal](15, 5) NULL	
 )

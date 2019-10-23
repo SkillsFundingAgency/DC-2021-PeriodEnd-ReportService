@@ -33,6 +33,7 @@
 
   <Section Name="DataPersistConfiguration">
     <Parameter Name="ReportDataConnectionString" Value="" />
+    <Parameter Name="DataPersistFeatureEnabled" Value="true" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">

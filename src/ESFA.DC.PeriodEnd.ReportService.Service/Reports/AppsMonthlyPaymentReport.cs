@@ -120,12 +120,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
 
-            await _persistReportData.PersistAppsAdditionalPaymentAsync(
-                                    (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
-                                    reportServiceContext.Ukprn,
-                                    reportServiceContext.ReturnPeriod,
-                                    reportServiceContext.ReportDataConnectionString,
-                                    cancellationToken);
+            if (reportServiceContext.DataPersistFeatureEnabled)
+            {
+                await _persistReportData.PersistAppsAdditionalPaymentAsync(
+                    (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
+                    reportServiceContext.Ukprn,
+                    reportServiceContext.ReturnPeriod,
+                    reportServiceContext.ReportDataConnectionString,
+                    cancellationToken);
+            }
+            else
+            {
+                _logger.LogDebug(" Data Persist Feature is disabled.");
+            }
         }
 
         private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)

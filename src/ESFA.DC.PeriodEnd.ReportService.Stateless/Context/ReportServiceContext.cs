@@ -54,6 +54,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 
         public string ReportDataConnectionString => _dataPersistConfiguration.ReportDataConnectionString;
 
+        public bool DataPersistFeatureEnabled => Convert.ToBoolean(_dataPersistConfiguration.DataPersistFeatureEnabled);
+
         public IEnumerable<ReturnPeriod> GetReturnPeriodsWithAdjustedEndTimes(IEnumerable<ReturnPeriod> returnPeriods)
         {
             foreach (ReturnPeriod period in returnPeriods.OrderBy(p => p.PeriodNumber))

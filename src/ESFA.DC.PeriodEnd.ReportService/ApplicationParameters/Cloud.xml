@@ -29,5 +29,6 @@
     <Parameter Name="JobQueueManagerConnectionString" Value="__JobQueueManagerConnectionString__" />
     <!-- ReportDataConnectionString -->
     <Parameter Name="ReportDataConnectionString" Value="__ReportDataConnectionString__" />
+    <Parameter Name="DataPersistFeatureEnabled" Value="__DataPersistFeatureEnabled__" />
   </Parameters>
 </Application>

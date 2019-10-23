@@ -74,8 +74,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
                 using (var memoryStream = workbook.SaveToStream())
                 {
-                    //await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", workbook.SaveToStream(), cancellationToken);
-                    await WriteZipEntry(archive, $"{fileName}.csv", memoryStream, cancellationToken);
+                    await WriteZipEntry(archive, $"{fileName}.xlsx", memoryStream, cancellationToken);
                 }
             }
         }

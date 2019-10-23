@@ -121,6 +121,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
 
             using (var zipStream = archivedFile.Open())
             {
+                stream.Position = 0;
+
                 await stream.CopyToAsync(zipStream, 81920, cancellationToken);
             }
         }

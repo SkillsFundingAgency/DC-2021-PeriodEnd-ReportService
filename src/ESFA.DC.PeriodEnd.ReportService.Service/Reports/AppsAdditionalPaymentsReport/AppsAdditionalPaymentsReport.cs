@@ -52,6 +52,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
+            _logger.LogInfo("Apps Additional Payments Start");
+
             var ilrLearners = await _ilrPeriodEndProviderService.GetILRInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var rulebaseApprenticeshipPriceEpisodes = await _fm36ProviderService.GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var rulebaseLearningDeliveries = await _fm36ProviderService.GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
@@ -59,10 +61,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
 
             var legalNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsAdditionalPaymentDasPaymentsInfo.Select(p => p.ApprenticeshipId), cancellationToken);
 
+            _logger.LogInfo("Apps Additional Payments Data Provision End");
+
             var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(ilrLearners, rulebaseApprenticeshipPriceEpisodes, rulebaseLearningDeliveries, appsAdditionalPaymentDasPaymentsInfo, legalNameDictionary);
+
+            _logger.LogInfo("Apps Additional Payments Report Creation End");
+
             string csv = await GetCsv(appsAdditionalPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
+
+            _logger.LogInfo("Apps Additional Payments Persistence End");
         }
 
         private async Task<string> GetCsv(

@@ -15,7 +15,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
     {
         public IEnumerable<AppsAdditionalPaymentsModel> BuildModel(
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
-            AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo,
+            IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
+            IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
             AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
         {
             List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModels = new List<AppsAdditionalPaymentsModel>();
@@ -23,7 +24,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             // Create an extended payments model that includes the payment related ILR data
             var extendedPayments = BuildAdditionalPaymentsExtendedPaymentsModel(
                 appsAdditionalPaymentIlrInfo,
-                appsAdditionalPaymentRulebaseInfo,
+                rulebasePriceEpisodes,
+                rulebaseLearningDeliveries,
                 appsAdditionalPaymentDasPaymentsInfo);
 
             /*
@@ -116,7 +118,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         /// <returns>A list of AppsAdditionalPaymentExtendedPaymentModels.</returns>
         public List<AppsAdditionalPaymentExtendedPaymentModel> BuildAdditionalPaymentsExtendedPaymentsModel(
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
-            AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo,
+            IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
+            IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
             AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
         {
             List<AppsAdditionalPaymentExtendedPaymentModel> extendedPayments =
@@ -139,13 +142,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         (x.FworkCode == null || x.FworkCode == dasPaymentInfo.LearningAimFrameworkCode) &&
                         (x.PwayCode == null || x.PwayCode == dasPaymentInfo.LearningAimPathwayCode));
 
-                var aecLearningDelivery = appsAdditionalPaymentRulebaseInfo?.AECLearningDeliveries?.SingleOrDefault(x =>
+                var aecLearningDelivery = rulebaseLearningDeliveries?.SingleOrDefault(x =>
                         x?.UKPRN == learningDelivery?.UKPRN &&
                         (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
                         x.AimSeqNumber == learningDelivery.AimSeqNumber);
 
-                var aecApprenticeshipPriceEpisodePeriodisedValues = appsAdditionalPaymentRulebaseInfo
-                    ?.AECApprenticeshipPriceEpisodePeriodisedValues.Where(x =>
+                var aecApprenticeshipPriceEpisodePeriodisedValues = rulebasePriceEpisodes?
+                        .Where(x =>
                         x?.UKPRN == learningDelivery?.UKPRN &&
                         (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
                         x.AimSeqNumber == learningDelivery?.AimSeqNumber).ToList();

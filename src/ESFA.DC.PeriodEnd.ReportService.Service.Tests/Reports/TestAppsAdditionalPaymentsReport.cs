@@ -61,13 +61,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Returns(Task.CompletedTask);
 
             var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn, ilrLearnRefNumber, ilrLearnAimRef, provSpecLearnMonOccurA, provSpecLearnMonOccurB);
-            var appsAdditionalPaymentRulebaseInfo = BuildFm36Model(ukPrn);
+            var rulebaseLearningDeliveries = BuildRulebaseLearningDeliveries();
+            var rulebasePriceEpisodes = BuildRulebasePriceEpisodes(ukPrn);
             var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName, dasLearnRefNumber, dasLearnAimRef);
 
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentIlrInfo);
-            fm36ProviderServiceMock.Setup(x => x.GetFM36DataForAppsAdditionalPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(appsAdditionalPaymentRulebaseInfo);
+            fm36ProviderServiceMock.Setup(x => x.GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(rulebaseLearningDeliveries);
+            fm36ProviderServiceMock.Setup(x => x.GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(rulebasePriceEpisodes);
             dasPaymentProviderMock.Setup(x => x.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentDasPaymentsInfo);
 
@@ -156,35 +159,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             };
         }
 
-        private AppsAdditionalPaymentRulebaseInfo BuildFm36Model(int ukPrn)
+        private List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> BuildRulebasePriceEpisodes(int ukprn)
         {
-            return new AppsAdditionalPaymentRulebaseInfo()
+            return new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>()
             {
-                UkPrn = ukPrn,
-                AECLearningDeliveries = new List<AECLearningDeliveryInfo>(),
-                AECApprenticeshipPriceEpisodePeriodisedValues =
-                    new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>()
-                    {
-                        new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                        {
-                            UKPRN = ukPrn,
-                            LearnRefNumber = "A12345",
-                            AimSeqNumber = 1,
-                            PriceEpisodeIdentifier = "1",
-                            Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
-                            AttributeName = "PriceEpisodeFirstEmp1618Pay"
-                        },
-                        new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                        {
-                            UKPRN = ukPrn,
-                            LearnRefNumber = "A12345",
-                            AimSeqNumber = 1,
-                            PriceEpisodeIdentifier = "1",
-                            Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
-                            AttributeName = "PriceEpisodeSecondProv1618Pay"
-                        }
-                    }
+                new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                {
+                    UKPRN = ukprn,
+                    LearnRefNumber = "A12345",
+                    AimSeqNumber = 1,
+                    PriceEpisodeIdentifier = "1",
+                    Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                    AttributeName = "PriceEpisodeFirstEmp1618Pay"
+                },
+                new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                {
+                    UKPRN = ukprn,
+                    LearnRefNumber = "A12345",
+                    AimSeqNumber = 1,
+                    PriceEpisodeIdentifier = "1",
+                    Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                    AttributeName = "PriceEpisodeSecondProv1618Pay"
+                }
             };
+        }
+
+        private List<AECLearningDeliveryInfo> BuildRulebaseLearningDeliveries()
+        {
+            return new List<AECLearningDeliveryInfo>();
         }
 
         private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn, string employerName, string dasLearnRefNumber, string dasLearnAimRef)

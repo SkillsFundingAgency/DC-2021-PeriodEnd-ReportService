@@ -4,7 +4,7 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.DataPersist
 {

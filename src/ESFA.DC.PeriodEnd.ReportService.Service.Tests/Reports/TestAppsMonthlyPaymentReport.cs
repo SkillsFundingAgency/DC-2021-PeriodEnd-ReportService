@@ -103,7 +103,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 larsProviderServiceMock.Object,
                 fcsProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
-                valueProvider,
                 appsMonthlyPaymentModelBuilder,
                 persistReportDataMock.Object);
 

@@ -8,6 +8,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
+using ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport.Model;
 using AppsAdditionalPaymentExtendedPaymentModel = ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport.Model.AppsAdditionalPaymentExtendedPaymentModel;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport
@@ -33,6 +34,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             [Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive] = ProviderPaymentType,
             [Constants.DASPayments.TransactionType.Apprenticeship] = ApprenticePaymentType,
         };
+
+        private readonly List<AppsAdditionalPaymentExtendedPaymentModel> _emptyModels = new List<AppsAdditionalPaymentExtendedPaymentModel>();
 
         public IEnumerable<AppsAdditionalPaymentsModel> BuildModel(
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
@@ -60,8 +63,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
              *    IlrEmployerIdentifier
              */
             return extendedPayments
-                .GroupBy(x => new
-                {
+                .GroupBy(x => new AppsAdditionalPaymentRecordKey(
                     x.PaymentLearnerReferenceNumber,
                     x.PaymentUniqueLearnerNumber,
                     x.PaymentLearningStartDate,
@@ -69,10 +71,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                     x.PaymentTypeOfAdditionalPayment,
                     x.AppsServiceEmployerName,
                     x.ilrEmployerIdentifier
-                })
+                ), AppsAdditionalPaymentRecordKey.AppsAdditionalPaymentRecordKeyComparer)
                 .Select(g =>
                 {
-                   // var groupedAcademicYear
+                    var academicYearPayments = g.Where(p => p.PaymentAcademicYear == Generics.AcademicYear).ToList();
+
+                    var groupedAcademicYear = academicYearPayments
+                        .GroupBy(p => p.PaymentCollectionPeriod)
+                        .ToDictionary(pg => pg.Key, pg => pg.ToList());
+
+                    var firstModel = g.FirstOrDefault();
 
                     return new AppsAdditionalPaymentsModel
                     {
@@ -83,43 +91,43 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         FundingLineType = g.Key.PaymentLearningAimFundingLineType,
                         TypeOfAdditionalPayment = g.Key.PaymentTypeOfAdditionalPayment,
                         EmployerNameFromApprenticeshipService = g.Key.AppsServiceEmployerName,
-                        EmployerIdentifierFromILR = g.Key.ilrEmployerIdentifier,
+                        EmployerIdentifierFromILR = g.Key.IlrEmployerIdentifier,
 
                         // other fields
-                        ProviderSpecifiedLearnerMonitoringA = g.FirstOrDefault()?.ProviderSpecifiedLearnerMonitoringA,
-                        ProviderSpecifiedLearnerMonitoringB = g.FirstOrDefault()?.ProviderSpecifiedLearnerMonitoringB,
+                        ProviderSpecifiedLearnerMonitoringA = firstModel?.ProviderSpecifiedLearnerMonitoringA,
+                        ProviderSpecifiedLearnerMonitoringB = firstModel?.ProviderSpecifiedLearnerMonitoringB,
 
                         // period totals
-                        AugustEarnings = g.Where(p => PeriodEarningsPredicate(p, 1)).Sum(c => c.EarningAmount ?? 0m),
-                        AugustR01Payments = g.Where(p => PeriodPaymentsPredicate(p, 1)).Sum(c => c.PaymentAmount ?? 0m),
-                        SeptemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 2)).Sum(c => c.EarningAmount ?? 0m),
-                        SeptemberR02Payments = g.Where(p => PeriodPaymentsPredicate(p, 2)).Sum(c => c.PaymentAmount ?? 0m),
-                        OctoberEarnings = g.Where(p => PeriodEarningsPredicate(p, 3)).Sum(c => c.EarningAmount ?? 0m),
-                        OctoberR03Payments = g.Where(p => PeriodPaymentsPredicate(p, 3)).Sum(c => c.PaymentAmount ?? 0m),
-                        NovemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 4)).Sum(c => c.EarningAmount ?? 0m),
-                        NovemberR04Payments = g.Where(p => PeriodPaymentsPredicate(p, 4)).Sum(c => c.PaymentAmount ?? 0m),
-                        DecemberEarnings = g.Where(p => PeriodEarningsPredicate(p, 5)).Sum(c => c.EarningAmount ?? 0m),
-                        DecemberR05Payments = g.Where(p => PeriodPaymentsPredicate(p, 5)).Sum(c => c.PaymentAmount ?? 0m),
-                        JanuaryEarnings = g.Where(p => PeriodEarningsPredicate(p, 6)).Sum(c => c.EarningAmount ?? 0m),
-                        JanuaryR06Payments = g.Where(p => PeriodPaymentsPredicate(p, 6)).Sum(c => c.PaymentAmount ?? 0m),
-                        FebruaryEarnings = g.Where(p => PeriodEarningsPredicate(p, 7)).Sum(c => c.EarningAmount ?? 0m),
-                        FebruaryR07Payments = g.Where(p => PeriodPaymentsPredicate(p, 7)).Sum(c => c.PaymentAmount ?? 0m),
-                        MarchEarnings = g.Where(p => PeriodEarningsPredicate(p, 8)).Sum(c => c.EarningAmount ?? 0m),
-                        MarchR08Payments = g.Where(p => PeriodPaymentsPredicate(p, 8)).Sum(c => c.PaymentAmount ?? 0m),
-                        AprilEarnings = g.Where(p => PeriodEarningsPredicate(p, 9)).Sum(c => c.EarningAmount ?? 0m),
-                        AprilR09Payments = g.Where(p => PeriodPaymentsPredicate(p, 9)).Sum(c => c.PaymentAmount ?? 0m),
-                        MayEarnings = g.Where(p => PeriodEarningsPredicate(p, 10)).Sum(c => c.EarningAmount ?? 0m),
-                        MayR10Payments = g.Where(p => PeriodPaymentsPredicate(p, 10)).Sum(c => c.PaymentAmount ?? 0m),
-                        JuneEarnings = g.Where(p => PeriodEarningsPredicate(p, 11)).Sum(c => c.EarningAmount ?? 0m),
-                        JuneR11Payments = g.Where(p => PeriodPaymentsPredicate(p, 11)).Sum(c => c.PaymentAmount ?? 0m),
-                        JulyEarnings = g.Where(p => PeriodEarningsPredicate(p, 12)).Sum(c => c.EarningAmount ?? 0m),
-                        JulyR12Payments = g.Where(p => PeriodPaymentsPredicate(p, 12)).Sum(c => c.PaymentAmount ?? 0m),
-                        R13Payments = g.Where(p => PeriodPaymentsPredicate(p, 13)).Sum(c => c.EarningAmount ?? 0m),
-                        R14Payments = g.Where(p => PeriodPaymentsPredicate(p, 14)).Sum(c => c.PaymentAmount ?? 0m),
+                        AugustEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 1),
+                        AugustR01Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 1),
+                        SeptemberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 2),
+                        SeptemberR02Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 2),
+                        OctoberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 3),
+                        OctoberR03Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 3),
+                        NovemberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 4),
+                        NovemberR04Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 4),
+                        DecemberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 5),
+                        DecemberR05Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 5),
+                        JanuaryEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 6),
+                        JanuaryR06Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 6),
+                        FebruaryEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 7),
+                        FebruaryR07Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 7),
+                        MarchEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 8),
+                        MarchR08Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 8),
+                        AprilEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 9),
+                        AprilR09Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 9),
+                        MayEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 10),
+                        MayR10Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 10),
+                        JuneEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 11),
+                        JuneR11Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 11),
+                        JulyEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 12),
+                        JulyR12Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 12),
+                        R13Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 13),
+                        R14Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 14),
 
                         // Annual totals
-                        TotalEarnings = g.Where(p => AnnualEarningsPredicate(p, 0)).Sum(c => c.EarningAmount ?? 0m),
-                        TotalPaymentsYearToDate = g.Where(p => AnnualPaymentsPredicate(p)).Sum(c => c.PaymentAmount ?? 0m),
+                        TotalEarnings = academicYearPayments.Where(p => p.EarningAmount.HasValue).Sum(c => c.EarningAmount.Value),
+                        TotalPaymentsYearToDate = academicYearPayments.Where(p => p.PaymentAmount.HasValue && _applicablePaymentTypes.Contains(p.PaymentTypeOfAdditionalPayment)).Sum(c => c.PaymentAmount.Value),
                     };
                 })
                 .OrderBy(o => o.LearnerReferenceNumber)
@@ -207,6 +215,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             return extendedPayments;
         }
 
+        private decimal GetPeriodEarningsTotalForPeriod(IDictionary<byte, List<AppsAdditionalPaymentExtendedPaymentModel>> models, byte period)
+        {
+            return models.GetValueOrDefault(period, _emptyModels).Where(p => p.EarningAmount.HasValue).Sum(c => c.EarningAmount.Value);
+        }
+
+        private decimal GetPeriodPaymentsTotalForPeriod(IDictionary<byte, List<AppsAdditionalPaymentExtendedPaymentModel>> models, byte period)
+        {
+            return models.GetValueOrDefault(period, _emptyModels).Where(p => p.PaymentAmount.HasValue && _applicablePaymentTypes.Contains(p.PaymentTypeOfAdditionalPayment)).Sum(c => c.PaymentAmount.Value);
+        }
+
         private string GetTypeOfAdditionalPayment(byte transactionType) => _transactionTypeToPaymentTypeDictionary.GetValueOrDefault(transactionType, string.Empty);
 
         private string GetAppServiceEmployerName(DASPaymentInfo payment, IDictionary<long, string> legalNameDictionary)
@@ -223,29 +241,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         {
             return learner?.ProviderSpecLearnerMonitorings
                        .SingleOrDefault(x => x.ProvSpecLearnMonOccur.CaseInsensitiveEquals(providerSpecifiedLearnerMonitoring))?.ProvSpecLearnMon ?? string.Empty;
-        }
-
-        private bool PeriodPaymentsPredicate(AppsAdditionalPaymentExtendedPaymentModel payment, int period)
-        {
-            return payment.PaymentCollectionPeriod == period && AnnualPaymentsPredicate(payment);
-        }
-
-        private bool AnnualPaymentsPredicate(AppsAdditionalPaymentExtendedPaymentModel payment)
-        {
-            return payment.PaymentAcademicYear == 1920 && _applicablePaymentTypes.Contains(payment.PaymentTypeOfAdditionalPayment);
-        }
-
-        private bool PeriodEarningsPredicate(AppsAdditionalPaymentExtendedPaymentModel payment, int period)
-        {
-            return payment.PaymentCollectionPeriod == period
-                   && payment.PaymentAcademicYear == 1920;
-        }
-
-        private bool AnnualEarningsPredicate(AppsAdditionalPaymentExtendedPaymentModel payment, int period)
-        {
-            bool result = payment.PaymentAcademicYear == 1920;
-
-            return result;
         }
 
         private decimal GetMonthlyEarnings(

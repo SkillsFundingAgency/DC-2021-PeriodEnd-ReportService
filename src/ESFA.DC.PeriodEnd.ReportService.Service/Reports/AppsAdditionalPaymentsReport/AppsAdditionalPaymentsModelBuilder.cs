@@ -8,6 +8,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
+using AppsAdditionalPaymentExtendedPaymentModel = ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport.Model.AppsAdditionalPaymentExtendedPaymentModel;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport
 {
@@ -17,7 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
             IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
             IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
-            AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
+            IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
+            IDictionary<long, string> legalNameDictionary)
         {
             List<AppsAdditionalPaymentsModel> appsAdditionalPaymentsModels = new List<AppsAdditionalPaymentsModel>();
 
@@ -26,7 +28,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                 appsAdditionalPaymentIlrInfo,
                 rulebasePriceEpisodes,
                 rulebaseLearningDeliveries,
-                appsAdditionalPaymentDasPaymentsInfo);
+                appsAdditionalPaymentDasPaymentsInfo,
+                legalNameDictionary);
 
             /*
              * Group the rows by BR1 for the final report
@@ -120,13 +123,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
             IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
             IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
-            AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
+            IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
+            IDictionary<long, string> legalNameDictionary)
         {
             List<AppsAdditionalPaymentExtendedPaymentModel> extendedPayments =
                 new List<AppsAdditionalPaymentExtendedPaymentModel>();
 
             // Create a new payment model which includes the related data from the ILR
-            foreach (var dasPaymentInfo in appsAdditionalPaymentDasPaymentsInfo.Payments)
+            foreach (var dasPaymentInfo in appsAdditionalPaymentDasPaymentsInfo)
             {
                 // lookup the related reference data for this payment
                 var learner = appsAdditionalPaymentIlrInfo?
@@ -161,8 +165,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                 extendedPayment.PaymentUniqueLearnerNumber = dasPaymentInfo.LearnerUln;
                 extendedPayment.PaymentLearningStartDate = dasPaymentInfo.LearningStartDate;
                 extendedPayment.PaymentLearningAimFundingLineType = dasPaymentInfo.LearningAimFundingLineType;
-                extendedPayment.PaymentTypeOfAdditionalPayment = dasPaymentInfo.TypeOfAdditionalPayment;
-                extendedPayment.AppsServiceEmployerName = dasPaymentInfo.EmployerName;
+                extendedPayment.PaymentTypeOfAdditionalPayment = GetTypeOfAdditionalPayment(dasPaymentInfo.TransactionType);
+                extendedPayment.AppsServiceEmployerName = GetAppServiceEmployerName(dasPaymentInfo, legalNameDictionary);
                 extendedPayment.ilrEmployerIdentifier = GetEmployerIdentifier(aecLearningDelivery, dasPaymentInfo);
 
                 // copy the remaining payment fields
@@ -188,6 +192,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             }
 
             return extendedPayments;
+        }
+
+        private string GetTypeOfAdditionalPayment(byte transactionType)
+        {
+            switch (transactionType)
+            {
+                case 4:
+                case 6:
+                    return "Employer";
+                case 5:
+                case 7:
+                    return "Provider";
+                case 16:
+                    return "Apprentice";
+                default:
+                    return string.Empty;
+            }
+        }
+
+        private string GetAppServiceEmployerName(DASPaymentInfo payment, IDictionary<long, string> legalNameDictionary)
+        {
+            if (payment.ContractType == 1 && (payment.TransactionType == 4 || payment.TransactionType == 6) && payment.ApprenticeshipId.HasValue)
+            {
+                return legalNameDictionary.GetValueOrDefault(payment.ApprenticeshipId.Value);
+            }
+
+            return null;
         }
 
         private string GetProviderSpecMonitor(AppsAdditionalPaymentLearnerInfo learner, string providerSpecifiedLearnerMonitoring)

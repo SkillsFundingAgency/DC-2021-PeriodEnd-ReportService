@@ -64,6 +64,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             var rulebaseLearningDeliveries = BuildRulebaseLearningDeliveries();
             var rulebasePriceEpisodes = BuildRulebasePriceEpisodes(ukPrn);
             var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName, dasLearnRefNumber, dasLearnAimRef);
+            var legalEntityNameDictionary = BuildLegalEntityNameDictionary(employerName);
 
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentIlrInfo);
@@ -73,6 +74,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .ReturnsAsync(rulebasePriceEpisodes);
             dasPaymentProviderMock.Setup(x => x.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentDasPaymentsInfo);
+            dasPaymentProviderMock
+                .Setup(x => x.GetLegalEntityNameApprenticeshipIdDictionaryAsync(It.IsAny<IEnumerable<long?>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(legalEntityNameDictionary);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
@@ -112,6 +116,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
+        private IDictionary<long, string> BuildLegalEntityNameDictionary(string employerName)
+        {
+            return new Dictionary<long, string>()
+            {
+                [1] = employerName
+            };
+        }
+
         private List<AppsAdditionalPaymentLearnerInfo> BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccurA, string provSpecLearnMonOccurB)
         {
             return new List<AppsAdditionalPaymentLearnerInfo>()
@@ -134,7 +146,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             ProgType = 1,
                             StdCode = 1,
                             FworkCode = 1,
-                            PwayCode = 1
+                            PwayCode = 1,
                         }
                     },
                     ProviderSpecLearnerMonitorings =
@@ -189,12 +201,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             return new List<AECLearningDeliveryInfo>();
         }
 
-        private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn, string employerName, string dasLearnRefNumber, string dasLearnAimRef)
+        private List<DASPaymentInfo> BuildDasPaymentsModel(int ukPrn, string employerName, string dasLearnRefNumber, string dasLearnAimRef)
         {
-            return new AppsAdditionalPaymentDasPaymentsInfo()
-            {
-                UkPrn = ukPrn,
-                Payments = new List<DASPaymentInfo>()
+            return new List<DASPaymentInfo>()
             {
                 new DASPaymentInfo()
                 {
@@ -211,12 +220,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     TransactionType = 4,
                     AcademicYear = 1920,
                     Amount = 10,
-                    ContractType = 2,
+                    ContractType = 1,
                     CollectionPeriod = 1,
                     DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
-                    TypeOfAdditionalPayment = "Apprentice",
-                    EmployerName = employerName
+                    ApprenticeshipId = 1,
                 },
                 new DASPaymentInfo()
                 {
@@ -233,14 +241,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     TransactionType = 6,
                     AcademicYear = 1920,
                     Amount = 10,
-                    ContractType = 2,
+                    ContractType = 1,
                     CollectionPeriod = 1,
                     DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
-                    TypeOfAdditionalPayment = "Apprentice",
-                    EmployerName = employerName
+                    ApprenticeshipId = 1,
                 }
-            }
             };
         }
     }

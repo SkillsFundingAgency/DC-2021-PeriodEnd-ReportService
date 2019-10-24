@@ -38,8 +38,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public DateTime? LearningStartDate { get; set; }
 
-        public string TypeOfAdditionalPayment { get; set; }
-
-        public string EmployerName { get; set; }
+        public long? ApprenticeshipId { get; set; }
     }
 }

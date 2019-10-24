@@ -4,6 +4,7 @@ using System.IO;
 using System.IO.Compression;
 using System.Threading;
 using System.Threading.Tasks;
+using Aspose.Cells;
 using CsvHelper;
 using CsvHelper.Configuration;
 using ESFA.DC.DateTimeProvider.Interface;
@@ -107,7 +108,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
             }
         }
 
-        protected async Task WriteZipEntry(ZipArchive archive, string filename, Stream stream, CancellationToken cancellationToken)
+        protected async Task WriteZipEntry(ZipArchive archive, string filename, Workbook workbook, CancellationToken cancellationToken)
         {
             if (archive == null)
             {
@@ -121,9 +122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
 
             using (var zipStream = archivedFile.Open())
             {
-                stream.Position = 0;
-
-                await stream.CopyToAsync(zipStream, 81920, cancellationToken);
+                workbook.Save(zipStream, SaveFormat.Xlsx);
             }
         }
     }

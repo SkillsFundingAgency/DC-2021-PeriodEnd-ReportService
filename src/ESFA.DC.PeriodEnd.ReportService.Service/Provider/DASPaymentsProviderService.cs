@@ -51,8 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 return await context
                     .Payments
                     .Where(p =>
-                        p.AcademicYear == Generics.AcademicYear
-                        && p.Ukprn == ukprn
+                        p.Ukprn == ukprn
                         && p.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA
                         && _appsAdditionalPaymentsTransactionTypes.Contains(p.TransactionType))
                     .Select(payment => new DASPaymentInfo()

@@ -73,7 +73,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         LearnRefNumber = pv.LearnRefNumber,
                         AimSeqNumber = pv.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber,
                         AttributeName = pv.AttributeName,
-                        PriceEpisodeIdentifier = pv.AEC_ApprenticeshipPriceEpisode.PriceEpisodeIdentifier,
+                        PriceEpisodeIdentifier = pv.PriceEpisodeIdentifier,
                         Periods = new[]
                                 {
                                     pv.Period_1,

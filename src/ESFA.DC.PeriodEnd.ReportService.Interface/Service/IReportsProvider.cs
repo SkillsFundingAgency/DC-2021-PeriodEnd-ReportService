@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ESFA.DC.PeriodEnd.ReportService.Interface;
+﻿using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service

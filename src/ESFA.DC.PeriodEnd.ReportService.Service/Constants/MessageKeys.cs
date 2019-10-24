@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class MessageKeys
     {

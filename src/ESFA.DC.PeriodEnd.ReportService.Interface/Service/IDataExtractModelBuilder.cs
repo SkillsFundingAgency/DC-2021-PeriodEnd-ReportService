@@ -2,7 +2,7 @@
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd
+namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service
 {
     public interface IDataExtractModelBuilder
     {

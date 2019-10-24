@@ -14,6 +14,8 @@ using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
@@ -59,7 +61,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsMonthlyPaymentReport;
 
-        public override void ApplyConfiguration(CsvWriter csvWriter)
+        public override void CsvWriterConfiguration(CsvWriter csvWriter)
         {
             csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats = new[] { "############0.00000" };
         }
@@ -67,7 +69,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         public override async Task GenerateReport(
             IReportServiceContext reportServiceContext,
             ZipArchive archive,
-            bool isFis,
             CancellationToken cancellationToken)
         {
             Stopwatch stopWatch = new Stopwatch();

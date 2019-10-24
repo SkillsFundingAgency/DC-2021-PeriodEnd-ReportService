@@ -33,74 +33,111 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             int ukPrn,
             CancellationToken cancellationToken)
         {
-            var appsAdditionalPaymentRulebaseInfo = new AppsAdditionalPaymentRulebaseInfo()
+            AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo = null;
+
+            try
             {
-                UkPrn = ukPrn,
-                AECApprenticeshipPriceEpisodePeriodisedValues =
-                    new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>(),
-                AECLearningDeliveries = new List<AECLearningDeliveryInfo>()
-            };
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            List<AEC_ApprenticeshipPriceEpisode> aecApprenticeshipPriceEpisodes;
-            List<AEC_LearningDelivery> aecLearningDeliveries;
-
-            using (var ilrContext = _ilrRulebaseContextFactory())
-            {
-                aecApprenticeshipPriceEpisodes = await ilrContext.AEC_ApprenticeshipPriceEpisodes
-                    .Include(x => x.AEC_ApprenticeshipPriceEpisode_PeriodisedValues).Where(x => x.UKPRN == ukPrn)
-                    .ToListAsync(cancellationToken);
-                aecLearningDeliveries = await ilrContext.AEC_LearningDeliveries.Where(x => x.UKPRN == ukPrn)
-                    .ToListAsync(cancellationToken);
-            }
-
-            foreach (var aecApprenticeshipPriceEpisode in aecApprenticeshipPriceEpisodes)
-            {
-                foreach (var aecApprenticeshipPriceEpisodePeriodisedValue in aecApprenticeshipPriceEpisode
-                    .AEC_ApprenticeshipPriceEpisode_PeriodisedValues)
+                appsAdditionalPaymentRulebaseInfo = new AppsAdditionalPaymentRulebaseInfo()
                 {
-                    var periodisedValue = new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = aecApprenticeshipPriceEpisodePeriodisedValue.LearnRefNumber,
-                        AimSeqNumber = (byte?)aecApprenticeshipPriceEpisode?.PriceEpisodeAimSeqNumber,
-                        AttributeName = aecApprenticeshipPriceEpisodePeriodisedValue?.AttributeName,
-                        Periods = new[]
-                        {
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_1.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_2.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_3.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_4.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_5.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_6.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_7.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_8.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_9.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_10.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_11.GetValueOrDefault(),
-                            (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_12.GetValueOrDefault(),
-                        }
-                    };
-                    appsAdditionalPaymentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues
-                        .Add(periodisedValue);
-                }
-            }
-
-            foreach (var aecLearningDelivery in aecLearningDeliveries)
-            {
-                var aecLearningDeliveryInfo = new AECLearningDeliveryInfo()
-                {
-                    UKPRN = ukPrn,
-                    LearnRefNumber = aecLearningDelivery.LearnRefNumber,
-                    AimSeqNumber = aecLearningDelivery.AimSeqNumber,
-                    LearnDelEmpIdFirstAdditionalPaymentThreshold =
-                        aecLearningDelivery.LearnDelEmpIdFirstAdditionalPaymentThreshold,
-                    LearnDelEmpIdSecondAdditionalPaymentThreshold =
-                        aecLearningDelivery.LearnDelEmpIdSecondAdditionalPaymentThreshold
+                    UkPrn = ukPrn,
+                    AECApprenticeshipPriceEpisodePeriodisedValues =
+                        new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>(),
+                    AECLearningDeliveries = new List<AECLearningDeliveryInfo>()
                 };
 
-                appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.Add(aecLearningDeliveryInfo);
+                cancellationToken.ThrowIfCancellationRequested();
+
+                List<AEC_ApprenticeshipPriceEpisode> aecApprenticeshipPriceEpisodes;
+                List<AEC_LearningDelivery> aecLearningDeliveries;
+
+                using (var ilrContext = _ilrRulebaseContextFactory())
+                {
+                    try
+                    {
+                        aecApprenticeshipPriceEpisodes = await ilrContext.AEC_ApprenticeshipPriceEpisodes
+                            .Include(x => x.AEC_ApprenticeshipPriceEpisode_PeriodisedValues)
+                            .Where(x => x.UKPRN == ukPrn)
+                            .ToListAsync(cancellationToken);
+                    }
+                    catch (Exception e)
+                    {
+                        _logger.LogError("Failed to get FM36 Apps Additional Payment AEC Apprenticeship Price Episode data", e);
+                        throw;
+                    }
+
+                    aecLearningDeliveries = await ilrContext.AEC_LearningDeliveries
+                        .Where(x => x.UKPRN == ukPrn)
+                        .ToListAsync(cancellationToken);
+                }
+
+                foreach (var aecApprenticeshipPriceEpisode in aecApprenticeshipPriceEpisodes)
+                {
+                    foreach (var aecApprenticeshipPriceEpisodePeriodisedValue in aecApprenticeshipPriceEpisode
+                        .AEC_ApprenticeshipPriceEpisode_PeriodisedValues)
+                    {
+                        // only include earnings that apply to additional payments
+                        if (aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName ==
+                            Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName ||
+                            aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName ==
+                            Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName ||
+                            aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName ==
+                            Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName ||
+                            aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName ==
+                            Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName ||
+                            aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName ==
+                            Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName ||
+                            aecApprenticeshipPriceEpisodePeriodisedValue.AttributeName ==
+                            Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName)
+                        {
+                            var periodisedValue = new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                            {
+                                UKPRN = ukPrn,
+                                LearnRefNumber = aecApprenticeshipPriceEpisodePeriodisedValue.LearnRefNumber,
+                                AimSeqNumber = (byte?)aecApprenticeshipPriceEpisode?.PriceEpisodeAimSeqNumber,
+                                AttributeName = aecApprenticeshipPriceEpisodePeriodisedValue?.AttributeName,
+                                PriceEpisodeIdentifier = aecApprenticeshipPriceEpisodePeriodisedValue?.PriceEpisodeIdentifier,
+                                Periods = new[]
+                                {
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_1.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_2.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_3.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_4.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_5.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_6.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_7.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_8.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_9.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_10.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_11.GetValueOrDefault(),
+                                    (decimal?)aecApprenticeshipPriceEpisodePeriodisedValue.Period_12.GetValueOrDefault(),
+                                }
+                            };
+                            appsAdditionalPaymentRulebaseInfo.AECApprenticeshipPriceEpisodePeriodisedValues
+                                .Add(periodisedValue);
+                        }
+                    }
+                }
+
+                foreach (var aecLearningDelivery in aecLearningDeliveries)
+                {
+                    var aecLearningDeliveryInfo = new AECLearningDeliveryInfo()
+                    {
+                        UKPRN = ukPrn,
+                        LearnRefNumber = aecLearningDelivery.LearnRefNumber,
+                        AimSeqNumber = aecLearningDelivery.AimSeqNumber,
+                        LearnDelEmpIdFirstAdditionalPaymentThreshold =
+                            aecLearningDelivery.LearnDelEmpIdFirstAdditionalPaymentThreshold,
+                        LearnDelEmpIdSecondAdditionalPaymentThreshold =
+                            aecLearningDelivery.LearnDelEmpIdSecondAdditionalPaymentThreshold
+                    };
+
+                    appsAdditionalPaymentRulebaseInfo.AECLearningDeliveries.Add(aecLearningDeliveryInfo);
+                }
+            }
+            catch (Exception e)
+            {
+                _logger.LogError("Failed to get FM36 Apps Additional Payment data", e);
+                throw;
             }
 
             return appsAdditionalPaymentRulebaseInfo;

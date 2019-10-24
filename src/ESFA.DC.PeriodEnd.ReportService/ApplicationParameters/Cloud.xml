@@ -25,6 +25,7 @@
     <!-- OrgConnectionString -->
     <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
     <Parameter Name="FCSConnectionString" Value="__FCSConnectionString__" />
+    <Parameter Name="EasConnectionString" Value="__Eas1920ConnectionString__" />
     <!-- JobQueueManager -->
     <Parameter Name="JobQueueManagerConnectionString" Value="__JobQueueManagerConnectionString__" />
     <!-- ReportDataConnectionString -->

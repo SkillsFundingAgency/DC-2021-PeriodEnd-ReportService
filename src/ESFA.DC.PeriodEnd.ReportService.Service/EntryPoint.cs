@@ -9,6 +9,7 @@ using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service
@@ -94,7 +95,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service
                 var stopWatch = new Stopwatch();
                 stopWatch.Start();
                 _logger.LogDebug($"Attempting to generate {report.GetType().Name}");
-                await report.GenerateReport(reportServiceContext, archive, false, cancellationToken);
+                await report.GenerateReport(reportServiceContext, archive, cancellationToken);
                 stopWatch.Stop();
                 _logger.LogDebug($"Persisted {report.GetType().Name} to csv/json in: {stopWatch.ElapsedMilliseconds}");
 

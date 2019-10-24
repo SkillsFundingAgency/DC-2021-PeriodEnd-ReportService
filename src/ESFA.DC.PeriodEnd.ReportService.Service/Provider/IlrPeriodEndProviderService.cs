@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
@@ -17,6 +16,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
+using ReturnPeriod = ESFA.DC.CollectionsManagement.Models.ReturnPeriod;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
@@ -65,7 +65,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 .ToList();
         }
 
-        public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn,
+            CancellationToken cancellationToken)
         {
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo = null;
 
@@ -179,7 +180,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsMonthlyPaymentIlrInfo;
         }
 
-        public async Task<AppsAdditionalPaymentILRInfo> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken)
+        public async Task<AppsAdditionalPaymentILRInfo> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn,
+            CancellationToken cancellationToken)
         {
             var appsAdditionalPaymentIlrInfo = new AppsAdditionalPaymentILRInfo()
             {
@@ -195,7 +197,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 learnersList = await ilrContext.Learners
                     .Include(x => x.LearningDeliveries)
                     .Include(x => x.ProviderSpecLearnerMonitorings)
-                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                    .Where(x => x.UKPRN == ukPrn &&
+                                x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
                     .ToListAsync(cancellationToken);
             }
 
@@ -205,27 +208,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 {
                     LearnRefNumber = learner.LearnRefNumber,
                     ULN = learner.ULN,
-                    LearningDeliveries = learner.LearningDeliveries.Select(x => new AppsAdditionalPaymentLearningDeliveryInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = x.LearnRefNumber,
-                        LearnAimRef = x.LearnAimRef,
-                        AimType = x.AimType,
-                        LearnStartDate = x.LearnStartDate,
-                        ProgType = x.ProgType,
-                        StdCode = x.StdCode,
-                        FworkCode = x.FworkCode,
-                        PwayCode = x.PwayCode,
-                        AimSeqNumber = x.AimSeqNumber,
-                        FundModel = x.FundModel
-                    }).ToList(),
-                    ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x => new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
-                    {
-                        UKPRN = x.UKPRN,
-                        LearnRefNumber = x.LearnRefNumber,
-                        ProvSpecLearnMon = x.ProvSpecLearnMon,
-                        ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
-                    }).ToList()
+                    LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                        new AppsAdditionalPaymentLearningDeliveryInfo()
+                        {
+                            UKPRN = ukPrn,
+                            LearnRefNumber = x.LearnRefNumber,
+                            LearnAimRef = x.LearnAimRef,
+                            AimType = x.AimType,
+                            LearnStartDate = x.LearnStartDate,
+                            ProgType = x.ProgType,
+                            StdCode = x.StdCode,
+                            FworkCode = x.FworkCode,
+                            PwayCode = x.PwayCode,
+                            AimSeqNumber = x.AimSeqNumber,
+                            FundModel = x.FundModel
+                        }).ToList(),
+                    ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                        new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
+                        {
+                            UKPRN = x.UKPRN,
+                            LearnRefNumber = x.LearnRefNumber,
+                            ProvSpecLearnMon = x.ProvSpecLearnMon,
+                            ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
+                        }).ToList()
                 };
                 appsAdditionalPaymentIlrInfo.Learners.Add(learnerInfo);
             }
@@ -268,7 +273,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             });
 
             var fdCs = fd
-                .GroupBy(x => new { x.PeriodNumber })
+                .GroupBy(x => new {x.PeriodNumber})
                 .Select(x => new
                 {
                     PeriodNumber = x.Key.PeriodNumber,
@@ -296,7 +301,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return returningProviders;
         }
 
-        public async Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -305,7 +311,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 top20RuleViolationsList = await ilrContext.ValidationErrors
                     .Where(x => x.Severity == "E")
-                    .GroupBy(x => new { x.RuleName, x.ErrorMessage })
+                    .GroupBy(x => new {x.RuleName, x.ErrorMessage})
                     .Select(x => new RuleViolationsInfo
                     {
                         RuleName = x.Key.RuleName,
@@ -324,7 +330,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top20RuleViolationsList;
         }
 
-        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(
+            IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -365,8 +372,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var ilrContext = _ilrInValidContextFactory())
             {
                 top10ProvidersWithInvalidLearnersInvalid = (await ilrContext.Learners
-                    .GroupBy(x => x.UKPRN)
-                    .ToListAsync(cancellationToken))
+                        .GroupBy(x => x.UKPRN)
+                        .ToListAsync(cancellationToken))
                     .OrderByDescending(x => x.Count())
                     .Take(10)
                     .Select(x => new Top10ProvidersWithInvalidLearnersInvalidLearners
@@ -527,11 +534,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
         {
-            return !submittedDateTime.HasValue ? 0 : returnPeriods
-                    .SingleOrDefault(x =>
-                        submittedDateTime >= x.StartDateTimeUtc &&
-                        submittedDateTime <= x.EndDateTimeUtc)
-                    ?.PeriodNumber ?? 99;
+            return !submittedDateTime.HasValue
+                ? 0
+                : returnPeriods
+                      .SingleOrDefault(x =>
+                          submittedDateTime >= x.StartDateTimeUtc &&
+                          submittedDateTime <= x.EndDateTimeUtc)
+                      ?.PeriodNumber ?? 99;
         }
     }
 }

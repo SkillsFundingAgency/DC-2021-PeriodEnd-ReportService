@@ -9,11 +9,11 @@ using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
@@ -32,10 +32,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IFM36PeriodEndProviderService fm36ProviderService,
             IDateTimeProvider dateTimeProvider,
-            IValueProvider valueProvider,
             IDASPaymentsProviderService dasPaymentsProviderService,
             IAppsAdditionalPaymentsModelBuilder modelBuilder)
-        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
+        : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
@@ -47,7 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsAdditionalPaymentsReport;
 
-        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken)
+        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);

@@ -1,6 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;

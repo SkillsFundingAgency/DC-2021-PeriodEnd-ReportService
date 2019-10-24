@@ -38,11 +38,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             return (
                 PaymentUniqueLearnerNumber,
                 PaymentLearningStartDate,
-                PaymentLearnerReferenceNumber.ToUpper(),
-                PaymentLearningAimFundingLineType.ToUpper(),
-                PaymentTypeOfAdditionalPayment.ToUpper(),
-                AppsServiceEmployerName.ToUpper(),
-                IlrEmployerIdentifier.ToUpper())
+                PaymentLearnerReferenceNumber?.ToUpper(),
+                PaymentLearningAimFundingLineType?.ToUpper(),
+                PaymentTypeOfAdditionalPayment?.ToUpper(),
+                AppsServiceEmployerName?.ToUpper(),
+                IlrEmployerIdentifier?.ToUpper())
                 .GetHashCode();
         }
 

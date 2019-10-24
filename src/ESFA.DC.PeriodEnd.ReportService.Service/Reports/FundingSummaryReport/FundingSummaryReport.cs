@@ -72,10 +72,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
                 await _excelService.SaveWorkbookAsync(workbook, replacedFileName, reportServiceContext.Container, cancellationToken);
 
-                using (var memoryStream = workbook.SaveToStream())
-                {
-                    await WriteZipEntry(archive, $"{fileName}.xlsx", memoryStream, cancellationToken);
-                }
+                await WriteZipEntry(archive, $"{fileName}.xlsx", workbook, cancellationToken);
             }
         }
     }

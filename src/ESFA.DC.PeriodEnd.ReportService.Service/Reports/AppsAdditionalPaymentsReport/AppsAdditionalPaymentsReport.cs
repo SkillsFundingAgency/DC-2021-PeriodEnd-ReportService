@@ -17,9 +17,9 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport
 {
-    public class AppsAdditionalPaymentsReport : AbstractReport, IReport
+    public class AppsAdditionalPaymentsReport : AbstractReport
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;

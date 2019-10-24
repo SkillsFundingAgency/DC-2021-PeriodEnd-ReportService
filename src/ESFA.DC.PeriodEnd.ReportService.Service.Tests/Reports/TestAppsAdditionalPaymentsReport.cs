@@ -16,6 +16,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
 using FluentAssertions;
@@ -108,12 +109,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
-        private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccurA, string provSpecLearnMonOccurB)
+        private List<AppsAdditionalPaymentLearnerInfo> BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccurA, string provSpecLearnMonOccurB)
         {
-            return new AppsAdditionalPaymentILRInfo()
-            {
-                UkPrn = ukPrn,
-                Learners = new List<AppsAdditionalPaymentLearnerInfo>()
+            return new List<AppsAdditionalPaymentLearnerInfo>()
             {
                 new AppsAdditionalPaymentLearnerInfo()
                 {
@@ -155,7 +153,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             }
                         }
                 }
-            }
             };
         }
 

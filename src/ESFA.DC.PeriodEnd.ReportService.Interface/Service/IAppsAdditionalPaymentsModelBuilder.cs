@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service
 {
     public interface IAppsAdditionalPaymentsModelBuilder
     {
-        IEnumerable<AppsAdditionalPaymentsModel> BuildModel(AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo, AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo, AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo);
+        IEnumerable<AppsAdditionalPaymentsModel> BuildModel(IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo, AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo, AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo);
     }
 }

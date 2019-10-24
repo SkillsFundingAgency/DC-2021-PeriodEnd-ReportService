@@ -9,12 +9,12 @@ using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport
 {
     public class AppsAdditionalPaymentsModelBuilder : IAppsAdditionalPaymentsModelBuilder
     {
         public IEnumerable<AppsAdditionalPaymentsModel> BuildModel(
-            AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo,
+            IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
             AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo,
             AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
         {
@@ -115,7 +115,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="appsAdditionalPaymentDasPaymentsInfo"></param>
         /// <returns>A list of AppsAdditionalPaymentExtendedPaymentModels.</returns>
         public List<AppsAdditionalPaymentExtendedPaymentModel> BuildAdditionalPaymentsExtendedPaymentsModel(
-            AppsAdditionalPaymentILRInfo appsAdditionalPaymentIlrInfo,
+            IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
             AppsAdditionalPaymentRulebaseInfo appsAdditionalPaymentRulebaseInfo,
             AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo)
         {
@@ -126,7 +126,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             foreach (var dasPaymentInfo in appsAdditionalPaymentDasPaymentsInfo.Payments)
             {
                 // lookup the related reference data for this payment
-                var learner = appsAdditionalPaymentIlrInfo?.Learners?
+                var learner = appsAdditionalPaymentIlrInfo?
                     .SingleOrDefault(x =>
                         x.LearnRefNumber.CaseInsensitiveEquals(dasPaymentInfo?.LearnerReferenceNumber));
 

@@ -180,62 +180,45 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsMonthlyPaymentIlrInfo;
         }
 
-        public async Task<AppsAdditionalPaymentILRInfo> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn,
-            CancellationToken cancellationToken)
+        public async Task<List<AppsAdditionalPaymentLearnerInfo>> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
-            var appsAdditionalPaymentIlrInfo = new AppsAdditionalPaymentILRInfo()
-            {
-                UkPrn = ukPrn,
-                Learners = new List<AppsAdditionalPaymentLearnerInfo>()
-            };
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            List<Learner> learnersList;
             using (var ilrContext = _ilrValidContextFactory())
             {
-                learnersList = await ilrContext.Learners
-                    .Include(x => x.LearningDeliveries)
-                    .Include(x => x.ProviderSpecLearnerMonitorings)
-                    .Where(x => x.UKPRN == ukPrn &&
-                                x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+               return await ilrContext
+                   .Learners
+                    .Where(
+                       x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                   .Select(learner =>
+                       new AppsAdditionalPaymentLearnerInfo
+                       {
+                           LearnRefNumber = learner.LearnRefNumber,
+                           ULN = learner.ULN,
+                           LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                               new AppsAdditionalPaymentLearningDeliveryInfo()
+                               {
+                                   UKPRN = ukPrn,
+                                   LearnRefNumber = x.LearnRefNumber,
+                                   LearnAimRef = x.LearnAimRef,
+                                   AimType = x.AimType,
+                                   LearnStartDate = x.LearnStartDate,
+                                   ProgType = x.ProgType,
+                                   StdCode = x.StdCode,
+                                   FworkCode = x.FworkCode,
+                                   PwayCode = x.PwayCode,
+                                   AimSeqNumber = x.AimSeqNumber,
+                                   FundModel = x.FundModel
+                               }).ToList(),
+                           ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                                   new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
+                                   {
+                                       UKPRN = x.UKPRN,
+                                       LearnRefNumber = x.LearnRefNumber,
+                                       ProvSpecLearnMon = x.ProvSpecLearnMon,
+                                       ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
+                                   }).ToList()
+                       })
                     .ToListAsync(cancellationToken);
             }
-
-            foreach (var learner in learnersList)
-            {
-                var learnerInfo = new AppsAdditionalPaymentLearnerInfo
-                {
-                    LearnRefNumber = learner.LearnRefNumber,
-                    ULN = learner.ULN,
-                    LearningDeliveries = learner.LearningDeliveries.Select(x =>
-                        new AppsAdditionalPaymentLearningDeliveryInfo()
-                        {
-                            UKPRN = ukPrn,
-                            LearnRefNumber = x.LearnRefNumber,
-                            LearnAimRef = x.LearnAimRef,
-                            AimType = x.AimType,
-                            LearnStartDate = x.LearnStartDate,
-                            ProgType = x.ProgType,
-                            StdCode = x.StdCode,
-                            FworkCode = x.FworkCode,
-                            PwayCode = x.PwayCode,
-                            AimSeqNumber = x.AimSeqNumber,
-                            FundModel = x.FundModel
-                        }).ToList(),
-                    ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
-                        new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
-                        {
-                            UKPRN = x.UKPRN,
-                            LearnRefNumber = x.LearnRefNumber,
-                            ProvSpecLearnMon = x.ProvSpecLearnMon,
-                            ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
-                        }).ToList()
-                };
-                appsAdditionalPaymentIlrInfo.Learners.Add(learnerInfo);
-            }
-
-            return appsAdditionalPaymentIlrInfo;
         }
 
         public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(

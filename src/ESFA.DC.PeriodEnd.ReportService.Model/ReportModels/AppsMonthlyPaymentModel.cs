@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 {
-    public class AppsMonthlyPaymentModel
+    public class AppsMonthlyPaymentModel : AbstractReportModel
     {
         public int? Ukprn { get; set; }
 
@@ -15,8 +15,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
         public string ProviderSpecifiedLearnerMonitoringA { get; set; }
 
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }
-
-        public Guid? PaymentEarningEventId { get; set; }
 
         public byte? PaymentEarningEventAimSeqNumber { get; set; }
 
@@ -380,9 +378,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
         public decimal? TotalLearningSupportDisadvantageAndFrameworkUpliftPayments { get; set; }
 
         public decimal? TotalPayments { get; set; }
-
-        public string OfficialSensitive { get; set; }
-
-        public decimal?[] TotalMonthlyPayments { get; set; }
     }
 }

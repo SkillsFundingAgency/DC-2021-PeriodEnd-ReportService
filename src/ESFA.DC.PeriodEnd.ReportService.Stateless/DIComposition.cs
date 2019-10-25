@@ -26,6 +26,7 @@ using ESFA.DC.JobContextManager.Model;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.Mapping.Interface;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Contexts;
 using ESFA.DC.PeriodEnd.ReportService.DataAccess.Services;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -67,6 +68,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             var containerBuilder = new ContainerBuilder();
 
             var statelessServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAsStatelessServiceConfiguration();
+
+            var dataPersistConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<DataPersistConfiguration>("DataPersistConfiguration");
+            containerBuilder.RegisterInstance(dataPersistConfiguration).As<DataPersistConfiguration>();
 
             var reportServiceConfiguration = serviceFabricConfigurationService.GetConfigSectionAs<ReportServiceConfiguration>("ReportServiceConfiguration");
             containerBuilder.RegisterInstance(reportServiceConfiguration).As<IReportServiceConfiguration>();
@@ -117,6 +121,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             RegisterServices(containerBuilder);
             RegisterBuilders(containerBuilder);
             RegisterReports(containerBuilder);
+            RegisterDataPersist(containerBuilder);
 
             RegisterFundingSummaryReport(containerBuilder);
 
@@ -312,6 +317,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<ProviderSubmissionsReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<CollectionStatsReport>().As<IInternalReport>();
+        }
+
+        private static void RegisterDataPersist(ContainerBuilder containerBuilder)
+        {
+            containerBuilder.RegisterType<PersistReportData>().As<IPersistReportData>();
+            containerBuilder.RegisterType<BulkInsert>().As<IBulkInsert>();
         }
 
         private static void RegisterServices(ContainerBuilder containerBuilder)

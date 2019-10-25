@@ -32,6 +32,11 @@
     <Parameter Name="EasConnectionString" Value="" />
   </Section>
 
+  <Section Name="DataPersistConfiguration">
+    <Parameter Name="ReportDataConnectionString" Value="" />
+    <Parameter Name="DataPersistFeatureEnabled" Value="true" />
+  </Section>
+
   <Section Name="SoftwareLicenceSection">
     <Parameter Name="AsposeLicence" Value="" />
   </Section>

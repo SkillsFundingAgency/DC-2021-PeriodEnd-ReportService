@@ -1,0 +1,17 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netstandard2.0</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
+    <PackageReference Include="FastMember" Version="1.5.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.7.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Model\ESFA.DC.PeriodEnd.ReportService.Model.csproj" />
+  </ItemGroup>
+
+</Project>

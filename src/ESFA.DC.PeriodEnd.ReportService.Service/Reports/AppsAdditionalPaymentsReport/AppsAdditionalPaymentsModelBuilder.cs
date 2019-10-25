@@ -242,7 +242,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
 
         private decimal GetMonthlyEarnings(
             DASPaymentInfo dasPaymentInfo,
-            IEnumerable<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
+            ICollection<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
             byte period)
         {
             if (period >= 1 && period <= 12)
@@ -286,17 +286,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         }
 
         private decimal GetAECPriceEpisodePeriodisedValue(
-            IEnumerable<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
-            IEnumerable<string> attributeNames,
+            ICollection<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
+            ICollection<string> attributeNames,
             byte period)
         {
-            var amount = aecApprenticeshipPriceEpisodePeriodisedValues
+            return aecApprenticeshipPriceEpisodePeriodisedValues
                              .Where(x =>
                                  x != null &&
                                  attributeNames.Contains(x.AttributeName, StringComparer.OrdinalIgnoreCase))
                              .Sum(z => z.Periods[period - 1]) ?? 0;
-
-            return amount;
         }
 
         private string GetEmployerIdentifier(AECLearningDeliveryInfo aecLearningDeliveryInfo, DASPaymentInfo payment)

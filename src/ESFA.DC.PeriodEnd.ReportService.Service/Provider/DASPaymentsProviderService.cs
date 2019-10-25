@@ -52,7 +52,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Payments
                     .Where(p =>
                         p.Ukprn == ukprn
-                        //&& p.AcademicYear == Generics.AcademicYear
+                        && p.AcademicYear == Generics.AcademicYear
                         && p.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA
                         && _appsAdditionalPaymentsTransactionTypes.Contains(p.TransactionType))
                     .Select(payment => new DASPaymentInfo()

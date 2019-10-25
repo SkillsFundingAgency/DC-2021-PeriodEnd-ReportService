@@ -54,16 +54,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
 
             _logger.LogInfo("Apps Additional Payments Start");
 
-            var ilrLearners = await _ilrPeriodEndProviderService.GetILRInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
-            var rulebaseApprenticeshipPriceEpisodes = await _fm36ProviderService.GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
-            var rulebaseLearningDeliveries = await _fm36ProviderService.GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
-            var appsAdditionalPaymentDasPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var ilrLearners = _ilrPeriodEndProviderService.GetILRInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var rulebaseApprenticeshipPriceEpisodes = _fm36ProviderService.GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var rulebaseLearningDeliveries = _fm36ProviderService.GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsAdditionalPaymentDasPaymentsInfo = _dasPaymentsProviderService.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
 
-            var legalNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsAdditionalPaymentDasPaymentsInfo.Select(p => p.ApprenticeshipId), cancellationToken);
+            await Task.WhenAll(ilrLearners, rulebaseApprenticeshipPriceEpisodes, rulebaseLearningDeliveries, appsAdditionalPaymentDasPaymentsInfo);
+
+            var legalNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsAdditionalPaymentDasPaymentsInfo.Result.Select(p => p.ApprenticeshipId), cancellationToken);
 
             _logger.LogInfo("Apps Additional Payments Data Provision End");
 
-            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(ilrLearners, rulebaseApprenticeshipPriceEpisodes, rulebaseLearningDeliveries, appsAdditionalPaymentDasPaymentsInfo, legalNameDictionary);
+            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(
+                ilrLearners.Result,
+                rulebaseApprenticeshipPriceEpisodes.Result,
+                rulebaseLearningDeliveries.Result,
+                appsAdditionalPaymentDasPaymentsInfo.Result,
+                legalNameDictionary);
 
             _logger.LogInfo("Apps Additional Payments Report Creation End");
 

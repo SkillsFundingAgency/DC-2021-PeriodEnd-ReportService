@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -56,7 +57,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var appsCoInvestmentPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var paymentsAppsCoInvestmentUniqueKeys = await _dasPaymentsProviderService.GetUniqueCombinationsOfKeyFromPaymentsAsync(reportServiceContext.Ukprn, cancellationToken);
             var ilrAppsCoInvestmentUniqueKeys = await _ilrPeriodEndProviderService.GetUniqueAppsCoInvestmentRecordKeysAsync(reportServiceContext.Ukprn, cancellationToken);
-            var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsCoInvestmentPaymentsInfo, cancellationToken);
+
+            var apprenticeshipIds = appsCoInvestmentPaymentsInfo.Payments.Select(p => p.ApprenticeshipId);
+
+            var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(apprenticeshipIds, cancellationToken);
 
             var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, paymentsAppsCoInvestmentUniqueKeys, ilrAppsCoInvestmentUniqueKeys, apprenticeshipIdLegalEntityNameDictionary, reportServiceContext.JobId);
 

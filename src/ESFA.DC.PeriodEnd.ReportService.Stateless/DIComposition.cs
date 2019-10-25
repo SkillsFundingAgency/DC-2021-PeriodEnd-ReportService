@@ -42,6 +42,7 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;

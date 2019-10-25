@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport.Model
 {
     public class AppsAdditionalPaymentExtendedPaymentModel
     {

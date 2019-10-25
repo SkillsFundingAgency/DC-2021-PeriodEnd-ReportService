@@ -143,6 +143,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         {
             var learnerDictionary = appsAdditionalPaymentIlrInfo.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
 
+            var priceEpisodesDictionary = rulebasePriceEpisodes
+                .Where(x => x != null)
+                .GroupBy(pel => pel.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key,
+                    g => g
+                        .GroupBy(gea => gea.AimSeqNumber)
+                        .ToDictionary(gi => gi.Key, gi => gi.ToArray()));
+
             // Create a new payment model which includes the related data from the ILR
             return appsAdditionalPaymentDasPaymentsInfo
                 .Where(p => p != null)
@@ -166,11 +174,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
                         x.AimSeqNumber == learningDelivery.AimSeqNumber);
 
-                    var aecApprenticeshipPriceEpisodePeriodisedValues = rulebasePriceEpisodes?
-                        .Where(x =>
-                            x != null &&
-                            x.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) &&
-                            x.AimSeqNumber == learningDelivery?.AimSeqNumber).ToList();
+                    var aecApprenticeshipPriceEpisodePeriodisedValues =
+                        priceEpisodesDictionary.GetValueOrDefault(learningDelivery?.LearnRefNumber)?
+                            .GetValueOrDefault(learningDelivery?.AimSeqNumber)
+                        ?? Array.Empty<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>();
 
                     // copy this payment's fields to the new extended payment model
                     return new AppsAdditionalPaymentExtendedPaymentModel
@@ -235,7 +242,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
 
         private decimal GetMonthlyEarnings(
             DASPaymentInfo dasPaymentInfo,
-            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
+            IEnumerable<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
             byte period)
         {
             if (period >= 1 && period <= 12)
@@ -279,7 +286,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         }
 
         private decimal GetAECPriceEpisodePeriodisedValue(
-            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
+            IEnumerable<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
             IEnumerable<string> attributeNames,
             byte period)
         {

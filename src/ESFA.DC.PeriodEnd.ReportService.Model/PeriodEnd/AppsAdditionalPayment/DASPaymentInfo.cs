@@ -4,7 +4,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 {
     public class DASPaymentInfo
     {
-        public int UkPrn { get; set; }
+        public long Ukprn { get; set; }
 
         public string LearnerReferenceNumber { get; set; }
 

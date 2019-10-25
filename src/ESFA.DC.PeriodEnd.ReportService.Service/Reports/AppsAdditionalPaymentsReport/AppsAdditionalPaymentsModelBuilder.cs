@@ -134,85 +134,76 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                 .ToList();
         }
 
-        /// <summary>
-        /// Create an extended payments model that includes the payment related ILR data
-        /// </summary>
-        /// <param name="appsAdditionalPaymentIlrInfo"></param>
-        /// <param name="appsAdditionalPaymentRulebaseInfo"></param>
-        /// <param name="appsAdditionalPaymentDasPaymentsInfo"></param>
-        /// <returns>A list of AppsAdditionalPaymentExtendedPaymentModels.</returns>
-        public List<AppsAdditionalPaymentExtendedPaymentModel> BuildAdditionalPaymentsExtendedPaymentsModel(
+        public IEnumerable<AppsAdditionalPaymentExtendedPaymentModel> BuildAdditionalPaymentsExtendedPaymentsModel(
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
             IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
             IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
             IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
             IDictionary<long, string> legalNameDictionary)
         {
-            List<AppsAdditionalPaymentExtendedPaymentModel> extendedPayments = new List<AppsAdditionalPaymentExtendedPaymentModel>();
-
             var learnerDictionary = appsAdditionalPaymentIlrInfo.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
 
             // Create a new payment model which includes the related data from the ILR
-            foreach (var dasPaymentInfo in appsAdditionalPaymentDasPaymentsInfo.Where(p => p != null))
-            {
-                // lookup the related reference data for this payment
-                var learner = learnerDictionary.GetValueOrDefault(dasPaymentInfo?.LearnerReferenceNumber);
+            return appsAdditionalPaymentDasPaymentsInfo
+                .Where(p => p != null)
+                .Select(dasPaymentInfo =>
+                {
+                    // lookup the related reference data for this payment
+                    var learner = learnerDictionary.GetValueOrDefault(dasPaymentInfo?.LearnerReferenceNumber);
 
-                var learningDelivery = learner?.LearningDeliveries?.SingleOrDefault(x =>
-                        (x?.LearnRefNumber.CaseInsensitiveEquals(dasPaymentInfo?.LearnerReferenceNumber) ?? false) &&
-                        x.LearnAimRef.CaseInsensitiveEquals(dasPaymentInfo?.LearningAimReference) &&
-                        x.LearnStartDate == dasPaymentInfo?.LearningStartDate &&
+                    var learningDelivery = learner?.LearningDeliveries?.FirstOrDefault(x =>
+                        x != null &&
                         (x.ProgType == null || x.ProgType == dasPaymentInfo.LearningAimProgrammeType) &&
                         (x.StdCode == null || x.StdCode == dasPaymentInfo.LearningAimStandardCode) &&
                         (x.FworkCode == null || x.FworkCode == dasPaymentInfo.LearningAimFrameworkCode) &&
-                        (x.PwayCode == null || x.PwayCode == dasPaymentInfo.LearningAimPathwayCode));
+                        (x.PwayCode == null || x.PwayCode == dasPaymentInfo.LearningAimPathwayCode) &&
+                        x.LearnRefNumber.CaseInsensitiveEquals(dasPaymentInfo.LearnerReferenceNumber) &&
+                        x.LearnAimRef.CaseInsensitiveEquals(dasPaymentInfo.LearningAimReference) &&
+                        x.LearnStartDate == dasPaymentInfo.LearningStartDate);
 
-                var aecLearningDelivery = rulebaseLearningDeliveries?.FirstOrDefault(x =>
+                    var aecLearningDelivery = rulebaseLearningDeliveries?.FirstOrDefault(x =>
                         x?.UKPRN == learningDelivery?.UKPRN &&
                         (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
                         x.AimSeqNumber == learningDelivery.AimSeqNumber);
 
-                var aecApprenticeshipPriceEpisodePeriodisedValues = rulebasePriceEpisodes?
+                    var aecApprenticeshipPriceEpisodePeriodisedValues = rulebasePriceEpisodes?
                         .Where(x =>
-                        x?.UKPRN == learningDelivery?.UKPRN &&
-                        (x?.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) ?? false) &&
-                        x.AimSeqNumber == learningDelivery?.AimSeqNumber).ToList();
+                            x != null &&
+                            x.LearnRefNumber.CaseInsensitiveEquals(learningDelivery?.LearnRefNumber) &&
+                            x.AimSeqNumber == learningDelivery?.AimSeqNumber).ToList();
 
-                // copy this payment's fields to the new extended payment model
-                var extendedPayment = new AppsAdditionalPaymentExtendedPaymentModel();
+                    // copy this payment's fields to the new extended payment model
+                    return new AppsAdditionalPaymentExtendedPaymentModel
+                    {
+                        // copy the reporting grouping fields
+                        PaymentLearnerReferenceNumber = dasPaymentInfo.LearnerReferenceNumber,
+                        PaymentUniqueLearnerNumber = dasPaymentInfo.LearnerUln,
+                        PaymentLearningStartDate = dasPaymentInfo.LearningStartDate,
+                        PaymentLearningAimFundingLineType = dasPaymentInfo.LearningAimFundingLineType,
+                        PaymentTypeOfAdditionalPayment = GetTypeOfAdditionalPayment(dasPaymentInfo.TransactionType),
+                        AppsServiceEmployerName = GetAppServiceEmployerName(dasPaymentInfo, legalNameDictionary),
+                        ilrEmployerIdentifier = GetEmployerIdentifier(aecLearningDelivery, dasPaymentInfo),
 
-                // copy the reporting grouping fields
-                extendedPayment.PaymentLearnerReferenceNumber = dasPaymentInfo.LearnerReferenceNumber;
-                extendedPayment.PaymentUniqueLearnerNumber = dasPaymentInfo.LearnerUln;
-                extendedPayment.PaymentLearningStartDate = dasPaymentInfo.LearningStartDate;
-                extendedPayment.PaymentLearningAimFundingLineType = dasPaymentInfo.LearningAimFundingLineType;
-                extendedPayment.PaymentTypeOfAdditionalPayment = GetTypeOfAdditionalPayment(dasPaymentInfo.TransactionType);
-                extendedPayment.AppsServiceEmployerName = GetAppServiceEmployerName(dasPaymentInfo, legalNameDictionary);
-                extendedPayment.ilrEmployerIdentifier = GetEmployerIdentifier(aecLearningDelivery, dasPaymentInfo);
+                        // copy the remaining payment fields
+                        PaymentLearningAimProgrammeType = dasPaymentInfo.LearningAimProgrammeType,
+                        PaymentLearningAimStandardCode = dasPaymentInfo.LearningAimStandardCode,
+                        PaymentLearningAimFrameworkCode = dasPaymentInfo.LearningAimFrameworkCode,
+                        PaymentLearningAimPathwayCode = dasPaymentInfo.LearningAimPathwayCode,
+                        PaymentLearningAimReference = dasPaymentInfo.LearningAimReference,
+                        PaymentContractType = dasPaymentInfo.ContractType,
+                        PaymentFundingSource = dasPaymentInfo.FundingSource,
+                        PaymentTransactionType = dasPaymentInfo.TransactionType,
+                        PaymentAcademicYear = dasPaymentInfo.AcademicYear,
+                        PaymentCollectionPeriod = dasPaymentInfo.CollectionPeriod,
+                        PaymentDeliveryPeriod = dasPaymentInfo.DeliveryPeriod,
+                        PaymentAmount = dasPaymentInfo.Amount,
 
-                // copy the remaining payment fields
-                extendedPayment.PaymentLearningAimProgrammeType = dasPaymentInfo.LearningAimProgrammeType;
-                extendedPayment.PaymentLearningAimStandardCode = dasPaymentInfo.LearningAimStandardCode;
-                extendedPayment.PaymentLearningAimFrameworkCode = dasPaymentInfo.LearningAimFrameworkCode;
-                extendedPayment.PaymentLearningAimPathwayCode = dasPaymentInfo.LearningAimPathwayCode;
-                extendedPayment.PaymentLearningAimReference = dasPaymentInfo.LearningAimReference;
-                extendedPayment.PaymentContractType = dasPaymentInfo.ContractType;
-                extendedPayment.PaymentFundingSource = dasPaymentInfo.FundingSource;
-                extendedPayment.PaymentTransactionType = dasPaymentInfo.TransactionType;
-                extendedPayment.PaymentAcademicYear = dasPaymentInfo.AcademicYear;
-                extendedPayment.PaymentCollectionPeriod = dasPaymentInfo.CollectionPeriod;
-                extendedPayment.PaymentDeliveryPeriod = dasPaymentInfo.DeliveryPeriod;
-                extendedPayment.PaymentAmount = dasPaymentInfo.Amount;
-
-                // copy the ilr fields
-                extendedPayment.ProviderSpecifiedLearnerMonitoringA = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringA);
-                extendedPayment.ProviderSpecifiedLearnerMonitoringB = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringB);
-                extendedPayment.EarningAmount = GetMonthlyEarnings(dasPaymentInfo, aecApprenticeshipPriceEpisodePeriodisedValues, dasPaymentInfo.CollectionPeriod);
-
-                extendedPayments.Add(extendedPayment);
-            }
-
-            return extendedPayments;
+                        // copy the ilr fields
+                        ProviderSpecifiedLearnerMonitoringA = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringA),
+                        ProviderSpecifiedLearnerMonitoringB = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringB),
+                        EarningAmount = GetMonthlyEarnings(dasPaymentInfo, aecApprenticeshipPriceEpisodePeriodisedValues, dasPaymentInfo.CollectionPeriod)
+                    };
+                });
         }
 
         private decimal GetPeriodEarningsTotalForPeriod(IDictionary<byte, List<AppsAdditionalPaymentExtendedPaymentModel>> models, byte period)
@@ -239,8 +230,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
 
         private string GetProviderSpecMonitor(AppsAdditionalPaymentLearnerInfo learner, string providerSpecifiedLearnerMonitoring)
         {
-            return learner?.ProviderSpecLearnerMonitorings
-                       .SingleOrDefault(x => x.ProvSpecLearnMonOccur.CaseInsensitiveEquals(providerSpecifiedLearnerMonitoring))?.ProvSpecLearnMon ?? string.Empty;
+            return learner?.ProviderSpecLearnerMonitorings.FirstOrDefault(x => x.ProvSpecLearnMonOccur.CaseInsensitiveEquals(providerSpecifiedLearnerMonitoring))?.ProvSpecLearnMon;
         }
 
         private decimal GetMonthlyEarnings(
@@ -248,59 +238,58 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
             byte period)
         {
-            if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive || dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive)
+            if (period >= 1 && period <= 12)
             {
-                return GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName, period)
-                             + GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName, period);
-            }
+                if (dasPaymentInfo.TransactionType ==
+                    Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive ||
+                    dasPaymentInfo.TransactionType ==
+                    Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive)
+                {
+                    return GetAECPriceEpisodePeriodisedValue(
+                        aecApprenticeshipPriceEpisodePeriodisedValues,
+                        new[]
+                        {
+                            Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName,
+                            Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName
+                        }, period);
+                }
 
-            if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive || dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive)
-            {
-                return GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName, period)
-                             + GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName, period);
-            }
+                if (dasPaymentInfo.TransactionType ==
+                    Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive ||
+                    dasPaymentInfo.TransactionType ==
+                    Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive)
+                {
+                    return GetAECPriceEpisodePeriodisedValue(
+                        aecApprenticeshipPriceEpisodePeriodisedValues,
+                        new[]
+                        {
+                            Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName,
+                            Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName
+                        }, period);
+                }
 
-            if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Apprenticeship)
-            {
-                return GetAECPriceEpisodePeriodisedValue(dasPaymentInfo.LearnerReferenceNumber, aecApprenticeshipPriceEpisodePeriodisedValues, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName, period);
+                if (dasPaymentInfo.TransactionType == Constants.DASPayments.TransactionType.Apprenticeship)
+                {
+                    return GetAECPriceEpisodePeriodisedValue(aecApprenticeshipPriceEpisodePeriodisedValues,
+                        new[] {Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName}, period);
+                }
             }
 
             return 0;
         }
 
         private decimal GetAECPriceEpisodePeriodisedValue(
-            string learnRefNumber,
             List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
-            string attributeName,
+            IEnumerable<string> attributeNames,
             byte period)
         {
             var amount = aecApprenticeshipPriceEpisodePeriodisedValues
                              .Where(x =>
-                                 (x?.LearnRefNumber.CaseInsensitiveEquals(learnRefNumber) ?? false) &&
-                                 x.AttributeName.CaseInsensitiveEquals(attributeName) &&
-                                 GetDateFromPriceEpisodeIdentifier(x.PriceEpisodeIdentifier) >= Generics.BeginningOfYear)
-                             .Sum(z => z?.Periods[period - 1]) ?? 0;
+                                 x != null &&
+                                 attributeNames.Contains(x.AttributeName, StringComparer.OrdinalIgnoreCase))
+                             .Sum(z => z.Periods[period - 1]) ?? 0;
 
             return amount;
-        }
-
-        private DateTime GetDateFromPriceEpisodeIdentifier(string priceEpisodeIdentifier)
-        {
-            string dateElement = string.Empty;
-            DateTime priceEpisodeDate = DateTime.MinValue;
-
-            if (priceEpisodeIdentifier != null && priceEpisodeIdentifier.Length >= 10)
-            {
-                dateElement = priceEpisodeIdentifier.Substring(priceEpisodeIdentifier.Length - 10, 10);
-
-                // expecting the last 10 characters of the price episode identifier to be a date in the format dd/mm/yyyy
-                if (dateElement.Length == 10)
-                {
-                    priceEpisodeDate = DateTime.ParseExact(dateElement, "dd/MM/yyyy", CultureInfo.InvariantCulture);
-                }
-            }
-
-            return priceEpisodeDate;
         }
 
         private string GetEmployerIdentifier(AECLearningDeliveryInfo aecLearningDeliveryInfo, DASPaymentInfo payment)

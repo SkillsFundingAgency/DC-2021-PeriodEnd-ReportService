@@ -207,7 +207,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             {
                 new DASPaymentInfo()
                 {
-                    UkPrn = ukPrn,
+                    Ukprn = ukPrn,
                     LearnerReferenceNumber = dasLearnRefNumber,
                     LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
@@ -228,7 +228,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 },
                 new DASPaymentInfo()
                 {
-                    UkPrn = ukPrn,
+                    Ukprn = ukPrn,
                     LearnerReferenceNumber = dasLearnRefNumber,
                     LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,

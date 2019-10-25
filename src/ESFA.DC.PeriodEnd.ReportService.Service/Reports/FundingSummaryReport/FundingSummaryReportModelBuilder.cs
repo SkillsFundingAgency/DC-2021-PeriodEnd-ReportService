@@ -20,7 +20,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var carryInApprenticeshipBudget = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.APPS1920, noContract);
             var apprenticeshipEmployerOnApprenticeshipServiceLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.LEVY1799, noContract);
             var apprenticeshipEmployersOnApprenticeshipServiceNonLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.NONLEVY2019, noContract);
-            var nonFunded = FundingStreamPeriodCodeConstants.NonFunded;
             var nonLevyContractedApprenticeships1618 = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.C1618NLAP2018, noContract);
             var nonLevyContractedApprenticeshipsAdult = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ANLAP2018, noContract);
             var traineeships1618 = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.C1618TRN1920, noContract);
@@ -87,9 +86,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                                 .WithFundLineGroup(BuildIlrApprenticeshipsFundLineGroup("16-18", "Apprenticeship (Employer on App Service) Levy", reportCurrentPeriod, new[] {FundLineConstants.LevyApprenticeship1618}, periodisedValues))
                                 .WithFundLineGroup(BuildEasLevyApprenticeshipsFundLineGroup("16-18", "Apprenticeship (Employer on App Service) Levy", reportCurrentPeriod, new[] { FundLineConstants.LevyApprenticeship1618 }, periodisedValues)),
 
-                            new FundingSubCategory("Adult Apprenticeship (Employer on App Service)", reportCurrentPeriod)
-                                .WithFundLineGroup(BuildIlrApprenticeshipsFundLineGroup("Adult", "Apprenticeship (Employer on App Service)", reportCurrentPeriod, new[] { FundLineConstants.LevyApprenticeship19Plus }, periodisedValues))
-                                .WithFundLineGroup(BuildEasLevyApprenticeshipsFundLineGroup("Adult", "Apprenticeship (Employer on App Service)", reportCurrentPeriod, new[] { FundLineConstants.LevyApprenticeship19Plus }, periodisedValues)),
+                            new FundingSubCategory("Adult Apprenticeship (Employer on App Service) Levy", reportCurrentPeriod)
+                                .WithFundLineGroup(BuildIlrApprenticeshipsFundLineGroup("Adult", "Apprenticeship (Employer on App Service) Levy", reportCurrentPeriod, new[] { FundLineConstants.LevyApprenticeship19Plus }, periodisedValues))
+                                .WithFundLineGroup(BuildEasLevyApprenticeshipsFundLineGroup("Adult", "Apprenticeship (Employer on App Service) Levy", reportCurrentPeriod, new[] { FundLineConstants.LevyApprenticeship19Plus }, periodisedValues)),
                         }, apprenticeshipEmployerOnApprenticeshipServiceLevy),
 
                     //-----------------------------------------------------------------
@@ -106,18 +105,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                                 .WithFundLineGroup(BuildIlrApprenticeshipsFundLineGroup("Adult", "Apprenticeship (Employer on App Service) Non-Levy", reportCurrentPeriod, new[] { FundLineConstants.NonLevyApprenticeshipEmployerOnAppService19Plus }, periodisedValues))
                                 .WithFundLineGroup(BuildEasLevyApprenticeshipsFundLineGroup("Adult", "Apprenticeship (Employer on App Service) Non-Levy", reportCurrentPeriod, new[] { FundLineConstants.NonLevyApprenticeshipEmployerOnAppService19Plus }, periodisedValues)),
                         }, apprenticeshipEmployersOnApprenticeshipServiceNonLevy),
-
-                    //------------------------------------------------------------------------------
-                    // Apprenticeships – Employers on Apprenticeship Service - Unresolved Data Locks
-                    //------------------------------------------------------------------------------
-                    new FundingCategory("Apprenticeships – Employers on Apprenticeship Service - Unresolved Data Locks", reportCurrentPeriod,
-                        new List<IFundingSubCategory>()
-                        {
-                            new FundingSubCategory("Apprenticeship (Employer on App Service) Unresolved Data Locks", reportCurrentPeriod)
-                                .WithFundLineGroup(BuildIlrApprenticeshipsUnresolvedDataLocksFundLineGroup(reportCurrentPeriod, periodisedValues)),
-                        },
-                        nonFunded,
-                        "Please note that funding with unresolved data locks will NOT be paid.  These figures represent total funding; co-investment is not taken into account."),
 
                     //---------------------------------------------------------------------
                     // 16-18 Non-Levy Contracted Apprenticeships Budget - Procured delivery

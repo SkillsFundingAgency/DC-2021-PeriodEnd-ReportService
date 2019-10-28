@@ -13,6 +13,8 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.Org;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
+using ESFA.DC.ReferenceData.Organisations.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {

@@ -101,5 +101,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             return appsMonthlyPaymentFcsInfo;
         }
+
+        public async Task<IDictionary<string, string>> GetContractAllocationNumberFSPCodeLookupAsync(int ukprn, CancellationToken cancellationToken)
+        {
+            using (var context = _fcsContextFunc())
+            {
+                return await context
+                    .ContractAllocations
+                    .Where(ca => ca.DeliveryUkprn == ukprn)
+                    .GroupBy(ca => ca.FundingStreamPeriodCode)
+                    .ToDictionaryAsync(ca => ca.Key, ca => ca.OrderByDescending(a => a.Id).First().ContractAllocationNumber, StringComparer.OrdinalIgnoreCase, cancellationToken);
+            }
+        }
     }
 }

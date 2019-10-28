@@ -28,12 +28,17 @@
     <Parameter Name="IlrValidationErrorsConnectionString" DefaultValue="" />
     <!-- Lars -->
     <Parameter Name="LarsConnectionString" DefaultValue="" />
-    <!-- Organsiation -->
+    <!-- Org -->
     <Parameter Name="OrgConnectionString" DefaultValue="" />
+    <!-- Eas -->
+    <Parameter Name="EasConnectionString" DefaultValue="" />
     <!-- Summarised Actuals -->
     <Parameter Name="SummarisedActualsConnectionString" DefaultValue="" />
     <!-- Job Queue Manager -->
     <Parameter Name="JobQueueManagerConnectionString" DefaultValue="" />
+    <!-- Report Data -->
+    <Parameter Name="ReportDataConnectionString" DefaultValue="" />
+    <Parameter Name="DataPersistFeatureEnabled" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -62,6 +67,7 @@
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
+            <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
             <Parameter Name="JobQueueManagerConnectionString" Value="[JobQueueManagerConnectionString]" />
           </Section>
           <Section Name="AzureStorageSection">
@@ -73,6 +79,10 @@
           </Section>
           <Section Name="VersionSection">
             <Parameter Name="ServiceReleaseVersion" Value="[ServiceReleaseVersion]" />
+          </Section>
+          <Section Name="DataPersistConfiguration">
+            <Parameter Name="ReportDataConnectionString" Value="[ReportDataConnectionString]" />
+            <Parameter Name="DataPersistFeatureEnabled" Value="[DataPersistFeatureEnabled]" />
           </Section>
         </Settings>
       </ConfigOverride>

@@ -13,12 +13,23 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Reports\Resources\Aspose.Cells.lic" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Reports\Resources\Aspose.Cells.lic">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </EmbeddedResource>
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.8.0" />
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="ESFA.DC.CollectionsManagement.Models" Version="0.2.10-beta0001" />
     <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.83" />
     <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
+    <PackageReference Include="ESFA.DC.EAS1920.EF" Version="0.0.91" />
     <PackageReference Include="ESFA.DC.FileService" Version="0.1.19-beta0001" />
     <PackageReference Include="ESFA.DC.ILR.1920.FundingService.FM36.FundingOutput.Model" Version="0.0.239" />
     <PackageReference Include="ESFA.DC.ILR.1920.Model" Version="0.1.8-beta0001" />
@@ -42,6 +53,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.DataPersist\ESFA.DC.PeriodEnd.DataPersist.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
   </ItemGroup>
 

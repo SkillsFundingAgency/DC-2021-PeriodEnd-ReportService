@@ -22,7 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 
         Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 
-        Task<AppsAdditionalPaymentILRInfo> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken);
+        Task<List<AppsAdditionalPaymentLearnerInfo>> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken);
 
         Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,

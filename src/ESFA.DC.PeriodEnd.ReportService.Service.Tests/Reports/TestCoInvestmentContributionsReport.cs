@@ -11,16 +11,11 @@ using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
 using FluentAssertions;
@@ -57,7 +52,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
-            IValueProvider valueProvider = new ValueProvider();
+
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
@@ -81,13 +76,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 logger.Object,
                 storage.Object,
                 dateTimeProviderMock.Object,
-                valueProvider,
                 ilrPeriodEndProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
                 fm36ProviderServiceMock.Object,
                 appsCoInvestmentContributionsModelBuilder);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             File.WriteAllText($"{filename}.csv", csv);
@@ -112,24 +106,78 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         [Fact]
         public void RecordKeysUnion_Test()
         {
+            List<string> learnRefNumbers = new List<string>() { "055300807083", "055300807081" };
+
             List<AppsCoInvestmentRecordKey> appsKeys = new List<AppsCoInvestmentRecordKey>()
             {
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 466, LearningAimPathwayCode = 1 },
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = null, LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 466, LearningAimPathwayCode = 1 },
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 },
             };
 
             List<AppsCoInvestmentRecordKey> ilrKeys = new List<AppsCoInvestmentRecordKey>()
             {
-               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 }
+               new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "055300807083", LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2019, 2, 21), LearningAimProgrammeType = 3, LearningAimStandardCode = 0, LearningAimFrameworkCode = 462, LearningAimPathwayCode = 1 }
             };
 
             Mock<ILogger> logger = new Mock<ILogger>();
             var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(logger.Object);
 
-            var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(ilrKeys, appsKeys);
+            var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(learnRefNumbers, ilrKeys, appsKeys);
 
             result.Count().Should().Be(3);
+        }
+
+        [Fact]
+        public void GetLearnerForRecord_Test()
+        {
+            IDictionary<string, LearnerInfo> learnerDictionary = new Dictionary<string, LearnerInfo>(StringComparer.OrdinalIgnoreCase);
+            learnerDictionary.Add("learnref1", new LearnerInfo() { LearnRefNumber = "learnref1" });
+            learnerDictionary.Add("LearnRef2", new LearnerInfo() { LearnRefNumber = "LearnRef2" });
+            learnerDictionary.Add("LEARNREF3", new LearnerInfo() { LearnRefNumber = "LEARNREF3" });
+
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(null);
+
+            var result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LeaRnrEf1" });
+
+            result.LearnRefNumber.Should().Be("learnref1");
+
+            result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LearnRef2" });
+
+            result.LearnRefNumber.Should().Be("LearnRef2");
+
+            result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LEARNREF3" });
+
+            result.LearnRefNumber.Should().Be("LEARNREF3");
+        }
+
+        [Fact]
+        public void BuildPaymentInfoDictionary_MixedCaseLearnRefNumber()
+        {
+            var paymentInfo = new AppsCoInvestmentPaymentsInfo()
+            {
+                Payments = new List<PaymentInfo>()
+                {
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "MiXeD",
+                    },
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "mixed",
+                    },
+                    new PaymentInfo()
+                    {
+                        LearnerReferenceNumber = "MIXED",
+                    }
+                }
+            };
+
+            var builder = new AppsCoInvestmentContributionsModelBuilder(null);
+
+            var result = builder.BuildPaymentInfoDictionary(paymentInfo);
+
+            result.Should().HaveCount(1);
         }
 
         private AppsCoInvestmentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, int aimSeqNumber)

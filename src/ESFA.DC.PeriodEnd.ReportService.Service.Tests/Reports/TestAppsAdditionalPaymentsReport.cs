@@ -10,14 +10,13 @@ using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
+using ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
 using FluentAssertions;
@@ -29,14 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
     public sealed class TestAppsAdditionalPaymentsReport
     {
         [Theory]
-        [InlineData("employer1", "employer1", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData(null, "", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "A12345", "ZPROG001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "A12345", "zprog001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "a12345", "ZPROG001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "zprog001", "T180400007")]
-        [InlineData("EMPLOYER2", "employer2", "a12345", "zprog001", "A12345", "ZPROG001", "t180400007")]
+        [InlineData("EMPLOYER2", "EMPLOYER2", "A12345", "ZPROG001", "A12345", "ZPROG001", "T100", "T200")]
         public async Task TestAppsAdditionalPaymentsReportGeneration(
             string employerName,
             string employerNameExpected,
@@ -44,7 +36,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             string ilrLearnAimRef,
             string dasLearnRefNumber,
             string dasLearnAimRef,
-            string provSpecLearnMonOccur)
+            string provSpecLearnMonOccurA,
+            string provSpecLearnMonOccurB)
         {
             string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
@@ -62,21 +55,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
-            IValueProvider valueProvider = new ValueProvider();
+
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
 
-            var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn, ilrLearnRefNumber, ilrLearnAimRef, provSpecLearnMonOccur);
-            var appsAdditionalPaymentRulebaseInfo = BuildFm36Model(ukPrn);
+            var appsAdditionalPaymentIlrInfo = BuildILRModel(ukPrn, ilrLearnRefNumber, ilrLearnAimRef, provSpecLearnMonOccurA, provSpecLearnMonOccurB);
+            var rulebaseLearningDeliveries = BuildRulebaseLearningDeliveries();
+            var rulebasePriceEpisodes = BuildRulebasePriceEpisodes(ukPrn);
             var appsAdditionalPaymentDasPaymentsInfo = BuildDasPaymentsModel(ukPrn, employerName, dasLearnRefNumber, dasLearnAimRef);
+            var legalEntityNameDictionary = BuildLegalEntityNameDictionary(employerName);
 
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetILRInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentIlrInfo);
-            fm36ProviderServiceMock.Setup(x => x.GetFM36DataForAppsAdditionalPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(appsAdditionalPaymentRulebaseInfo);
+            fm36ProviderServiceMock.Setup(x => x.GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(rulebaseLearningDeliveries);
+            fm36ProviderServiceMock.Setup(x => x.GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(rulebasePriceEpisodes);
             dasPaymentProviderMock.Setup(x => x.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(appsAdditionalPaymentDasPaymentsInfo);
+            dasPaymentProviderMock
+                .Setup(x => x.GetLegalEntityNameApprenticeshipIdDictionaryAsync(It.IsAny<IEnumerable<long?>>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(legalEntityNameDictionary);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
@@ -88,11 +88,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 ilrPeriodEndProviderServiceMock.Object,
                 fm36ProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
-                valueProvider,
                 dasPaymentProviderMock.Object,
                 appsAdditionalPaymentsModelBuilder);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             TestCsvHelper.CheckCsv(csv, new CsvEntry(new AppsAdditionalPaymentsMapper(), 1));
@@ -100,27 +99,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             using (var csvReader = new CsvReader(new StringReader(csv)))
             {
+                csvReader.Configuration.TypeConverterOptionsCache.GetOptions<DateTime>().Formats = new[] { "dd/MM/yyyy" };
+                csvReader.Configuration.TypeConverterOptionsCache.GetOptions<DateTime?>().Formats = new[] { "dd/MM/yyyy" };
+
                 csvReader.Configuration.RegisterClassMap<AppsAdditionalPaymentsMapper>();
                 result = csvReader.GetRecords<AppsAdditionalPaymentsModel>().ToList();
             }
 
             result.Should().NotBeNullOrEmpty();
             result.Count().Should().Be(1);
-            result.First().AprilEarnings.Should().Be(180);
-            result.First().JulyEarnings.Should().Be(240);
-            result.First().DecemberEarnings.Should().Be(100);
-            result.First().TotalEarnings.Should().Be(1560);
+            result.First().AugustEarnings.Should().Be(20);
+            result.First().JulyEarnings.Should().Be(0);
+            result.First().TotalEarnings.Should().Be(20);
             result.First().TotalPaymentsYearToDate.Should().Be(20);
             result.First().UniqueLearnerNumber.Should().Be(12345);
             result.First().EmployerNameFromApprenticeshipService.Should().Be(employerNameExpected);
         }
 
-        private AppsAdditionalPaymentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccur)
+        private IDictionary<long, string> BuildLegalEntityNameDictionary(string employerName)
         {
-            return new AppsAdditionalPaymentILRInfo()
+            return new Dictionary<long, string>()
             {
-                UkPrn = ukPrn,
-                Learners = new List<AppsAdditionalPaymentLearnerInfo>()
+                [1] = employerName
+            };
+        }
+
+        private List<AppsAdditionalPaymentLearnerInfo> BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, string provSpecLearnMonOccurA, string provSpecLearnMonOccurB)
+        {
+            return new List<AppsAdditionalPaymentLearnerInfo>()
             {
                 new AppsAdditionalPaymentLearnerInfo()
                 {
@@ -140,7 +146,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                             ProgType = 1,
                             StdCode = 1,
                             FworkCode = 1,
-                            PwayCode = 1
+                            PwayCode = 1,
                         }
                     },
                     ProviderSpecLearnerMonitorings =
@@ -151,62 +157,57 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 UKPRN = ukPrn,
                                 LearnRefNumber = "1",
                                 ProvSpecLearnMon = "A",
-                                ProvSpecLearnMonOccur = provSpecLearnMonOccur
+                                ProvSpecLearnMonOccur = provSpecLearnMonOccurA
                             },
                             new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
                             {
                                 UKPRN = ukPrn,
                                 LearnRefNumber = "1",
                                 ProvSpecLearnMon = "B",
-                                ProvSpecLearnMonOccur = "150563"
+                                ProvSpecLearnMonOccur = provSpecLearnMonOccurB
                             }
                         }
                 }
-            }
             };
         }
 
-        private AppsAdditionalPaymentRulebaseInfo BuildFm36Model(int ukPrn)
+        private List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> BuildRulebasePriceEpisodes(int ukprn)
         {
-            return new AppsAdditionalPaymentRulebaseInfo()
+            return new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>()
             {
-                UkPrn = ukPrn,
-                AECLearningDeliveries = new List<AECLearningDeliveryInfo>(),
-                AECApprenticeshipPriceEpisodePeriodisedValues =
-                    new List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>()
-                    {
-                    new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = "A12345",
-                        AimSeqNumber = 1,
-                        PriceEpisodeIdentifier = "1",
-                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
-                        AttributeName = "PriceEpisodeFirstEmp1618Pay"
-                    },
-                    new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = "A12345",
-                        AimSeqNumber = 1,
-                        PriceEpisodeIdentifier = "1",
-                        Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
-                        AttributeName = "PriceEpisodeSecondProv1618Pay"
-                    }
-                    }
+                new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                {
+                    UKPRN = ukprn,
+                    LearnRefNumber = "A12345",
+                    AimSeqNumber = 1,
+                    PriceEpisodeIdentifier = "1",
+                    Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                    AttributeName = "PriceEpisodeFirstEmp1618Pay"
+                },
+                new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                {
+                    UKPRN = ukprn,
+                    LearnRefNumber = "A12345",
+                    AimSeqNumber = 1,
+                    PriceEpisodeIdentifier = "1",
+                    Periods = new decimal?[] { 10, 20, 30, 40, 50, 60, 70, 80, 90, 100, 110, 120 },
+                    AttributeName = "PriceEpisodeSecondProv1618Pay"
+                }
             };
         }
 
-        private AppsAdditionalPaymentDasPaymentsInfo BuildDasPaymentsModel(int ukPrn, string employerName, string dasLearnRefNumber, string dasLearnAimRef)
+        private List<AECLearningDeliveryInfo> BuildRulebaseLearningDeliveries()
         {
-            return new AppsAdditionalPaymentDasPaymentsInfo()
-            {
-                UkPrn = ukPrn,
-                Payments = new List<DASPaymentInfo>()
+            return new List<AECLearningDeliveryInfo>();
+        }
+
+        private List<DASPaymentInfo> BuildDasPaymentsModel(int ukPrn, string employerName, string dasLearnRefNumber, string dasLearnAimRef)
+        {
+            return new List<DASPaymentInfo>()
             {
                 new DASPaymentInfo()
                 {
-                    UkPrn = ukPrn,
+                    Ukprn = ukPrn,
                     LearnerReferenceNumber = dasLearnRefNumber,
                     LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
@@ -219,16 +220,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     TransactionType = 4,
                     AcademicYear = 1920,
                     Amount = 10,
-                    ContractType = 2,
+                    ContractType = 1,
                     CollectionPeriod = 1,
                     DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
-                    TypeOfAdditionalPayment = "Apprentice",
-                    EmployerName = employerName
+                    ApprenticeshipId = 1,
                 },
                 new DASPaymentInfo()
                 {
-                    UkPrn = ukPrn,
+                    Ukprn = ukPrn,
                     LearnerReferenceNumber = dasLearnRefNumber,
                     LearningAimReference = dasLearnAimRef,
                     LearnerUln = 12345,
@@ -241,14 +241,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     TransactionType = 6,
                     AcademicYear = 1920,
                     Amount = 10,
-                    ContractType = 2,
+                    ContractType = 1,
                     CollectionPeriod = 1,
                     DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
-                    TypeOfAdditionalPayment = "Apprentice",
-                    EmployerName = employerName
+                    ApprenticeshipId = 1,
                 }
-            }
             };
         }
     }

@@ -33,5 +33,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
         IEnumerable<ReturnPeriod> ILRPeriods { get; }
 
         IEnumerable<ReturnPeriod> ILRPeriodsAdjustedTimes { get; }
+
+        string ReportDataConnectionString { get; }
+
+        bool DataPersistFeatureEnabled { get; }
     }
 }

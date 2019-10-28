@@ -4,7 +4,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 {
     public class DASPaymentInfo
     {
-        public int UkPrn { get; set; }
+        public long Ukprn { get; set; }
 
         public string LearnerReferenceNumber { get; set; }
 
@@ -15,8 +15,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
         public string LearningAimFundingLineType { get; set; }
 
         public byte TransactionType { get; set; }
-
-        public string LegalEntityName { get; set; }
 
         public int LearningAimProgrammeType { get; set; }
 
@@ -40,8 +38,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public DateTime? LearningStartDate { get; set; }
 
-        public string TypeOfAdditionalPayment { get; set; }
-
-        public string EmployerName { get; set; }
+        public long? ApprenticeshipId { get; set; }
     }
 }

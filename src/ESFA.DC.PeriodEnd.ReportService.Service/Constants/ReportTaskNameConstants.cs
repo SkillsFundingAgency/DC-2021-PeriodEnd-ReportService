@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Interface
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class ReportTaskNameConstants
     {
@@ -8,7 +8,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
 
         public const string AppsMonthlyPaymentReport = "TaskGenerateAppsMonthlyPaymentReport";
         public const string AppsAdditionalPaymentsReport = "TaskGenerateAppsAdditionalPaymentsReport";
-        public const string FundingSummaryReport = "TaskGenerateFundingSummaryReport";
+        public const string FundingSummaryReport = "TaskGenerateFundingSummaryPeriodEndReport";
         public const string AppsCoInvestmentContributionsReport = "TaskGenerateAppsCoInvestmentContributionsReport";
 
         public static class InternalReports

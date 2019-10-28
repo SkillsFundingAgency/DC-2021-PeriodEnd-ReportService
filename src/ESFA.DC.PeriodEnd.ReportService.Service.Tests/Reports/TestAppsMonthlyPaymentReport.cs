@@ -9,18 +9,14 @@ using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
 using FluentAssertions;
@@ -54,7 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
             Mock<IFCSProviderService> fcsProviderServiceMock = new Mock<IFCSProviderService>();
-            IValueProvider valueProvider = new ValueProvider();
+
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
@@ -96,6 +92,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
             var appsMonthlyPaymentModelBuilder = new AppsMonthlyPaymentModelBuilder();
 
+            Mock<IPersistReportData> persistReportDataMock = new Mock<IPersistReportData>();
+
             var report = new AppsMonthlyPaymentReport(
                 logger.Object,
                 storage.Object,
@@ -105,10 +103,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 larsProviderServiceMock.Object,
                 fcsProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
-                valueProvider,
-                appsMonthlyPaymentModelBuilder);
+                appsMonthlyPaymentModelBuilder,
+                persistReportDataMock.Object);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             File.WriteAllText($"{filename}.csv", csv);

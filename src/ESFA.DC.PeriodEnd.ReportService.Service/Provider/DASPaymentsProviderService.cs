@@ -322,7 +322,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         }).ToListAsync(cancellationToken);
             }
 
-           return appsCoInvestmentPaymentsInfo;
+            return appsCoInvestmentPaymentsInfo;
         }
 
         public async Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(AppsCoInvestmentPaymentsInfo paymentInfo, CancellationToken cancellationToken)

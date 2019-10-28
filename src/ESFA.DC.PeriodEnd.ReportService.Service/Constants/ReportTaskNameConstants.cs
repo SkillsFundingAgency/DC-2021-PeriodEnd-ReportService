@@ -12,6 +12,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
         public const string AppsAdditionalPaymentsReport = "TaskGenerateAppsAdditionalPaymentsReport";
         public const string FundingSummaryReport = "TaskGenerateFundingSummaryReport";
         public const string AppsCoInvestmentContributionsReport = "TaskGenerateAppsCoInvestmentContributionsReport";
+        public const string LearnerLevelViewReport = "TaskLearnerLevelViewReport";
 
         public static class InternalReports
         {

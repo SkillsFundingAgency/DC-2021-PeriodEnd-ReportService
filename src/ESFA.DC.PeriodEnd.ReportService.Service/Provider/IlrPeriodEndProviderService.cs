@@ -99,6 +99,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         Ukprn = learner.UKPRN,
                         LearnRefNumber = learner.LearnRefNumber,
                         UniqueLearnerNumber = learner.ULN,
+                        FamilyName = learner.FamilyName,
+                        GivenNames = learner.GivenNames,
                         CampId = learner.CampId,
                         LearningDeliveries = learner.LearningDeliveries.Select(x =>
                                                  new AppsMonthlyPaymentLearningDeliveryModel

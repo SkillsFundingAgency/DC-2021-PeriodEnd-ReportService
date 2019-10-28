@@ -10,6 +10,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public long? UniqueLearnerNumber { get; set; }
 
+        public string FamilyName { get; set; }
+
+        public string GivenNames { get; set; }
+
         public string CampId { get; set; }
 
         public ICollection<AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo> ProviderSpecLearnerMonitorings { get; set; }

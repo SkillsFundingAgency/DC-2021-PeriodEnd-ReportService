@@ -318,6 +318,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<ProviderSubmissionsReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<CollectionStatsReport>().As<IInternalReport>();
+
+            containerBuilder.RegisterType<ActCountReport>().As<IInternalReport>();
         }
 
         private static void RegisterDataPersist(ContainerBuilder containerBuilder)

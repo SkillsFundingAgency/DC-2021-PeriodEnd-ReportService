@@ -5,7 +5,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Aspose.Cells;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -13,6 +12,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.ReferenceData.Organisations.Model;
 
@@ -54,8 +54,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             _logger.LogInfo($"In {ReportFileName} report.");
             List<long> ukprns = new List<long>();
 
-            var externalFileName = GetFilename(reportServiceContext);
-            List<FileDetail> fileDetails = (await _ilrPeriodEndProviderService.GetFileDetailsAsync(CancellationToken.None)).ToList();
+            string externalFileName = GetFilename(reportServiceContext);
+            List<FileDetailModel> fileDetails = (await _ilrPeriodEndProviderService.GetFileDetailsAsync(CancellationToken.None)).ToList();
 
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
                 reportServiceContext.CollectionYear,
@@ -67,7 +67,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners = (await
                 _ilrPeriodEndProviderService.GetProvidersWithoutValidLearners(fileDetails, CancellationToken.None)).ToList();
-            ukprns.AddRange(providersWithoutValidLearners.Select(x => (long)x.Ukprn));
 
             IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = (await
                 _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
@@ -75,9 +74,32 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 reportServiceContext.ILRPeriods,
                 fileDetails,
                 CancellationToken.None)).ToList();
+
+            ukprns.AddRange(providersWithoutValidLearners.Select(x => (long)x.Ukprn));
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
 
-            IEnumerable<OrgDetail> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);
+            IEnumerable<OrgModel> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);
+            PopulateModelsWithOrgDetails(orgDetails, providersWithoutValidLearners, providersWithInvalidLearners);
+
+            Workbook dataQualityWorkbook = GenerateWorkbook(
+                reportServiceContext.ReturnPeriod,
+                dataQualityModels,
+                ruleViolations,
+                providersWithoutValidLearners,
+                providersWithInvalidLearners);
+
+            using (var ms = new MemoryStream())
+            {
+                dataQualityWorkbook.Save(ms, SaveFormat.Xlsx);
+                await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", ms, cancellationToken);
+            }
+        }
+
+        public static void PopulateModelsWithOrgDetails(
+            IEnumerable<OrgModel> orgDetails,
+            IEnumerable<ProviderWithoutValidLearners> providersWithoutValidLearners,
+            IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners)
+        {
             foreach (var org in orgDetails)
             {
                 var valid = providersWithoutValidLearners.SingleOrDefault(p => p.Ukprn == org.Ukprn);
@@ -92,19 +114,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                     invalid.Name = org.Name;
                     invalid.Status = org.Status;
                 }
-            }
-
-            Workbook dataQualityWorkbook = GenerateWorkbook(
-                reportServiceContext.ReturnPeriod,
-                dataQualityModels,
-                ruleViolations,
-                providersWithoutValidLearners,
-                providersWithInvalidLearners);
-
-            using (var ms = new MemoryStream())
-            {
-                dataQualityWorkbook.Save(ms, SaveFormat.Xlsx);
-                await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.xlsx", ms, cancellationToken);
             }
         }
 

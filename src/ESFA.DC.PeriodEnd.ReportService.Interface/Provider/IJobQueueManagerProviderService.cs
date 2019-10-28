@@ -1,23 +1,22 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.CollectionsManagement.Models;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
     public interface IJobQueueManagerProviderService
     {
-        Task<IEnumerable<long>> GetExpectedReturnersUKPRNsAsync(
-            string collectionName,
-            int returnPeriod,
-            IEnumerable<ReturnPeriod> returnPeriods,
+        Task<int> GetCollectionIdAsync(string collectionType, CancellationToken cancellationToken);
+
+        Task<IEnumerable<OrganisationCollectionModel>> GetExpectedReturnersUKPRNsAsync(
+            int CollectionId,
             CancellationToken cancellationToken);
 
         Task<IEnumerable<long>> GetActualReturnersUKPRNsAsync(
-            string collectionName,
+            int collectionId,
             int returnPeriod,
-            IEnumerable<ReturnPeriod> returnPeriods,
             CancellationToken cancellationToken);
 
         Task<IEnumerable<CollectionStatsModel>> GetCollectionStatsModels(

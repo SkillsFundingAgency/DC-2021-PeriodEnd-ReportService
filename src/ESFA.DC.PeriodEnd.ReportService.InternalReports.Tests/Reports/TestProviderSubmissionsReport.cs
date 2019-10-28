@@ -1,7 +1,6 @@
 ﻿using Aspose.Cells;
 using ESFA.DC.CollectionsManagement.Models;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -10,7 +9,6 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
-using ESFA.DC.ReferenceData.Organisations.Model;
 using FluentAssertions;
 using Moq;
 using System;
@@ -19,6 +17,8 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using Xunit;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
@@ -67,26 +67,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                     })
                 .Returns(Task.CompletedTask);
 
-            var orgInfo = BuildOrgModel(ukPrn);
-            var periodReturnInfo = BuildReturnPeriodsModel();
-            var fileDetails = BuildFileDetailsModel();
-            var expectedReturner = new List<long>() { ukPrn, 10036145, 10036147 };
-            var actualReturner = new List<long>() { ukPrn, 10036145, 10036147 };
-            var providerSubmissionModel = BuildProviderSubmissionModel();
+            List<OrgModel> orgInfo = BuildOrgModel(ukPrn);
+            IEnumerable<ProviderSubmissionModel> fileDetails = BuildFileDetailsModel();
+            List<OrganisationCollectionModel> expectedReturner = new List<OrganisationCollectionModel> { new OrganisationCollectionModel { Ukprn = ukPrn }, new OrganisationCollectionModel { Ukprn = 10036145 }, new OrganisationCollectionModel { Ukprn = 10036147 } };
+            List<long> actualReturner = new List<long> { ukPrn, 10036145, 10036147 };
+            IEnumerable<ProviderSubmissionModel> providerSubmissionModel = BuildProviderSubmissionModel();
 
             orgProviderMock.Setup(x => x.GetOrgDetailsForUKPRNsAsync(It.IsAny<List<long>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(orgInfo);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetFileDetailsAsync(It.IsAny<CancellationToken>()))
-                .ReturnsAsync(fileDetails);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetFileDetailsLatestSubmittedAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(fileDetails);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetPeriodReturn(It.IsAny<DateTime?>(), It.IsAny<IEnumerable<ReturnPeriod>>()))
                 .Returns(12);
-            jobQueueManagerMock.Setup(x => x.GetExpectedReturnersUKPRNsAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IEnumerable<ReturnPeriod>>(), It.IsAny<CancellationToken>()))
+            jobQueueManagerMock.Setup(x => x.GetExpectedReturnersUKPRNsAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(expectedReturner);
-            jobQueueManagerMock.Setup(x => x.GetActualReturnersUKPRNsAsync(It.IsAny<string>(), It.IsAny<int>(), It.IsAny<IEnumerable<ReturnPeriod>>(), It.IsAny<CancellationToken>()))
+            jobQueueManagerMock.Setup(x => x.GetActualReturnersUKPRNsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(actualReturner);
-            providerSubmissionModelBuilderMock.Setup(x => x.BuildModel(It.IsAny<IEnumerable<FileDetail>>(), It.IsAny<IEnumerable<OrgDetail>>(), It.IsAny<IEnumerable<long>>(), It.IsAny<IEnumerable<long>>(), It.IsAny<IEnumerable<ReturnPeriod>>()))
+            providerSubmissionModelBuilderMock.Setup(x => x.BuildModel(It.IsAny<List<ProviderSubmissionModel>>(), It.IsAny<IEnumerable<OrgModel>>(), It.IsAny<List<OrganisationCollectionModel>>(), It.IsAny<IEnumerable<long>>(), It.IsAny<IEnumerable<ReturnPeriod>>(), It.IsAny<int>()))
                 .Returns(providerSubmissionModel);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
@@ -115,25 +112,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             wb.Worksheets[0].Name.Should().Be("Provider Submissions");
         }
 
-        private IEnumerable<FileDetail> BuildFileDetailsModel()
+        private IEnumerable<ProviderSubmissionModel> BuildFileDetailsModel()
         {
-            return new List<FileDetail>()
+            return new List<ProviderSubmissionModel>
             {
-                new FileDetail()
+                new ProviderSubmissionModel
                 {
-                     ID = 12,
-                     Filename = "10006341/ILR-10006341-1920-20190805-110110-35.XML",
-                     Success = true,
-                     SubmittedTime = new DateTime(2019, 05, 01)
+                    Ukprn = 10006341,
+                    SubmittedDateTime = new DateTime(2019, 05, 01)
                 }
             };
         }
 
         private IEnumerable<ProviderSubmissionModel> BuildProviderSubmissionModel()
         {
-            return new List<ProviderSubmissionModel>()
+            return new List<ProviderSubmissionModel>
             {
-                new ProviderSubmissionModel()
+                new ProviderSubmissionModel
                 {
                     Ukprn = 10036143,
                     SubmittedDateTime = new DateTime(2019, 05, 01),
@@ -149,11 +144,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             };
         }
 
-        private List<OrgDetail> BuildOrgModel(int ukprn)
+        private List<OrgModel> BuildOrgModel(int ukprn)
         {
-            return new List<OrgDetail>()
+            return new List<OrgModel>
             {
-                new OrgDetail()
+                new OrgModel
                 {
                     Ukprn = ukprn,
                     Name = "WOODSPEEN TRAINING LIMITED",
@@ -164,14 +159,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
         private List<ReturnPeriod> BuildReturnPeriodsModel()
         {
-            return new List<ReturnPeriod>()
+            return new List<ReturnPeriod>
             {
-                new ReturnPeriod()
-                    {
-                        StartDateTimeUtc = new DateTime(2019, 05, 01, 13, 30, 00),
-                        EndDateTimeUtc = new DateTime(2019, 05, 02, 15, 30, 45),
-                        PeriodNumber = 12
-                    }
+                new ReturnPeriod
+                {
+                    StartDateTimeUtc = new DateTime(2019, 05, 01, 13, 30, 00),
+                    EndDateTimeUtc = new DateTime(2019, 05, 02, 15, 30, 45),
+                    PeriodNumber = 12
+                }
             };
         }
     }

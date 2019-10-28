@@ -1,15 +1,16 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.CollectionsManagement.Models;
-using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.ReferenceData.Organisations.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 {
-    public class ProviderSubmissionsModelBuilder : IProviderSubmissionsModelBuilder
+    public sealed class ProviderSubmissionsModelBuilder : IProviderSubmissionsModelBuilder
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
 
@@ -19,38 +20,60 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         public IEnumerable<ProviderSubmissionModel> BuildModel(
-            IEnumerable<FileDetail> fileDetails,
-            IEnumerable<OrgDetail> orgDetails,
-            IEnumerable<long> expectedReturners,
+            List<ProviderSubmissionModel> models,
+            IEnumerable<OrgModel> orgDetails,
+            List<OrganisationCollectionModel> expectedReturners,
             IEnumerable<long> actualReturners,
-            IEnumerable<ReturnPeriod> returnPeriods)
+            IEnumerable<ReturnPeriod> periods,
+            int currentPeriod)
         {
-            return fileDetails
-                .Select(x => new ProviderSubmissionModel
-                {
-                    Ukprn = x.UKPRN,
-                    SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
-                    TotalErrors = x.TotalErrorCount.GetValueOrDefault(),
-                    TotalInvalid = x.TotalInvalidLearnersSubmitted.GetValueOrDefault(),
-                    TotalValid = x.TotalValidLearnersSubmitted.GetValueOrDefault(),
-                    TotalWarnings = x.TotalWarningCount.GetValueOrDefault(),
-                    Name = GetOrgNameForUKPRN(x.UKPRN, orgDetails),
-                    Expected = expectedReturners.Any(e => e == x.UKPRN),
-                    Returned = actualReturners.Any(e => e == x.UKPRN),
-                    LatestReturn = $"R{_ilrPeriodEndProviderService.GetPeriodReturn(x.SubmittedTime, returnPeriods):D2}"
-                })
-                .ToList();
-        }
+            ReturnPeriod period = periods.Single(x => x.PeriodNumber == currentPeriod);
 
-        private string GetOrgNameForUKPRN(int ukprn, IEnumerable<OrgDetail> orgDetails)
-        {
-            string name = string.Empty;
-            if (orgDetails.Any(o => o.Ukprn == ukprn))
+            foreach (ProviderSubmissionModel providerSubmissionModel in models)
             {
-                name = orgDetails.Where(o => o.Ukprn == ukprn).Single().Name;
+                providerSubmissionModel.Expected = expectedReturners.Any(x => x.Ukprn == providerSubmissionModel.Ukprn && x.Expected(period.StartDateTimeUtc, period.EndDateTimeUtc));
+                providerSubmissionModel.Returned = actualReturners.Any(x => x == providerSubmissionModel.Ukprn);
+                GetLatestReturn(providerSubmissionModel, periods, currentPeriod);
             }
 
-            return name;
+            foreach (var org in expectedReturners)
+            {
+                if (models.Any(x => x.Ukprn == org.Ukprn))
+                {
+                    continue;
+                }
+
+                models.Add(new ProviderSubmissionModel
+                {
+                    Expected = org.Expected(period.StartDateTimeUtc, period.EndDateTimeUtc),
+                    LatestReturn = string.Empty,
+                    Name = string.Empty,
+                    Returned = false,
+                    SubmittedDateTime = DateTime.MinValue,
+                    TotalErrors = 0,
+                    TotalInvalid = 0,
+                    TotalValid = 0,
+                    TotalWarnings = 0,
+                    Ukprn = org.Ukprn
+                });
+            }
+
+            foreach (var orgDetail in orgDetails)
+            {
+                models.Single(x => x.Ukprn == orgDetail.Ukprn).Name = orgDetail.Name;
+            }
+
+            return models;
+        }
+
+        private void GetLatestReturn(ProviderSubmissionModel providerSubmissionModel, IEnumerable<ReturnPeriod> returnPeriods, int collectionPeriod)
+        {
+            int returnPeriod = returnPeriods
+                                   .SingleOrDefault(x => x.StartDateTimeUtc <= providerSubmissionModel.SubmittedDateTime && x.EndDateTimeUtc >= providerSubmissionModel.SubmittedDateTime)
+                                   ?.PeriodNumber ?? 0;
+
+            providerSubmissionModel.LatestReturn = $"R{returnPeriod.ToString().PadLeft(2, '0')}";
+            providerSubmissionModel.Returned = returnPeriod == collectionPeriod;
         }
     }
 }

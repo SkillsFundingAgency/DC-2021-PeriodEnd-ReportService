@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.ReferenceData.Organisations.Model;
+using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using ESFA.DC.ReferenceData.Organisations.Model.Interface;
 using Microsoft.EntityFrameworkCore;
 
@@ -19,22 +19,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _orgContextFactory = orgContextFactory;
         }
 
-        public async Task<List<OrgDetail>> GetOrgDetailsForUKPRNsAsync(
+        public async Task<IEnumerable<OrgModel>> GetOrgDetailsForUKPRNsAsync(
             List<long> uKPRNs,
             CancellationToken cancellationToken)
         {
+            List<OrgModel> orgModels = new List<OrgModel>();
+
             if ((uKPRNs?.Count ?? 0) == 0)
             {
-                return null;
+                return orgModels;
             }
+
+            int count = uKPRNs.Count;
+            int pageSize = 1000;
 
             using (var orgContext = _orgContextFactory())
             {
-                return await orgContext.OrgDetails
-                    .Join(uKPRNs, o => o.Ukprn, u => u, (o, u) => o)
-                    .Distinct()
-                    .ToListAsync(cancellationToken);
+                for (int i = 0; i < count; i += pageSize)
+                {
+                    List<OrgModel> orgs = await orgContext.OrgDetails
+                        .Where(x => uKPRNs.Skip(i).Take(pageSize).Contains(x.Ukprn))
+                        .Select(x => new OrgModel { Ukprn = x.Ukprn, Name = x.Name, Status = x.Status })
+                        .ToListAsync(cancellationToken);
+
+                    orgModels.AddRange(orgs);
+                }
             }
+
+            return orgModels;
         }
     }
 }

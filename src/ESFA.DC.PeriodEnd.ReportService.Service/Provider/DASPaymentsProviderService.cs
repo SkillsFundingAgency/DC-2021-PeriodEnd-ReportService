@@ -171,7 +171,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             LearningAimStandardCode = earning.LearningAimStandardCode,
                             LearningAimFrameworkCode = earning.LearningAimFrameworkCode,
                             LearningAimPathwayCode = earning.LearningAimPathwayCode,
-                            LearningAimFundingLineType = MapOldFundingLineTypes(earning.LearningAimFundingLineType),
                             LearningStartDate = earning.LearningStartDate,
                             AgreementId = earning.AgreementId,
                             IlrSubmissionDateTime = earning.IlrSubmissionDateTime,
@@ -288,28 +287,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 return apprenticeshipIdLegalEntityNameCollection.ToDictionary(a => a.Item1, a => a.Item2);
             }
-        }
-
-        private string MapOldFundingLineTypes(string fundingLineType)
-        {
-            string newFundingLineType = string.Empty;
-
-            switch (fundingLineType.ToUpper())
-            {
-                case @"16 - 18 APPRENTICESHIP(FROM MAY 2017) NON - LEVY CONTRACT":
-                    newFundingLineType = @"16-18 Apprenticeship (From May 2017) Non-Levy Contract (non-procured)";
-                    break;
-
-                case @"19+ APPRENTICESHIP (FROM MAY 2017) NON-LEVY CONTRACT":
-                    newFundingLineType = @"19+ Apprenticeship (From May 2017) Non-Levy Contract (non-procured)";
-                    break;
-
-                default:
-                    newFundingLineType = fundingLineType;
-                    break;
-            }
-
-            return newFundingLineType;
         }
     }
 }

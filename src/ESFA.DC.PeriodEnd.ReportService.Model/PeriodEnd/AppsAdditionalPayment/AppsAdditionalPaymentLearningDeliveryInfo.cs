@@ -18,12 +18,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public int FundModel { get; set; }
 
-        public int? ProgType { get; set; }
+        public int ProgType { get; set; }
 
-        public int? FworkCode { get; set; }
+        public int FworkCode { get; set; }
 
-        public int? PwayCode { get; set; }
+        public int PwayCode { get; set; }
 
-        public int? StdCode { get; set; }
+        public int StdCode { get; set; }
     }
 }

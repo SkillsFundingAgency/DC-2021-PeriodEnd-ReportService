@@ -30,8 +30,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public int? LearningAimPathwayCode { get; set; }
 
-        public string LearningAimFundingLineType { get; set; }
-
         public DateTime? LearningStartDate { get; set; }
 
         public string AgreementId { get; set; }

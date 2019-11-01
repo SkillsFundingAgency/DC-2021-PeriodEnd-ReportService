@@ -156,10 +156,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                 .Where(p => p != null)
                 .Select(dasPaymentInfo =>
                 {
-                    AppsAdditionalPaymentLearnerInfo learner;
-                    AppsAdditionalPaymentLearningDeliveryInfo learningDelivery;
-                    AECLearningDeliveryInfo aecLearningDelivery;
-                    AECApprenticeshipPriceEpisodePeriodisedValuesInfo[] aecApprenticeshipPriceEpisodePeriodisedValues;
+                    AppsAdditionalPaymentLearnerInfo learner = null;
+                    AppsAdditionalPaymentLearningDeliveryInfo learningDelivery = null;
+                    AECLearningDeliveryInfo aecLearningDelivery = null;
+                    AECApprenticeshipPriceEpisodePeriodisedValuesInfo[] aecApprenticeshipPriceEpisodePeriodisedValues = null;
 
                     // lookup the related reference data for this payment
                     learner = learnerDictionary.GetValueOrDefault(dasPaymentInfo?.LearnerReferenceNumber);
@@ -201,7 +201,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         PaymentLearningAimFundingLineType = dasPaymentInfo.LearningAimFundingLineType,
                         PaymentTypeOfAdditionalPayment = GetTypeOfAdditionalPayment(dasPaymentInfo.TransactionType),
                         AppsServiceEmployerName = GetAppServiceEmployerName(dasPaymentInfo, legalNameDictionary),
-                        ilrEmployerIdentifier = GetEmployerIdentifier(aecLearningDelivery, dasPaymentInfo.TransactionType),
+                        ilrEmployerIdentifier = aecLearningDelivery != null ? GetEmployerIdentifier(aecLearningDelivery, dasPaymentInfo.TransactionType) : null,
 
                         // copy the remaining payment fields
                         PaymentLearningAimProgrammeType = dasPaymentInfo.LearningAimProgrammeType,
@@ -220,7 +220,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         // copy the ilr fields
                         ProviderSpecifiedLearnerMonitoringA = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringA),
                         ProviderSpecifiedLearnerMonitoringB = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringB),
-                        EarningAmount = GetMonthlyEarnings(dasPaymentInfo, aecApprenticeshipPriceEpisodePeriodisedValues, dasPaymentInfo.CollectionPeriod)
+                        EarningAmount = GetMonthlyEarnings(dasPaymentInfo.TransactionType, aecApprenticeshipPriceEpisodePeriodisedValues, dasPaymentInfo.CollectionPeriod)
                     };
                 });
         }

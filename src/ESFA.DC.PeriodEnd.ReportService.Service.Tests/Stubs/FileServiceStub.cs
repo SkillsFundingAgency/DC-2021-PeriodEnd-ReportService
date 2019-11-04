@@ -40,5 +40,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Stubs
         {
             throw new NotImplementedException();
         }
+
+        public Task<IEnumerable<string>> GetFileReferencesAsync(string container, string prefix, bool includeSubfolders, CancellationToken cancellationToken)
+        {
+            throw new NotImplementedException();
+        }
     }
 }

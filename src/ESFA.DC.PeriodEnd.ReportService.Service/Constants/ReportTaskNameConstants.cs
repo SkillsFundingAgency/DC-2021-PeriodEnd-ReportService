@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
             public const string DataQualityReport = "TaskGenerateDataQualityReport";
             public const string PeriodEndMetricsReport = "TaskGeneratePeriodEndMetricsReport";
             public const string ProviderSubmissionsReport = "TaskGenerateProviderSubmissionsReport";
-            public const string ActCountReport = "TaskGenerateActCountReportReport";
+            public const string ActCountReport = "TaskGenerateActCountReport";
 
             public static IEnumerable<string> TasksList = new List<string>()
             {

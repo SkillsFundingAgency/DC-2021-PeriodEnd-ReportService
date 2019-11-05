@@ -53,7 +53,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         public string ProviderSpecifiedLearnerMonitoringA { get; set; }
 
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }
-
-        public decimal? EarningAmount { get; set; }
     }
 }

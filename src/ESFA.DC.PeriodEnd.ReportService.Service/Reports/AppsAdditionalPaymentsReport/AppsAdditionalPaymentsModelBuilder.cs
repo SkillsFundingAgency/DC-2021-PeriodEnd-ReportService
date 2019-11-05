@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Globalization;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
@@ -35,8 +34,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             [Constants.DASPayments.TransactionType.Apprenticeship] = ApprenticePaymentType,
         };
 
-        private readonly List<AppsAdditionalPaymentExtendedPaymentModel> _emptyModels = new List<AppsAdditionalPaymentExtendedPaymentModel>();
-
         public IEnumerable<AppsAdditionalPaymentsModel> BuildModel(
             IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
             IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
@@ -44,10 +41,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
             IDictionary<long, string> legalNameDictionary)
         {
+            var learnerDictionary = appsAdditionalPaymentIlrInfo.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
+
+            var priceEpisodesDictionary = rulebasePriceEpisodes
+                .Where(x => x != null)
+                .GroupBy(pel => pel.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(g => g.Key,
+                    g => g
+                        .GroupBy(gea => gea.AimSeqNumber)
+                        .ToDictionary(gi => gi.Key, gi => gi.ToArray()));
+
             // Create an extended payments model that includes the payment related ILR data
             var extendedPayments = BuildAdditionalPaymentsExtendedPaymentsModel(
-                appsAdditionalPaymentIlrInfo,
-                rulebasePriceEpisodes,
+                learnerDictionary,
                 rulebaseLearningDeliveries,
                 appsAdditionalPaymentDasPaymentsInfo,
                 legalNameDictionary);
@@ -62,7 +68,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
              *    AppServiceEmployerName
              *    IlrEmployerIdentifier
              */
-            return extendedPayments
+            var groups = extendedPayments
                 .GroupBy(x => new AppsAdditionalPaymentRecordKey(
                     x.PaymentLearnerReferenceNumber,
                     x.PaymentUniqueLearnerNumber,
@@ -72,6 +78,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                     x.AppsServiceEmployerName,
                     x.ilrEmployerIdentifier
                 ), AppsAdditionalPaymentRecordKey.AppsAdditionalPaymentRecordKeyComparer)
+                .ToList();
+
+            var earningsData = BuildGroupedEarningsValuesByPeriod(groups, learnerDictionary, priceEpisodesDictionary);
+
+            return groups
                 .Select(g =>
                 {
                     var academicYearPayments = g.Where(p => p.PaymentAcademicYear == Generics.AcademicYear).ToList();
@@ -98,59 +109,141 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         ProviderSpecifiedLearnerMonitoringB = firstModel?.ProviderSpecifiedLearnerMonitoringB,
 
                         // period totals
-                        AugustEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 1),
+                        AugustEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 1),
                         AugustR01Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 1),
-                        SeptemberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 2),
+                        SeptemberEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 2),
                         SeptemberR02Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 2),
-                        OctoberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 3),
+                        OctoberEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 3),
                         OctoberR03Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 3),
-                        NovemberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 4),
+                        NovemberEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 4),
                         NovemberR04Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 4),
-                        DecemberEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 5),
+                        DecemberEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 5),
                         DecemberR05Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 5),
-                        JanuaryEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 6),
+                        JanuaryEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 6),
                         JanuaryR06Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 6),
-                        FebruaryEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 7),
+                        FebruaryEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 7),
                         FebruaryR07Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 7),
-                        MarchEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 8),
+                        MarchEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 8),
                         MarchR08Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 8),
-                        AprilEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 9),
+                        AprilEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 9),
                         AprilR09Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 9),
-                        MayEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 10),
+                        MayEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 10),
                         MayR10Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 10),
-                        JuneEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 11),
+                        JuneEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 11),
                         JuneR11Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 11),
-                        JulyEarnings = GetPeriodEarningsTotalForPeriod(groupedAcademicYear, 12),
+                        JulyEarnings = GetEarningsForKeyAndPeriod(earningsData, g.Key, 12),
                         JulyR12Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 12),
                         R13Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 13),
                         R14Payments = GetPeriodPaymentsTotalForPeriod(groupedAcademicYear, 14),
 
                         // Annual totals
-                        TotalEarnings = academicYearPayments.Where(p => p.EarningAmount.HasValue).Sum(c => c.EarningAmount.Value),
-                        TotalPaymentsYearToDate = academicYearPayments.Where(p => p.PaymentAmount.HasValue && _applicablePaymentTypes.Contains(p.PaymentTypeOfAdditionalPayment)).Sum(c => c.PaymentAmount.Value),
+                        TotalEarnings = earningsData.GetValueOrDefault(g.Key)?.Values.Sum() ?? 0,
+                        TotalPaymentsYearToDate = academicYearPayments.Where(p => p.PaymentAmount != null && _applicablePaymentTypes.Contains(p.PaymentTypeOfAdditionalPayment)).Sum(c => c.PaymentAmount.Value),
                     };
                 })
                 .OrderBy(o => o.LearnerReferenceNumber)
                 .ToList();
         }
 
+        public Dictionary<AppsAdditionalPaymentRecordKey, Dictionary<int, decimal>> BuildGroupedEarningsValuesByPeriod(
+            IEnumerable<IGrouping<AppsAdditionalPaymentRecordKey, AppsAdditionalPaymentExtendedPaymentModel>> groups,
+            IDictionary<string, AppsAdditionalPaymentLearnerInfo> learnerDictionary,
+            Dictionary<string, Dictionary<int?, AECApprenticeshipPriceEpisodePeriodisedValuesInfo[]>> priceEpisodesDictionary)
+        {
+            return groups.ToDictionary(
+                g => g.Key,
+                v =>
+                {
+                    var learnRefNumber = v.Key.PaymentLearnerReferenceNumber;
+
+                    var learner = learnerDictionary.GetValueOrDefault(learnRefNumber);
+
+                    var learningDeliveries = learner?.LearningDeliveries?
+                        .Where(x => v.Any(dasPaymentInfo =>
+                            x != null &&
+                            x.ProgType == dasPaymentInfo.PaymentLearningAimProgrammeType &&
+                            x.StdCode == dasPaymentInfo.PaymentLearningAimStandardCode &&
+                            x.FworkCode == dasPaymentInfo.PaymentLearningAimFrameworkCode &&
+                            x.PwayCode == dasPaymentInfo.PaymentLearningAimPathwayCode &&
+                            x.LearnRefNumber.CaseInsensitiveEquals(dasPaymentInfo.PaymentLearnerReferenceNumber) &&
+                            x.LearnAimRef.CaseInsensitiveEquals(dasPaymentInfo.PaymentLearningAimReference) &&
+                            x.LearnStartDate == dasPaymentInfo.PaymentLearningStartDate));
+
+                    if (learningDeliveries != null)
+                    {
+                        var priceEpisodesForLearningDeliveries = learningDeliveries.Select(ld =>
+                            priceEpisodesDictionary
+                                .GetValueOrDefault(learnRefNumber)?
+                                .GetValueOrDefault(ld.AimSeqNumber))?
+                            .Where(pe => pe != null)
+                            .ToArray();
+
+                        return new Dictionary<int, decimal>()
+                        {
+                            [1] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period1, v.Key.PaymentTypeOfAdditionalPayment),
+                            [2] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period2, v.Key.PaymentTypeOfAdditionalPayment),
+                            [3] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period3, v.Key.PaymentTypeOfAdditionalPayment),
+                            [4] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period4, v.Key.PaymentTypeOfAdditionalPayment),
+                            [5] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period5, v.Key.PaymentTypeOfAdditionalPayment),
+                            [6] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period6, v.Key.PaymentTypeOfAdditionalPayment),
+                            [7] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period7, v.Key.PaymentTypeOfAdditionalPayment),
+                            [8] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period8, v.Key.PaymentTypeOfAdditionalPayment),
+                            [9] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period9, v.Key.PaymentTypeOfAdditionalPayment),
+                            [10] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period10, v.Key.PaymentTypeOfAdditionalPayment),
+                            [11] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period11, v.Key.PaymentTypeOfAdditionalPayment),
+                            [12] = SumPriceEpisodesByPeriodForPaymentType(priceEpisodesForLearningDeliveries, pe => pe.Period12, v.Key.PaymentTypeOfAdditionalPayment),
+                        };
+                    }
+
+                    return new Dictionary<int, decimal>();
+                },
+                AppsAdditionalPaymentRecordKey.AppsAdditionalPaymentRecordKeyComparer);
+        }
+
+        public decimal SumPriceEpisodesByPeriodForPaymentType(AECApprenticeshipPriceEpisodePeriodisedValuesInfo[][] priceEpisodes, Func<AECApprenticeshipPriceEpisodePeriodisedValuesInfo, decimal?> periodSelector, string paymentType)
+        {
+            return priceEpisodes
+                .Sum(p => p.Where(pe => periodSelector(pe) != null && EarningsAttributeFilter(pe, paymentType))
+                    .Sum(pe => periodSelector(pe).Value));
+        }
+
+        public bool EarningsAttributeFilter(AECApprenticeshipPriceEpisodePeriodisedValuesInfo periodisedValues, string paymentType)
+        {
+            if (paymentType.CaseInsensitiveEquals(EmployerPaymentType) &&
+                (periodisedValues.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) ||
+                    periodisedValues.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName)))
+            {
+                return true;
+            }
+
+            if (paymentType.CaseInsensitiveEquals(ProviderPaymentType) &&
+                (periodisedValues.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) ||
+                    periodisedValues.AttributeName.CaseInsensitiveEquals(Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName)))
+            {
+                return true;
+            }
+
+            if (paymentType == ApprenticePaymentType && periodisedValues.AttributeName == Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName)
+            {
+                return true;
+            }
+
+            return false;
+        }
+
+        public decimal GetEarningsForKeyAndPeriod(Dictionary<AppsAdditionalPaymentRecordKey, Dictionary<int, decimal>> earnings, AppsAdditionalPaymentRecordKey key, int period)
+        {
+            return earnings
+                .GetValueOrDefault(key)
+                .GetValueOrDefault(period, 0);
+        }
+
         public IEnumerable<AppsAdditionalPaymentExtendedPaymentModel> BuildAdditionalPaymentsExtendedPaymentsModel(
-            IList<AppsAdditionalPaymentLearnerInfo> appsAdditionalPaymentIlrInfo,
-            IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
+            IDictionary<string, AppsAdditionalPaymentLearnerInfo> learnerDictionary,
             IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
             IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
             IDictionary<long, string> legalNameDictionary)
         {
-            var learnerDictionary = appsAdditionalPaymentIlrInfo.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
-
-            var priceEpisodesDictionary = rulebasePriceEpisodes
-                .Where(x => x != null)
-                .GroupBy(pel => pel.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(g => g.Key,
-                    g => g
-                        .GroupBy(gea => gea.AimSeqNumber)
-                        .ToDictionary(gi => gi.Key, gi => gi.ToArray()));
-
             // Create a new payment model which includes the related data from the ILR
             return appsAdditionalPaymentDasPaymentsInfo
                 .Where(p => p != null)
@@ -159,7 +252,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                     AppsAdditionalPaymentLearnerInfo learner = null;
                     AppsAdditionalPaymentLearningDeliveryInfo learningDelivery = null;
                     AECLearningDeliveryInfo aecLearningDelivery = null;
-                    AECApprenticeshipPriceEpisodePeriodisedValuesInfo[] aecApprenticeshipPriceEpisodePeriodisedValues = null;
 
                     // lookup the related reference data for this payment
                     learner = learnerDictionary.GetValueOrDefault(dasPaymentInfo?.LearnerReferenceNumber);
@@ -183,11 +275,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                                 x.UKPRN == learningDelivery.UKPRN &&
                                 x.LearnRefNumber.CaseInsensitiveEquals(learningDelivery.LearnRefNumber) &&
                                 x.AimSeqNumber == learningDelivery.AimSeqNumber);
-
-                            aecApprenticeshipPriceEpisodePeriodisedValues =
-                                priceEpisodesDictionary.GetValueOrDefault(learningDelivery.LearnRefNumber)?
-                                    .GetValueOrDefault(learningDelivery.AimSeqNumber)
-                                ?? Array.Empty<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>();
                         }
                     }
 
@@ -220,19 +307,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                         // copy the ilr fields
                         ProviderSpecifiedLearnerMonitoringA = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringA),
                         ProviderSpecifiedLearnerMonitoringB = GetProviderSpecMonitor(learner, Generics.ProviderSpecifiedLearnerMonitoringB),
-                        EarningAmount = GetMonthlyEarnings(dasPaymentInfo.TransactionType, aecApprenticeshipPriceEpisodePeriodisedValues, dasPaymentInfo.CollectionPeriod)
                     };
                 });
         }
 
-        private decimal GetPeriodEarningsTotalForPeriod(IDictionary<byte, List<AppsAdditionalPaymentExtendedPaymentModel>> models, byte period)
-        {
-            return models.GetValueOrDefault(period, _emptyModels).Where(p => p.EarningAmount.HasValue).Sum(c => c.EarningAmount.Value);
-        }
-
         private decimal GetPeriodPaymentsTotalForPeriod(IDictionary<byte, List<AppsAdditionalPaymentExtendedPaymentModel>> models, byte period)
         {
-            return models.GetValueOrDefault(period, _emptyModels).Where(p => p.PaymentAmount.HasValue && _applicablePaymentTypes.Contains(p.PaymentTypeOfAdditionalPayment)).Sum(c => c.PaymentAmount.Value);
+            return models.GetValueOrDefault(period)?.Where(p => p.PaymentAmount.HasValue && _applicablePaymentTypes.Contains(p.PaymentTypeOfAdditionalPayment)).Sum(c => c.PaymentAmount.Value) ?? 0;
         }
 
         private string GetTypeOfAdditionalPayment(byte transactionType) => _transactionTypeToPaymentTypeDictionary.GetValueOrDefault(transactionType, string.Empty);
@@ -250,58 +331,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         private string GetProviderSpecMonitor(AppsAdditionalPaymentLearnerInfo learner, string providerSpecifiedLearnerMonitoring)
         {
             return learner?.ProviderSpecLearnerMonitorings.FirstOrDefault(x => x.ProvSpecLearnMonOccur.CaseInsensitiveEquals(providerSpecifiedLearnerMonitoring))?.ProvSpecLearnMon;
-        }
-
-        private decimal GetMonthlyEarnings(
-            byte transactionType,
-            ICollection<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
-            byte period)
-        {
-            if (period >= 1 && period <= 12)
-            {
-                if (transactionType == Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive ||
-                    transactionType == Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive)
-                {
-                    return GetAECPriceEpisodePeriodisedValue(
-                        aecApprenticeshipPriceEpisodePeriodisedValues,
-                        new[]
-                        {
-                            Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName,
-                            Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName
-                        }, period);
-                }
-
-                if (transactionType == Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive ||
-                    transactionType == Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive)
-                {
-                    return GetAECPriceEpisodePeriodisedValue(
-                        aecApprenticeshipPriceEpisodePeriodisedValues,
-                        new[]
-                        {
-                            Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName,
-                            Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName
-                        }, period);
-                }
-
-                if (transactionType == Constants.DASPayments.TransactionType.Apprenticeship)
-                {
-                    return GetAECPriceEpisodePeriodisedValue(aecApprenticeshipPriceEpisodePeriodisedValues, new[] {Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName}, period);
-                }
-            }
-
-            return 0;
-        }
-
-        private decimal GetAECPriceEpisodePeriodisedValue(
-            ICollection<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aecApprenticeshipPriceEpisodePeriodisedValues,
-            ICollection<string> attributeNames,
-            byte period)
-        {
-            return aecApprenticeshipPriceEpisodePeriodisedValues
-                             .Where(x =>
-                                 x != null &&
-                                 attributeNames.Contains(x.AttributeName, StringComparer.OrdinalIgnoreCase))
-                             .Sum(z => z.Periods[period - 1]) ?? 0;
         }
 
         private string GetEmployerIdentifier(AECLearningDeliveryInfo aecLearningDeliveryInfo, byte transactionType)

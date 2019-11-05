@@ -26,7 +26,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
                 DataExtractReport,
                 DataQualityReport,
                 PeriodEndMetricsReport,
-                ProviderSubmissionsReport
+                ProviderSubmissionsReport,
+                ActCountReport
             };
         }
     }

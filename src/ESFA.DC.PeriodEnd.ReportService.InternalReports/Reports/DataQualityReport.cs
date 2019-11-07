@@ -59,7 +59,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
                 reportServiceContext.CollectionYear,
-                reportServiceContext.ILRPeriods,
+                reportServiceContext.ILRPeriodsAdjustedTimes,
                 fileDetails,
                 CancellationToken.None);
 
@@ -71,7 +71,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             IEnumerable<Top10ProvidersWithInvalidLearners> providersWithInvalidLearners = (await
                 _ilrPeriodEndProviderService.GetProvidersWithInvalidLearners(
                 reportServiceContext.CollectionYear,
-                reportServiceContext.ILRPeriods,
+                reportServiceContext.ILRPeriodsAdjustedTimes,
                 fileDetails,
                 CancellationToken.None)).ToList();
 

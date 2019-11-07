@@ -7,6 +7,7 @@
     <Parameter Name="TopicName" DefaultValue="periodendtopic" />
     <Parameter Name="ServiceBusConnectionString" DefaultValue="" />
     <Parameter Name="ILRDataStoreConnectionString" DefaultValue="" />
+    <Parameter Name="ILRReferenceDataConnectionString" DefaultValue="" />
     <Parameter Name="LoggerConnectionstring" DefaultValue="" />
     <Parameter Name="MaxMessageSize" DefaultValue="1073741824" />
     <Parameter Name="AzureBlobConnectionString" DefaultValue="UseDevelopmentStorage=true" />
@@ -65,6 +66,7 @@
             <Parameter Name="SummarisedActualsConnectionString" Value="[SummarisedActualsConnectionString]" />
             <Parameter Name="DASPaymentsConnectionString" Value="[DASPaymentsConnectionString]" />
             <Parameter Name="ILRDataStoreConnectionString" Value="[ILRDataStoreConnectionString]" />
+            <Parameter Name="ILRReferenceDataConnectionString" Value="[ILRReferenceDataConnectionString]" />
             <Parameter Name="LarsConnectionString" Value="[LarsConnectionString]" />
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
             <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />

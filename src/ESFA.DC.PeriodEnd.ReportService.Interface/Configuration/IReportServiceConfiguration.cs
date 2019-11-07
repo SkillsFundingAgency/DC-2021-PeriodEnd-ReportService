@@ -8,6 +8,8 @@
 
         string ILRDataStoreConnectionString { get; }
 
+        string ILRReferenceDataConnectionString { get; }
+
         string LarsConnectionString { get; }
 
         string OrgConnectionString { get; }

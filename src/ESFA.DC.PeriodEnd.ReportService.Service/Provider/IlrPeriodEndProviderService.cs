@@ -341,8 +341,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 foreach (var ruleViolationsInfo in top20RuleViolationsList)
                 {
                     ruleViolationsInfo.ErrorMessage = errors
-                        .Where(e => e.Rulename == ruleViolationsInfo.RuleName)
-                        .Select(e => e.Message).FirstOrDefault();
+                        .FirstOrDefault(e => e.Rulename == ruleViolationsInfo.RuleName)?.Message;
                 }
             }
 

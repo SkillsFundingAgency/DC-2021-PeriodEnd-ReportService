@@ -3,6 +3,7 @@
   <Parameters>
     <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
+    <Parameter Name="ILRReferenceDataConnectionString" Value="__ILR1920ReferenceDataConnectionString__" />
     <Parameter Name="ILRDataStoreConnectionString" Value="__ILR1920DataStoreConnectionString__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
     <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionString__" />

@@ -11,7 +11,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityRepor
         public int PeriodNumber { get; set; }
 
         public DateTime? SubmittedTime { get; set; }
-
-        public bool? Success { get; set; }
     }
 }

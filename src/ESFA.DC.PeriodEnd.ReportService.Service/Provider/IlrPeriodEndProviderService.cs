@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model;
+using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
@@ -26,17 +28,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         private readonly Func<IIlr1920RulebaseContext> _ilrContextFactory;
         private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
         private readonly Func<IIlr1920InvalidContext> _ilrInValidContextFactory;
+        private readonly Func<IIlrReferenceDataContext> _ilrRefDataFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
             Func<IIlr1920RulebaseContext> ilrContextFactory,
             Func<IIlr1920ValidContext> ilrValidContextFactory,
-            Func<IIlr1920InvalidContext> ilrInValidContextFactory)
+            Func<IIlr1920InvalidContext> ilrInValidContextFactory,
+            Func<IIlrReferenceDataContext> ilrRefDataFactory)
             : base(logger)
         {
             _ilrContextFactory = ilrContextFactory;
             _ilrValidContextFactory = ilrValidContextFactory;
             _ilrInValidContextFactory = ilrInValidContextFactory;
+            _ilrRefDataFactory = ilrRefDataFactory;
         }
 
         public async Task<IEnumerable<FileDetailModel>> GetFileDetailsAsync(CancellationToken cancellationToken)
@@ -251,7 +256,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 {
                     UKPRN = f.Ukprn,
                     Filename = f.Filename,
-                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods)
+                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods),
+                    SubmittedTime = f.SubmittedTime
                 }).ToList();
 
             var fds = fd.GroupBy(x => x.UKPRN)
@@ -306,6 +312,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             List<RuleViolationsInfo> top20RuleViolationsList;
             using (var ilrContext = _ilrContextFactory())
+            using (var ilrReferenceData = _ilrRefDataFactory())
             {
                 top20RuleViolationsList = await ilrContext.ValidationErrors
                     .Where(x => x.Severity == "E")
@@ -313,7 +320,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .Select(x => new RuleViolationsInfo
                     {
                         RuleName = x.Key.RuleName,
-                        ErrorMessage = x.Key.ErrorMessage,
                         Providers = x.Select(y => y.UKPRN).Distinct().Count(),
                         Learners = x.Select(y => y.LearnRefNumber).Distinct().Count(),
                         NoOfErrors = x.Select(y => y.ErrorMessage).Count()
@@ -323,6 +329,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ThenByDescending(x => x.Providers)
                     .Take(20)
                     .ToListAsync(cancellationToken);
+
+                var errors = await ilrReferenceData.Rules
+                    .Where(e => top20RuleViolationsList.Exists(rule => rule.RuleName == e.Rulename))
+                    .Select(e => new
+                    {
+                        e.Rulename,
+                        e.Message
+                    }).ToListAsync(cancellationToken);
+
+                foreach (var ruleViolationsInfo in top20RuleViolationsList)
+                {
+                    ruleViolationsInfo.ErrorMessage = errors
+                        .FirstOrDefault(e => e.Rulename == ruleViolationsInfo.RuleName)?.Message;
+                }
             }
 
             return top20RuleViolationsList;

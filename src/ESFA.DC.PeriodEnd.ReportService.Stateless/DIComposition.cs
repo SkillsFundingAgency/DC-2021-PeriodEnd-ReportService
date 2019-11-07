@@ -11,6 +11,8 @@ using ESFA.DC.FileService;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.FileService.Config.Interface;
 using ESFA.DC.FileService.Interface;
+using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model;
+using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.Interface;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid;
@@ -261,6 +263,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 return optionsBuilder.Options;
             })
                 .As<DbContextOptions<SummarisationContext>>()
+                .SingleInstance();
+
+            // ILr Reference Data
+            containerBuilder.RegisterType<IlrReferenceDataContext>().As<IIlrReferenceDataContext>().ExternallyOwned();
+            containerBuilder.Register(context =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<IlrReferenceDataContext>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.ILRReferenceDataConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                    return optionsBuilder.Options;
+                })
+                .As<DbContextOptions<IlrReferenceDataContext>>()
                 .SingleInstance();
 
             // Organisation

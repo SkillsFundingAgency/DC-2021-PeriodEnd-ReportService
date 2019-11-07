@@ -12,6 +12,7 @@ using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
@@ -24,21 +25,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {
     public sealed class ActCountReport : AbstractInternalReport, IInternalReport
     {
-        private const string QUERY =
-            "SELECT ld.UKPRN Ukprn, Count(case when ldf.LearnDelFAMCode = '1' then 1 else NULL end) ActCountOne, Count(case when ldf.LearnDelFAMCode = '2' then 1 else NULL end) ActCountTwo FROM [Valid].[LearningDelivery] ld INNER JOIN [Valid].[LearningDeliveryFAM] ldf on ldf.UKPRN = ld.UKPRN and ldf.LearnRefNumber = ld.LearnRefNumber AND ldf.AimSeqNumber = ld.AimSeqNumber WHERE LearnAimRef = 'ZPROG001' and ldf.LearnDelFAMType = 'ACT' and ld.FundModel = 36 GROUP BY ld.UKPRN";
-
-        private readonly DbContextOptions<ILR1920_DataStoreEntitiesValid> _dataStoreOptions;
+        private readonly IPeriodEndQueryService1920 _ilrPeriodEndService;
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
 
         public ActCountReport(
             ILogger logger,
             IDateTimeProvider dateTimeProvider,
-            DbContextOptions<ILR1920_DataStoreEntitiesValid> dataStoreOptions,
+            IPeriodEndQueryService1920 ilrPeriodEndService,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IValueProvider valueProvider)
         : base(valueProvider, dateTimeProvider)
         {
-            _dataStoreOptions = dataStoreOptions;
+            _ilrPeriodEndService = ilrPeriodEndService;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
         }
 
@@ -48,10 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
         public async Task<IEnumerable<ActCountModel>> GenerateModelsAsync(CancellationToken cancellationToken)
         {
-            using (SqlConnection sqlConnection = new SqlConnection(_dataStoreOptions.FindExtension<SqlServerOptionsExtension>().ConnectionString))
-            {
-                return (await sqlConnection.QueryAsync<ActCountModel>(QUERY, cancellationToken)).OrderBy(x => x.Ukprn).ToList();
-            }
+            return await _ilrPeriodEndService.GetActCounts();
         }
 
         public override async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)

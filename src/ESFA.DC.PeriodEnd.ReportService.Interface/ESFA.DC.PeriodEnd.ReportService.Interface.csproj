@@ -18,7 +18,7 @@
     <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />
     <PackageReference Include="ESFA.DC.ILR.1920.FundingService.FM36.FundingOutput.Model" Version="0.0.276" />
     <PackageReference Include="ESFA.DC.ILR.1920.Model.Interface" Version="0.1.4-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.415" />
+    <PackageReference Include="ESFA.DC.ILR1920.Database.EF" Version="0.0.454" />
     <PackageReference Include="ESFA.DC.ReferenceData.FCS.Model" Version="0.2.210" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

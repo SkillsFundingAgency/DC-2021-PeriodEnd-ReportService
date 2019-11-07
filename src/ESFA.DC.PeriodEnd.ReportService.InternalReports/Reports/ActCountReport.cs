@@ -1,14 +1,10 @@
 ﻿using System.Collections.Generic;
-using System.Data.SqlClient;
 using System.IO;
-using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
-using Dapper;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -18,8 +14,6 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ActCountReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
-using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.SqlServer.Infrastructure.Internal;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {

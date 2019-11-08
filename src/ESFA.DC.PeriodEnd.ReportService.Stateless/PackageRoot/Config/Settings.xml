@@ -24,6 +24,7 @@
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
+    <Parameter Name="ILRReferenceDataConnectionString" Value="" />
     <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="OrgConnectionString" Value="" />

@@ -66,7 +66,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 .GetFileDetailsLatestSubmittedAsync(cancellationToken)).ToList();
 
             int collectionId = await _jobQueueManagerProviderService.GetCollectionIdAsync(
-                reportServiceContext.CollectionName,
+                ReportTaskNameConstants.Ilr1920CollectionName,
                 cancellationToken);
 
             List<OrganisationCollectionModel> expectedReturners = (await _jobQueueManagerProviderService

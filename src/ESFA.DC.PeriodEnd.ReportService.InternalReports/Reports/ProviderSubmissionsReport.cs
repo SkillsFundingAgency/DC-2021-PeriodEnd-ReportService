@@ -15,7 +15,6 @@ using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
 using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
-using ESFA.DC.ReferenceData.Organisations.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {
@@ -66,7 +65,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 .GetFileDetailsLatestSubmittedAsync(cancellationToken)).ToList();
 
             int collectionId = await _jobQueueManagerProviderService.GetCollectionIdAsync(
-                reportServiceContext.CollectionName,
+                $"{ReportTaskNameConstants.IlrCollectionName}{reportServiceContext.CollectionYear}",
                 cancellationToken);
 
             List<OrganisationCollectionModel> expectedReturners = (await _jobQueueManagerProviderService

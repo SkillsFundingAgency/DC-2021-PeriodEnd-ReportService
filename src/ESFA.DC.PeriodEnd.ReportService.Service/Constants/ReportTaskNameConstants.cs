@@ -11,6 +11,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string FundingSummaryReport = "TaskGenerateFundingSummaryPeriodEndReport";
         public const string AppsCoInvestmentContributionsReport = "TaskGenerateAppsCoInvestmentContributionsReport";
 
+        public const string IlrCollectionName = "ILR";
+
         public static class InternalReports
         {
             public const string CollectionStatsReport = "TaskGenerateCollectionStatsReport";

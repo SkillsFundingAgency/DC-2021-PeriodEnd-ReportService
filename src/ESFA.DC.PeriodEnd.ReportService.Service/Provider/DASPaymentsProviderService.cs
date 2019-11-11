@@ -163,6 +163,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             Amount = payment.Amount
                         })
                         .ToListAsync(cancellationToken);
+
+                    var eukprns = context.EarningEvents.Where(x => x.Ukprn == 10006341);
+                    var pukprns = context.Payments.Where(x => x.Ukprn == 10006341);
                 }
             }
             catch (Exception ex)

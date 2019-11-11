@@ -28,7 +28,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
-        private readonly IDASPaymentsProviderService _dasEarningsProviderService;
         private readonly ILarsProviderService _larsProviderService;
         private readonly IFCSProviderService _fcsProviderService;
         private readonly ILearnerLevelViewModelBuilder _modelBuilder;
@@ -87,18 +86,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
 
-            // Get the AEC data
-            var appsMonthlyPaymentRulebaseInfo =
-                await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn,
-                    cancellationToken);
-
-            // Get the Fcs Contract data
-            var appsMonthlyPaymentFcsInfo =
-                await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn,
-                    cancellationToken);
-
             // Get the name's of the learning aims
             string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)
                 .Select(x => x.LearnAimRef).Distinct().ToArray();
@@ -107,14 +94,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     learnAimRefs,
                     cancellationToken);
 
+            // Get the earning data
+            var learnerLevelViewFM36Info = await _fm36ProviderService.GetFM36DataForLearnerLevelView(
+                    reportServiceContext.Ukprn,
+                    cancellationToken);
+
+            // Get the employer investment info
+            var appsCoInvestmentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsCoInvestmentReportAsync(
+                    reportServiceContext.Ukprn,
+                    cancellationToken);
+
             // Build the actual Apps Monthly Payment Report
             var learnerLevelViewModel = _modelBuilder.BuildLearnerLevelViewModelList(
                 appsMonthlyPaymentIlrInfo,
-                appsMonthlyPaymentRulebaseInfo,
                 appsMonthlyPaymentDasInfo,
                 appsMonthlyPaymentDasEarningsInfo,
-                appsMonthlyPaymentFcsInfo,
+                appsCoInvestmentIlrInfo,
                 appsMonthlyPaymentLarsLearningDeliveryInfos,
+                learnerLevelViewFM36Info,
                 reportServiceContext.ReturnPeriod);
 
             string csv = await GetCsv(learnerLevelViewModel, cancellationToken);

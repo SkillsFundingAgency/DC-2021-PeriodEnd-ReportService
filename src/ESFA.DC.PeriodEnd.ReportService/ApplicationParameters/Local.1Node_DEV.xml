@@ -1,0 +1,31 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ESFA.DC.PeriodEnd1920.ReportService" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+  <Parameters>
+    <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
+    <Parameter Name="ProcessingServicePlacementConstraints" Value="" />
+    <Parameter Name="ILRDataStoreConnectionString" Value="data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=ILR1920DataStore;User Id=ILR1920DataStore_RO_User;Password=N7R6YaTjkcFyHQrD58@z2CuXOLBe-nqEPSm4tKwvilJZsM9x3VbUgAhofdGpIW012iushoTzBb4;MultipleActiveResultSets=true;Encrypt=True;" />
+    <Parameter Name="AzureBlobConnectionString" Value="DefaultEndpointsProtocol=https;AccountName=dcoldevcistorageaccountw;AccountKey=NEAM0WPqccTzJxiF6iKFX0WjXyUBpNoAwV8E3hmftsvi3tXmmQtdiTRnBT03L5O8k0wKYPP3MezJ7FgJRNxCyg==;EndpointSuffix=core.windows.net" />
+    <Parameter Name="ServiceBusConnectionString" Value="Endpoint=sb://xx-rj-servicebus-weu.servicebus.windows.net/;SharedAccessKeyName=RootManageSharedAccessKey;SharedAccessKey=FsKVSuGCMpjOI358juMJdR074RhSOayfiQqxP7w1mg0=" />
+    <Parameter Name="AuditQueueName" Value="auditingqueue" />
+    <Parameter Name="TopicName" Value="periodendtopic" />
+    <Parameter Name="LoggerConnectionstring" Value="Server=DCOL-DEV-SqlServer-WEU.database.windows.net;Database=AppLogs;User Id=ApplicationLogUser;Password=7rvxEJsDFRaQoYMhyVcqPtdzl-T538K9WL2;MultipleActiveResultSets=true;Encrypt=True;" />
+    <Parameter Name="AzureBlobContainerName" Value="Should not be used as now part of context message now." />
+    <Parameter Name="JobStatusQueueName" Value="jobstatusqueue" />
+    <Parameter Name="ServiceReleaseVersion" Value="DC-1920-PeriodEnd-ReportService-0.0.0396-R001" />
+    <Parameter Name="AsposeLicence" Value="&lt;License&gt; &lt;Data&gt; &lt;LicensedTo&gt;Education and Skills Funding Agency&lt;/LicensedTo&gt; &lt;EmailTo&gt;amandeep.samra@education.gov.uk&lt;/EmailTo&gt; &lt;LicenseType&gt;Site OEM&lt;/LicenseType&gt; &lt;LicenseNote&gt;Limited to 10 developers, unlimited physical locations&lt;/LicenseNote&gt; &lt;OrderID&gt;190307110608&lt;/OrderID&gt; &lt;UserID&gt;134980817&lt;/UserID&gt; &lt;OEM&gt;This is a redistributable license&lt;/OEM&gt; &lt;Products&gt; &lt;Product&gt;Aspose.Cells for .NET&lt;/Product&gt; &lt;/Products&gt; &lt;EditionType&gt;Enterprise&lt;/EditionType&gt; &lt;SerialNumber&gt;8df9ec1f-4a43-40e4-bdf5-6aa4a12c8877&lt;/SerialNumber&gt; &lt;SubscriptionExpiry&gt;20200315&lt;/SubscriptionExpiry&gt; &lt;LicenseVersion&gt;3.0&lt;/LicenseVersion&gt; &lt;LicenseInstructions&gt;https://purchase.aspose.com/policies/use-license&lt;/LicenseInstructions&gt; &lt;/Data&gt; &lt;Signature&gt;PcUVvr3sq2fD00bqTiKJbHh4OdX5wB03N4aULUHynqHo6zHYJlF5XKLsmfvNJddSIzq98Wxja0SbYGr7pPiBQkuZ8gURsNXoM2qSsvYPpezS3HHaYbDHcImT8UW+R0h7uZar1s1k4lWm36z6GcklloR2XElgt51C0qSmYnpPSks=&lt;/Signature&gt; &lt;/License&gt;" />
+    <Parameter Name="TopicMaxCallbackTimeSpanMinutes" Value="30" />
+    <!-- Subscription Name -->
+    <Parameter Name="SubscriptionName" Value="Reports" />
+    <!-- DASPayments -->
+    <Parameter Name="DASPaymentsConnectionString" Value="Data Source=DCOL-DEV-SqlServer-WEU.database.windows.net;Initial Catalog=DASPayments;User ID=DASPaymentROUser;Password=ZxjOYbIeGuVmrHC8pgv4BwPk-5t9Sno1cQiLTM3@DFXU7zfAN6dy0q2JWlKEhsRaNJRL@7Thb1w;Persist Security Info=False;Integrated Security=False;Encrypt=True;" />
+    <!-- Lars -->
+    <Parameter Name="LarsConnectionString" Value="Server=DCOL-DEV-SqlServer-WEU.database.windows.net;Database=Lars;MultipleActiveResultSets=true;User Id=Lars_RO_User;Password=o@W5F0dA1gZIVCUPbk28hTiazSnwER3pfy6-JLXm7OtDreuB9sMjQqYl4vKxcHGNzLyREN12YQc;Encrypt=True;" />
+    <!-- Summarised Actuals -->
+    <Parameter Name="SummarisedActualsConnectionString" Value="data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=SummarisedActuals;User Id=SummarisedActuals_RO_User;Password=gDOw0idAkRnK-hxSHfPXtzL98vy3TNBJQ7mZlYpurboa@6U1ejcqVs4ECMG2FIW5ZwTn5mu4vXx;MultipleActiveResultSets=true;Encrypt=True;" />
+    <!-- OrgConnectionString -->
+    <Parameter Name="OrgConnectionString" Value="data source=DCOL-DEV-SqlServer-WEU.database.windows.net;initial catalog=Org;User Id=Org_RW_User;Password=X6DwuPhp8ykCJVM@Q09IqSdlrsKgWn-UbLvz4Y1GF5At3RfxBZ2OcjNHomTE7eaikfiDQTE4ryB;MultipleActiveResultSets=true;Encrypt=True;" />
+    <Parameter Name="FCSConnectionString" Value="Server=DCOL-DEV-SqlServer-WEU.database.windows.net;Database=FCS;User Id=FCS_RO_User;Password=iNWtZRfxpvPw-SQ5n4XaGq9rDml86khuTMyC7ojdY@IEe1cVBLJgUbA3sO2Fz0HKX5MVdlOBW7g;Encrypt=True;" />
+    <!-- JobQueueManager -->
+    <Parameter Name="JobQueueManagerConnectionString" Value="Server=DCOL-DEV-SqlServer-WEU.database.windows.net;Database=JobManagement;User Id=JobManagement_RO_User;Password=6cxaDHuX9rVteATopN5-Ugmb1G0iFhvsZCjEyInOzBwJk37qlY@2LMQSRKPdWf484gnEksKHLdy;MultipleActiveResultSets=true;Encrypt=True;" />
+  </Parameters>
+</Application>

@@ -1,8 +1,9 @@
-﻿CREATE TABLE [dbo].[AppsMonthlyPayment](
-	[Ukprn] [int] NOT NULL,
+﻿
+CREATE TABLE [dbo].[AppsMonthlyPayment](
+	[Ukprn] [bigint] NOT NULL,
 	[ReturnPeriod] [int] NOT NULL,
 	[PaymentLearnerReferenceNumber] [varchar](250) NULL,
-	[PaymentUniqueLearnerNumber] [int] NULL,
+	[PaymentUniqueLearnerNumber] [bigint] NULL,
 	[LearnerCampusIdentifier] [varchar](max) NULL,
 	[ProviderSpecifiedLearnerMonitoringA] [varchar](250) NULL,
 	[ProviderSpecifiedLearnerMonitoringB] [varchar](250) NULL,
@@ -15,7 +16,7 @@
 	[LearningDeliveryCompletionStatus] [int] NULL,
 	[LearningDeliveryLearningActualEndDate] [datetime] NULL,
 	[LearningDeliveryAchievementDate] [datetime] NULL,
-	[LearningDeliveryOutcome] [int] NULL,
+	[LearningDeliveryOutcome] [bigint] NULL,
 	[PaymentProgrammeType] [int] NULL,
 	[PaymentStandardCode] [int] NULL,
 	[PaymentFrameworkCode] [int] NULL,
@@ -34,14 +35,14 @@
 	[ProviderSpecifiedDeliveryMonitoringD] [varchar](max) NULL,
 	[LearningDeliveryEndPointAssessmentOrganisation] [varchar](max) NULL,
 	[RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim] [int] NULL,
-	[LearningDeliverySubContractedOrPartnershipUkprn] [int] NULL,
+	[LearningDeliverySubContractedOrPartnershipUkprn] [bigint] NULL,
 	[PaymentPriceEpisodeIdentifier] [varchar](max) NULL,
 	[PaymentPriceEpisodeStartDate] [varchar](max) NULL,
 	[RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate] [datetime] NULL,
 	[FcsContractContractAllocationContractAllocationNumber] [varchar](max) NULL,
 	[PaymentFundingLineType] [varchar](max) NULL,
 	[PaymentApprenticeshipContractType] [int] NULL,
-	[LearnerEmploymentStatusEmployerId] [int] NULL,
+	[LearnerEmploymentStatusEmployerId] [bigint] NULL,
 	[RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier] [varchar](max) NULL,
 	[LearnerEmploymentStatus] [int] NULL,
 	[LearnerEmploymentStatusDate] [datetime] NULL,
@@ -179,5 +180,5 @@
 	[TotalApprenticeAdditionalPayments] [decimal](15, 5) NULL,
 	[TotalEnglishAndMathsPayments] [decimal](15, 5) NULL,
 	[TotalLearningSupportDisadvantageAndFrameworkUpliftPayments] [decimal](15, 5) NULL,
-	[TotalPayments] [decimal](15, 5) NULL	
+	[TotalPayments] [decimal](15, 5) NULL
 )

@@ -2,7 +2,7 @@
 	[Ukprn] [int] NOT NULL,
 	[ReturnPeriod] [int] NOT NULL,
 	[PaymentLearnerReferenceNumber] [varchar](250) NULL,
-	[PaymentUniqueLearnerNumber] [int] NULL,
+	[PaymentUniqueLearnerNumber] [bigint] NULL,
 	[LearnerCampusIdentifier] [varchar](max) NULL,
 	[ProviderSpecifiedLearnerMonitoringA] [varchar](250) NULL,
 	[ProviderSpecifiedLearnerMonitoringB] [varchar](250) NULL,

@@ -114,12 +114,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 learnerLevelViewFM36Info,
                 reportServiceContext.ReturnPeriod);
 
-            string csv = await GetCsv(learnerLevelViewModel, cancellationToken);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
-            await WriteZipEntry(archive, $"{fileName}.csv", csv);
+            string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
+            await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", learnerLevelViewCSV, cancellationToken);
+
+            string learnerLevelFinancialsRemovedCSV = await GetLearnerLevelFinancialsRemovedViewCsv(learnerLevelViewModel, cancellationToken);
+            await WriteZipEntry(archive, $"{fileName}.csv", learnerLevelFinancialsRemovedCSV);
         }
 
-        private async Task<string> GetCsv(IReadOnlyList<LearnerLevelViewModel> learnerLevelViewModel, CancellationToken cancellationToken)
+        private async Task<string> GetLearnerLevelViewCsv(IReadOnlyList<LearnerLevelViewModel> learnerLevelViewModel, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -130,7 +132,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 {
                     using (CsvWriter csvWriter = new CsvWriter(textWriter))
                     {
-                        WriteCsvRecords<AppsMonthlyPaymentMapper, LearnerLevelViewModel>(csvWriter, learnerLevelViewModel);
+                        WriteCsvRecords<LearnerLevelViewMapper, LearnerLevelViewModel>(csvWriter, learnerLevelViewModel);
+
+                        csvWriter.Flush();
+                        textWriter.Flush();
+                        return Encoding.UTF8.GetString(ms.ToArray());
+                    }
+                }
+            }
+        }
+
+        private async Task<string> GetLearnerLevelFinancialsRemovedViewCsv(IReadOnlyList<LearnerLevelViewModel> learnerLevelViewModel, CancellationToken cancellationToken)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using (MemoryStream ms = new MemoryStream())
+            {
+                UTF8Encoding utF8Encoding = new UTF8Encoding(false, true);
+                using (TextWriter textWriter = new StreamWriter(ms, utF8Encoding))
+                {
+                    using (CsvWriter csvWriter = new CsvWriter(textWriter))
+                    {
+                        WriteCsvRecords<LearnerLevelViewFinancialsRemovedMapper, LearnerLevelViewModel>(csvWriter, learnerLevelViewModel);
 
                         csvWriter.Flush();
                         textWriter.Flush();

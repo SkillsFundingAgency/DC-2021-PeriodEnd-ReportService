@@ -50,6 +50,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public string PaymentFundingLineType { get; set; }
 
+        public string RuleDescription { get; set; }
+
         public byte?[] learningAimSeqNumbers { get; set; }
     }
 }

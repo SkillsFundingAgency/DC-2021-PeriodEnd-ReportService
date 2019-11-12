@@ -423,7 +423,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     validLearnersForUkprns.SingleOrDefault(x => x.Ukprn == fileDetailsForUkprn.Ukprn)?.NoOfValidLearners ?? 0;
             }
 
-            return fileDetailsForUkprns;
+            return fileDetailsForUkprns.OrderByDescending(fileDetail => fileDetail.NoOfInvalidLearners);
         }
 
         public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)

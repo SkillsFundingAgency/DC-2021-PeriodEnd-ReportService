@@ -103,6 +103,7 @@
     </Reference>
     <Reference Include="ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model, Version=0.0.217.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.1920.FundingService.FM36.FundingOutput.Model.0.0.217\lib\netstandard2.0\ESFA.DC.ILR.FundingService.FM36.FundingOutput.Model.dll</HintPath>
+    </Reference>
     <Reference Include="ESFA.DC.FileService.Interface, Version=0.1.20.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.FileService.Interface.0.1.20-beta0001\lib\netstandard2.0\ESFA.DC.FileService.Interface.dll</HintPath>
     </Reference>

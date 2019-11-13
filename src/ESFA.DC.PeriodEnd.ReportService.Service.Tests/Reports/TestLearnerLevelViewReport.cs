@@ -18,7 +18,6 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
@@ -123,7 +122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 valueProvider,
                 learnerLevelViewModelBuilder);
 
-            await report.GenerateReport(reportServiceContextMock.Object, null, false, CancellationToken.None);
+            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
             csv.Should().NotBeNullOrEmpty();
             File.WriteAllText($"{filename}.csv", csv);

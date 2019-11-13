@@ -158,7 +158,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                         {
                             new FundingSubCategory("19-24 Traineeships", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("19-24", "Traineeships", reportCurrentPeriod, new[] {FundLineConstants.Traineeship1924ProcuredFromNov2017}, periodisedValues))
-                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("19-24", "Traineeships", reportCurrentPeriod, new[] {FundLineConstants.EasTraineeships1924NonProcured}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("19-24", "Traineeships", reportCurrentPeriod, new[] { FundLineConstants.EasTraineeships1924NonProcured }, periodisedValues)),
                         }, traineeships1924Procured),
 
                     //---------------------------------------------------------------------
@@ -168,8 +168,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                         new List<IFundingSubCategory>()
                         {
                             new FundingSubCategory("ESFA AEB – Adult Skills (non-procured)", reportCurrentPeriod)
-                                .WithFundLineGroup(BuildIlrFm35FundLineGroup("ESFA", "AEB - Adult Skills (non-procured)", reportCurrentPeriod, new[] { FundLineConstants.AebOtherLearning, FundLineConstants.AebOtherLearningNonProcured }, periodisedValues))
-                                .WithFundLineGroup(BuildEasAebFundLineGroup("ESFA", "AEB - Adult Skills (non-procured)", reportCurrentPeriod, new[] {FundLineConstants.EasAebAdultSkillsNonProcured}, periodisedValues))
+                                .WithFundLineGroup(BuildIlrFm35FundLineGroup("ESFA", "AEB - Adult Skills (non-procured)", reportCurrentPeriod, new[] { FundLineConstants.AebOtherLearningNonProcured }, periodisedValues))
+                                .WithFundLineGroup(BuildEasAebFundLineGroup("ESFA", "AEB - Adult Skills (non-procured)", reportCurrentPeriod, new[] { FundLineConstants.EasAebAdultSkillsNonProcured }, periodisedValues))
                         }, adultEducationBudgetNonProcured, AdultEducationBudgetNote),
 
                     //---------------------------------------------------------------------
@@ -179,8 +179,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                         new List<IFundingSubCategory>()
                         {
                             new FundingSubCategory("ESFA AEB – Adult Skills (procured from Nov 2017)", reportCurrentPeriod)
-                                .WithFundLineGroup(BuildIlrFm35FundLineGroup("ESFA", "AEB - Adult Skills (procured from Nov 2017)", reportCurrentPeriod, new[] {FundLineConstants.AebOtherLearningProcuredFromNov2017}, periodisedValues))
-                                .WithFundLineGroup(BuildEasAebFundLineGroup("ESFA", "AEB - Adult Skills (procured from Nov 2017)", reportCurrentPeriod, new[] {FundLineConstants.EasAebAdultSkillsProcuredFromNov2017}, periodisedValues))
+                                .WithFundLineGroup(BuildIlrFm35FundLineGroup("ESFA", "AEB - Adult Skills (procured from Nov 2017)", reportCurrentPeriod, new[] { FundLineConstants.AebOtherLearningProcuredFromNov2017 }, periodisedValues))
+                                .WithFundLineGroup(BuildEasAebFundLineGroup("ESFA", "AEB - Adult Skills (procured from Nov 2017)", reportCurrentPeriod, new[] { FundLineConstants.EasAebAdultSkillsProcuredFromNov2017 }, periodisedValues))
                         }, adultEducationBudgetProcured, AdultEducationBudgetNote),
 
                     //---------------------------------------------------------------------

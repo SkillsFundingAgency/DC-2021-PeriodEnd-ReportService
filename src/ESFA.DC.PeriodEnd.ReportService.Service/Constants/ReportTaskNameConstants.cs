@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Interface
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class ReportTaskNameConstants
     {
@@ -10,9 +8,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
 
         public const string AppsMonthlyPaymentReport = "TaskGenerateAppsMonthlyPaymentReport";
         public const string AppsAdditionalPaymentsReport = "TaskGenerateAppsAdditionalPaymentsReport";
-        public const string FundingSummaryReport = "TaskGenerateFundingSummaryReport";
+        public const string FundingSummaryReport = "TaskGenerateFundingSummaryPeriodEndReport";
         public const string AppsCoInvestmentContributionsReport = "TaskGenerateAppsCoInvestmentContributionsReport";
         public const string LearnerLevelViewReport = "TaskLearnerLevelViewReport";
+
+        public const string IlrCollectionName = "ILR";
 
         public static class InternalReports
         {
@@ -21,6 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
             public const string DataQualityReport = "TaskGenerateDataQualityReport";
             public const string PeriodEndMetricsReport = "TaskGeneratePeriodEndMetricsReport";
             public const string ProviderSubmissionsReport = "TaskGenerateProviderSubmissionsReport";
+            public const string ActCountReport = "TaskGenerateActCountReport";
 
             public static IEnumerable<string> TasksList = new List<string>()
             {
@@ -28,7 +29,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
                 DataExtractReport,
                 DataQualityReport,
                 PeriodEndMetricsReport,
-                ProviderSubmissionsReport
+                ProviderSubmissionsReport,
+                ActCountReport
             };
         }
     }

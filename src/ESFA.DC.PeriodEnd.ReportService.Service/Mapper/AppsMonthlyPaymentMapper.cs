@@ -1,8 +1,5 @@
-﻿using System;
-using System.Globalization;
-using CsvHelper.Configuration;
+﻿using CsvHelper.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 {
@@ -120,7 +117,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.NovemberTotalPayments).Index(i++).Name("November (R04) total payments");
 
             Map(m => m.DecemberLevyPayments).Index(i++).Name("December (R05) levy payments");
-            Map(m => m.DecemberCoInvestmentPayments).Name("December (R05) co-investment payments");
+            Map(m => m.DecemberCoInvestmentPayments).Index(i++).Name("December (R05) co-investment payments");
             Map(m => m.DecemberCoInvestmentDueFromEmployerPayments).Index(i++).Name("December (R05) co-investment (below band upper limit) due from employer");
             Map(m => m.DecemberEmployerAdditionalPayments).Index(i++).Name("December (R05) employer additional payments");
             Map(m => m.DecemberProviderAdditionalPayments).Index(i++).Name("December (R05) provider additional payments");

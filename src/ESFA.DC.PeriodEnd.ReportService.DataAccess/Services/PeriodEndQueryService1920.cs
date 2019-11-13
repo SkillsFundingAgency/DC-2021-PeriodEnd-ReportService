@@ -5,6 +5,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ActCountReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
 using Microsoft.EntityFrameworkCore;
 
@@ -38,6 +39,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
             }
 
             return metrics;
+        }
+
+        public async Task<IEnumerable<ActCountModel>> GetActCounts()
+        {
+            List<ActCountModel> actAccountsModel;
+
+            using (var context = _contextFactory())
+            {
+                actAccountsModel = (await context.ActCounts
+                        .AsNoTracking()
+                        .FromSql("GetACTCounts")
+                        .ToListAsync())
+                    .Select(entity => new ActCountModel()
+                    {
+                       Ukprn = entity.UkPrn,
+                       ActCountOne = entity.LearnersAct1,
+                       ActCountTwo = entity.LearnersAct2
+                    }).ToList();
+            }
+
+            return actAccountsModel;
         }
     }
 }

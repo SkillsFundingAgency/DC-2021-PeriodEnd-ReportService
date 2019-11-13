@@ -10,6 +10,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
 
@@ -43,80 +44,40 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             _dasPaymentsContextFactory = dasPaymentsContextFactory;
         }
 
-        public async Task<AppsAdditionalPaymentDasPaymentsInfo> GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(
-            int ukPrn, CancellationToken cancellationToken)
+        public async Task<List<DASPaymentInfo>> GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(int ukprn, CancellationToken cancellationToken)
         {
-            AppsAdditionalPaymentDasPaymentsInfo appsAdditionalPaymentDasPaymentsInfo = null;
-
-            try
+            using (var context = _dasPaymentsContextFactory())
             {
-                appsAdditionalPaymentDasPaymentsInfo = new AppsAdditionalPaymentDasPaymentsInfo
-                {
-                    UkPrn = ukPrn,
-                    Payments = new List<DASPaymentInfo>()
-                };
-
-                cancellationToken.ThrowIfCancellationRequested();
-
-                using (var context = _dasPaymentsContextFactory())
-                {
-                    var paymentsList =
-                        await (from payment in context.Payments
-                                join apprenticeships in context.Apprenticeships on payment.ApprenticeshipId equals
-                                    apprenticeships.Id
-                                    into payment_apprenticeship_join
-                                from payment_apprenticeship in payment_apprenticeship_join.DefaultIfEmpty()
-                                where payment.Ukprn == ukPrn &&
-                                      payment.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA &&
-                                      _appsAdditionalPaymentsTransactionTypes.Contains(payment.TransactionType)
-                                select new DASPaymentInfo()
-                                {
-                                    UkPrn = (int)payment.Ukprn,
-                                    FundingSource = payment.FundingSource,
-                                    TransactionType = payment.TransactionType,
-                                    AcademicYear = payment.AcademicYear,
-                                    CollectionPeriod = payment.CollectionPeriod,
-                                    ContractType = payment.ContractType,
-                                    DeliveryPeriod = payment.DeliveryPeriod,
-                                    LearnerReferenceNumber = payment.LearnerReferenceNumber,
-                                    LearnerUln = payment.LearnerUln,
-                                    LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
-                                    LearningAimPathwayCode = payment.LearningAimPathwayCode,
-                                    LearningAimProgrammeType = payment.LearningAimProgrammeType,
-                                    LearningAimReference = payment.LearningAimReference,
-                                    LearningAimStandardCode = payment.LearningAimStandardCode,
-                                    LearningStartDate = payment.LearningStartDate,
-                                    Amount = payment.Amount,
-                                    LearningAimFundingLineType =
-                                        MapOldFundingLineTypes(payment.LearningAimFundingLineType),
-                                    TypeOfAdditionalPayment = GetTypeOfAdditionalPayment(payment.TransactionType),
-                                    EmployerName = GetAppServiceEmployerName(payment, payment_apprenticeship.LegalEntityName)
-                                })
-                            .OrderBy(o => o.LearnerReferenceNumber)
-                            .ToListAsync(cancellationToken);
-
-                    appsAdditionalPaymentDasPaymentsInfo.Payments.AddRange(paymentsList);
-                }
+                return await context
+                    .Payments
+                    .Where(p =>
+                        p.Ukprn == ukprn
+                        && p.AcademicYear == Generics.AcademicYear
+                        && p.FundingSource == Constants.DASPayments.FundingSource.Fully_Funded_SFA
+                        && _appsAdditionalPaymentsTransactionTypes.Contains(p.TransactionType))
+                    .Select(payment => new DASPaymentInfo()
+                        {
+                            Ukprn = payment.Ukprn,
+                            FundingSource = payment.FundingSource,
+                            TransactionType = payment.TransactionType,
+                            AcademicYear = payment.AcademicYear,
+                            CollectionPeriod = payment.CollectionPeriod,
+                            ContractType = payment.ContractType,
+                            DeliveryPeriod = payment.DeliveryPeriod,
+                            LearnerReferenceNumber = payment.LearnerReferenceNumber,
+                            LearnerUln = payment.LearnerUln,
+                            LearningAimFrameworkCode = payment.LearningAimFrameworkCode,
+                            LearningAimPathwayCode = payment.LearningAimPathwayCode,
+                            LearningAimProgrammeType = payment.LearningAimProgrammeType,
+                            LearningAimReference = payment.LearningAimReference,
+                            LearningAimStandardCode = payment.LearningAimStandardCode,
+                            LearningStartDate = payment.LearningStartDate,
+                            Amount = payment.Amount,
+                            LearningAimFundingLineType = payment.LearningAimFundingLineType,
+                            ApprenticeshipId = payment.ApprenticeshipId
+                        })
+                    .ToListAsync(cancellationToken);
             }
-            catch (Exception ex)
-            {
-                _logger.LogError("Failed to get Additional Payments data", ex);
-                throw;
-            }
-
-            return appsAdditionalPaymentDasPaymentsInfo;
-        }
-
-        public string GetAppServiceEmployerName(Payment payment, string legalEntityName)
-        {
-            string name = string.Empty;
-
-            if (payment.ContractType == 1 && (payment.TransactionType == 4 || payment.TransactionType == 6))
-            {
-                name = legalEntityName ?? string.Empty;
-            }
-
-            return name;
         }
 
         public async Task<AppsMonthlyPaymentDASInfo> GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
@@ -210,7 +171,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             LearningAimStandardCode = earning.LearningAimStandardCode,
                             LearningAimFrameworkCode = earning.LearningAimFrameworkCode,
                             LearningAimPathwayCode = earning.LearningAimPathwayCode,
-                            LearningAimFundingLineType = MapOldFundingLineTypes(earning.LearningAimFundingLineType),
                             LearningStartDate = earning.LearningStartDate,
                             AgreementId = earning.AgreementId,
                             IlrSubmissionDateTime = earning.IlrSubmissionDateTime,
@@ -258,28 +218,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
-        public string MapOldFundingLineTypes(string fundingLineType)
-        {
-            string newFundingLineType = string.Empty;
-
-            switch (fundingLineType.ToUpper())
-            {
-                case @"16 - 18 APPRENTICESHIP(FROM MAY 2017) NON - LEVY CONTRACT":
-                    newFundingLineType = @"16-18 Apprenticeship (From May 2017) Non-Levy Contract (non-procured)";
-                    break;
-
-                case @"19+ APPRENTICESHIP (FROM MAY 2017) NON-LEVY CONTRACT":
-                    newFundingLineType = @"19+ Apprenticeship (From May 2017) Non-Levy Contract (non-procured)";
-                    break;
-
-                default:
-                    newFundingLineType = fundingLineType;
-                    break;
-            }
-
-            return newFundingLineType;
-        }
-
         public async Task<AppsCoInvestmentPaymentsInfo> GetPaymentsInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
             var appsCoInvestmentPaymentsInfo = new AppsCoInvestmentPaymentsInfo
@@ -325,9 +263,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsCoInvestmentPaymentsInfo;
         }
 
-        public async Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(AppsCoInvestmentPaymentsInfo paymentInfo, CancellationToken cancellationToken)
+        public async Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(IEnumerable<long?> apprenticeshipIds, CancellationToken cancellationToken)
         {
-            var uniqueApprenticeshipIds = paymentInfo.Payments.Select(p => p.ApprenticeshipId).Distinct().OrderBy(a => a).ToList();
+            var uniqueApprenticeshipIds = apprenticeshipIds.Where(id => id.HasValue).Distinct().OrderBy(a => a).ToList();
 
             List<Tuple<long, string>> apprenticeshipIdLegalEntityNameCollection = new List<Tuple<long, string>>();
 
@@ -348,23 +286,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 }
 
                 return apprenticeshipIdLegalEntityNameCollection.ToDictionary(a => a.Item1, a => a.Item2);
-            }
-        }
-
-        private string GetTypeOfAdditionalPayment(byte transactionType)
-        {
-            switch (transactionType)
-            {
-                case 4:
-                case 6:
-                    return "Employer";
-                case 5:
-                case 7:
-                    return "Provider";
-                case 16:
-                    return "Apprentice";
-                default:
-                    return string.Empty;
             }
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -9,17 +10,17 @@ using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Builders.PeriodEnd;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport
 {
-    public class AppsAdditionalPaymentsReport : AbstractReport, IReport
+    public class AppsAdditionalPaymentsReport : AbstractReport
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
@@ -32,10 +33,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IFM36PeriodEndProviderService fm36ProviderService,
             IDateTimeProvider dateTimeProvider,
-            IValueProvider valueProvider,
             IDASPaymentsProviderService dasPaymentsProviderService,
             IAppsAdditionalPaymentsModelBuilder modelBuilder)
-        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
+        : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
@@ -47,19 +47,38 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsAdditionalPaymentsReport;
 
-        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken)
+        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
-            var appsAdditionalPaymentIlrInfo = await _ilrPeriodEndProviderService.GetILRInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
-            var appsAdditionalPaymentRulebaseInfo = await _fm36ProviderService.GetFM36DataForAppsAdditionalPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
-            var appsAdditionalPaymentDasPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            _logger.LogInfo("Apps Additional Payments Start");
 
-            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(appsAdditionalPaymentIlrInfo, appsAdditionalPaymentRulebaseInfo, appsAdditionalPaymentDasPaymentsInfo);
+            var ilrLearners = _ilrPeriodEndProviderService.GetILRInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var rulebaseApprenticeshipPriceEpisodes = _fm36ProviderService.GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var rulebaseLearningDeliveries = _fm36ProviderService.GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(reportServiceContext.Ukprn, cancellationToken);
+            var appsAdditionalPaymentDasPaymentsInfo = _dasPaymentsProviderService.GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(reportServiceContext.Ukprn, cancellationToken);
+
+            await Task.WhenAll(ilrLearners, rulebaseApprenticeshipPriceEpisodes, rulebaseLearningDeliveries, appsAdditionalPaymentDasPaymentsInfo);
+
+            var legalNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsAdditionalPaymentDasPaymentsInfo.Result.Select(p => p.ApprenticeshipId), cancellationToken);
+
+            _logger.LogInfo("Apps Additional Payments Data Provision End");
+
+            var appsAdditionalPaymentsModel = _modelBuilder.BuildModel(
+                ilrLearners.Result,
+                rulebaseApprenticeshipPriceEpisodes.Result,
+                rulebaseLearningDeliveries.Result,
+                appsAdditionalPaymentDasPaymentsInfo.Result,
+                legalNameDictionary);
+
+            _logger.LogInfo("Apps Additional Payments Report Creation End");
+
             string csv = await GetCsv(appsAdditionalPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
+
+            _logger.LogInfo("Apps Additional Payments Persistence End");
         }
 
         private async Task<string> GetCsv(

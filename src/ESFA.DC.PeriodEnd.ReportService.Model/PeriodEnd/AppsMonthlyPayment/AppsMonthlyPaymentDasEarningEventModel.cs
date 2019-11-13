@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Security.Cryptography.X509Certificates;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 {
@@ -30,8 +29,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public int? LearningAimFrameworkCode { get; set; }
 
         public int? LearningAimPathwayCode { get; set; }
-
-        public string LearningAimFundingLineType { get; set; }
 
         public DateTime? LearningStartDate { get; set; }
 

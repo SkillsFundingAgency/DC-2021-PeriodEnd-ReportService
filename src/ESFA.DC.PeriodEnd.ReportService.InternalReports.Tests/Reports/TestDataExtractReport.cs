@@ -15,7 +15,7 @@ using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataExtractReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using FluentAssertions;
 using Moq;

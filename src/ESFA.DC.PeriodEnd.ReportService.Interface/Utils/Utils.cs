@@ -1,6 +1,4 @@
-﻿using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Interface.Utils
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Interface.Utils
 {
     public static class Utils
     {

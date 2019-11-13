@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Collections.Generic;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport.Model
 {
     public class AppsAdditionalPaymentExtendedPaymentModel
     {
@@ -54,7 +53,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
         public string ProviderSpecifiedLearnerMonitoringA { get; set; }
 
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }
-
-        public decimal? EarningAmount { get; set; }
     }
 }

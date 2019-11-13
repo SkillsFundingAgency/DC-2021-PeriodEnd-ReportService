@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.CollectionsManagement.Models;
-using ESFA.DC.ILR1920.DataStore.EF;
+using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model;
+using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
@@ -15,57 +15,79 @@ using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
+using ReturnPeriod = ESFA.DC.CollectionsManagement.Models.ReturnPeriod;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
     public sealed class IlrPeriodEndProviderService : AbstractFundModelProviderService, IIlrPeriodEndProviderService
     {
-        private const int ApprentishipsFundModel = 36;
+        private const int ApprenticeshipsFundModel = 36;
         private readonly Func<IIlr1920RulebaseContext> _ilrContextFactory;
         private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
         private readonly Func<IIlr1920InvalidContext> _ilrInValidContextFactory;
+        private readonly Func<IIlrReferenceDataContext> _ilrRefDataFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
             Func<IIlr1920RulebaseContext> ilrContextFactory,
             Func<IIlr1920ValidContext> ilrValidContextFactory,
-            Func<IIlr1920InvalidContext> ilrInValidContextFactory)
+            Func<IIlr1920InvalidContext> ilrInValidContextFactory,
+            Func<IIlrReferenceDataContext> ilrRefDataFactory)
             : base(logger)
         {
             _ilrContextFactory = ilrContextFactory;
             _ilrValidContextFactory = ilrValidContextFactory;
             _ilrInValidContextFactory = ilrInValidContextFactory;
+            _ilrRefDataFactory = ilrRefDataFactory;
         }
 
-        public async Task<IEnumerable<FileDetail>> GetFileDetailsAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<FileDetailModel>> GetFileDetailsAsync(CancellationToken cancellationToken)
         {
             using (var ilrContext = _ilrContextFactory())
             {
                 return await ilrContext
                     .FileDetails
+                    .Where(x => x.Success == true)
+                    .Select(x => new FileDetailModel
+                    {
+                        Ukprn = x.UKPRN,
+                        Filename = x.Filename,
+                        SubmittedTime = x.SubmittedTime
+                    })
                     .ToListAsync(cancellationToken);
             }
         }
 
-        public async Task<IEnumerable<FileDetail>> GetFileDetailsLatestSubmittedAsync(
+        public async Task<IEnumerable<ProviderSubmissionModel>> GetFileDetailsLatestSubmittedAsync(
             CancellationToken cancellationToken)
         {
-            IEnumerable<FileDetail> fileDetails = await GetFileDetailsAsync(cancellationToken);
+            using (var ilrContext = _ilrContextFactory())
+            {
+                List<long> fd = await ilrContext.FileDetails
+                    .Where(x => x.Success == true)
+                    .GroupBy(x => x.UKPRN)
+                    .Select(x => x.Max(y => y.ID))
+                    .ToListAsync(cancellationToken);
 
-            var latestFilesSubmitted = fileDetails
-                .Where(x => x.Success == true)
-                .GroupBy(x => x.UKPRN)
-                .Select(x => x.Max(y => y.ID))
-                .ToList();
-
-            return fileDetails
-                .Join(latestFilesSubmitted, l => l.ID, f => f, (fd, lfs) => fd)
-                .ToList();
+                return await ilrContext.FileDetails.Where(x => fd.Contains(x.ID))
+                    .Select(x => new ProviderSubmissionModel
+                    {
+                        Ukprn = x.UKPRN,
+                        SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
+                        TotalErrors = x.TotalErrorCount.GetValueOrDefault(),
+                        TotalInvalid = x.TotalInvalidLearnersSubmitted.GetValueOrDefault(),
+                        TotalValid = x.TotalValidLearnersSubmitted.GetValueOrDefault(),
+                        TotalWarnings = x.TotalWarningCount.GetValueOrDefault()
+                    })
+                    .ToListAsync(cancellationToken);
+            }
         }
 
-        public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken)
+        public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn,
+            CancellationToken cancellationToken)
         {
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo = null;
 
@@ -88,7 +110,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         .Include(x => x.ProviderSpecLearnerMonitorings)
                         .Include(x => x.LearnerEmploymentStatuses)
                         .Where(x => x.UKPRN == ukPrn &&
-                                    x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
+                                    x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
                         .ToListAsync(cancellationToken);
                 }
 
@@ -181,76 +203,63 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return appsMonthlyPaymentIlrInfo;
         }
 
-        public async Task<AppsAdditionalPaymentILRInfo> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken)
+        public async Task<List<AppsAdditionalPaymentLearnerInfo>> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
-            var appsAdditionalPaymentIlrInfo = new AppsAdditionalPaymentILRInfo()
-            {
-                UkPrn = ukPrn,
-                Learners = new List<AppsAdditionalPaymentLearnerInfo>()
-            };
-
-            cancellationToken.ThrowIfCancellationRequested();
-
-            List<Learner> learnersList;
             using (var ilrContext = _ilrValidContextFactory())
             {
-                learnersList = await ilrContext.Learners
-                    .Include(x => x.LearningDeliveries)
-                    .Include(x => x.ProviderSpecLearnerMonitorings)
-                    .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprentishipsFundModel))
-                    .ToListAsync(cancellationToken);
+                return await ilrContext
+                    .Learners
+                     .Where(
+                        x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
+                    .Select(learner =>
+                        new AppsAdditionalPaymentLearnerInfo
+                        {
+                            LearnRefNumber = learner.LearnRefNumber,
+                            ULN = learner.ULN,
+                            LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                                new AppsAdditionalPaymentLearningDeliveryInfo()
+                                {
+                                    UKPRN = ukPrn,
+                                    LearnRefNumber = x.LearnRefNumber,
+                                    LearnAimRef = x.LearnAimRef,
+                                    AimType = x.AimType,
+                                    LearnStartDate = x.LearnStartDate,
+                                    ProgType = x.ProgType ?? 0,
+                                    StdCode = x.StdCode ?? 0,
+                                    FworkCode = x.FworkCode ?? 0,
+                                    PwayCode = x.PwayCode ?? 0,
+                                    AimSeqNumber = x.AimSeqNumber,
+                                    FundModel = x.FundModel
+                                }).ToList(),
+                            ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                                    new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
+                                    {
+                                        UKPRN = x.UKPRN,
+                                        LearnRefNumber = x.LearnRefNumber,
+                                        ProvSpecLearnMon = x.ProvSpecLearnMon,
+                                        ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
+                                    }).ToList()
+                        })
+                     .ToListAsync(cancellationToken);
             }
-
-            foreach (var learner in learnersList)
-            {
-                var learnerInfo = new AppsAdditionalPaymentLearnerInfo
-                {
-                    LearnRefNumber = learner.LearnRefNumber,
-                    ULN = learner.ULN,
-                    LearningDeliveries = learner.LearningDeliveries.Select(x => new AppsAdditionalPaymentLearningDeliveryInfo()
-                    {
-                        UKPRN = ukPrn,
-                        LearnRefNumber = x.LearnRefNumber,
-                        LearnAimRef = x.LearnAimRef,
-                        AimType = x.AimType,
-                        LearnStartDate = x.LearnStartDate,
-                        ProgType = x.ProgType,
-                        StdCode = x.StdCode,
-                        FworkCode = x.FworkCode,
-                        PwayCode = x.PwayCode,
-                        AimSeqNumber = x.AimSeqNumber,
-                        FundModel = x.FundModel
-                    }).ToList(),
-                    ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x => new AppsAdditionalPaymentProviderSpecLearnerMonitoringInfo()
-                    {
-                        UKPRN = x.UKPRN,
-                        LearnRefNumber = x.LearnRefNumber,
-                        ProvSpecLearnMon = x.ProvSpecLearnMon,
-                        ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
-                    }).ToList()
-                };
-                appsAdditionalPaymentIlrInfo.Learners.Add(learnerInfo);
-            }
-
-            return appsAdditionalPaymentIlrInfo;
         }
 
         public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetail> fileDetails,
+            IEnumerable<FileDetailModel> fileDetails,
             CancellationToken cancellationToken)
         {
             List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
             List<FilePeriodInfo> fd;
 
             fd = fileDetails
-                .Where(x => x.Success == true)
                 .Select(f => new FilePeriodInfo
                 {
-                    UKPRN = f.UKPRN,
+                    UKPRN = f.Ukprn,
                     Filename = f.Filename,
-                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods)
+                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods),
+                    SubmittedTime = f.SubmittedTime
                 }).ToList();
 
             var fds = fd.GroupBy(x => x.UKPRN)
@@ -270,7 +279,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             });
 
             var fdCs = fd
-                .GroupBy(x => new { x.PeriodNumber })
+                .GroupBy(x => new {x.PeriodNumber})
                 .Select(x => new
                 {
                     PeriodNumber = x.Key.PeriodNumber,
@@ -298,20 +307,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return returningProviders;
         }
 
-        public async Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(CancellationToken cancellationToken)
+        public async Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(
+            CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
             List<RuleViolationsInfo> top20RuleViolationsList;
             using (var ilrContext = _ilrContextFactory())
+            using (var ilrReferenceData = _ilrRefDataFactory())
             {
                 top20RuleViolationsList = await ilrContext.ValidationErrors
                     .Where(x => x.Severity == "E")
-                    .GroupBy(x => new { x.RuleName, x.ErrorMessage })
+                    .GroupBy(x => new {x.RuleName, x.ErrorMessage})
                     .Select(x => new RuleViolationsInfo
                     {
                         RuleName = x.Key.RuleName,
-                        ErrorMessage = x.Key.ErrorMessage,
                         Providers = x.Select(y => y.UKPRN).Distinct().Count(),
                         Learners = x.Select(y => y.LearnRefNumber).Distinct().Count(),
                         NoOfErrors = x.Select(y => y.ErrorMessage).Count()
@@ -321,12 +331,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .ThenByDescending(x => x.Providers)
                     .Take(20)
                     .ToListAsync(cancellationToken);
+
+                var errors = await ilrReferenceData.Rules
+                    .Where(e => top20RuleViolationsList.Exists(rule => rule.RuleName == e.Rulename))
+                    .Select(e => new
+                    {
+                        e.Rulename,
+                        e.Message
+                    }).ToListAsync(cancellationToken);
+
+                foreach (var ruleViolationsInfo in top20RuleViolationsList)
+                {
+                    ruleViolationsInfo.ErrorMessage = errors
+                        .FirstOrDefault(e => e.Rulename == ruleViolationsInfo.RuleName)?.Message;
+                }
             }
 
             return top20RuleViolationsList;
         }
 
-        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetail> fileDetails, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetailModel> fileDetails, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -342,8 +366,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             List<ProviderWithoutValidLearners>
                 providersWithoutValidLearnersList = fileDetails
-                    .Where(x => !validLearnerUkprns.Contains(x.UKPRN))
-                    .GroupBy(x => x.UKPRN)
+                    .Where(x => !validLearnerUkprns.Contains(x.Ukprn))
+                    .GroupBy(x => x.Ukprn)
                     .Select(x => new ProviderWithoutValidLearners
                     {
                         Ukprn = x.Key,
@@ -358,7 +382,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetail> fileDetails,
+            IEnumerable<FileDetailModel> fileDetails,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
@@ -367,8 +391,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var ilrContext = _ilrInValidContextFactory())
             {
                 top10ProvidersWithInvalidLearnersInvalid = (await ilrContext.Learners
-                    .GroupBy(x => x.UKPRN)
-                    .ToListAsync(cancellationToken))
+                        .GroupBy(x => x.UKPRN)
+                        .ToListAsync(cancellationToken))
                     .OrderByDescending(x => x.Count())
                     .Take(10)
                     .Select(x => new Top10ProvidersWithInvalidLearnersInvalidLearners
@@ -421,7 +445,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     validLearnersForUkprns.SingleOrDefault(x => x.Ukprn == fileDetailsForUkprn.Ukprn)?.NoOfValidLearners ?? 0;
             }
 
-            return fileDetailsForUkprns;
+            return fileDetailsForUkprns.OrderByDescending(fileDetail => fileDetail.NoOfInvalidLearners);
         }
 
         public async Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken)
@@ -529,11 +553,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
         public int GetPeriodReturn(DateTime? submittedDateTime, IEnumerable<ReturnPeriod> returnPeriods)
         {
-            return !submittedDateTime.HasValue ? 0 : returnPeriods
-                    .SingleOrDefault(x =>
-                        submittedDateTime >= x.StartDateTimeUtc &&
-                        submittedDateTime <= x.EndDateTimeUtc)
-                    ?.PeriodNumber ?? 99;
+            return !submittedDateTime.HasValue
+                ? 0
+                : returnPeriods
+                      .SingleOrDefault(x =>
+                          submittedDateTime >= x.StartDateTimeUtc &&
+                          submittedDateTime <= x.EndDateTimeUtc)
+                      ?.PeriodNumber ?? 99;
         }
     }
 }

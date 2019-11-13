@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 16.0.29201.188
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.Interface", "ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj", "{B5BA0738-C780-4A6D-B0BE-473D8520EB12}"
 EndProject
@@ -28,7 +28,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.DataAccess", "ESFA.DC.PeriodEnd.ReportService.DataAccess\ESFA.DC.PeriodEnd.ReportService.DataAccess.csproj", "{7BDF722A-31BE-445A-ABAD-469B90151A62}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests", "ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests\ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.csproj", "{1D61F0FF-F852-4876-87CB-587CA4DACCFF}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests", "ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests\ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.csproj", "{1D61F0FF-F852-4876-87CB-587CA4DACCFF}"
+EndProject
+Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ESFA.DC.PeriodEnd.DataPerist.Database", "ESFA.DC.PeriodEnd.DataPerist.Database\ESFA.DC.PeriodEnd.DataPerist.Database.sqlproj", "{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.PeriodEnd.DataPersist", "ESFA.DC.PeriodEnd.DataPersist\ESFA.DC.PeriodEnd.DataPersist.csproj", "{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -111,6 +115,26 @@ Global
 		{1D61F0FF-F852-4876-87CB-587CA4DACCFF}.Release|Any CPU.Build.0 = Release|Any CPU
 		{1D61F0FF-F852-4876-87CB-587CA4DACCFF}.Release|x64.ActiveCfg = Release|Any CPU
 		{1D61F0FF-F852-4876-87CB-587CA4DACCFF}.Release|x64.Build.0 = Release|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Debug|x64.Build.0 = Debug|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Debug|x64.Deploy.0 = Debug|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Release|Any CPU.Deploy.0 = Release|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Release|x64.ActiveCfg = Release|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Release|x64.Build.0 = Release|Any CPU
+		{2EF3834A-4374-4A08-88A2-EB38FBF5A2F5}.Release|x64.Deploy.0 = Release|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Debug|x64.Build.0 = Debug|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Release|x64.ActiveCfg = Release|Any CPU
+		{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,5 +11,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<List<DataExtractFcsInfo>> GetFCSForDataExtractReport(IEnumerable<string> OrganisationIds, CancellationToken cancellationToken);
 
         Task<AppsMonthlyPaymentFcsInfo> GetFcsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
+
+        Task<IDictionary<string, string>> GetContractAllocationNumberFSPCodeLookupAsync(int ukprn, CancellationToken cancellationToken);
     }
 }

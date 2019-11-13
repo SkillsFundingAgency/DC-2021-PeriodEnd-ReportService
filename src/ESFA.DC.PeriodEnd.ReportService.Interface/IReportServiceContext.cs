@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Text;
 using ESFA.DC.CollectionsManagement.Models;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface
@@ -34,5 +33,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
         IEnumerable<ReturnPeriod> ILRPeriods { get; }
 
         IEnumerable<ReturnPeriod> ILRPeriodsAdjustedTimes { get; }
+
+        string ReportDataConnectionString { get; }
+
+        bool DataPersistFeatureEnabled { get; }
     }
 }

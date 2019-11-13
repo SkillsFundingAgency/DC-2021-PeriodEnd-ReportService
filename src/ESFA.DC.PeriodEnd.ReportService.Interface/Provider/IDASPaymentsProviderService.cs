@@ -9,7 +9,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
     public interface IDASPaymentsProviderService
     {
-        Task<AppsAdditionalPaymentDasPaymentsInfo> GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken);
+        Task<List<DASPaymentInfo>> GetPaymentsInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken);
 
         Task<AppsMonthlyPaymentDASInfo> GetPaymentsInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 
@@ -19,6 +19,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 
         Task<List<AppsCoInvestmentRecordKey>> GetUniqueCombinationsOfKeyFromPaymentsAsync(int ukprn, CancellationToken cancellationToken);
 
-        Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(AppsCoInvestmentPaymentsInfo paymentsInfo, CancellationToken cancellationToken);
+        Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(IEnumerable<long?> apprenticeshipIds, CancellationToken cancellationToken);
     }
 }

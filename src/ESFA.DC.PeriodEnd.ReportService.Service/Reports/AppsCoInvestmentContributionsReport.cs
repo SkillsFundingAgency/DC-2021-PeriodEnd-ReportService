@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.IO.Compression;
+using System.Linq;
 using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
@@ -12,11 +13,10 @@ using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
-using ReportTaskNameConstants = ESFA.DC.PeriodEnd.ReportService.Interface.ReportTaskNameConstants;
+using ReportTaskNameConstants = ESFA.DC.PeriodEnd.ReportService.Service.Constants.ReportTaskNameConstants;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 {
@@ -31,12 +31,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IDateTimeProvider dateTimeProvider,
-            IValueProvider valueProvider,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
             IFM36PeriodEndProviderService fm36PeriodEndProviderService,
             IAppsCoInvestmentContributionsModelBuilder modelBuilder)
-        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
+        : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
@@ -48,7 +47,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsCoInvestmentContributionsReport;
 
-        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, bool isFis, CancellationToken cancellationToken)
+        public override async Task GenerateReport(IReportServiceContext reportServiceContext, ZipArchive archive, CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
@@ -58,7 +57,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var appsCoInvestmentPaymentsInfo = await _dasPaymentsProviderService.GetPaymentsInfoForAppsCoInvestmentReportAsync(reportServiceContext.Ukprn, cancellationToken);
             var paymentsAppsCoInvestmentUniqueKeys = await _dasPaymentsProviderService.GetUniqueCombinationsOfKeyFromPaymentsAsync(reportServiceContext.Ukprn, cancellationToken);
             var ilrAppsCoInvestmentUniqueKeys = await _ilrPeriodEndProviderService.GetUniqueAppsCoInvestmentRecordKeysAsync(reportServiceContext.Ukprn, cancellationToken);
-            var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(appsCoInvestmentPaymentsInfo, cancellationToken);
+
+            var apprenticeshipIds = appsCoInvestmentPaymentsInfo.Payments.Select(p => p.ApprenticeshipId);
+
+            var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(apprenticeshipIds, cancellationToken);
 
             var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, paymentsAppsCoInvestmentUniqueKeys, ilrAppsCoInvestmentUniqueKeys, apprenticeshipIdLegalEntityNameDictionary, reportServiceContext.JobId);
 

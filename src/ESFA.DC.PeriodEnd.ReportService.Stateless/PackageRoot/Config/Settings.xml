@@ -24,11 +24,18 @@
     <Parameter Name="FCSConnectionString" Value="" />
     <Parameter Name="DASPaymentsConnectionString" Value="" />
     <Parameter Name="ILRDataStoreConnectionString" Value="" />
+    <Parameter Name="ILRReferenceDataConnectionString" Value="" />
     <Parameter Name="IlrValidationErrorsConnectionString" Value="" />
     <Parameter Name="LarsConnectionString" Value="" />
     <Parameter Name="OrgConnectionString" Value="" />
     <Parameter Name="SummarisedActualsConnectionString" Value="" />
     <Parameter Name="JobQueueManagerConnectionString" Value="" />
+    <Parameter Name="EasConnectionString" Value="" />
+  </Section>
+
+  <Section Name="DataPersistConfiguration">
+    <Parameter Name="ReportDataConnectionString" Value="" />
+    <Parameter Name="DataPersistFeatureEnabled" Value="true" />
   </Section>
 
   <Section Name="SoftwareLicenceSection">

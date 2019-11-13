@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common
 {
     public class AECLearningDeliveryValuesInfo
     {

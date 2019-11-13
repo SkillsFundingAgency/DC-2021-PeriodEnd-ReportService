@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -11,13 +10,13 @@ using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels.PeriodEnd;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 
@@ -32,6 +31,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly ILarsProviderService _larsProviderService;
         private readonly IFCSProviderService _fcsProviderService;
         private readonly IAppsMonthlyPaymentModelBuilder _modelBuilder;
+        private readonly IPersistReportData _persistReportData;
 
         public AppsMonthlyPaymentReport(
             ILogger logger,
@@ -42,9 +42,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             ILarsProviderService larsProviderService,
             IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
-            IValueProvider valueProvider,
-            IAppsMonthlyPaymentModelBuilder modelBuilder)
-        : base(dateTimeProvider, valueProvider, streamableKeyValuePersistenceService, logger)
+            IAppsMonthlyPaymentModelBuilder modelBuilder,
+            IPersistReportData persistReportData)
+        : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
@@ -52,13 +52,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _larsProviderService = larsProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
+            _persistReportData = persistReportData;
         }
 
         public override string ReportFileName => "Apps Monthly Payment Report";
 
         public override string ReportTaskName => ReportTaskNameConstants.AppsMonthlyPaymentReport;
 
-        public override void ApplyConfiguration(CsvWriter csvWriter)
+        public override void CsvWriterConfiguration(CsvWriter csvWriter)
         {
             csvWriter.Configuration.TypeConverterOptionsCache.GetOptions(typeof(decimal?)).Formats = new[] { "############0.00000" };
         }
@@ -66,9 +67,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         public override async Task GenerateReport(
             IReportServiceContext reportServiceContext,
             ZipArchive archive,
-            bool isFis,
             CancellationToken cancellationToken)
         {
+            Stopwatch stopWatch = new Stopwatch();
+            stopWatch.Start();
             var externalFileName = GetFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
@@ -119,6 +121,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             string csv = await GetCsv(appsMonthlyPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
+
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport before logging took - {stopWatch.ElapsedMilliseconds} ms ");
+
+            if (reportServiceContext.DataPersistFeatureEnabled)
+            {
+                Stopwatch stopWatchLog = new Stopwatch();
+                stopWatchLog.Start();
+                await _persistReportData.PersistAppsAdditionalPaymentAsync(
+                    (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
+                    reportServiceContext.Ukprn,
+                    reportServiceContext.ReturnPeriod,
+                    reportServiceContext.ReportDataConnectionString,
+                    cancellationToken);
+                _logger.LogDebug($"Performance-AppsMonthlyPaymentReport logging took - {stopWatchLog.ElapsedMilliseconds} ms ");
+                stopWatchLog.Stop();
+            }
+            else
+            {
+                _logger.LogDebug(" Data Persist Feature is disabled.");
+            }
+
+            stopWatch.Stop();
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport Total generation time - {stopWatch.ElapsedMilliseconds} ms ");
         }
 
         private async Task<string> GetCsv(IReadOnlyList<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)

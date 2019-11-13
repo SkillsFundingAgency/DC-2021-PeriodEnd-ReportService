@@ -1,15 +1,19 @@
-﻿using System.Threading;
+﻿using System.Collections.Generic;
+using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
     public interface IFM36PeriodEndProviderService
     {
-        Task<AppsAdditionalPaymentRulebaseInfo> GetFM36DataForAppsAdditionalPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
+        Task<List<AECLearningDeliveryInfo>> GetLearningDeliveriesForAppsAdditionalPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
+
+        Task<List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> GetApprenticeshipPriceEpisodesForAppsAdditionalPaymentsReportAsync(int ukprn, CancellationToken cancellationToken);
 
         Task<AppsMonthlyPaymentRulebaseInfo> GetRulebaseDataForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 

@@ -10,6 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
 
         public string ILRDataStoreConnectionString { get; set; }
 
+        public string ILRReferenceDataConnectionString { get; set; }
+
         public string LarsConnectionString { get; set; }
 
         public string OrgConnectionString { get; set; }
@@ -17,5 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
         public string SummarisedActualsConnectionString { get; set; }
 
         public string JobQueueManagerConnectionString { get; set; }
+
+        public string EasConnectionString { get; set; }
     }
 }

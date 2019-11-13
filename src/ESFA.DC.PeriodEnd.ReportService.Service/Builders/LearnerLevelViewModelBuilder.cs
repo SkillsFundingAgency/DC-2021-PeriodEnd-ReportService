@@ -17,11 +17,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 {
     public class LearnerLevelViewModelBuilder : ILearnerLevelViewModelBuilder
     {
-        private const string ZPROG001 = "ZPROG001";
-        private static readonly DateTime BeginningOfYear = new DateTime(2019, 8, 1);
-        private static readonly DateTime EndOfYear = new DateTime(2020, 7, 31, 23, 59, 59);
-        private static readonly int CurrentAcademicYear = 1920;
-
         private readonly HashSet<byte?> _fundingSourceLevyPayments = new HashSet<byte?>() { 1, 5 };
         private readonly HashSet<byte?> _fundingSourceCoInvestmentPayments = new HashSet<byte?>() { 2 };
         private readonly HashSet<byte?> _fundingSourceCoInvestmentDueFromEmployer = new HashSet<byte?>() { 3 };
@@ -72,7 +67,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             {
                 // Populate learner level view list
                 learnerLevelViewModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear == CurrentAcademicYear)
+                    .Where(p => p.AcademicYear == Generics.AcademicYear)
                     .GroupBy(r => new
                     {
                         r.Ukprn,
@@ -150,7 +145,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             if ((learningDelivery != null) && (learningDelivery.AppFinRecords != null))
                             {
                                 IReadOnlyCollection<AppFinRecordInfo> currentYearData = learningDelivery.AppFinRecords
-                                    .Where(x => x.AFinDate >= BeginningOfYear && x.AFinDate <= EndOfYear &&
+                                    .Where(x => x.AFinDate >= Generics.BeginningOfYear && x.AFinDate <= Generics.EndOfYear &&
                                                 string.Equals(x.AFinType, "PMR", StringComparison.OrdinalIgnoreCase)).ToList();
 
                                 learnerLevelViewModel.TotalCoInvestmentCollectedToDate =
@@ -333,8 +328,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                   payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                    _fundingSourceLevyPayments.Contains(payment.FundingSource) &&
                    _transactionTypesLevyPayments.Contains(payment.TransactionType);
 
@@ -361,8 +356,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                           _fundingSourceCoInvestmentPayments.Contains(payment.FundingSource) &&
                           _transactionTypesCoInvestmentPayments.Contains(payment.TransactionType);
 
@@ -404,8 +399,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                           _fundingSourceCoInvestmentDueFromEmployer.Contains(payment.FundingSource) &&
                          _transactionTypesCoInvestmentDueFromEmployer.Contains(payment.TransactionType);
 
@@ -433,8 +428,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                           _transactionTypesEmployerAdditionalPayments.Contains(payment.TransactionType);
 
             return result;
@@ -461,8 +456,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalProviderAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                           _transactionTypesProviderAdditionalPayments.Contains(payment.TransactionType);
 
             return result;
@@ -504,8 +499,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(
             AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                   payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                    _transactionTypesApprenticeshipAdditionalPayments.Contains(payment.TransactionType);
 
             return result;
@@ -532,8 +527,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                          !payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                          !payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                           _transactionTypesEnglishAndMathsPayments.Contains(payment.TransactionType);
 
             return result;
@@ -561,10 +556,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
             AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == CurrentAcademicYear &&
-                           ((payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) &&
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                           ((payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
                            _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) ||
-                           (!payment.LearningAimReference.CaseInsensitiveEquals(ZPROG001) && payment.TransactionType == 15));
+                           (!payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) && payment.TransactionType == 15));
 
             return result;
         }

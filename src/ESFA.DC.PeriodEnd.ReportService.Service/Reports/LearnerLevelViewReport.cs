@@ -87,11 +87,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     reportServiceContext.Ukprn, cancellationToken);
 
             // Get the name's of the learning aims
-            string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)
-                .Select(x => x.LearnAimRef).Distinct().ToArray();
+            IEnumerable<string> learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)
+                .Select(x => x.LearnAimRef).Distinct().ToList();
             var appsMonthlyPaymentLarsLearningDeliveryInfos =
                 await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
-                    learnAimRefs,
+                    learnAimRefs.ToArray(),
                     cancellationToken);
 
             // Get the earning data

@@ -13,10 +13,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <Compile Remove="ReportModels\LearnerLevelViewFinancialsRemovedModel.cs" />
-  </ItemGroup>
-
-  <ItemGroup>
     <Folder Include="Configuration\" />
     <Folder Include="Styling\" />
   </ItemGroup>

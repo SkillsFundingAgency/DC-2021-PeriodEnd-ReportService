@@ -266,17 +266,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public LearningDeliveryInfo GetLearningDeliveryForRecord(LearnerInfo learner, AppsCoInvestmentRecordKey record)
         {
-            return learner?
-                .LearningDeliveries
-                .FirstOrDefault(ld => IlrLearningDeliveryRecordMatch(ld, record));
+            if (learner != null)
+            {
+                return learner?
+                    .LearningDeliveries
+                    .FirstOrDefault(ld => IlrLearningDeliveryRecordMatch(ld, record));
+            }
+
+            return null;
         }
 
         public LearnerInfo GetLearnerForRecord(AppsCoInvestmentILRInfo ilrInfo, AppsCoInvestmentRecordKey record)
         {
-            return ilrInfo
-                .Learners?
-                .FirstOrDefault(l => l.LearnRefNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber)
-                    && (l.LearningDeliveries?.Any(ld => IlrLearningDeliveryRecordMatch(ld, record)) ?? false));
+            if (ilrInfo != null)
+            {
+                return ilrInfo
+                    .Learners?
+                    .FirstOrDefault(l => l.LearnRefNumber.CaseInsensitiveEquals(record.LearnerReferenceNumber)
+                        && (l.LearningDeliveries?.Any(ld => IlrLearningDeliveryRecordMatch(ld, record)) ?? false));
+            }
+
+            return null;
         }
 
         public bool IlrLearningDeliveryRecordMatch(LearningDeliveryInfo learningDelivery, AppsCoInvestmentRecordKey record)
@@ -344,20 +354,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private bool PeriodCoInvestmentPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                          TotalCoInvestmentPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is a CoInvestment payment  for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a CoInvestment payment, otherwise false.</returns>
-        private bool PeriodCoInvestmentPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
                           TotalCoInvestmentPaymentsTypePredicate(payment);
 
             return result;
@@ -435,20 +431,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        /// <summary>
-        /// Returns true if the payment is an Employer additional payment for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Employer additional payment, otherwise false.</returns>
-        private bool PeriodEmployerAdditionalPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalEmployerAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
         private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == CurrentAcademicYear &&
@@ -472,20 +454,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                          TotalProviderAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is Provider additional payment for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Provider additional payment, otherwise false.</returns>
-        private bool PeriodProviderAdditionalPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
                           TotalProviderAdditionalPaymentsTypePredicate(payment);
 
             return result;
@@ -562,20 +530,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return result;
         }
 
-        /// <summary>
-        /// Returns true if the payment is an English and Maths payment for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an English and Maths payment.</returns>
-        private bool PeriodEnglishAndMathsPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalEnglishAndMathsPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
         private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == CurrentAcademicYear &&
@@ -599,20 +553,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                   TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is a Learning Support, Disadvantage and Framework Uplift payment for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if aLearning Support, Disadvantage and Framework Uplift payments.</returns>
-        private bool PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
                    TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
 
             return result;

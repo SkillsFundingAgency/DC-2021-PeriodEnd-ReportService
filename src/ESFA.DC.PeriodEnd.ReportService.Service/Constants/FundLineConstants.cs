@@ -19,20 +19,26 @@
         public const string Apprenticeship24Plus = "24+ Apprenticeship";
         public const string Traineeship1924 = "19-24 Traineeship";
         public const string Traineeship1924NonProcured = "19-24 Traineeship (non-procured)";
-        public const string EasTraineeships1924NonProcured = "19-24 Traineeships(non-procured)";
+        public const string EasTraineeships1924NonProcured = "19-24 Traineeships (non-procured)";
         public const string Traineeship1924ProcuredFromNov2017 = "19-24 Traineeship (procured from Nov 2017)";
-        public const string EasTraineeships1924NonProcuredFromNov2017 = "19-24 Traineeships (procured from Nov 2017)";
+        public const string EasTraineeships1924ProcuredFromNov2017 = "19-24 Traineeships (procured from Nov 2017)";
         public const string AebOtherLearningNonProcured = "ESFA AEB - Adult Skills (non-procured)";
         public const string AebOtherLearningProcuredFromNov2017 = "ESFA AEB - Adult Skills (procured from Nov 2017)";
         public const string EasAebAdultSkillsNonProcured = "ESFA AEB - Adult Skills (non-procured)";
         public const string EasAebAdultSkillsProcuredFromNov2017 = "ESFA AEB - Adult Skills (procured from Nov 2017)";
         public const string AdultEducationEligibleMCAGLANonProcured = "Adult Education - Eligible for MCA/GLA funding (non-procured)";
         public const string AdultEducationEligibleMCAGLAProcured = "Adult Education - Eligible for MCA/GLA funding (procured)";
+        public const string EasApprenticeship1618 = "16-18 Apprenticeships";
+        public const string EasApprenticeship1923 = "19-23 Apprenticeships";
+        public const string EasApprenticeship24Plus = "24+ Apprenticeships";
 
         // FM81 FundLines
         public const string TrailblazerApprenticeship1618 = "16-18 Trailblazer Apprenticeship";
         public const string TrailblazerApprenticeship1923 = "19-23 Trailblazer Apprenticeship";
         public const string TrailblazerApprenticeship24Plus = "24+ Trailblazer Apprenticeship";
+        public const string EasTrailblazerApprenticeship1618 = "16-18 Trailblazer Apprenticeships";
+        public const string EasTrailblazerApprenticeship1923 = "19-23 Trailblazer Apprenticeships";
+        public const string EasTrailblazerApprenticeship24Plus = "24+ Trailblazer Apprenticeships";
 
         // FM36 FundLines
         public const string NonLevyApprenticeship1618 = "16-18 Apprenticeship (From May 2017) Non-Levy Contract";

@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
+using ESFA.DC.ILR1920.DataStore.EF.StoredProc;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ActCountReport;
@@ -13,9 +14,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
 {
     public class PeriodEndQueryService1920 : IPeriodEndQueryService1920
     {
-        private readonly Func<ILR1920_DataStoreEntitiesValid> _contextFactory;
+        private readonly Func<ILR1920_DataStoreEntitiesStoredProc> _contextFactory;
 
-        public PeriodEndQueryService1920(Func<ILR1920_DataStoreEntitiesValid> contextFactory)
+        public PeriodEndQueryService1920(Func<ILR1920_DataStoreEntitiesStoredProc> contextFactory)
         {
             _contextFactory = contextFactory;
         }
@@ -53,9 +54,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
                         .ToListAsync())
                     .Select(entity => new ActCountModel()
                     {
-                       Ukprn = entity.UkPrn,
-                       ActCountOne = entity.LearnersAct1,
-                       ActCountTwo = entity.LearnersAct2
+                        Ukprn = entity.UkPrn,
+                        ActCountOne = entity.LearnersAct1,
+                        ActCountTwo = entity.LearnersAct2
                     }).ToList();
             }
 

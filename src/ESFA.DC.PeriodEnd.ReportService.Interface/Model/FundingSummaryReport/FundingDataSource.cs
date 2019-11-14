@@ -8,5 +8,6 @@
         FM99,   // Non-funded (No ESFA funding for this learning aim)
         EAS,    // Earnings Adjustment Statement
         DAS,    // DAS Payments
+        EASDAS, // EAS DAS Payments
     }
 }

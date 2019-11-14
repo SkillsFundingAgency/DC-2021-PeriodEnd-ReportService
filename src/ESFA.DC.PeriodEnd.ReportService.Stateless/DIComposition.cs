@@ -310,6 +310,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterReports(ContainerBuilder containerBuilder)
         {
+            containerBuilder.RegisterType<LearnerLevelViewReport>().As<IReport>()
+                .WithAttributeFiltering()
+                .InstancePerLifetimeScope();
+
             containerBuilder.RegisterType<AppsMonthlyPaymentReport>().As<IReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
@@ -387,6 +391,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterBuilders(ContainerBuilder containerBuilder)
         {
+            containerBuilder.RegisterType<LearnerLevelViewModelBuilder>().As<ILearnerLevelViewModelBuilder>()
+                .InstancePerLifetimeScope();
+
             containerBuilder.RegisterType<AppsMonthlyPaymentModelBuilder>().As<IAppsMonthlyPaymentModelBuilder>()
                 .InstancePerLifetimeScope();
 

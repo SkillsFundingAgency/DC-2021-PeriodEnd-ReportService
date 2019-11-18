@@ -17,6 +17,7 @@ using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.StoredProc;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
@@ -185,6 +186,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .As<DbContextOptions<ILR1920_DataStoreEntitiesInvalid>>()
                 .SingleInstance();
 
+            containerBuilder.Register(context =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesStoredProc>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.ILRDataStoreConnectionString,
+                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+
+                    return new ILR1920_DataStoreEntitiesStoredProc(optionsBuilder.Options);
+                }).As<ILR1920_DataStoreEntitiesStoredProc>()
+                .ExternallyOwned();
+
             // Eas 1920
             containerBuilder.RegisterType<EasContext>().As<IEasdbContext>().ExternallyOwned();
             containerBuilder.Register(context =>
@@ -310,6 +322,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterReports(ContainerBuilder containerBuilder)
         {
+            containerBuilder.RegisterType<LearnerLevelViewReport>().As<IReport>()
+                .WithAttributeFiltering()
+                .InstancePerLifetimeScope();
+
             containerBuilder.RegisterType<AppsMonthlyPaymentReport>().As<IReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
@@ -387,6 +403,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterBuilders(ContainerBuilder containerBuilder)
         {
+            containerBuilder.RegisterType<LearnerLevelViewModelBuilder>().As<ILearnerLevelViewModelBuilder>()
+                .InstancePerLifetimeScope();
+
             containerBuilder.RegisterType<AppsMonthlyPaymentModelBuilder>().As<IAppsMonthlyPaymentModelBuilder>()
                 .InstancePerLifetimeScope();
 

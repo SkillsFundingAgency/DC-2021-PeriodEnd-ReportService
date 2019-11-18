@@ -12,6 +12,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
@@ -201,6 +202,90 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
 
             return appsCoInvestmentRulebaseInfo;
+        }
+
+        public async Task<LearnerLevelViewFM36Info> GetFM36DataForLearnerLevelView(int ukPrn, CancellationToken cancellationToken)
+        {
+            var learnerLevelInfo = new LearnerLevelViewFM36Info()
+            {
+                UkPrn = ukPrn
+            };
+
+            // Looking for period data on PriceEpisodes and Learningeliveries
+            cancellationToken.ThrowIfCancellationRequested();
+
+            using (var ilrContext = _ilrRulebaseContextFactory())
+            {
+                learnerLevelInfo.AECApprenticeshipPriceEpisodePeriodisedValues = await ilrContext
+                    .AEC_ApprenticeshipPriceEpisode_PeriodisedValues
+                    .Where(x => x.UKPRN == ukPrn && (x.AttributeName == Generics.Fm36PriceEpisodeCompletionPaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeOnProgPaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm3PriceEpisodeBalancePaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeLSFCashAttributeName))
+                    .Select(p => new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+                    {
+                        UKPRN = ukPrn,
+                        LearnRefNumber = p.LearnRefNumber,
+                        AimSeqNumber = p.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber ?? 0,
+                        AttributeName = p.AttributeName,
+                        Periods = new[]
+                        {
+                            p.Period_1,
+                            p.Period_2,
+                            p.Period_3,
+                            p.Period_4,
+                            p.Period_5,
+                            p.Period_6,
+                            p.Period_7,
+                            p.Period_8,
+                            p.Period_9,
+                            p.Period_10,
+                            p.Period_11,
+                            p.Period_12
+                        }
+                    }).ToListAsync(cancellationToken);
+
+                learnerLevelInfo.AECLearningDeliveryPeriodisedValuesInfo = await ilrContext
+                    .AEC_LearningDelivery_PeriodisedValues
+                    .Where(x => x.UKPRN == ukPrn && (x.AttributeName == Generics.Fm36LearnSuppFundCashAttributeName ||
+                                                     x.AttributeName == Generics.Fm36MathEngOnProgPaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36MathEngBalPayment ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName ||
+                                                     x.AttributeName == Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName))
+                    .Select(ld => new AECLearningDeliveryPeriodisedValuesInfo()
+                    {
+                        UKPRN = ukPrn,
+                        LearnRefNumber = ld.LearnRefNumber,
+                        AimSeqNumber = (byte?)ld.AimSeqNumber,
+                        AttributeName = ld.AttributeName,
+                        LearnDelMathEng = ld.AEC_LearningDelivery.LearnDelMathEng,
+                        Periods = new[]
+                        {
+                            ld.Period_1,
+                            ld.Period_2,
+                            ld.Period_3,
+                            ld.Period_4,
+                            ld.Period_5,
+                            ld.Period_6,
+                            ld.Period_7,
+                            ld.Period_8,
+                            ld.Period_9,
+                            ld.Period_10,
+                            ld.Period_11,
+                            ld.Period_12
+                        }
+                    }).ToListAsync(cancellationToken);
+            }
+
+            return learnerLevelInfo;
         }
     }
 }

@@ -297,10 +297,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
             using (var context = _easContextFactory())
             {
-                paymentTypeDictionary = await context
+                var paymentsFlattenedList = await context
                     .PaymentTypes
-                    .ToDictionaryAsync(k => k.PaymentId,
-                        v => (FundingLine: v.FundingLine.Name, AdjustmentType: v.AdjustmentType.Name), cancellationToken);
+                    .Select(p => new { p.PaymentId, FundingLine = p.FundingLine.Name, AdjustmentType = p.AdjustmentType.Name })
+                    .ToListAsync(cancellationToken);
+
+                paymentTypeDictionary = paymentsFlattenedList
+                    .ToDictionary(k => k.PaymentId, v => (FundingLine: v.FundingLine, AdjustmentType: v.AdjustmentType));
             }
 
             using (var context = _dasContextFactory())

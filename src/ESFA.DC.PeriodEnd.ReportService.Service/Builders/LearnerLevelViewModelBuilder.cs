@@ -153,15 +153,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             }
                         }
 
-                        // Work out calculated fields
-                        // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them
-                        learnerLevelViewModel.IssuesAmount = (learnerLevelViewModel.TotalEarningsForPeriod
-                                                            - learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod
-                                                            - learnerLevelViewModel.CoInvestmentPaymentsToCollectThisPeriod) * -1;
-
-                        // Work out what is remaining from employer by subtracting what they a have paid so far from their calculated payments.
-                        learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate = learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate - learnerLevelViewModel.TotalCoInvestmentCollectedToDate;
-
                         // EmpId: related to Latest DateEmpStatApp where EmpStat = 10 (i.e. they are employed)
                         if (_appsMonthlyPaymentIlrInfo?.Learners != null)
                         {
@@ -245,6 +236,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 CalculateLearningDeliveryEarningsToPeriod(false, _appsReturnPeriod, learnerLevelViewModel, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
                                 CalculateLearningDeliveryEarningsToPeriod(false, _appsReturnPeriod, learnerLevelViewModel, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
                                 CalculateLearningDeliveryEarningsToPeriod(false, _appsReturnPeriod, learnerLevelViewModel, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+                        }
+
+                        // Work out calculated fields
+                        // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them
+                        learnerLevelViewModel.IssuesAmount = (learnerLevelViewModel.TotalEarningsForPeriod
+                                                            - learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod
+                                                            - learnerLevelViewModel.CoInvestmentPaymentsToCollectThisPeriod) * -1;
+
+                        // Work out what is remaining from employer by subtracting what they a have paid so far from their calculated payments.
+                        learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate = learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate - learnerLevelViewModel.TotalCoInvestmentCollectedToDate;
+
+                        // TODO: Work out reason for issues (datalock and HBCP)
+                        if (learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod < 0)
+                        {
+                            learnerLevelViewModel.ReasonForIssues = (int?)Reports.LearnerLevelViewReport.ReasonForIssues.CompletionHoldbackPayment;
+                        }
+
+                        if ((learnerLevelViewModel.TotalEarningsForPeriod > learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod +
+                                                                            learnerLevelViewModel.CoInvestmentPaymentsToCollectThisPeriod)
+                            && (learnerLevelViewModel.TotalEarningsToDate == learnerLevelViewModel.PlannedPaymentsToYouToDate +
+                                                                             learnerLevelViewModel.TotalCoInvestmentCollectedToDate +
+                                                                             learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate))
+                        {
+                            learnerLevelViewModel.ReasonForIssues = (int?)Reports.LearnerLevelViewReport.ReasonForIssues.CompletionHoldbackPayment;
                         }
                     }
                 }

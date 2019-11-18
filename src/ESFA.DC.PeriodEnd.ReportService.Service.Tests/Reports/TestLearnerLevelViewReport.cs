@@ -102,6 +102,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
                     It.IsAny<string[]>(),
                     It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
+
             fcsProviderServiceMock.Setup(x => x.GetFcsInfoForAppsMonthlyPaymentReportAsync(
                 It.IsAny<int>(),
                 It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
@@ -145,13 +146,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].FamilyName.Should().Be("Banner");
             result[0].GivenNames.Should().Be("Bruce");
-            result[0].IssuesAmount.Should().Be(17);
+            result[0].IssuesAmount.Should().Be(-21);
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].PaymentFundingLineType.Should().Be("16-18 Apprenticeship Non-Levy Contract (procured)");
-            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(17);
-            result[0].PlannedPaymentsToYouToDate.Should().Be(17);
+            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(-17);
+            result[0].PlannedPaymentsToYouToDate.Should().Be(-17);
             result[0].TotalCoInvestmentCollectedToDate.Should().Be(100);
             result[0].CoInvestmentOutstandingFromEmplToDate.Should().Be(-100);
+            result[0].ReasonForIssues.Should().Be(1);
         }
 
         private LearnerLevelViewFM36Info BuildLearnerLevelViewFM36InfoModel(int ukPrn)
@@ -166,14 +168,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         UKPRN = ukPrn,
                         LearnRefNumber = "A12345",
                         Periods = new decimal?[12] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 },
-                        AttributeName = "PriceEpisodeBalancePayment"
+                        AttributeName = "PriceEpisodeBalancePayment",
+                        AimSeqNumber = 1
                     },
                     new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
                     {
                         UKPRN = ukPrn,
                         LearnRefNumber = "A12345",
                         Periods = new decimal?[12] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 },
-                        AttributeName = "PriceEpisodeLSFCash"
+                        AttributeName = "PriceEpisodeLSFCash",
+                        AimSeqNumber = 2
                     }
                 },
                 AECLearningDeliveryPeriodisedValuesInfo = new List<AECLearningDeliveryPeriodisedValuesInfo>()
@@ -184,7 +188,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearnRefNumber = "A12345",
                         Periods = new decimal?[12] { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 },
                         AttributeName = "MathEngBalPayment",
-                        LearnDelMathEng = true
+                        LearnDelMathEng = true,
+                        AimSeqNumber = 3
                     }
                 }
             };
@@ -561,7 +566,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningStartDate = new DateTime(2019, 08, 28),
                     AcademicYear = 1920,
                     CollectionPeriod = 1,
-                    LearningAimSequenceNumber = 1
+                    LearningAimSequenceNumber = 1,
+                    LearnerUln = 12345
                 },
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
@@ -571,8 +577,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearnerReferenceNumber = "A12345",
                     LearningStartDate = new DateTime(2019, 08, 28),
                     AcademicYear = 1920,
-                    CollectionPeriod = 2,
-                    LearningAimSequenceNumber = 1
+                    CollectionPeriod = 1,
+                    LearningAimSequenceNumber = 2,
+                    LearnerUln = 12345
                 }
             };
 
@@ -630,7 +637,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 11m
+                    Amount = -11m
                 };
 
                 var coInvestmentPayments = new AppsMonthlyPaymentDasPaymentModel()
@@ -656,7 +663,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 12m
+                    Amount = -12m
                 };
 
                 var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPaymentModel()
@@ -682,7 +689,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 13m
+                    Amount = -13m
                 };
 
                 var employerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
@@ -708,7 +715,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 14m
+                    Amount = -14m
                 };
 
                 var providerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
@@ -734,7 +741,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 15m
+                    Amount = -15m
                 };
 
                 var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
@@ -760,7 +767,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 16m
+                    Amount = -16m
                 };
 
                 var englishAndMathsPayments = new AppsMonthlyPaymentDasPaymentModel()
@@ -786,7 +793,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 17m
+                    Amount = -17m
                 };
 
                 var paymentsForLearningSupport = new AppsMonthlyPaymentDasPaymentModel()
@@ -812,7 +819,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     DeliveryPeriod = 1,
                     CollectionPeriod = i,
 
-                    Amount = 18m
+                    Amount = -18m
                 };
 
                 appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);

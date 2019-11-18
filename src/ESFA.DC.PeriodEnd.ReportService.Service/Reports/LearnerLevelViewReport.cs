@@ -53,6 +53,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _modelBuilder = modelBuilder;
         }
 
+        public enum ReasonForIssues
+        {
+            Datalock,
+            CompletionHoldbackPayment,
+            Clawback,
+            Other
+        }
+
         public override string ReportFileName => "Learner Level View Report";
 
         public override string ReportTaskName => ReportTaskNameConstants.LearnerLevelViewReport;

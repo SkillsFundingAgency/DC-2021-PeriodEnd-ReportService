@@ -21,5 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
         public string JobQueueManagerConnectionString { get; set; }
 
         public string EasConnectionString { get; set; }
+
+        public string CommandTimeout { get; set; }
     }
 }

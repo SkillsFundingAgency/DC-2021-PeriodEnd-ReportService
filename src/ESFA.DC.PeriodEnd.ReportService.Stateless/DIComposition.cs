@@ -191,7 +191,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                     var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesStoredProc>();
                     optionsBuilder.UseSqlServer(
                         reportServiceConfiguration.ILRDataStoreConnectionString,
-                        options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+                        options =>
+                        {
+                            options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>());
+                            if (int.TryParse(reportServiceConfiguration.CommandTimeout, out int commandTimeout) && commandTimeout > 0)
+                            {
+                                options.CommandTimeout(commandTimeout);
+                            }
+                        });
 
                     return new ILR1920_DataStoreEntitiesStoredProc(optionsBuilder.Options);
                 }).As<ILR1920_DataStoreEntitiesStoredProc>()

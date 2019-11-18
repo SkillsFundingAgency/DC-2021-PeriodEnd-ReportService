@@ -31,6 +31,7 @@
     <Parameter Name="SummarisedActualsConnectionString" Value="" />
     <Parameter Name="JobQueueManagerConnectionString" Value="" />
     <Parameter Name="EasConnectionString" Value="" />
+    <Parameter Name="CommandTimeout" Value="" />
   </Section>
 
   <Section Name="DataPersistConfiguration">

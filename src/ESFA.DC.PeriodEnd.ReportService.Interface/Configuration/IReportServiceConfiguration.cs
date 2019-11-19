@@ -19,5 +19,7 @@
         string JobQueueManagerConnectionString { get; }
 
         string EasConnectionString { get; }
+
+        string PeriodEndReportServiceDBCommandTimeout { get; }
     }
 }

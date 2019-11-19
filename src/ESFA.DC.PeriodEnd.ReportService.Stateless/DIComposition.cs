@@ -194,7 +194,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                         options =>
                         {
                             options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>());
-                            if (int.TryParse(reportServiceConfiguration.CommandTimeout, out int commandTimeout) && commandTimeout > 0)
+                            if (int.TryParse(reportServiceConfiguration.PeriodEndReportServiceDBCommandTimeout, out int commandTimeout) && commandTimeout > 0)
                             {
                                 options.CommandTimeout(commandTimeout);
                             }

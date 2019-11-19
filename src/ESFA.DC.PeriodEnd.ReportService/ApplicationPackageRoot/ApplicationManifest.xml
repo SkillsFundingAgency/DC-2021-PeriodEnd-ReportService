@@ -40,7 +40,7 @@
     <!-- Report Data -->
     <Parameter Name="ReportDataConnectionString" DefaultValue="" />
     <Parameter Name="DataPersistFeatureEnabled" DefaultValue="" />
-    <Parameter Name="CommandTimeout" DefaultValue="" />
+    <Parameter Name="PeriodEndReportServiceDBCommandTimeout" DefaultValue="" />
   </Parameters>
   <!-- Import the ServiceManifest from the ServicePackage. The ServiceManifestName and ServiceManifestVersion 
        should match the Name and Version attributes of the ServiceManifest element defined in the 
@@ -72,7 +72,7 @@
             <Parameter Name="OrgConnectionString" Value="[OrgConnectionString]" />
             <Parameter Name="EasConnectionString" Value="[EasConnectionString]" />
             <Parameter Name="JobQueueManagerConnectionString" Value="[JobQueueManagerConnectionString]" />
-            <Parameter Name="CommandTimeout" Value="[CommandTimeout]" />
+            <Parameter Name="PeriodEndReportServiceDBCommandTimeout" Value="[PeriodEndReportServiceDBCommandTimeout]" />
           </Section>
           <Section Name="AzureStorageSection">
             <Parameter Name="AzureBlobConnectionString" Value="[AzureBlobConnectionString]" />

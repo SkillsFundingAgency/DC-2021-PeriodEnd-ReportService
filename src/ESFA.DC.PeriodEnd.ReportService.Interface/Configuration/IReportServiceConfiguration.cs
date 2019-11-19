@@ -20,6 +20,6 @@
 
         string EasConnectionString { get; }
 
-        string CommandTimeout { get; }
+        string PeriodEndReportServiceDBCommandTimeout { get; }
     }
 }

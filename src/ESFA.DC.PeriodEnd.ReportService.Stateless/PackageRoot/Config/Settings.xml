@@ -31,7 +31,7 @@
     <Parameter Name="SummarisedActualsConnectionString" Value="" />
     <Parameter Name="JobQueueManagerConnectionString" Value="" />
     <Parameter Name="EasConnectionString" Value="" />
-    <Parameter Name="CommandTimeout" Value="" />
+    <Parameter Name="PeriodEndReportServiceDBCommandTimeout" Value="" />
   </Section>
 
   <Section Name="DataPersistConfiguration">

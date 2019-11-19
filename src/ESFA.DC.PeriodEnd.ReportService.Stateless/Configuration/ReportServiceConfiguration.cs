@@ -22,6 +22,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration
 
         public string EasConnectionString { get; set; }
 
-        public string CommandTimeout { get; set; }
+        public string PeriodEndReportServiceDBCommandTimeout { get; set; }
     }
 }

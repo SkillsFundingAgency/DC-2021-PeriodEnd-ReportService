@@ -4,6 +4,7 @@ using System.Threading.Tasks;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 {
@@ -20,5 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<List<AppsCoInvestmentRecordKey>> GetUniqueCombinationsOfKeyFromPaymentsAsync(int ukprn, CancellationToken cancellationToken);
 
         Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(IEnumerable<long?> apprenticeshipIds, CancellationToken cancellationToken);
+
+        Task<LearnerLevelViewDASDataLockInfo> GetDASDataLockInfoAsync(int ukPrn, CancellationToken cancellationToken);
     }
 }

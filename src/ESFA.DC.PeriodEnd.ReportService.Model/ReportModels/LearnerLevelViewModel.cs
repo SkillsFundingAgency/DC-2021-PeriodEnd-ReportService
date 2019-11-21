@@ -46,7 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public decimal? IssuesAmount { get; set; }
 
-        public int? ReasonForIssues { get; set; }
+        public string ReasonForIssues { get; set; }
 
         public string PaymentFundingLineType { get; set; }
 

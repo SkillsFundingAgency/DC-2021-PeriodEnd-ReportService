@@ -34,6 +34,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private AppsMonthlyPaymentDASInfo _appsMonthlyPaymentDasInfo;
         private AppsMonthlyPaymentDasEarningsInfo _appsMonthlyPaymentDasEarningsInfo;
         private LearnerLevelViewFM36Info _learnerLevelViewFM36Info;
+        private LearnerLevelViewDASDataLockInfo _learnerLevelViewDASDataLockInfo;
         private int _appsReturnPeriod;
 
         private IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> _appsMonthlyPaymentLarsLearningDeliveryInfoList;
@@ -50,6 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList,
             LearnerLevelViewFM36Info learnerLevelViewFM36Info,
+            LearnerLevelViewDASDataLockInfo learnerLevelViewDASDataLockInfo,
             int returnPeriod)
         {
             // cache the passed in data for use in the private 'Get' methods
@@ -58,6 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             _appsMonthlyPaymentDasEarningsInfo = appsMonthlyPaymentDasEarningsInfo;
             _appsMonthlyPaymentLarsLearningDeliveryInfoList = appsMonthlyPaymentLarsLearningDeliveryInfoList;
             _learnerLevelViewFM36Info = learnerLevelViewFM36Info;
+            _learnerLevelViewDASDataLockInfo = learnerLevelViewDASDataLockInfo;
             _appsReturnPeriod = returnPeriod;
 
             // this variable is the final report and is the return value of this method.
@@ -72,14 +75,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         r.Ukprn,
                         r.LearnerReferenceNumber,
                         r.LearnerUln,
-                        r.LearningAimReference,
-                        r.LearningStartDate,
-                        r.LearningAimProgrammeType,
-                        r.LearningAimStandardCode,
-                        r.LearningAimFrameworkCode,
-                        r.LearningAimPathwayCode,
-                        r.ReportingAimFundingLineType,
-                        r.PriceEpisodeIdentifier
+                        r.ReportingAimFundingLineType
                     })
                     .OrderBy(o => o.Key.Ukprn)
                         .ThenBy(o => o.Key.LearnerReferenceNumber)
@@ -90,12 +86,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         Ukprn = g.Key.Ukprn,
                         PaymentLearnerReferenceNumber = g?.Key.LearnerReferenceNumber,
                         PaymentUniqueLearnerNumber = g?.Key.LearnerUln,
-                        LearningAimReference = g.Key.LearningAimReference,
-                        LearningStartDate = g?.Key.LearningStartDate,
-                        LearningAimProgrammeType = g?.Key.LearningAimProgrammeType,
-                        LearningAimStandardCode = g?.Key.LearningAimStandardCode,
-                        LearningAimFrameworkCode = g?.Key.LearningAimFrameworkCode,
-                        LearningAimPathwayCode = g?.Key.LearningAimPathwayCode,
+                        LearningAimReference = g.First().LearningAimReference,
+                        LearningStartDate = g.First().LearningStartDate,
+                        LearningAimProgrammeType = g.First().LearningAimProgrammeType,
+                        LearningAimStandardCode = g.First().LearningAimStandardCode,
+                        LearningAimFrameworkCode = g.First().LearningAimFrameworkCode,
+                        LearningAimPathwayCode = g.First().LearningAimPathwayCode,
                         LearnerEmploymentStatusEmployerId = null, // Set in the "Further..." section below
                         TotalEarningsToDate = 0, // Set in the "Further..." section below
                         PlannedPaymentsToYouToDate = g.Where(p => PeriodLevyPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
@@ -247,10 +243,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         // Work out what is remaining from employer by subtracting what they a have paid so far from their calculated payments.
                         learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate = learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate - learnerLevelViewModel.TotalCoInvestmentCollectedToDate;
 
-                        // TODO: Work out reason for issues (datalock and HBCP)
+                        // Issues for non-payment - worked out in order of priority.
+                        // Work out issues (Other) (NOTE: Do this first as lowest priority)
+                        if (learnerLevelViewModel.TotalEarningsForPeriod > learnerLevelViewModel.CoInvestmentPaymentsToCollectThisPeriod +
+                                                                           learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod)
+                        {
+                            learnerLevelViewModel.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_Other;
+                        }
+
+                        // TODO: Work out issues (HBCP)
+
+                        // Work out reason for issues (Clawback)
                         if (learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod < 0)
                         {
-                            learnerLevelViewModel.ReasonForIssues = (int?)Reports.LearnerLevelViewReport.ReasonForIssues.CompletionHoldbackPayment;
+                            learnerLevelViewModel.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_Clawback;
                         }
 
                         if ((learnerLevelViewModel.TotalEarningsForPeriod > learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod +
@@ -259,7 +265,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                                                              learnerLevelViewModel.TotalCoInvestmentCollectedToDate +
                                                                              learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate))
                         {
-                            learnerLevelViewModel.ReasonForIssues = (int?)Reports.LearnerLevelViewReport.ReasonForIssues.CompletionHoldbackPayment;
+                            learnerLevelViewModel.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_Clawback;
+                        }
+
+                        // If the reason for issue is datalock then we need to set the rule description
+                        if ((_learnerLevelViewDASDataLockInfo != null) && (_learnerLevelViewDASDataLockInfo.DASDataLocks != null))
+                        {
+                            var datalock = _learnerLevelViewDASDataLockInfo.DASDataLocks
+                                                    .FirstOrDefault(x => x.UkPrn == learnerLevelViewModel.Ukprn &&
+                                                            x.LearnerReferenceNumber == learnerLevelViewModel.PaymentLearnerReferenceNumber &&
+                                                            x.LearnerUln == learnerLevelViewModel.PaymentUniqueLearnerNumber &&
+                                                            x.LearningAimReference == learnerLevelViewModel.LearningAimReference &&
+                                                            x.CollectionPeriod == _appsReturnPeriod);
+
+                            // Check to see if any records returned
+                            if (datalock != null)
+                            {
+                                // Extract data lock info
+                                int datalock_rule_id = datalock.DataLockFailureId;
+
+                                // calculate the rule description
+                                string datalockValue = Generics.DLockErrorRuleNamePrefix + datalock_rule_id.ToString("00");
+                                learnerLevelViewModel.ReasonForIssues = datalockValue;
+                                learnerLevelViewModel.RuleDescription = DataLockValidationMessages.Validations.FirstOrDefault(x => x.RuleId.CaseInsensitiveEquals(datalockValue))?.ErrorMessage;
+                            }
                         }
                     }
                 }

@@ -25,6 +25,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 {
     public class LearnerLevelViewReport : AbstractReport
     {
+        public const string ReasonForIssues_CompletionHoldbackPayment = "";
+        public const string ReasonForIssues_Clawback = "";
+        public const string ReasonForIssues_Other = "";
+
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
@@ -51,14 +55,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _larsProviderService = larsProviderService;
             _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
-        }
-
-        public enum ReasonForIssues
-        {
-            Datalock,
-            CompletionHoldbackPayment,
-            Clawback,
-            Other
         }
 
         public override string ReportFileName => "Learner Level View Report";
@@ -106,6 +102,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     reportServiceContext.Ukprn,
                     cancellationToken);
 
+            // Get the datalock information
+            var learnerLevelDatalockInfo = await _dasPaymentsProviderService.GetDASDataLockInfoAsync(
+                    reportServiceContext.Ukprn,
+                    cancellationToken);
+
             // Build the actual Apps Monthly Payment Report
             var learnerLevelViewModel = _modelBuilder.BuildLearnerLevelViewModelList(
                 appsMonthlyPaymentIlrInfo,
@@ -114,6 +115,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 appsCoInvestmentIlrInfo,
                 appsMonthlyPaymentLarsLearningDeliveryInfos,
                 learnerLevelViewFM36Info,
+                learnerLevelDatalockInfo,
                 reportServiceContext.ReturnPeriod);
 
             string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
@@ -121,6 +123,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             string learnerLevelFinancialsRemovedCSV = await GetLearnerLevelFinancialsRemovedViewCsv(learnerLevelViewModel, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", learnerLevelFinancialsRemovedCSV);
+
+            // Create the json file which will be used by the WebUI to display the summary view
+            string summaryJson = CreateSummaryJson(learnerLevelViewModel);
+            await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}_Summary.json", summaryJson, cancellationToken);
+        }
+
+        private string CreateSummaryJson(IReadOnlyList<LearnerLevelViewModel> learnerLevelView)
+        {
+            // Drop out if there is no data to report on.
+            if (learnerLevelView == null)
+            {
+                return null;
+            }
+
+            string jsonReturnValue = string.Empty;
+
+            return jsonReturnValue;
         }
 
         private async Task<string> GetLearnerLevelViewCsv(IReadOnlyList<LearnerLevelViewModel> learnerLevelViewModel, CancellationToken cancellationToken)

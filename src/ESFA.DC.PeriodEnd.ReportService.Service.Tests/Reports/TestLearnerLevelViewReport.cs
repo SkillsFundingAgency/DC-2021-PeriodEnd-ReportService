@@ -139,21 +139,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             }
 
             result.Should().NotBeNullOrEmpty();
-            result.Count().Should().Be(4);
+            result.Count().Should().Be(2);
 
             result[0].PaymentLearnerReferenceNumber.Should().Be("A12345");
             result[0].PaymentUniqueLearnerNumber.Should().Be(12345);
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].FamilyName.Should().Be("Banner");
             result[0].GivenNames.Should().Be("Bruce");
-            result[0].IssuesAmount.Should().Be(-21);
+            result[0].IssuesAmount.Should().Be(179);
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].PaymentFundingLineType.Should().Be("16-18 Apprenticeship Non-Levy Contract (procured)");
-            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(-17);
-            result[0].PlannedPaymentsToYouToDate.Should().Be(-17);
+            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(157);
+            result[0].PlannedPaymentsToYouToDate.Should().Be(181);
             result[0].TotalCoInvestmentCollectedToDate.Should().Be(100);
-            result[0].CoInvestmentOutstandingFromEmplToDate.Should().Be(-100);
-            result[0].ReasonForIssues.Should().Be(1);
+            result[0].CoInvestmentOutstandingFromEmplToDate.Should().Be(-74);
         }
 
         private LearnerLevelViewFM36Info BuildLearnerLevelViewFM36InfoModel(int ukPrn)

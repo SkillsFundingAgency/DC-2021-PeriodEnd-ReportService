@@ -10,6 +10,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Abstract;
 using Microsoft.EntityFrameworkCore;
@@ -78,6 +79,40 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         })
                     .ToListAsync(cancellationToken);
             }
+        }
+
+        public async Task<LearnerLevelViewDASDataLockInfo> GetDASDataLockInfoAsync(
+            int ukPrn,
+            CancellationToken cancellationToken)
+        {
+            LearnerLevelViewDASDataLockInfo dataLockInfo = null;
+
+            using (IDASPaymentsContext dasPaymentsContext = _dasPaymentsContextFactory())
+            {
+                dataLockInfo = new LearnerLevelViewDASDataLockInfo()
+                {
+                    UkPrn = ukPrn,
+                    DASDataLocks = new List<LearnerLevelViewDASDataLockModel>()
+                };
+
+                var dataLockValidationErrors = await dasPaymentsContext.DataMatchReport
+                    .Where(x => x.UkPrn == ukPrn)
+                    .Select(x => new LearnerLevelViewDASDataLockModel
+                    {
+                        UkPrn = x.UkPrn,
+                        LearnerReferenceNumber = x.LearnerReferenceNumber,
+                        LearnerUln = x.LearnerUln,
+                        DataLockFailureId = x.DataLockFailureId,
+                        LearningAimSequenceNumber = x.LearningAimSequenceNumber,
+                        CollectionPeriod = x.CollectionPeriod,
+                    })
+                    .Distinct()
+                    .ToListAsync(cancellationToken);
+
+                dataLockInfo.DASDataLocks.AddRange(dataLockValidationErrors);
+            }
+
+            return dataLockInfo;
         }
 
         public async Task<AppsMonthlyPaymentDASInfo> GetPaymentsInfoForAppsMonthlyPaymentReportAsync(

@@ -15,6 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
              AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
              IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList,
              LearnerLevelViewFM36Info learnerLevelViewFM36Info,
+             LearnerLevelViewDASDataLockInfo learnerLevelViewDASDataLockInfo,
              int returnPeriod);
     }
 }

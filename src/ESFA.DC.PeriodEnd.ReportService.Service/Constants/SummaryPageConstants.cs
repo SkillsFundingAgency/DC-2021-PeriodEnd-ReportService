@@ -18,20 +18,6 @@
 
         public const string SecurityClassification = "Security Classification:";
 
-        public const string ApplicationVersion = "Application Version:";
-
-        public const string FilePreparationDate = "File Preparation Date:";
-
-        public const string LARSVersion = "LARS Data:";
-
-        public const string PostcodeVersion = "Postcode Data:";
-
-        public const string OrganisationVersion = "Organisation Data:";
-
-        public const string LargeEmployersVersion = "Large Employers Data:";
-
         public const string ReportGeneratedAt = "Report Generated at:";
-
-        public const string Page = "Page:";
     }
 }

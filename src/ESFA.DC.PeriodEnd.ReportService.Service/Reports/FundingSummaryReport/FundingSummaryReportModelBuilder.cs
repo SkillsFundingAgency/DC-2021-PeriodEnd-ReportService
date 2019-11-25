@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
+using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
@@ -10,10 +16,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingSummaryReportModelBuilder : IFundingSummaryReportModelBuilder
     {
+        private const string lastSubmittedIlrFileDateStringFormat = "dd/MM/yyyy HH:mm:ss";
+        private const string ilrFileNameDateTimeParseFormat = "yyyyMMdd-HHmmss";
+
+        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IReferenceDataService _referenceDataService;
+
         private string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
-        public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup)
+        public FundingSummaryReportModelBuilder(IReferenceDataService referenceDataService, IDateTimeProvider dateTimeProvider)
+        {
+            _dateTimeProvider = dateTimeProvider;
+            _referenceDataService = referenceDataService;
+        }
+
+        public async Task<FundingSummaryReportModel> BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup, CancellationToken cancellationToken)
         {
             var noContract = "No Contract";
 
@@ -34,8 +52,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                 ?? noContract;
 
             byte reportCurrentPeriod = (byte)reportServiceContext.ReturnPeriod > 12 ? (byte)12 : (byte)reportServiceContext.ReturnPeriod;
+            var headerData = await BuildHeaderData(reportServiceContext, CancellationToken.None);
+            var footerData = BuildFooterData(reportServiceContext);
 
             var fundingSummaryReportModel = new FundingSummaryReportModel(
+                headerData,
                 new List<IFundingCategory>()
                 {
                     //----------------------------------------------------------------------------------------
@@ -194,7 +215,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                                 .WithFundLineGroup(BuildIlrFm99FundLineGroup(reportCurrentPeriod, periodisedValues))
                                 .WithFundLineGroup(BuildEasFm99FundLineGroup(reportCurrentPeriod, periodisedValues))
                         }, advancedLoansBursary)
-                });
+                },
+                footerData);
 
             return fundingSummaryReportModel;
         }
@@ -423,6 +445,65 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                 .WithFundLine($"EAS {description} Authorised Claims (£)", new[] {AttributeConstants.EasAuthorisedClaims});
 
             return fundLineGroup;
+        }
+
+        private async Task<IDictionary<string, string>> BuildHeaderData(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        {
+            var organisationName = await _referenceDataService.GetProviderNameAsync(reportServiceContext.Ukprn, cancellationToken) ?? string.Empty;
+            var easLastUpdate = await _referenceDataService.GetLastestEasSubmissionDateTimeAsync(reportServiceContext.Ukprn, cancellationToken);
+            var fileName = ExtractFileName(await _referenceDataService.GetLatestIlrSubmissionFileNameAsync(reportServiceContext.Ukprn, cancellationToken));
+
+            string easLastUpdateUk = null;
+
+            if (easLastUpdate != null)
+            {
+                easLastUpdateUk = _dateTimeProvider.ConvertUtcToUk(easLastUpdate.Value).LongDateStringFormat();
+            }
+
+            return new Dictionary<string, string>()
+            {
+                {SummaryPageConstants.ProviderName, organisationName},
+                {SummaryPageConstants.UKPRN, reportServiceContext.Ukprn.ToString()},
+                {SummaryPageConstants.ILRFile, fileName},
+                {SummaryPageConstants.LastILRFileUpdate, ExtractDisplayDateTimeFromFileName(fileName)},
+                {SummaryPageConstants.LastEASUpdate, easLastUpdateUk},
+                {SummaryPageConstants.SecurityClassification, SummaryPageConstants.OfficialSensitive}
+            };
+        }
+
+        private IDictionary<string, string> BuildFooterData(IReportServiceContext reportServiceContext)
+        {
+            DateTime dateTimeNowUtc = _dateTimeProvider.GetNowUtc();
+            DateTime dateTimeNowUk = _dateTimeProvider.ConvertUtcToUk(dateTimeNowUtc);
+
+            var reportGeneratedAt = dateTimeNowUk.TimeOfDayOnDateStringFormat();
+
+            return new Dictionary<string, string>()
+            {
+                { SummaryPageConstants.ReportGeneratedAt, reportGeneratedAt }
+            };
+        }
+
+        private string ExtractDisplayDateTimeFromFileName(string ilrFileName)
+        {
+            var ilrFilenameDateTime = ExtractFileName(ilrFileName).Substring(18, 15);
+
+            return DateTime.TryParseExact(ilrFilenameDateTime, ilrFileNameDateTimeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseDateTime)
+                ? parseDateTime.ToString(lastSubmittedIlrFileDateStringFormat)
+                : string.Empty;
+        }
+
+        private string ExtractFileName(string ilrFileName)
+        {
+            if (string.IsNullOrEmpty(ilrFileName) || ilrFileName.Length < 33)
+            {
+                return string.Empty;
+            }
+
+            var parts = ilrFileName.Split('/');
+            var ilrFilename = parts[parts.Length - 1];
+
+            return ilrFilename;
         }
     }
 }

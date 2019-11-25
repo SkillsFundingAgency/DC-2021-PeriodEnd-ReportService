@@ -1,4 +1,5 @@
-﻿using System.Drawing;
+﻿using System.Collections.Generic;
+using System.Drawing;
 using Aspose.Cells;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
@@ -22,6 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         private readonly Style _fundingCategoryStyle;
         private readonly Style _fundingSubCategoryStyle;
         private readonly Style _fundLineGroupStyle;
+        private readonly Style _headerAndFooterStyle;
 
         private readonly StyleFlag _styleFlag = new StyleFlag()
         {
@@ -43,6 +45,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             _fundingCategoryStyle = cellsFactory.CreateStyle();
             _fundingSubCategoryStyle = cellsFactory.CreateStyle();
             _fundLineGroupStyle = cellsFactory.CreateStyle();
+            _headerAndFooterStyle = cellsFactory.CreateStyle();
 
             ConfigureStyles();
         }
@@ -53,16 +56,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             worksheet.Cells.StandardWidth = 20;
             worksheet.Cells.Columns[0].Width = 65;
 
+            RenderHeader(worksheet, NextRow(worksheet), fundingSummaryReport);
+
             foreach (var fundingCategory in fundingSummaryReport.FundingCategories)
             {
                 RenderFundingCategory(worksheet, fundingCategory);
             }
+
+            RenderFooter(worksheet, NextRow(worksheet) + 1, fundingSummaryReport);
 
             worksheet.AutoFitColumn(0);
             worksheet.AutoFitColumn(1);
 
             return worksheet;
         }
+
+        private Worksheet RenderHeader(Worksheet worksheet, int row, IFundingSummaryReport fundingSummaryReport) =>
+            RenderHeaderOrFooterArray(worksheet, row, fundingSummaryReport.HeaderData);
+
+        private Worksheet RenderFooter(Worksheet worksheet, int row, IFundingSummaryReport fundingSummaryReport) =>
+            RenderHeaderOrFooterArray(worksheet, row, fundingSummaryReport.FooterData);
 
         private Worksheet RenderFundingCategory(Worksheet worksheet, IFundingCategory fundingCategory)
         {
@@ -219,6 +232,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             return worksheet;
         }
 
+        private Worksheet RenderHeaderOrFooterArray(Worksheet worksheet, int row, IDictionary<string, string> data)
+        {
+            foreach (var entry in data)
+            {
+                worksheet.Cells.ImportTwoDimensionArray(new object[,]
+                {
+                    { entry.Key, entry.Value }
+                }, row, 0);
+
+                ApplyStyleToRow(worksheet, row, _headerAndFooterStyle);
+
+                row++;
+            }
+
+            return worksheet;
+        }
+
         private int NextRow(Worksheet worksheet)
         {
             return worksheet.Cells.MaxRow + 1;
@@ -271,6 +301,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             _fundLineGroupStyle.Font.IsBold = true;
             _fundLineGroupStyle.Font.Name = "Arial";
             _fundLineGroupStyle.SetCustom(DecimalFormat, false);
+
+            _headerAndFooterStyle.Font.Size = 10;
+            _headerAndFooterStyle.Font.Name = "Arial";
+            _headerAndFooterStyle.Font.IsBold = true;
         }
     }
 }

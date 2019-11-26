@@ -65,64 +65,134 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
             // this variable is the final report and is the return value of this method.
             List<LearnerLevelViewModel> learnerLevelViewModelList = null;
+
             try
             {
-                // Populate learner level view list
-                learnerLevelViewModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear == Generics.AcademicYear)
-                    .GroupBy(r => new
-                    {
-                        r.Ukprn,
-                        r.LearnerReferenceNumber,
-                        r.LearnerUln,
-                        r.ReportingAimFundingLineType
-                    })
-                    .OrderBy(o => o.Key.Ukprn)
-                        .ThenBy(o => o.Key.LearnerReferenceNumber)
-                        .ThenBy(o => o.Key.LearnerUln)
-                        .ThenBy(o => o.Key.ReportingAimFundingLineType)
-                    .Select(g => new LearnerLevelViewModel
-                    {
-                        Ukprn = g.Key.Ukprn,
-                        PaymentLearnerReferenceNumber = g?.Key.LearnerReferenceNumber,
-                        PaymentUniqueLearnerNumber = g?.Key.LearnerUln,
-                        LearningAimReference = g.First().LearningAimReference,
-                        LearningStartDate = g.First().LearningStartDate,
-                        LearningAimProgrammeType = g.First().LearningAimProgrammeType,
-                        LearningAimStandardCode = g.First().LearningAimStandardCode,
-                        LearningAimFrameworkCode = g.First().LearningAimFrameworkCode,
-                        LearningAimPathwayCode = g.First().LearningAimPathwayCode,
-                        LearnerEmploymentStatusEmployerId = null, // Set in the "Further..." section below
-                        TotalEarningsToDate = 0, // Set in the "Further..." section below
-                        PlannedPaymentsToYouToDate = g.Where(p => PeriodLevyPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m),
-                        TotalCoInvestmentCollectedToDate = 0, // Set in the "Further..." section below
-                        CoInvestmentOutstandingFromEmplToDate = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m), // Additional calc needed in the "further..." section below
-                        TotalEarningsForPeriod = 0, // Set in the "Further..." section below
-                        ESFAPlannedPaymentsThisPeriod = g.Where(p => PeriodLevyPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m),
-                        CoInvestmentPaymentsToCollectThisPeriod = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m),
-                        IssuesAmount = 0, // Set in the "Further..." section below
-                        ReasonForIssues = null, // TODO
-                        PaymentFundingLineType = g?.Key.ReportingAimFundingLineType
-                    }).ToList();
+                // Populate the learner list using the ILR query first
+                learnerLevelViewModelList = appsMonthlyPaymentIlrInfo.Learners
+                .GroupBy(r => new
+                {
+                    r.Ukprn,
+                    r.LearnRefNumber,
+                    r.UniqueLearnerNumber
+                })
+                .OrderBy(o => o.Key.Ukprn)
+                    .ThenBy(o => o.Key.LearnRefNumber)
+                    .ThenBy(o => o.Key.UniqueLearnerNumber)
+                .Select(g => new LearnerLevelViewModel
+                {
+                    Ukprn = g.Key.Ukprn,
+                    PaymentLearnerReferenceNumber = g.Key.LearnRefNumber,
+                    PaymentUniqueLearnerNumber = g.Key.UniqueLearnerNumber,
+                    GivenNames = g.First().GivenNames,
+                    FamilyName = g.First().FamilyName,
+                    LearnerEmploymentStatusEmployerId = g.First().LearnerEmploymentStatus.Where(les => les?.Ukprn == g.Key.Ukprn &&
+                                                            les.LearnRefNumber.CaseInsensitiveEquals(g.Key.LearnRefNumber) &&
+                                                            les?.EmpStat == 10)
+                                                        .OrderByDescending(les => les?.DateEmpStatApp)
+                                                        .FirstOrDefault().EmpdId,
+                    LearningAimReference = g.First().LearningDeliveries.First().LearnAimRef
+                }).ToList();
 
                 // Further population of the appsMonthlyPaymentModel payment related fields
                 if (learnerLevelViewModelList != null)
                 {
                     foreach (var learnerLevelViewModel in learnerLevelViewModelList)
                     {
+                        // Add the payment information from the the appmonthly payments data source
+                        if (appsMonthlyPaymentDasInfo != null && appsMonthlyPaymentDasInfo.Payments != null)
+                        {
+                            var learnerPayment = appsMonthlyPaymentDasInfo.Payments?
+                                    .Where(p => p.AcademicYear == Generics.AcademicYear &&
+                                            p.LearnerReferenceNumber == learnerLevelViewModel.PaymentLearnerReferenceNumber);
+
+                            if ( learnerPayment != null && learnerPayment.Count() > 0)
+                            {
+                                // Assign the payment information for the learner - learning aim details are same in all records in the payment data set
+                                learnerLevelViewModel.LearningAimReference = learnerPayment.FirstOrDefault().LearningAimReference;
+                                learnerLevelViewModel.LearningStartDate = learnerPayment.FirstOrDefault().LearningStartDate;
+                                learnerLevelViewModel.LearningAimProgrammeType = learnerPayment.FirstOrDefault().LearningAimProgrammeType;
+                                learnerLevelViewModel.LearningAimStandardCode = learnerPayment.FirstOrDefault().LearningAimStandardCode;
+                                learnerLevelViewModel.LearningAimFrameworkCode = learnerPayment.FirstOrDefault().LearningAimFrameworkCode;
+                                learnerLevelViewModel.LearningAimPathwayCode = learnerPayment.FirstOrDefault().LearningAimPathwayCode;
+                                learnerLevelViewModel.PaymentFundingLineType = learnerPayment.FirstOrDefault().ReportingAimFundingLineType;
+
+                                // Assign the amounts
+                                learnerLevelViewModel.PlannedPaymentsToYouToDate = learnerPayment.Where(p => PeriodLevyPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                                                    learnerPayment.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+
+                                learnerLevelViewModel.ESFAPlannedPaymentsThisPeriod = learnerPayment.Where(p => PeriodLevyPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                        learnerPayment.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                        learnerPayment.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                        learnerPayment.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                        learnerPayment.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                        learnerPayment.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                        learnerPayment.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+
+                                learnerLevelViewModel.CoInvestmentPaymentsToCollectThisPeriod = learnerPayment.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+
+                                // NOTE: Additional earigns calc required for this field
+                                learnerLevelViewModel.CoInvestmentOutstandingFromEmplToDate = learnerPayment.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                            }
+                        }
+
+                // Populate learner level view list
+                // learnerLevelViewModelList = appsMonthlyPaymentDasInfo.Payments?
+                //    .Where(p => p.AcademicYear == Generics.AcademicYear)
+                //    .GroupBy(r => new
+                //    {
+                //        r.Ukprn,
+                //        r.LearnerReferenceNumber,
+                //        r.LearnerUln,
+                //        r.ReportingAimFundingLineType
+                //    })
+                //    .OrderBy(o => o.Key.Ukprn)
+                //        .ThenBy(o => o.Key.LearnerReferenceNumber)
+                //        .ThenBy(o => o.Key.LearnerUln)
+                //        .ThenBy(o => o.Key.ReportingAimFundingLineType)
+                //    .Select(g => new LearnerLevelViewModel
+                //    {
+                //        Ukprn = g.Key.Ukprn,
+                //        PaymentLearnerReferenceNumber = g?.Key.LearnerReferenceNumber,
+                //        PaymentUniqueLearnerNumber = g?.Key.LearnerUln,
+                //        LearningAimReference = g.First().LearningAimReference,
+                //        LearningStartDate = g.First().LearningStartDate,
+                //        LearningAimProgrammeType = g.First().LearningAimProgrammeType,
+                //        LearningAimStandardCode = g.First().LearningAimStandardCode,
+                //        LearningAimFrameworkCode = g.First().LearningAimFrameworkCode,
+                //        LearningAimPathwayCode = g.First().LearningAimPathwayCode,
+                //        LearnerEmploymentStatusEmployerId = null, // Set in the "Further..." section below
+                //        TotalEarningsToDate = 0, // Set in the "Further..." section below
+                //        PlannedPaymentsToYouToDate = g.Where(p => PeriodLevyPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m),
+                //        TotalCoInvestmentCollectedToDate = 0, // Set in the "Further..." section below
+                //        CoInvestmentOutstandingFromEmplToDate = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m), // Additional calc needed in the "further..." section below
+                //        TotalEarningsForPeriod = 0, // Set in the "Further..." section below
+                //        ESFAPlannedPaymentsThisPeriod = g.Where(p => PeriodLevyPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                //                g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m),
+                //        CoInvestmentPaymentsToCollectThisPeriod = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m),
+                //        IssuesAmount = 0, // Set in the "Further..." section below
+                //        ReasonForIssues = null, // TODO
+                //        PaymentFundingLineType = g?.Key.ReportingAimFundingLineType
+                //    }).ToList();
+
                         // Extract learner delivery details
                         AppsCoInvestmentRecordKey record = new AppsCoInvestmentRecordKey(
                             learnerLevelViewModel.PaymentLearnerReferenceNumber,
@@ -146,36 +216,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 learnerLevelViewModel.TotalCoInvestmentCollectedToDate =
                                     currentYearData.Where(x => x.AFinCode == 1 || x.AFinCode == 2).Sum(x => x.AFinAmount) -
                                     currentYearData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount);
-                            }
-                        }
-
-                        // EmpId: related to Latest DateEmpStatApp where EmpStat = 10 (i.e. they are employed)
-                        if (_appsMonthlyPaymentIlrInfo?.Learners != null)
-                        {
-                            var ilrLearner = _appsMonthlyPaymentIlrInfo?.Learners?
-                                .Where(x => x.LearnRefNumber.CaseInsensitiveEquals(learnerLevelViewModel?.PaymentLearnerReferenceNumber))
-                                .SingleOrDefault();
-
-                            if (ilrLearner != null)
-                            {
-                                if (ilrLearner?.LearnerEmploymentStatus != null)
-                                {
-                                    var ilrLearnerEmploymentStatus = ilrLearner?.LearnerEmploymentStatus?
-                                        .Where(les => les?.Ukprn == learnerLevelViewModel.Ukprn &&
-                                                        les.LearnRefNumber.CaseInsensitiveEquals(learnerLevelViewModel?.PaymentLearnerReferenceNumber) &&
-                                                        les?.EmpStat == 10)
-                                        .OrderByDescending(les => les?.DateEmpStatApp)
-                                        .FirstOrDefault();
-
-                                    if (ilrLearnerEmploymentStatus != null)
-                                    {
-                                        // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.
-                                        learnerLevelViewModel.LearnerEmploymentStatusEmployerId = ilrLearnerEmploymentStatus?.EmpdId;
-                                    }
-                                }
-
-                                learnerLevelViewModel.FamilyName = ilrLearner.FamilyName;
-                                learnerLevelViewModel.GivenNames = ilrLearner.GivenNames;
                             }
                         }
 

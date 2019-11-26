@@ -32,7 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
             using (var context = _organisationsContextFunc.Invoke())
             {
                 providerName = (await context.OrgDetails
-                    .FirstOrDefaultAsync(o => o.Ukprn == ukprn, cancellationToken))
+                    .SingleOrDefaultAsync(o => o.Ukprn == ukprn, cancellationToken))
                     ?.Name;
             }
 
@@ -51,7 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
         {
             using (var context = _ilrContextFunc.Invoke())
             {
-                return (await context.FileDetails.Where(fd => fd.UKPRN == ukprn).OrderByDescending(f => f.SubmittedTime).FirstOrDefaultAsync(cancellationToken)).Filename;
+                return (await context.FileDetails.Where(fd => fd.UKPRN == ukprn).OrderByDescending(f => f.SubmittedTime).FirstOrDefaultAsync(cancellationToken))?.Filename;
             }
         }
     }

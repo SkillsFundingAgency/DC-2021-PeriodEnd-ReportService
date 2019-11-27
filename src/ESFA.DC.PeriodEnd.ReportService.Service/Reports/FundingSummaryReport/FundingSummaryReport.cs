@@ -58,7 +58,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             var fcsLookup = await _fcsProviderService.GetContractAllocationNumberFSPCodeLookupAsync(reportServiceContext.Ukprn, cancellationToken);
             var periodisedValuesLookup = await _periodisedValuesLookupProvider.ProvideAsync(reportServiceContext, cancellationToken);
 
-            var model = _modelBuilder.BuildFundingSummaryReportModel(reportServiceContext, periodisedValuesLookup, fcsLookup);
+            var model = await _modelBuilder.BuildFundingSummaryReportModel(reportServiceContext, periodisedValuesLookup, fcsLookup, cancellationToken);
 
             using (var workbook = _excelService.NewWorkbook())
             {

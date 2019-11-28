@@ -109,6 +109,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             // Build the actual Apps Monthly Payment Report
             var learnerLevelViewModel = _modelBuilder.BuildLearnerLevelViewModelList(
+                reportServiceContext.Ukprn,
                 appsMonthlyPaymentIlrInfo,
                 appsMonthlyPaymentDasInfo,
                 appsMonthlyPaymentDasEarningsInfo,

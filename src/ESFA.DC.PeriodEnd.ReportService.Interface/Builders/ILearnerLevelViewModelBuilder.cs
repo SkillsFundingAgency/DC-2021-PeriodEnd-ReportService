@@ -9,6 +9,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
     public interface ILearnerLevelViewModelBuilder
     {
         IReadOnlyList<LearnerLevelViewModel> BuildLearnerLevelViewModelList(
+             int Ukprn,
              AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
              AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
              AppsMonthlyPaymentDasEarningsInfo appsMonthlyPaymentDasEarningsInfo,

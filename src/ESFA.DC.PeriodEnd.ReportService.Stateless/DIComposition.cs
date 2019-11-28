@@ -17,6 +17,7 @@ using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid;
 using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
+using ESFA.DC.ILR1920.DataStore.EF.StoredProc;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
@@ -184,6 +185,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             })
                 .As<DbContextOptions<ILR1920_DataStoreEntitiesInvalid>>()
                 .SingleInstance();
+
+            containerBuilder.Register(context =>
+                {
+                    var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesStoredProc>();
+                    optionsBuilder.UseSqlServer(
+                        reportServiceConfiguration.ILRDataStoreConnectionString,
+                        options =>
+                        {
+                            options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>());
+                            if (int.TryParse(reportServiceConfiguration.PeriodEndReportServiceDBCommandTimeout, out int commandTimeout) && commandTimeout > 0)
+                            {
+                                options.CommandTimeout(commandTimeout);
+                            }
+                        });
+
+                    return new ILR1920_DataStoreEntitiesStoredProc(optionsBuilder.Options);
+                }).As<ILR1920_DataStoreEntitiesStoredProc>()
+                .ExternallyOwned();
 
             // Eas 1920
             containerBuilder.RegisterType<EasContext>().As<IEasdbContext>().ExternallyOwned();
@@ -386,6 +405,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<JobQueueManagerProviderService>().As<IJobQueueManagerProviderService>()
+                .InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<ReferenceDataService>().As<IReferenceDataService>()
                 .InstancePerLifetimeScope();
         }
 

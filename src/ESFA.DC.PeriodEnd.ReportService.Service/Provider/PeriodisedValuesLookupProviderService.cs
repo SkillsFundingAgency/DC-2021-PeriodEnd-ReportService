@@ -4,12 +4,14 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.DASPayments.EF.Interfaces;
+using ESFA.DC.EAS1920.EF;
 using ESFA.DC.EAS1920.EF.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
+using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Service.Provider.Model;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport;
 using Microsoft.EntityFrameworkCore;
@@ -42,8 +44,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             var fm99 = BuildFm99DictionaryAsync(ukprn, cancellationToken);
             var eas = BuildEasDictionaryAsync(ukprn, cancellationToken);
             var das = BuildDasDictionaryAsync(ukprn, cancellationToken);
+            var easdas = BuildEasDasDictionaryAsync(ukprn, cancellationToken);
 
-            await Task.WhenAll(fm35, fm25, fm81, fm99, eas, das);
+            await Task.WhenAll(fm35, fm25, fm81, fm99, eas, das, easdas);
 
             var periodisedValuesLookup = new PeriodisedValuesLookup();
 
@@ -53,6 +56,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             periodisedValuesLookup.Add(FundingDataSource.FM99, fm99.Result);
             periodisedValuesLookup.Add(FundingDataSource.EAS, eas.Result);
             periodisedValuesLookup.Add(FundingDataSource.DAS, das.Result);
+            periodisedValuesLookup.Add(FundingDataSource.EASDAS, easdas.Result);
 
             return periodisedValuesLookup;
         }
@@ -284,6 +288,66 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                     .ToDictionary(k => k.Key,
                                         tt => tt.Select(pvGroup => pvGroup.Periods).ToArray())),
                         StringComparer.OrdinalIgnoreCase);
+            }
+        }
+
+        public async Task<Dictionary<string, Dictionary<string, decimal?[][]>>> BuildEasDasDictionaryAsync(int ukprn, CancellationToken cancellationToken)
+        {
+            Dictionary<int, (string FundingLine, string AdjustmentType)> paymentTypeDictionary;
+
+            using (var context = _easContextFactory())
+            {
+                var paymentsFlattenedList = await context
+                    .PaymentTypes
+                    .Select(p => new { p.PaymentId, FundingLine = p.FundingLine.Name, AdjustmentType = p.AdjustmentType.Name })
+                    .ToListAsync(cancellationToken);
+
+                paymentTypeDictionary = paymentsFlattenedList
+                    .ToDictionary(k => k.PaymentId, v => (FundingLine: v.FundingLine, AdjustmentType: v.AdjustmentType));
+            }
+
+            using (var context = _dasContextFactory())
+            {
+                var periodisedValuesQuery = await context
+                    .ProviderAdjustmentPayments
+                    .Where(p => p.Ukprn == ukprn && p.SubmissionAcademicYear == Generics.AcademicYear)
+                    .GroupBy(p => p.PaymentType)
+                    .Select(pv => new
+                    {
+                        PaymentType = pv.Key,
+                        Periods = new decimal?[]
+                        {
+                            pv.Where(v => v.SubmissionCollectionPeriod == 1).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 2).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 3).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 4).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 5).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 6).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 7).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 8).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 9).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 10).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 11).Sum(a => a.Amount),
+                            pv.Where(v => v.SubmissionCollectionPeriod == 12).Sum(a => a.Amount),
+                        }
+                    })
+                    .ToListAsync(cancellationToken);
+
+                var periodisedValues = periodisedValuesQuery
+                    .Where(pv => paymentTypeDictionary.ContainsKey(pv.PaymentType))
+                    .Select(pv =>
+                    {
+                        var paymentType = paymentTypeDictionary.GetValueOrDefault(pv.PaymentType);
+
+                        return new PeriodisedValuesFlattened()
+                        {
+                            FundLine = paymentType.FundingLine,
+                            AttributeName = paymentType.AdjustmentType,
+                            Periods = pv.Periods,
+                        };
+                    });
+
+                return BuildDictionary(periodisedValues);
             }
         }
 

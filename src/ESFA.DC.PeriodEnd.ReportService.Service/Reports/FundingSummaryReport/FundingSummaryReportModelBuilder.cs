@@ -1,5 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
+using System.Globalization;
+using System.Threading;
+using System.Threading.Tasks;
+using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
@@ -10,10 +16,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 {
     public class FundingSummaryReportModelBuilder : IFundingSummaryReportModelBuilder
     {
+        private const string lastSubmittedIlrFileDateStringFormat = "dd/MM/yyyy HH:mm:ss";
+        private const string ilrFileNameDateTimeParseFormat = "yyyyMMdd-HHmmss";
+
+        private readonly IDateTimeProvider _dateTimeProvider;
+        private readonly IReferenceDataService _referenceDataService;
+
         private string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
-        public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup)
+        public FundingSummaryReportModelBuilder(IReferenceDataService referenceDataService, IDateTimeProvider dateTimeProvider)
+        {
+            _dateTimeProvider = dateTimeProvider;
+            _referenceDataService = referenceDataService;
+        }
+
+        public async Task<FundingSummaryReportModel> BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup, CancellationToken cancellationToken)
         {
             var noContract = "No Contract";
 
@@ -30,11 +48,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
             var advancedLoansBursary =
                 fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ALLB1920)
-                ?? fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ALLBC1920);
+                ?? fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.ALLBC1920)
+                ?? noContract;
 
             byte reportCurrentPeriod = (byte)reportServiceContext.ReturnPeriod > 12 ? (byte)12 : (byte)reportServiceContext.ReturnPeriod;
+            var headerData = await BuildHeaderData(reportServiceContext, CancellationToken.None);
+            var footerData = BuildFooterData(reportServiceContext);
 
             var fundingSummaryReportModel = new FundingSummaryReportModel(
+                headerData,
                 new List<IFundingCategory>()
                 {
                     //----------------------------------------------------------------------------------------
@@ -45,11 +67,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                         {
                             new FundingSubCategory(@"16-18 Apprenticeship Frameworks for starts before 1 May 2017", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("16-18", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.Apprenticeship1618}, periodisedValues))
-                                .WithFundLineGroup(BuildEasFm35FundLineGroup("16-18", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.Apprenticeship1618}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasFm35FundLineGroup("16-18", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.EasApprenticeship1618}, periodisedValues)),
 
                             new FundingSubCategory(@"16-18 Trailblazer Apprenticeships for starts before 1 May 2017", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrTrailblazerApprenticeshipsFundLineGroup("16-18", reportCurrentPeriod, new[] {FundLineConstants.TrailblazerApprenticeship1618}, periodisedValues))
-                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("16-18", "Trailblazer Apprenticeships", reportCurrentPeriod, new[] {FundLineConstants.TrailblazerApprenticeship1618}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("16-18", "Trailblazer Apprenticeships", reportCurrentPeriod, new[] {FundLineConstants.EasTrailblazerApprenticeship1618}, periodisedValues)),
 
                             new FundingSubCategory(@"16-18 Non-Levy Contracted Apprenticeships - Non-procured delivery", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrNonLevyApprenticeshipsFundLineGroup("16-18", reportCurrentPeriod, new[] { FundLineConstants.NonLevyApprenticeship1618, FundLineConstants.NonLevyApprenticeship1618NonProcured }, periodisedValues))
@@ -57,19 +79,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
                             new FundingSubCategory(@"19-23 Apprenticeship Frameworks for starts before 1 May 2017", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("19-23", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.Apprenticeship1923}, periodisedValues))
-                                .WithFundLineGroup(BuildEasFm35FundLineGroup("19-23", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.Apprenticeship1923}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasFm35FundLineGroup("19-23", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.EasApprenticeship1923}, periodisedValues)),
 
                             new FundingSubCategory(@"19-23 Trailblazer Apprenticeships for starts before 1 May 2017", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrTrailblazerApprenticeshipsFundLineGroup("19-23", reportCurrentPeriod, new[] {FundLineConstants.TrailblazerApprenticeship1923}, periodisedValues))
-                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("19-23", "Trailblazer Apprenticeships", reportCurrentPeriod, new[] {FundLineConstants.TrailblazerApprenticeship1923}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("19-23", "Trailblazer Apprenticeships", reportCurrentPeriod, new[] {FundLineConstants.EasTrailblazerApprenticeship1923}, periodisedValues)),
 
                             new FundingSubCategory(@"24+ Apprenticeship Frameworks for starts before 1 May 2017", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("24+", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.Apprenticeship24Plus}, periodisedValues))
-                                .WithFundLineGroup(BuildEasFm35FundLineGroup("24+", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.Apprenticeship24Plus}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasFm35FundLineGroup("24+", "Apprenticeship Frameworks", reportCurrentPeriod, new[] {FundLineConstants.EasApprenticeship24Plus}, periodisedValues)),
 
                             new FundingSubCategory(@"24+ Trailblazer Apprenticeships for starts before 1 May 2017", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrTrailblazerApprenticeshipsFundLineGroup("24+", reportCurrentPeriod, new[] {FundLineConstants.TrailblazerApprenticeship24Plus}, periodisedValues))
-                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("24+", "Trailblazer Apprenticeships", reportCurrentPeriod, new[] {FundLineConstants.TrailblazerApprenticeship24Plus}, periodisedValues)),
+                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("24+", "Trailblazer Apprenticeships", reportCurrentPeriod, new[] {FundLineConstants.EasTrailblazerApprenticeship24Plus}, periodisedValues)),
 
                             new FundingSubCategory(@"Adult Non-Levy Contracted Apprenticeships - Non-procured delivery", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrNonLevyApprenticeshipsFundLineGroup("Adult", reportCurrentPeriod, new[] { FundLineConstants.NonLevyApprenticeship19Plus, FundLineConstants.NonLevyApprenticeship19PlusNonProcured}, periodisedValues))
@@ -158,7 +180,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                         {
                             new FundingSubCategory("19-24 Traineeships", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("19-24", "Traineeships", reportCurrentPeriod, new[] {FundLineConstants.Traineeship1924ProcuredFromNov2017}, periodisedValues))
-                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("19-24", "Traineeships", reportCurrentPeriod, new[] { FundLineConstants.EasTraineeships1924NonProcured }, periodisedValues)),
+                                .WithFundLineGroup(BuildEasAuthorisedClaimsExcessLearningSupportFundLineGroup("19-24", "Traineeships", reportCurrentPeriod, new[] { FundLineConstants.EasTraineeships1924ProcuredFromNov2017 }, periodisedValues)),
                         }, traineeships1924Procured),
 
                     //---------------------------------------------------------------------
@@ -193,7 +215,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                                 .WithFundLineGroup(BuildIlrFm99FundLineGroup(reportCurrentPeriod, periodisedValues))
                                 .WithFundLineGroup(BuildEasFm99FundLineGroup(reportCurrentPeriod, periodisedValues))
                         }, advancedLoansBursary)
-                });
+                },
+                footerData);
 
             return fundingSummaryReportModel;
         }
@@ -274,7 +297,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         // -------------------------------------------------------------------------------------------------------------------------------------
         public virtual IFundLineGroup BuildEasLevyApprenticeshipsFundLineGroup(string ageRange, string description, byte currentPeriod, IEnumerable<string> fundLines, IPeriodisedValuesLookup periodisedValues)
         {
-            var fundLineGroup = new FundLineGroup($"EAS Total {ageRange} {description} Earnings Adjustment (£)", currentPeriod, FundingDataSource.EAS, fundLines, periodisedValues)
+            var fundLineGroup = new FundLineGroup($"EAS Total {ageRange} {description} Earnings Adjustment (£)", currentPeriod, FundingDataSource.EASDAS, fundLines, periodisedValues)
                 .WithFundLine($"EAS {ageRange} {description} - Training Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaimsTraining })
                 .WithFundLine($"EAS {ageRange} {description} - Additional Payments for Providers Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaimsProvider })
                 .WithFundLine($"EAS {ageRange} {description} - Additional Payments for Employers Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaimsEmployer })
@@ -324,7 +347,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
         {
             var description = "Non-Levy Contracted Apprenticeships";
 
-            var fundLineGroup = new FundLineGroup($"EAS Total {ageRange} {description} Earnings Adjustment (£)", currentPeriod, FundingDataSource.EAS, fundLines, periodisedValues)
+            var fundLineGroup = new FundLineGroup($"EAS Total {ageRange} {description} Earnings Adjustment (£)", currentPeriod, FundingDataSource.EASDAS, fundLines, periodisedValues)
                 .WithFundLine($"EAS {ageRange} {description} Training Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaimsTraining })
                 .WithFundLine($"EAS {ageRange} {description} Additional Payments for Providers Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaimsProvider })
                 .WithFundLine($"EAS {ageRange} {description} Additional Payments for Employers Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaimsEmployer })
@@ -422,6 +445,65 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                 .WithFundLine($"EAS {description} Authorised Claims (£)", new[] {AttributeConstants.EasAuthorisedClaims});
 
             return fundLineGroup;
+        }
+
+        private async Task<IDictionary<string, string>> BuildHeaderData(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        {
+            var organisationName = await _referenceDataService.GetProviderNameAsync(reportServiceContext.Ukprn, cancellationToken) ?? string.Empty;
+            var easLastUpdate = await _referenceDataService.GetLastestEasSubmissionDateTimeAsync(reportServiceContext.Ukprn, cancellationToken);
+            var fileName = ExtractFileName(await _referenceDataService.GetLatestIlrSubmissionFileNameAsync(reportServiceContext.Ukprn, cancellationToken));
+
+            string easLastUpdateUk = null;
+
+            if (easLastUpdate != null)
+            {
+                easLastUpdateUk = _dateTimeProvider.ConvertUtcToUk(easLastUpdate.Value).LongDateStringFormat();
+            }
+
+            return new Dictionary<string, string>()
+            {
+                {SummaryPageConstants.ProviderName, organisationName},
+                {SummaryPageConstants.UKPRN, reportServiceContext.Ukprn.ToString()},
+                {SummaryPageConstants.ILRFile, fileName},
+                {SummaryPageConstants.LastILRFileUpdate, ExtractDisplayDateTimeFromFileName(fileName)},
+                {SummaryPageConstants.LastEASUpdate, easLastUpdateUk},
+                {SummaryPageConstants.SecurityClassification, SummaryPageConstants.OfficialSensitive}
+            };
+        }
+
+        private IDictionary<string, string> BuildFooterData(IReportServiceContext reportServiceContext)
+        {
+            DateTime dateTimeNowUtc = _dateTimeProvider.GetNowUtc();
+            DateTime dateTimeNowUk = _dateTimeProvider.ConvertUtcToUk(dateTimeNowUtc);
+
+            var reportGeneratedAt = dateTimeNowUk.TimeOfDayOnDateStringFormat();
+
+            return new Dictionary<string, string>()
+            {
+                { SummaryPageConstants.ReportGeneratedAt, reportGeneratedAt }
+            };
+        }
+
+        private string ExtractDisplayDateTimeFromFileName(string ilrFileName)
+        {
+            var ilrFilenameDateTime = ExtractFileName(ilrFileName).Substring(18, 15);
+
+            return DateTime.TryParseExact(ilrFilenameDateTime, ilrFileNameDateTimeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseDateTime)
+                ? parseDateTime.ToString(lastSubmittedIlrFileDateStringFormat)
+                : string.Empty;
+        }
+
+        private string ExtractFileName(string ilrFileName)
+        {
+            if (string.IsNullOrEmpty(ilrFileName) || ilrFileName.Length < 33)
+            {
+                return string.Empty;
+            }
+
+            var parts = ilrFileName.Split('/');
+            var ilrFilename = parts[parts.Length - 1];
+
+            return ilrFilename;
         }
     }
 }

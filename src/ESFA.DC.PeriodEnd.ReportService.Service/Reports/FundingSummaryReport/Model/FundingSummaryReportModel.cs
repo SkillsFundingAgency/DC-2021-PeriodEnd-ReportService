@@ -5,11 +5,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport.M
 {
     public class FundingSummaryReportModel : IFundingSummaryReport
     {
-        public FundingSummaryReportModel(List<IFundingCategory> fundingCategories)
+        public FundingSummaryReportModel(IDictionary<string, string> headerData, List<IFundingCategory> fundingCategories, IDictionary<string, string> footerData)
         {
+            HeaderData = headerData;
             FundingCategories = fundingCategories ?? new List<IFundingCategory>();
+            FooterData = footerData;
         }
 
         public List<IFundingCategory> FundingCategories { get; }
+
+        public IDictionary<string, string> HeaderData { get; }
+
+        public IDictionary<string, string> FooterData { get; }
     }
 }

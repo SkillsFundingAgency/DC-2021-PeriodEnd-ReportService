@@ -21,6 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
         {
             _organisationsContextFunc = organisationsContextFunc;
             _easContextFunc = easContextFunc;
+            _ilrContextFunc = ilrContextFunc;
         }
 
         public async Task<string> GetProviderNameAsync(int ukprn, CancellationToken cancellationToken)

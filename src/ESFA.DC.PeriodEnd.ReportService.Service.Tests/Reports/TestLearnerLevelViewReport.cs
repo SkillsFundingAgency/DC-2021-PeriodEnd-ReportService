@@ -227,6 +227,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         {
                             new LearningDeliveryInfo()
                             {
+                                UKPRN = ukPrn,
                                 LearnRefNumber = "A12345",
                                 ProgType = 1,
                                 StdCode = 1,

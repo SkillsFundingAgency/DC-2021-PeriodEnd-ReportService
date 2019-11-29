@@ -31,14 +31,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private readonly HashSet<byte?> _transactionTypesLearningSupportPayments = new HashSet<byte?>() { 8, 9, 10, 11, 12, 15 };
 
         private readonly ILogger _logger;
-        private AppsMonthlyPaymentILRInfo _appsMonthlyPaymentIlrInfo;
-        private AppsMonthlyPaymentDASInfo _appsMonthlyPaymentDasInfo;
-        private AppsMonthlyPaymentDasEarningsInfo _appsMonthlyPaymentDasEarningsInfo;
-        private LearnerLevelViewFM36Info _learnerLevelViewFM36Info;
-        private LearnerLevelViewDASDataLockInfo _learnerLevelViewDASDataLockInfo;
         private int _appsReturnPeriod;
-
-        private IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> _appsMonthlyPaymentLarsLearningDeliveryInfoList;
 
         public LearnerLevelViewModelBuilder(ILogger logger)
         {
@@ -46,23 +39,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         public IReadOnlyList<LearnerLevelViewModel> BuildLearnerLevelViewModelList(
-            int Ukprn,
+            int ukprn,
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
-            AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
-            AppsMonthlyPaymentDasEarningsInfo appsMonthlyPaymentDasEarningsInfo,
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
-            IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList,
-            LearnerLevelViewFM36Info learnerLevelViewFM36Info,
             LearnerLevelViewDASDataLockInfo learnerLevelViewDASDataLockInfo,
+            IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> paymentsDictionary,
+            IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> aECPriceEpisodeDictionary,
+            IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> aECLearningDeliveryDictionary,
             int returnPeriod)
         {
             // cache the passed in data for use in the private 'Get' methods
-            _appsMonthlyPaymentIlrInfo = appsMonthlyPaymentIlrInfo;
-            _appsMonthlyPaymentDasInfo = appsMonthlyPaymentDasInfo;
-            _appsMonthlyPaymentDasEarningsInfo = appsMonthlyPaymentDasEarningsInfo;
-            _appsMonthlyPaymentLarsLearningDeliveryInfoList = appsMonthlyPaymentLarsLearningDeliveryInfoList;
-            _learnerLevelViewFM36Info = learnerLevelViewFM36Info;
-            _learnerLevelViewDASDataLockInfo = learnerLevelViewDASDataLockInfo;
             _appsReturnPeriod = returnPeriod;
 
             // this variable is the final report and is the return value of this method.
@@ -70,10 +56,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
             try
             {
-                // Create keys for the records which need to come from payments and earnings
-                var paymentsDictionary = BuildPaymentInfoDictionary(appsMonthlyPaymentDasInfo);
-                var aECPriceEpisodeDictionary = BuildAECPriceEpisodeDictionary(_learnerLevelViewFM36Info?.AECApprenticeshipPriceEpisodePeriodisedValues);
-                var aECLearningDeliveryDictionary = BuildAECLearningDeliveryDictionary(_learnerLevelViewFM36Info?.AECLearningDeliveryPeriodisedValuesInfo);
+                // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(paymentsDictionary.Keys, aECPriceEpisodeDictionary.Keys, aECLearningDeliveryDictionary.Keys);
 
                 // Populate the learner list using the ILR query first
@@ -84,7 +67,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     var reportRecord = new LearnerLevelViewModel()
                     {
-                        Ukprn = Ukprn,
+                        Ukprn = ukprn,
                         PaymentLearnerReferenceNumber = record.LearnerReferenceNumber,
                         PaymentFundingLineType = record.PaymentFundingLineType
                     };
@@ -117,7 +100,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     }
 
                     // Extract ILR info
-                    var ilrRecord = appsMonthlyPaymentIlrInfo.Learners.FirstOrDefault(p => p.Ukprn == Ukprn && p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
+                    var ilrRecord = appsMonthlyPaymentIlrInfo.Learners.FirstOrDefault(p => p.Ukprn == ukprn && p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
                     if (ilrRecord != null)
                     {
                         reportRecord.FamilyName = ilrRecord.FamilyName;
@@ -125,11 +108,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         reportRecord.PaymentUniqueLearnerNumber = ilrRecord.UniqueLearnerNumber;
                         if ((ilrRecord.LearnerEmploymentStatus != null) && (ilrRecord.LearnerEmploymentStatus.Count > 0))
                         {
-                            reportRecord.LearnerEmploymentStatusEmployerId = ilrRecord.LearnerEmploymentStatus.Where(les => les?.Ukprn == Ukprn &&
+                            reportRecord.LearnerEmploymentStatusEmployerId = ilrRecord.LearnerEmploymentStatus.Where(les => les?.Ukprn == ukprn &&
                                                                                                                         les.LearnRefNumber.CaseInsensitiveEquals(reportRecord.PaymentLearnerReferenceNumber) &&
                                                                                                                         les?.EmpStat == 10)
                                                                                                                 .OrderByDescending(les => les?.DateEmpStatApp)
-                                                                                                                .FirstOrDefault().EmpdId;
+                                                                                                                .FirstOrDefault()?.EmpdId;
                         }
                     }
 
@@ -140,12 +123,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         if (ilrInfo != null)
                         {
-                            var learningDeliveries = ilrInfo.LearningDeliveries.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber && p.UKPRN == Ukprn);
+                            var learningDeliveries = ilrInfo.LearningDeliveries.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber && p.UKPRN == ukprn);
                             if ((learningDeliveries != null) && (learningDeliveries.Count() > 0))
                             {
                                 foreach (var learningDelivery in learningDeliveries)
                                 {
-                                    IReadOnlyCollection<AppFinRecordInfo> currentYearData = learningDelivery.AppFinRecords.Where(x => x.AFinDate >= Generics.BeginningOfYear && x.AFinDate <= Generics.EndOfYear && string.Equals(x.AFinType, "PMR", StringComparison.OrdinalIgnoreCase)).ToList();
+                                    IReadOnlyCollection<AppFinRecordInfo> currentYearData = learningDelivery.AppFinRecords.Where(x => x.AFinDate >= Generics.BeginningOfYear && x.AFinDate <= Generics.EndOfYear && x.AFinType.CaseInsensitiveEquals("PMR")).ToList();
                                     reportRecord.TotalCoInvestmentCollectedToDate =
                                         currentYearData.Where(x => x.AFinCode == 1 || x.AFinCode == 2).Sum(x => x.AFinAmount) -
                                         currentYearData.Where(x => x.AFinCode == 3).Sum(x => x.AFinAmount);
@@ -229,9 +212,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     }
 
                     // If the reason for issue is datalock then we need to set the rule description
-                    if ((_learnerLevelViewDASDataLockInfo != null) && (_learnerLevelViewDASDataLockInfo.DASDataLocks != null))
+                    if ((learnerLevelViewDASDataLockInfo != null) && (learnerLevelViewDASDataLockInfo.DASDataLocks != null))
                     {
-                        var datalock = _learnerLevelViewDASDataLockInfo.DASDataLocks
+                        var datalock = learnerLevelViewDASDataLockInfo.DASDataLocks
                                                 .FirstOrDefault(x => x.UkPrn == reportRecord.Ukprn &&
                                                         x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
                                                         x.CollectionPeriod == _appsReturnPeriod);
@@ -259,37 +242,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             }
 
             return learnerLevelViewModelList;
-        }
-
-        public IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> BuildPaymentInfoDictionary(AppsMonthlyPaymentDASInfo paymentsInfo)
-        {
-            return paymentsInfo
-                .Payments
-                .GroupBy(
-                p => new LearnerLevelViewPaymentsKey(p.LearnerReferenceNumber, p.ReportingAimFundingLineType), new LLVPaymentRecordKeyEqualityComparer())
-                .ToDictionary(k => k.Key, v => v.ToList());
-        }
-
-        public IDictionary<string, List<AppsMonthlyPaymentDasEarningEventModel>> BuildEarningsInfoDictionary(AppsMonthlyPaymentDasEarningsInfo earningsInfo)
-        {
-            return earningsInfo
-                .Earnings
-                .GroupBy(p => p.LearnerReferenceNumber, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(k => k.Key, v => v.ToList());
-        }
-
-        public IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> BuildAECPriceEpisodeDictionary(List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aECPriceEpisodeInfo)
-        {
-            return aECPriceEpisodeInfo
-                .GroupBy(p => p.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(k => k.Key, v => v.ToList());
-        }
-
-        public IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> BuildAECLearningDeliveryDictionary(List<AECLearningDeliveryPeriodisedValuesInfo> aECLearningDeliveryInfo)
-        {
-            return aECLearningDeliveryInfo
-                .GroupBy(p => p.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
-                .ToDictionary(k => k.Key, v => v.ToList());
         }
 
         public IEnumerable<LearnerLevelViewPaymentsKey> UnionKeys(IEnumerable<LearnerLevelViewPaymentsKey> paymentRecords, IEnumerable<string> priceEpisodeRecords, IEnumerable<string> learningDeliveryRecords)

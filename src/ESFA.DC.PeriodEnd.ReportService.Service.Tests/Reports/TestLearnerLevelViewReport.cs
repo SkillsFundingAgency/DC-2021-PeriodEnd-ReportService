@@ -117,8 +117,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 ilrPeriodEndProviderServiceMock.Object,
                 fm36ProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
-                larsProviderServiceMock.Object,
-                fcsProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
                 valueProvider,
                 learnerLevelViewModelBuilder);

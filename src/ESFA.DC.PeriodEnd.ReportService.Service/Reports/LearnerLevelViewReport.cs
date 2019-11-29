@@ -16,6 +16,10 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
@@ -32,8 +36,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
-        private readonly ILarsProviderService _larsProviderService;
-        private readonly IFCSProviderService _fcsProviderService;
         private readonly ILearnerLevelViewModelBuilder _modelBuilder;
 
         public LearnerLevelViewReport(
@@ -42,8 +44,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IFM36PeriodEndProviderService fm36ProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
-            ILarsProviderService larsProviderService,
-            IFCSProviderService fcsProviderService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             ILearnerLevelViewModelBuilder modelBuilder)
@@ -52,8 +52,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
-            _larsProviderService = larsProviderService;
-            _fcsProviderService = fcsProviderService;
             _modelBuilder = modelBuilder;
         }
 
@@ -67,6 +65,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
+            var internalFileName = GetFilenameForInternalReport(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
             // get the main base DAS payments data
@@ -74,23 +73,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
 
-            // get the DAS Earnings Event data
-            var appsMonthlyPaymentDasEarningsInfo =
-                await _dasPaymentsProviderService.GetEarningsInfoForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn, cancellationToken);
-
             // get the ILR data
             var appsMonthlyPaymentIlrInfo =
                 await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
-
-            // Get the name's of the learning aims
-            IEnumerable<string> learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)
-                .Select(x => x.LearnAimRef).Distinct().ToList();
-            var appsMonthlyPaymentLarsLearningDeliveryInfos =
-                await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
-                    learnAimRefs.ToArray(),
-                    cancellationToken);
 
             // Get the earning data
             var learnerLevelViewFM36Info = await _fm36ProviderService.GetFM36DataForLearnerLevelView(
@@ -107,16 +93,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     reportServiceContext.Ukprn,
                     cancellationToken);
 
+            var paymentsDictionary = BuildPaymentInfoDictionary(appsMonthlyPaymentDasInfo);
+            var aECPriceEpisodeDictionary = BuildAECPriceEpisodeDictionary(learnerLevelViewFM36Info?.AECApprenticeshipPriceEpisodePeriodisedValues);
+            var aECLearningDeliveryDictionary = BuildAECLearningDeliveryDictionary(learnerLevelViewFM36Info?.AECLearningDeliveryPeriodisedValuesInfo);
+
             // Build the actual Apps Monthly Payment Report
             var learnerLevelViewModel = _modelBuilder.BuildLearnerLevelViewModelList(
                 reportServiceContext.Ukprn,
                 appsMonthlyPaymentIlrInfo,
-                appsMonthlyPaymentDasInfo,
-                appsMonthlyPaymentDasEarningsInfo,
                 appsCoInvestmentIlrInfo,
-                appsMonthlyPaymentLarsLearningDeliveryInfos,
-                learnerLevelViewFM36Info,
                 learnerLevelDatalockInfo,
+                paymentsDictionary,
+                aECPriceEpisodeDictionary,
+                aECLearningDeliveryDictionary,
                 reportServiceContext.ReturnPeriod);
 
             string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
@@ -127,7 +116,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             // Create the json file which will be used by the WebUI to display the summary view
             string summaryJson = CreateSummaryJson(learnerLevelViewModel);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}_Summary.json", summaryJson, cancellationToken);
+            await _streamableKeyValuePersistenceService.SaveAsync($"{internalFileName}_Summary.json", summaryJson, cancellationToken);
+        }
+
+        public IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> BuildPaymentInfoDictionary(AppsMonthlyPaymentDASInfo paymentsInfo)
+        {
+            return paymentsInfo
+                .Payments
+                .GroupBy(
+                p => new LearnerLevelViewPaymentsKey(p.LearnerReferenceNumber, p.ReportingAimFundingLineType), new LLVPaymentRecordKeyEqualityComparer())
+                .ToDictionary(k => k.Key, v => v.ToList());
+        }
+
+        public IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> BuildAECPriceEpisodeDictionary(List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> aECPriceEpisodeInfo)
+        {
+            return aECPriceEpisodeInfo
+                .GroupBy(p => p.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(k => k.Key, v => v.ToList());
+        }
+
+        public IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> BuildAECLearningDeliveryDictionary(List<AECLearningDeliveryPeriodisedValuesInfo> aECLearningDeliveryInfo)
+        {
+            return aECLearningDeliveryInfo
+                .GroupBy(p => p.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(k => k.Key, v => v.ToList());
         }
 
         private string CreateSummaryJson(IReadOnlyList<LearnerLevelViewModel> learnerLevelView)
@@ -139,6 +151,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             }
 
             string jsonReturnValue = string.Empty;
+
+            // Sum the totals ready for the report
 
             return jsonReturnValue;
         }

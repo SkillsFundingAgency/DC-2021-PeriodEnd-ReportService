@@ -14,6 +14,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
@@ -109,7 +110,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
-            var learnerLevelViewModelBuilder = new LearnerLevelViewModelBuilder(logger.Object);
+            LLVPaymentRecordKeyEqualityComparer lLVPaymentRecordKeyEqualityComparer = new LLVPaymentRecordKeyEqualityComparer();
+            LLVPaymentRecordLRefOnlyKeyEqualityComparer lLVPaymentRecordLRefOnlyKeyEqualityComparer = new LLVPaymentRecordLRefOnlyKeyEqualityComparer();
+            var learnerLevelViewModelBuilder = new LearnerLevelViewModelBuilder(logger.Object, lLVPaymentRecordKeyEqualityComparer, lLVPaymentRecordLRefOnlyKeyEqualityComparer);
 
             var report = new LearnerLevelViewReport(
                 logger.Object,

@@ -476,6 +476,10 @@
       <Project>{e7a17bb9-4a5d-4381-802f-2d4f7b881bb0}</Project>
       <Name>ESFA.DC.PeriodEnd.ReportService.InternalReports</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Model\ESFA.DC.PeriodEnd.ReportService.Model.csproj">
+      <Project>{c279bd86-7651-43cf-833e-8437d9158429}</Project>
+      <Name>ESFA.DC.PeriodEnd.ReportService.Model</Name>
+    </ProjectReference>
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Service\ESFA.DC.PeriodEnd.ReportService.Service.csproj">
       <Project>{8DE95CF2-E438-47E9-8522-0AB52A63DB84}</Project>
       <Name>ESFA.DC.PeriodEnd.ReportService.Service</Name>

@@ -3,7 +3,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer
 {
-    public class LLVPaymentRecordLRefOnlyKeyEqualityComparer : IEqualityComparer<LearnerLevelViewPaymentsKey>
+    public class LLVPaymentRecordLRefOnlyKeyEqualityComparer : IEqualityComparer<LearnerLevelViewPaymentsKey>, ILLVPaymentRecordLRefOnlyKeyEqualityComparer
     {
         public bool Equals(LearnerLevelViewPaymentsKey x, LearnerLevelViewPaymentsKey y)
         {

@@ -12,18 +12,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public long? PaymentUniqueLearnerNumber { get; set; }
 
-        public string LearningAimReference { get; set; }
-
-        public DateTime? LearningStartDate { get; set; }
-
-        public int? LearningAimProgrammeType { get; set; }
-
-        public int? LearningAimStandardCode { get; set; }
-
-        public int? LearningAimFrameworkCode { get; set; }
-
-        public int? LearningAimPathwayCode { get; set; }
-
         public string FamilyName { get; set; }
 
         public string GivenNames { get; set; }
@@ -46,12 +34,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public decimal? IssuesAmount { get; set; }
 
-        public int? ReasonForIssues { get; set; }
+        public string ReasonForIssues { get; set; }
 
         public string PaymentFundingLineType { get; set; }
 
         public string RuleDescription { get; set; }
-
-        public byte?[] learningAimSeqNumbers { get; set; }
     }
 }

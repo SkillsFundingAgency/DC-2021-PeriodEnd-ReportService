@@ -4,6 +4,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
     public static class Generics
     {
+        // Prefix for Data lock validation rule name (see data match report code)
+        public const string DLockErrorRuleNamePrefix = "DLOCK_";
+
         public const string EmploymentStatusMonitoringTypeSEM = "SEM";
 
         // LearningDelivery FAM Codes
@@ -142,10 +145,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string Zero = "0";
         public const string NotApplicable = "n/a";
         public const string NotAvailable = "Not available";
-        public static string DateTimeMin = DateTime.MinValue.ToString("dd/MM/yyyy");
 
         // Dates
         public static readonly DateTime BeginningOfYear = new DateTime(2019, 8, 1);
         public static readonly DateTime EndOfYear = new DateTime(2020, 7, 31, 23, 59, 59);
+
+        // Value Provider
+        public static string DateTimeMin = DateTime.MinValue.ToString("dd/MM/yyyy");
     }
 }

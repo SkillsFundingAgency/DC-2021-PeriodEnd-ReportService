@@ -61,12 +61,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             var externalFileName = GetFilename(reportServiceContext);
 
-            List<ProviderSubmissionModel> fileDetails = (await _ilrPeriodEndProviderService
-                .GetFileDetailsLatestSubmittedAsync(cancellationToken)).ToList();
+            List<ProviderSubmissionModel> fileDetails = new List<ProviderSubmissionModel>();
 
             int collectionId = await _jobQueueManagerProviderService.GetCollectionIdAsync(
                 $"{ReportTaskNameConstants.IlrCollectionName}{reportServiceContext.CollectionYear}",
                 cancellationToken);
+
+            var providerReturns = (await _jobQueueManagerProviderService.GetReturnersAndPeriodsAsync(collectionId, reportServiceContext.ReturnPeriod, cancellationToken)).ToList();
+
+            foreach (var providerReturn in providerReturns)
+            {
+                fileDetails.Add(await _ilrPeriodEndProviderService.GetFileDetailsLatestSubmittedAsync(providerReturn.Ukprn, providerReturn.FileName, providerReturn.ReturnPeriod, cancellationToken));
+            }
 
             List<OrganisationCollectionModel> expectedReturners = (await _jobQueueManagerProviderService
                 .GetExpectedReturnersUKPRNsAsync(
@@ -79,8 +85,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                     reportServiceContext.ReturnPeriod,
                     cancellationToken);
 
-            IEnumerable<long> ukPrns = expectedReturners.Select(x => x.Ukprn).Distinct();
-            IEnumerable<OrgModel> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukPrns.ToList(), cancellationToken);
+            var ukPrns = providerReturns.Select(x => x.Ukprn).Union(expectedReturners.Select(x => x.Ukprn)).ToList();
+            var orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukPrns, cancellationToken);
 
             IEnumerable<ProviderSubmissionModel> providerSubmissionsModel = _providerSubmissionsModelBuilder
                 .BuildModel(

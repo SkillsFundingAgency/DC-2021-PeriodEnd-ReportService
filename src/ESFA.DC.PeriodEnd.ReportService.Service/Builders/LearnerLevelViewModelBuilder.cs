@@ -83,22 +83,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     if (paymentsDictionary.TryGetValue(new LearnerLevelViewPaymentsKey(reportRecord.PaymentLearnerReferenceNumber, reportRecord.PaymentFundingLineType), out paymentValues))
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodLevyPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsOneTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTwoTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
-                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodLevyPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsOneTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTwoTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
                         reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
@@ -271,43 +260,91 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         //------------------------------------------------------------------------------------------------------
-        // Levy Payments Type Predicates
+        // Payments Type Predicates
         //------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Returns true if the payment is a Levy payment.
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For funding source 1, 2, 5 and transaction type 1, 2, 3.
         /// </summary>
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        private bool PeriodESFAPlannedPaymentsOneTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                          TotalLevyPaymentsTypePredicate(payment);
+                          TotalESFAPlannedPaymentsOneTypePredicate(payment);
 
             return result;
         }
 
         /// <summary>
-        /// Returns true if the payment is a Levy payment for a range of periods.
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For funding source 1, 2, 5 and transaction type 1, 2, 3.
         /// </summary>
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodLevyPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        private bool PeriodESFAPlannedPaymentsOneTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
         {
             bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalLevyPaymentsTypePredicate(payment);
+                          TotalESFAPlannedPaymentsOneTypePredicate(payment);
 
             return result;
         }
 
-        private bool TotalLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        private bool TotalESFAPlannedPaymentsOneTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
+            // TODO: Get rid of hardcodings to generics class
+            List<byte?> eSFAFundingSources = new List<byte?> { 1, 2, 5 };
+            List<byte?> eSFATransactionTypes = new List<byte?> { 1, 2, 3 };
+
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   _fundingSourceLevyPayments.Contains(payment.FundingSource) &&
-                   _transactionTypesLevyPayments.Contains(payment.TransactionType);
+                   eSFAFundingSources.Contains(payment.FundingSource) &&
+                   eSFATransactionTypes.Contains(payment.TransactionType);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For transaction type 4 -> 16.
+        /// /// </summary>
+        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
+        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
+        /// <returns>true if a Levy payment, otherwise false.</returns>
+        private bool PeriodESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        {
+            bool result = payment.CollectionPeriod <= period &&
+                          TotalESFAPlannedPaymentsTwoTypePredicate(payment);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For transaction type 4 -> 16.
+        /// </summary>
+        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
+        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
+        /// <returns>true if a Levy payment, otherwise false.</returns>
+        private bool PeriodESFAPlannedPaymentsTwoTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        {
+            bool result = payment.CollectionPeriod <= toPeriod &&
+                          TotalESFAPlannedPaymentsTwoTypePredicate(payment);
+
+            return result;
+        }
+
+        private bool TotalESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        {
+            // TODO: Get rid of hardcodings to generics class
+            List<byte?> eSFATransactionTypes = new List<byte?> { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
+                   eSFATransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
@@ -375,167 +412,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _fundingSourceCoInvestmentDueFromEmployer.Contains(payment.FundingSource) &&
-                         _transactionTypesCoInvestmentDueFromEmployer.Contains(payment.TransactionType);
+            // TODO: Get rid of hardcoding to generics class
+            List<byte?> coInvestmentundingSources = new List<byte?> { 3 };
+            List<byte?> coInvestmentTransactionTypes = new List<byte?> { 1, 2, 3 };
 
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Employer Additional Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is an Employer additional payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Employer additional payment, otherwise false.</returns>
-        private bool PeriodEmployerAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalEmployerAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _transactionTypesEmployerAdditionalPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Provider Additional Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is Provider additional payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Provider additional payment, otherwise false.</returns>
-        private bool PeriodProviderAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalProviderAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalProviderAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _transactionTypesProviderAdditionalPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Apprenticeship Additional Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is an Apprenticeship additional payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Apprenticeship additional payment, otherwise false.</returns>
-        private bool PeriodApprenticeAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is an Apprenticeship additional payment for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Apprenticeship additional payment, otherwise false.</returns>
-        private bool PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment)
-        {
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   _transactionTypesApprenticeshipAdditionalPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // English and Maths Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is an English and Maths payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an English and Maths payment.</returns>
-        private bool PeriodEnglishAndMathsPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalEnglishAndMathsPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          !payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _transactionTypesEnglishAndMathsPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Learning Support, Disadvantage and Framework Uplift Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is a Learning Support, Disadvantage and Framework Uplift payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if aLearning Support, Disadvantage and Framework Uplift payments.</returns>
-        private bool PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                   TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                           ((payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                           _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) ||
-                           (!payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) && payment.TransactionType == 15));
+                   coInvestmentundingSources.Contains(payment.FundingSource) &&
+                   coInvestmentTransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
@@ -554,7 +438,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner;
                 if (ldpvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
                 {
-                    if (ldLearner.Where(p => p.LearnDelMathEng == true).Count() > 0)
+                    if (ldLearner.Where(p => p.LearnDelMathEng == true && p.AttributeName == Generics.Fm36PriceEpisodeLSFCashAttributeName).Count() > 0)
                     {
                         return 0;
                     }
@@ -596,7 +480,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             {
                 if (pvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
                 {
-                    if (ldLearner.Where(p => p.LearnDelMathEng == true).Count() == 0)
+                    if (ldLearner.Where(p => p.LearnDelMathEng == true && p.AttributeName == Generics.Fm36LearnSuppFundCashAttributeName).Count() == 0)
                     {
                         return 0;
                     }

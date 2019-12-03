@@ -6,6 +6,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
     {
         public long Ukprn { get; set; }
 
+        public int ReturnPeriod { get; set; }
+
         public string Name { get; set; }
 
         public bool Expected { get; set; }

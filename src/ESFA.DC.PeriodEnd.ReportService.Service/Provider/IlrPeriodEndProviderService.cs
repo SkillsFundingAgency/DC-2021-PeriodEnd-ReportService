@@ -86,6 +86,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public async Task<ProviderSubmissionModel> GetFileDetailsLatestSubmittedAsync(long ukPrn, string fileName, int returnPeriod, CancellationToken cancellationToken)
+        {
+            using (var ilrContext = _ilrContextFactory())
+            {
+                return await ilrContext.FileDetails
+                    .Where(f => f.Filename == fileName)
+                    .Select(x => new ProviderSubmissionModel
+                    {
+                        Ukprn = ukPrn,
+                        ReturnPeriod = returnPeriod,
+                        SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
+                        TotalErrors = x.TotalErrorCount.GetValueOrDefault(),
+                        TotalInvalid = x.TotalInvalidLearnersSubmitted.GetValueOrDefault(),
+                        TotalValid = x.TotalValidLearnersSubmitted.GetValueOrDefault(),
+                        TotalWarnings = x.TotalWarningCount.GetValueOrDefault()
+                    })
+                    .SingleOrDefaultAsync(cancellationToken) ?? new ProviderSubmissionModel
+                    {
+                        Ukprn = ukPrn,
+                        ReturnPeriod = returnPeriod
+                    };
+            }
+        }
+
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn,
             CancellationToken cancellationToken)
         {

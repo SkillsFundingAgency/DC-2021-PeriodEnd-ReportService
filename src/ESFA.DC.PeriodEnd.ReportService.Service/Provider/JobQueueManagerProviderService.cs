@@ -97,7 +97,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 && x.Job.Status == JobQueue.Status.Completed
                                 && x.PeriodNumber <= returnPeriod)
                     .GroupBy(d => d.Job.Ukprn)
-                    .Select(g => g.OrderByDescending(d => d.PeriodNumber).First())
+                    .Select(g => g.OrderByDescending(d => d.Id).First())
                     .Select(s => new ProviderReturnPeriod
                     {
                         Ukprn = s.Job.Ukprn.Value,

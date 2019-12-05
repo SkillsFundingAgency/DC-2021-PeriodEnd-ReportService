@@ -264,7 +264,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     {
                         UKPRN = ukPrn,
                         LearnRefNumber = ld.LearnRefNumber,
-                        AimSeqNumber = (byte?)ld.AimSeqNumber,
+                        AimSeqNumber = (int?)ld.AimSeqNumber,
                         AttributeName = ld.AttributeName,
                         LearnDelMathEng = ld.AEC_LearningDelivery.LearnDelMathEng,
                         Periods = new[]

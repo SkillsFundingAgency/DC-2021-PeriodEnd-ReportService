@@ -134,44 +134,47 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     }
 
                     // Work out total earnings to date
+                    aECLearningDeliveryDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner);
+                    aECPriceEpisodeDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> peLearner);
+
                     reportRecord.TotalEarningsToDate =
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
 
                     // Work out earnings for this period
                     reportRecord.TotalEarningsForPeriod =
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
 
                     // Work out calculated fields
                     // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them
@@ -241,7 +244,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             catch (Exception ex)
             {
                 _logger.LogError("Failed to Build Learner Level View", ex);
-                throw;
+                throw ex;
             }
 
             return learnerLevelViewModelList;
@@ -425,41 +428,42 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         private decimal? CalculatePriceEpisodeEarningsToPeriod(
-                                IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> ldpvdict,
-                                IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> pepvdict,
+                                List<AECLearningDeliveryPeriodisedValuesInfo> ldLearnerRecords,
+                                List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> pelearnerRecords,
                                 bool yearToDate,
                                 int period,
                                 LearnerLevelViewModel learnerLevelViewModel,
                                 string attributeType)
         {
-            // NOTE: Don't return any data if attribute is PriceEpisodeLSFCash and LearnDelMathEng flag is set
-            if (attributeType == Generics.Fm36PriceEpisodeLSFCashAttributeName)
+            // Exit if there are no records to calc
+            if (pelearnerRecords == null)
             {
-                List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner;
-                if (ldpvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
-                {
-                    if (ldLearner.Where(p => p.LearnDelMathEng == true && p.AttributeName == Generics.Fm36PriceEpisodeLSFCashAttributeName).Count() > 0)
-                    {
-                        return 0;
-                    }
-                }
+                return 0;
             }
 
-            // Filter the correct records based on learner info and type of payment/earning
-            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> learnerRecord;
             decimal? sum = 0;
-            if (pepvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out learnerRecord))
+            var peRecords = pelearnerRecords?.Where(pe => pe.AttributeName == attributeType);
+            foreach (var pe in peRecords)
             {
-                foreach (var lr in learnerRecord.Where( p => p.AttributeName == attributeType && p.Periods != null))
+                // Check to see if this is a request for "PriceEpisodeLSFCash" - if it is, check the corresponding LearningDelivery records
+                // (which matches learner ref and aim seq) to see if the LearnDelMathEng flag is set.  If the flag is set don't return a value
+                if ((attributeType == Generics.Fm36PriceEpisodeLSFCashAttributeName) &&
+                    (ldLearnerRecords != null) &&
+                    (ldLearnerRecords.Where(p => p.LearnRefNumber == pe.LearnRefNumber && p.AimSeqNumber == pe.AimSeqNumber && p.LearnDelMathEng == true)?.Count() > 0))
                 {
+                    // Don't calculate as the value comes from Learning Delivery records
+                }
+                else
+                {
+                    // Add the PE value to the sum
                     // NOTE: "i" is an index value created in the linq query
-                    if (yearToDate)
+                    if ((yearToDate == true) && (pe.Periods != null))
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
+                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
                     }
                     else
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
+                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
                     }
                 }
             }
@@ -468,39 +472,39 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         private decimal? CalculateLearningDeliveryEarningsToPeriod(
-                                IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> pvdict,
-                                bool yearToDate,
-                                int period,
-                                LearnerLevelViewModel learnerLevelViewModel,
-                                string attributeType)
+                            List<AECLearningDeliveryPeriodisedValuesInfo> ldLearnerRecords,
+                            bool yearToDate,
+                            int period,
+                            LearnerLevelViewModel learnerLevelViewModel,
+                            string attributeType)
         {
-            // Filter the correct records based on learner info and type of payment/earning
-            List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner = null;
-            if (attributeType == Generics.Fm36LearnSuppFundCashAttributeName)
+            // Exit if there are no records to calc
+            if (ldLearnerRecords == null)
             {
-                if (pvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
-                {
-                    if (ldLearner.Where(p => p.LearnDelMathEng == true && p.AttributeName == Generics.Fm36LearnSuppFundCashAttributeName).Count() == 0)
-                    {
-                        return 0;
-                    }
-                }
+                return 0;
             }
 
-            // Now extract the total value - loop though learners and pull out period data less than or equal to current period
             decimal? sum = 0;
-            if ((ldLearner != null) || pvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
+            var ldRecords = ldLearnerRecords?.Where(pe => pe.AttributeName == attributeType);
+            foreach (var ld in ldRecords)
             {
-                foreach (var lr in ldLearner.Where(p => p.AttributeName == attributeType && p.Periods != null))
+                // Check to see if this is a request for "LearnSuppFundCash" - if it is check to see if the record has LearnDelMathEng flag set.
+                // If it does, we are OK to use this value in the sum (otherwise the corresponding PE value will be used)
+                if ((attributeType == Generics.Fm36LearnSuppFundCashAttributeName) && (ld.LearnDelMathEng != true))
                 {
+                    // Don't calc anything
+                }
+                else
+                {
+                    // Make sure this is the right attrib to be summed
                     // NOTE: "i" is an index value created in the linq query
-                    if (yearToDate)
+                    if ((yearToDate == true) && (ld.Periods != null))
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
+                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
                     }
                     else
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
+                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
                     }
                 }
             }

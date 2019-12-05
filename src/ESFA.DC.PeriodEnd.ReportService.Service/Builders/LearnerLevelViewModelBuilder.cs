@@ -319,7 +319,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <returns>true if a Levy payment, otherwise false.</returns>
         private bool PeriodESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
-            bool result = payment.CollectionPeriod <= period &&
+            bool result = payment.CollectionPeriod == period &&
                           TotalESFAPlannedPaymentsTwoTypePredicate(payment);
 
             return result;

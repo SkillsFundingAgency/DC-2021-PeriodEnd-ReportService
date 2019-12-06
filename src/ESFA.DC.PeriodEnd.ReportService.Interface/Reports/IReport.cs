@@ -12,6 +12,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 
         string GetFilename(IReportServiceContext reportServiceContext);
 
+        string GetSummaryFilename(IReportServiceContext reportServiceContext);
+
         string GetFilenameForInternalReport(IReportServiceContext reportServiceContext);
 
         string GetZipFilename(IReportServiceContext reportServiceContext);

@@ -239,6 +239,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     // Default any null calculated records
                     reportRecord.IssuesAmount = reportRecord.IssuesAmount == null ? 0 : reportRecord.IssuesAmount;
+                    reportRecord.ReasonForIssues = reportRecord.ReasonForIssues == null ? string.Empty : reportRecord.ReasonForIssues;
 
                     return reportRecord;
                 }).ToList();

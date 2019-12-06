@@ -29,9 +29,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 {
     public class LearnerLevelViewReport : AbstractReport
     {
-        public const string ReasonForIssues_CompletionHoldbackPayment = "";
-        public const string ReasonForIssues_Clawback = "";
-        public const string ReasonForIssues_Other = "";
+        public const string ReasonForIssues_CompletionHoldbackPayment = "Completion Holdback";
+        public const string ReasonForIssues_Clawback = "Clawback";
+        public const string ReasonForIssues_Other = "Other Issue";
 
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
@@ -65,7 +65,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
-            var internalFileName = GetFilenameForInternalReport(reportServiceContext);
+            var summaryFileName = GetSummaryFilename(reportServiceContext);
             var fileName = GetZipFilename(reportServiceContext);
 
             // get the main base DAS payments data
@@ -115,8 +115,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             await WriteZipEntry(archive, $"{fileName}.csv", learnerLevelFinancialsRemovedCSV);
 
             // Create the json file which will be used by the WebUI to display the summary view
-            string summaryJson = CreateSummaryJson(learnerLevelViewModel);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{internalFileName}_Summary.json", summaryJson, cancellationToken);
+            string summaryFile = CreateSummaryJson(learnerLevelViewModel, cancellationToken);
+            await _streamableKeyValuePersistenceService.SaveAsync($"{summaryFileName}.csv", summaryFile, cancellationToken);
         }
 
         public IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> BuildPaymentInfoDictionary(AppsMonthlyPaymentDASInfo paymentsInfo)
@@ -142,19 +142,62 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 .ToDictionary(k => k.Key, v => v.ToList());
         }
 
-        private string CreateSummaryJson(IReadOnlyList<LearnerLevelViewModel> learnerLevelView)
+        private string CreateSummaryJson(IReadOnlyList<LearnerLevelViewModel> learnerLevelView, CancellationToken cancellationToken)
         {
+            cancellationToken.ThrowIfCancellationRequested();
+
             // Drop out if there is no data to report on.
             if (learnerLevelView == null)
             {
                 return null;
             }
 
-            string jsonReturnValue = string.Empty;
+            try
+            {
+                // Create the model to be saved to the CSV file.
+                var learnerLevelViewSummaryModels = new List<LearnerLevelViewSummaryModel>();
+                var learnerLevelViewSummary = new LearnerLevelViewSummaryModel()
+                {
+                    Ukprn = learnerLevelView.FirstOrDefault().Ukprn,
+                    NumberofLearners = learnerLevelView.Count(),
+                    TotalCostofClawback = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Sum(r => r.IssuesAmount),
+                    TotalCostOfHBCP = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Sum(r => r.IssuesAmount),
+                    TotalCostofOthers = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Other).Sum(r => r.IssuesAmount),
+                    TotalCostOfDataLocks = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Length > Generics.DLockErrorRuleNamePrefix.Length - 1 && p.ReasonForIssues.Substring(0, Generics.DLockErrorRuleNamePrefix.Length - 1) == Generics.DLockErrorRuleNamePrefix).Sum(r => r.IssuesAmount),
+                    ESFAPlannedPayments = learnerLevelView.Sum(r => r.ESFAPlannedPaymentsThisPeriod),
+                    TotalEarningsForThisPeriod = learnerLevelView.Sum(r => r.TotalEarningsForPeriod),
+                    CoInvestmentPaymentsToCollect = learnerLevelView.Sum(r => r.CoInvestmentPaymentsToCollectThisPeriod)
+                };
 
-            // Sum the totals ready for the report
+                learnerLevelViewSummary.TotalPayments = learnerLevelViewSummary.TotalCostofClawback +
+                                                        learnerLevelViewSummary.TotalCostOfHBCP +
+                                                        learnerLevelViewSummary.TotalCostofOthers +
+                                                        learnerLevelViewSummary.TotalCostOfDataLocks +
+                                                        learnerLevelViewSummary.ESFAPlannedPayments +
+                                                        learnerLevelViewSummary.CoInvestmentPaymentsToCollect;
+                learnerLevelViewSummaryModels.Add(learnerLevelViewSummary);
 
-            return jsonReturnValue;
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    UTF8Encoding utF8Encoding = new UTF8Encoding(false, true);
+                    using (TextWriter textWriter = new StreamWriter(ms, utF8Encoding))
+                    {
+                        using (CsvWriter csvWriter = new CsvWriter(textWriter))
+                        {
+                            WriteCsvRecords<LearnerLevelViewSummaryMapper, LearnerLevelViewSummaryModel>(csvWriter, learnerLevelViewSummaryModels);
+
+                            csvWriter.Flush();
+                            textWriter.Flush();
+                            return Encoding.UTF8.GetString(ms.ToArray());
+                        }
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to Build Summary Json file", ex);
+                return null;
+            }
         }
 
         private async Task<string> GetLearnerLevelViewCsv(IReadOnlyList<LearnerLevelViewModel> learnerLevelViewModel, CancellationToken cancellationToken)

@@ -85,6 +85,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public async Task<IEnumerable<ProviderReturnPeriod>> GetReturnersAndPeriodsAsync(int collectionId, int returnPeriod, CancellationToken cancellationToken)
+        {
+            using (var jobQueueDataContext = _jobQueueDataFactory())
+            {
+                return await jobQueueDataContext.FileUploadJobMetaData
+                    .Include(x => x.Job)
+                    .ThenInclude(x => x.Collection)
+                    .Where(x => x.Job.CollectionId == collectionId
+                                && x.Job.Ukprn.HasValue
+                                && x.Job.Status == JobQueue.Status.Completed
+                                && x.PeriodNumber <= returnPeriod)
+                    .GroupBy(d => d.Job.Ukprn)
+                    .Select(g => g.OrderByDescending(d => d.Id).First())
+                    .Select(s => new ProviderReturnPeriod
+                    {
+                        Ukprn = s.Job.Ukprn.Value,
+                        ReturnPeriod = s.PeriodNumber,
+                        FileName = s.FileName
+                    }).ToListAsync(cancellationToken);
+            }
+        }
+
         public async Task<IEnumerable<CollectionStatsModel>> GetCollectionStatsModels(
             int collectionYear,
             int collectionPeriod,

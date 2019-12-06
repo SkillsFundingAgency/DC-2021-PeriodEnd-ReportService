@@ -33,7 +33,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             {
                 providerSubmissionModel.Expected = expectedReturners.Any(x => x.Ukprn == providerSubmissionModel.Ukprn && x.Expected(period.StartDateTimeUtc, period.EndDateTimeUtc));
                 providerSubmissionModel.Returned = actualReturners.Any(x => x == providerSubmissionModel.Ukprn);
-                GetLatestReturn(providerSubmissionModel, periods, currentPeriod);
+                GetLatestReturn(providerSubmissionModel, currentPeriod);
             }
 
             foreach (var org in expectedReturners)
@@ -66,14 +66,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return models;
         }
 
-        private void GetLatestReturn(ProviderSubmissionModel providerSubmissionModel, IEnumerable<ReturnPeriod> returnPeriods, int collectionPeriod)
+        private void GetLatestReturn(ProviderSubmissionModel providerSubmissionModel, int collectionPeriod)
         {
-            int returnPeriod = returnPeriods
-                                   .SingleOrDefault(x => x.StartDateTimeUtc <= providerSubmissionModel.SubmittedDateTime && x.EndDateTimeUtc >= providerSubmissionModel.SubmittedDateTime)
-                                   ?.PeriodNumber ?? 0;
-
-            providerSubmissionModel.LatestReturn = $"R{returnPeriod.ToString().PadLeft(2, '0')}";
-            providerSubmissionModel.Returned = returnPeriod == collectionPeriod;
+            providerSubmissionModel.LatestReturn = $"R{providerSubmissionModel.ReturnPeriod.ToString().PadLeft(2, '0')}";
+            providerSubmissionModel.Returned = providerSubmissionModel.ReturnPeriod == collectionPeriod;
         }
     }
 }

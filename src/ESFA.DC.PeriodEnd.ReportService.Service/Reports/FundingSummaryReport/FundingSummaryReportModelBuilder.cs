@@ -486,6 +486,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         private string ExtractDisplayDateTimeFromFileName(string ilrFileName)
         {
+            if (string.IsNullOrWhiteSpace(ilrFileName) || ilrFileName.Length < 33)
+            {
+                return string.Empty;
+            }
+
             var ilrFilenameDateTime = ExtractFileName(ilrFileName).Substring(18, 15);
 
             return DateTime.TryParseExact(ilrFilenameDateTime, ilrFileNameDateTimeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseDateTime)
@@ -495,11 +500,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
 
         private string ExtractFileName(string ilrFileName)
         {
-            if (string.IsNullOrEmpty(ilrFileName) || ilrFileName.Length < 33)
-            {
-                return string.Empty;
-            }
-
             var parts = ilrFileName.Split('/');
             var ilrFilename = parts[parts.Length - 1];
 

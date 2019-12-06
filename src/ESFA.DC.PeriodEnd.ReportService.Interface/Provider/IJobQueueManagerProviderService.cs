@@ -23,5 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
             int collectionYear,
             int collectionPeriod,
             CancellationToken cancellationToken);
+
+        Task<IEnumerable<ProviderReturnPeriod>> GetReturnersAndPeriodsAsync(int collectionId, int returnPeriod, CancellationToken cancellationToken);
     }
 }

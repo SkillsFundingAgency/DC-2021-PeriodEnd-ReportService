@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.CollectionsManagement.Models;
+using ESFA.DC.ILR.Constants;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -24,17 +25,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
             _dataPersistConfiguration = dataPersistConfiguration;
         }
 
-        public string Filename => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Filename].ToString();
+        public string Filename => _jobContextMessage.KeyValuePairs[ILRContextKeys.Filename].ToString();
 
-        public int Ukprn => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.UkPrn].ToString());
+        public int Ukprn => int.Parse(_jobContextMessage.KeyValuePairs[ILRContextKeys.Ukprn].ToString());
 
-        public string Container => _jobContextMessage.KeyValuePairs[JobContextMessageKey.Container].ToString();
+        public string Container => _jobContextMessage.KeyValuePairs[ILRContextKeys.Container].ToString();
 
         public IEnumerable<string> Tasks => _jobContextMessage.Topics[_jobContextMessage.TopicPointer].Tasks.SelectMany(x => x.Tasks);
 
-        public int CollectionYear => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.CollectionYear].ToString());
+        public int CollectionYear => int.Parse(_jobContextMessage.KeyValuePairs[ILRContextKeys.CollectionYear].ToString());
 
-        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[JobContextMessageKey.ReturnPeriod].ToString());
+        public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[ILRContextKeys.ReturnPeriod].ToString());
+
+        public string ReturnPeriodName => _jobContextMessage.KeyValuePairs[ILRContextKeys.ReturnPeriodName].ToString();
 
         public long JobId => _jobContextMessage.JobId;
 

@@ -20,6 +20,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface
 
         int ReturnPeriod { get; }
 
+        string ReturnPeriodName { get; }
+
         DateTime SubmissionDateTimeUtc { get; }
 
         string CollectionName { get; }

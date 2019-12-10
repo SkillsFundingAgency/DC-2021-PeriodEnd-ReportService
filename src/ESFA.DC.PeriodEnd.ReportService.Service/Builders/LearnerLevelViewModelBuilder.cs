@@ -83,22 +83,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     if (paymentsDictionary.TryGetValue(new LearnerLevelViewPaymentsKey(reportRecord.PaymentLearnerReferenceNumber, reportRecord.PaymentFundingLineType), out paymentValues))
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodLevyPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                                            paymentValues.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsOneTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTwoTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
-                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodLevyPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                paymentValues.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsOneTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
+                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTwoTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
                         reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
@@ -145,44 +134,54 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     }
 
                     // Work out total earnings to date
+                    aECLearningDeliveryDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner);
+                    aECPriceEpisodeDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> peLearner);
+
                     reportRecord.TotalEarningsToDate =
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
 
                     // Work out earnings for this period
                     reportRecord.TotalEarningsForPeriod =
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
-                        CalculatePriceEpisodeEarningsToPeriod(aECLearningDeliveryDictionary, aECPriceEpisodeDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
-                        CalculateLearningDeliveryEarningsToPeriod(aECLearningDeliveryDictionary, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeCompletionPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeOnProgPaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm3PriceEpisodeBalancePaymentAttributeName) +
+                        CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLSFCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36LearnSuppFundCashAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36MathEngBalPayment) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
+                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+
+                    // Default any null valued records
+                    reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod == null ? 0 : reportRecord.ESFAPlannedPaymentsThisPeriod;
+                    reportRecord.PlannedPaymentsToYouToDate = reportRecord.PlannedPaymentsToYouToDate == null ? 0 : reportRecord.PlannedPaymentsToYouToDate;
+                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
+                    reportRecord.CoInvestmentPaymentsToCollectThisPeriod = reportRecord.CoInvestmentPaymentsToCollectThisPeriod == null ? 0 : reportRecord.CoInvestmentPaymentsToCollectThisPeriod;
+                    reportRecord.TotalCoInvestmentCollectedToDate = reportRecord.TotalCoInvestmentCollectedToDate == null ? 0 : reportRecord.TotalCoInvestmentCollectedToDate;
 
                     // Work out calculated fields
                     // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them
@@ -239,12 +238,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         }
                     }
 
-                    // Default any null valued records
-                    reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod == null ? 0 : reportRecord.ESFAPlannedPaymentsThisPeriod;
-                    reportRecord.PlannedPaymentsToYouToDate = reportRecord.PlannedPaymentsToYouToDate == null ? 0 : reportRecord.PlannedPaymentsToYouToDate;
-                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
-                    reportRecord.CoInvestmentPaymentsToCollectThisPeriod = reportRecord.CoInvestmentPaymentsToCollectThisPeriod == null ? 0 : reportRecord.CoInvestmentPaymentsToCollectThisPeriod;
+                    // Default any null calculated records
                     reportRecord.IssuesAmount = reportRecord.IssuesAmount == null ? 0 : reportRecord.IssuesAmount;
+                    reportRecord.ReasonForIssues = reportRecord.ReasonForIssues == null ? string.Empty : reportRecord.ReasonForIssues;
+                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
 
                     return reportRecord;
                 }).ToList();
@@ -252,7 +249,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             catch (Exception ex)
             {
                 _logger.LogError("Failed to Build Learner Level View", ex);
-                throw;
+                throw ex;
             }
 
             return learnerLevelViewModelList;
@@ -271,43 +268,91 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         //------------------------------------------------------------------------------------------------------
-        // Levy Payments Type Predicates
+        // Payments Type Predicates
         //------------------------------------------------------------------------------------------------------
 
         /// <summary>
-        /// Returns true if the payment is a Levy payment.
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For funding source 1, 2, 5 and transaction type 1, 2, 3.
         /// </summary>
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        private bool PeriodESFAPlannedPaymentsOneTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                          TotalLevyPaymentsTypePredicate(payment);
+                          TotalESFAPlannedPaymentsOneTypePredicate(payment);
 
             return result;
         }
 
         /// <summary>
-        /// Returns true if the payment is a Levy payment for a range of periods.
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For funding source 1, 2, 5 and transaction type 1, 2, 3.
         /// </summary>
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodLevyPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        private bool PeriodESFAPlannedPaymentsOneTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
         {
             bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalLevyPaymentsTypePredicate(payment);
+                          TotalESFAPlannedPaymentsOneTypePredicate(payment);
 
             return result;
         }
 
-        private bool TotalLevyPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        private bool TotalESFAPlannedPaymentsOneTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
+            // TODO: Get rid of hardcodings to generics class
+            List<byte?> eSFAFundingSources = new List<byte?> { 1, 2, 5 };
+            List<byte?> eSFATransactionTypes = new List<byte?> { 1, 2, 3 };
+
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   _fundingSourceLevyPayments.Contains(payment.FundingSource) &&
-                   _transactionTypesLevyPayments.Contains(payment.TransactionType);
+                   eSFAFundingSources.Contains(payment.FundingSource) &&
+                   eSFATransactionTypes.Contains(payment.TransactionType);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For transaction type 4 -> 16.
+        /// /// </summary>
+        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
+        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
+        /// <returns>true if a Levy payment, otherwise false.</returns>
+        private bool PeriodESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        {
+            bool result = payment.CollectionPeriod == period &&
+                          TotalESFAPlannedPaymentsTwoTypePredicate(payment);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For transaction type 4 -> 16.
+        /// </summary>
+        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
+        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
+        /// <returns>true if a Levy payment, otherwise false.</returns>
+        private bool PeriodESFAPlannedPaymentsTwoTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        {
+            bool result = payment.CollectionPeriod <= toPeriod &&
+                          TotalESFAPlannedPaymentsTwoTypePredicate(payment);
+
+            return result;
+        }
+
+        private bool TotalESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        {
+            // TODO: Get rid of hardcodings to generics class
+            List<byte?> eSFATransactionTypes = new List<byte?> { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
+                   eSFATransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
@@ -375,207 +420,55 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _fundingSourceCoInvestmentDueFromEmployer.Contains(payment.FundingSource) &&
-                         _transactionTypesCoInvestmentDueFromEmployer.Contains(payment.TransactionType);
+            // TODO: Get rid of hardcoding to generics class
+            List<byte?> coInvestmentundingSources = new List<byte?> { 3 };
+            List<byte?> coInvestmentTransactionTypes = new List<byte?> { 1, 2, 3 };
 
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Employer Additional Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is an Employer additional payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Employer additional payment, otherwise false.</returns>
-        private bool PeriodEmployerAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalEmployerAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalEmployerAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _transactionTypesEmployerAdditionalPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Provider Additional Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is Provider additional payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Provider additional payment, otherwise false.</returns>
-        private bool PeriodProviderAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalProviderAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalProviderAdditionalPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _transactionTypesProviderAdditionalPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Apprenticeship Additional Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is an Apprenticeship additional payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Apprenticeship additional payment, otherwise false.</returns>
-        private bool PeriodApprenticeAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is an Apprenticeship additional payment for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an Apprenticeship additional payment, otherwise false.</returns>
-        private bool PeriodApprenticeAdditionalPaymentsTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalProviderApprenticeshipAdditionalPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment)
-        {
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   _transactionTypesApprenticeshipAdditionalPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // English and Maths Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is an English and Maths payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if an English and Maths payment.</returns>
-        private bool PeriodEnglishAndMathsPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalEnglishAndMathsPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalEnglishAndMathsPaymentsTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                          !payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                          _transactionTypesEnglishAndMathsPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        //------------------------------------------------------------------------------------------------------
-        // Learning Support, Disadvantage and Framework Uplift Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is a Learning Support, Disadvantage and Framework Uplift payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if aLearning Support, Disadvantage and Framework Uplift payments.</returns>
-        private bool PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                   TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(
-            AppsMonthlyPaymentDasPaymentModel payment)
-        {
-            bool result = payment.AcademicYear == Generics.AcademicYear &&
-                           ((payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                           _transactionTypesLearningSupportPayments.Contains(payment.TransactionType)) ||
-                           (!payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) && payment.TransactionType == 15));
+                   coInvestmentundingSources.Contains(payment.FundingSource) &&
+                   coInvestmentTransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
 
         private decimal? CalculatePriceEpisodeEarningsToPeriod(
-                                IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> ldpvdict,
-                                IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> pepvdict,
+                                List<AECLearningDeliveryPeriodisedValuesInfo> ldLearnerRecords,
+                                List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> pelearnerRecords,
                                 bool yearToDate,
                                 int period,
                                 LearnerLevelViewModel learnerLevelViewModel,
                                 string attributeType)
         {
-            // NOTE: Don't return any data if attribute is PriceEpisodeLSFCash and LearnDelMathEng flag is set
-            if (attributeType == Generics.Fm36PriceEpisodeLSFCashAttributeName)
+            // Exit if there are no records to calc
+            if (pelearnerRecords == null)
             {
-                List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner;
-                if (ldpvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
-                {
-                    if (ldLearner.Where(p => p.LearnDelMathEng == true).Count() > 0)
-                    {
-                        return 0;
-                    }
-                }
+                return 0;
             }
 
-            // Filter the correct records based on learner info and type of payment/earning
-            List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> learnerRecord;
             decimal? sum = 0;
-            if (pepvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out learnerRecord))
+            var peRecords = pelearnerRecords?.Where(pe => pe.AttributeName == attributeType);
+            foreach (var pe in peRecords)
             {
-                foreach (var lr in learnerRecord.Where( p => p.AttributeName == attributeType && p.Periods != null))
+                // Check to see if this is a request for "PriceEpisodeLSFCash" - if it is, check the corresponding LearningDelivery records
+                // (which matches learner ref and aim seq) to see if the LearnDelMathEng flag is set.  If the flag is set don't return a value
+                if ((attributeType == Generics.Fm36PriceEpisodeLSFCashAttributeName) &&
+                    (ldLearnerRecords != null) &&
+                    (ldLearnerRecords.Where(p => p.LearnRefNumber == pe.LearnRefNumber && p.AimSeqNumber == pe.AimSeqNumber && p.LearnDelMathEng == true)?.Count() > 0))
                 {
+                    // Don't calculate as the value comes from Learning Delivery records
+                }
+                else
+                {
+                    // Add the PE value to the sum
                     // NOTE: "i" is an index value created in the linq query
-                    if (yearToDate)
+                    if ((yearToDate == true) && (pe.Periods != null))
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
+                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
                     }
                     else
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
+                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
                     }
                 }
             }
@@ -584,39 +477,39 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         }
 
         private decimal? CalculateLearningDeliveryEarningsToPeriod(
-                                IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> pvdict,
-                                bool yearToDate,
-                                int period,
-                                LearnerLevelViewModel learnerLevelViewModel,
-                                string attributeType)
+                            List<AECLearningDeliveryPeriodisedValuesInfo> ldLearnerRecords,
+                            bool yearToDate,
+                            int period,
+                            LearnerLevelViewModel learnerLevelViewModel,
+                            string attributeType)
         {
-            // Filter the correct records based on learner info and type of payment/earning
-            List<AECLearningDeliveryPeriodisedValuesInfo> ldLearner = null;
-            if (attributeType == Generics.Fm36LearnSuppFundCashAttributeName)
+            // Exit if there are no records to calc
+            if (ldLearnerRecords == null)
             {
-                if (pvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
-                {
-                    if (ldLearner.Where(p => p.LearnDelMathEng == true).Count() == 0)
-                    {
-                        return 0;
-                    }
-                }
+                return 0;
             }
 
-            // Now extract the total value - loop though learners and pull out period data less than or equal to current period
             decimal? sum = 0;
-            if ((ldLearner != null) || pvdict.TryGetValue(learnerLevelViewModel.PaymentLearnerReferenceNumber, out ldLearner))
+            var ldRecords = ldLearnerRecords?.Where(pe => pe.AttributeName == attributeType);
+            foreach (var ld in ldRecords)
             {
-                foreach (var lr in ldLearner.Where(p => p.AttributeName == attributeType && p.Periods != null))
+                // Check to see if this is a request for "LearnSuppFundCash" - if it is check to see if the record has LearnDelMathEng flag set.
+                // If it does, we are OK to use this value in the sum (otherwise the corresponding PE value will be used)
+                if ((attributeType == Generics.Fm36LearnSuppFundCashAttributeName) && (ld.LearnDelMathEng != true))
                 {
+                    // Don't calc anything
+                }
+                else
+                {
+                    // Make sure this is the right attrib to be summed
                     // NOTE: "i" is an index value created in the linq query
-                    if (yearToDate)
+                    if ((yearToDate == true) && (ld.Periods != null))
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
+                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
                     }
                     else
                     {
-                        sum = sum + lr.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
+                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
                     }
                 }
             }

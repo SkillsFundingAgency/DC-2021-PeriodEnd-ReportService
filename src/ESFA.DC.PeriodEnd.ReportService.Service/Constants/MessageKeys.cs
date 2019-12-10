@@ -2,8 +2,6 @@
 {
     public static class MessageKeys
     {
-        public const string ReturnPeriod = "ReturnPeriod";
-
         public const string CollectionName = "CollectionName";
 
         public const string CollectionReturnCodeDC = "CollectionReturnCodeDC";

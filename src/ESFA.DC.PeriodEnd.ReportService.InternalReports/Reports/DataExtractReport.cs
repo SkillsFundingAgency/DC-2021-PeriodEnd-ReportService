@@ -49,9 +49,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         public override async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
+            var collectionName = $"ILR{reportServiceContext.CollectionYear}";
 
             IEnumerable<DataExtractModel> summarisationInfo = (await _summarisationProviderService.GetSummarisedActualsForDataExtractReport(
-                reportServiceContext.CollectionName,
+                collectionName,
                 new[] { reportServiceContext.CollectionReturnCodeApp, reportServiceContext.CollectionReturnCodeDC, reportServiceContext.CollectionReturnCodeESF },
                 cancellationToken)).ToList();
             IEnumerable<string> organisationIds = summarisationInfo?.Select(x => x.OrganisationId).Distinct();

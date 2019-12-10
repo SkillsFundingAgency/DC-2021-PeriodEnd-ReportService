@@ -158,7 +158,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 var learnerLevelViewSummaryModels = new List<LearnerLevelViewSummaryModel>();
                 var learnerLevelViewSummary = new LearnerLevelViewSummaryModel()
                 {
-                    Ukprn = learnerLevelView.FirstOrDefault().Ukprn,
+                    Ukprn = learnerLevelView.FirstOrDefault()?.Ukprn,
                     NumberofLearners = learnerLevelView.Count(),
                     TotalCostofClawback = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Sum(r => r.IssuesAmount),
                     TotalCostOfHBCP = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Sum(r => r.IssuesAmount),
@@ -196,7 +196,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             catch (Exception ex)
             {
                 _logger.LogError("Failed to Build Summary Json file", ex);
-                return null;
+                throw ex;
             }
         }
 

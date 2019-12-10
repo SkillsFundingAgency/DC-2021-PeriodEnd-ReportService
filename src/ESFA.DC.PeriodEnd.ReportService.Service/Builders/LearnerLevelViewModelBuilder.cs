@@ -181,6 +181,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     reportRecord.PlannedPaymentsToYouToDate = reportRecord.PlannedPaymentsToYouToDate == null ? 0 : reportRecord.PlannedPaymentsToYouToDate;
                     reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
                     reportRecord.CoInvestmentPaymentsToCollectThisPeriod = reportRecord.CoInvestmentPaymentsToCollectThisPeriod == null ? 0 : reportRecord.CoInvestmentPaymentsToCollectThisPeriod;
+                    reportRecord.TotalCoInvestmentCollectedToDate = reportRecord.TotalCoInvestmentCollectedToDate == null ? 0 : reportRecord.TotalCoInvestmentCollectedToDate;
 
                     // Work out calculated fields
                     // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them
@@ -240,6 +241,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     // Default any null calculated records
                     reportRecord.IssuesAmount = reportRecord.IssuesAmount == null ? 0 : reportRecord.IssuesAmount;
                     reportRecord.ReasonForIssues = reportRecord.ReasonForIssues == null ? string.Empty : reportRecord.ReasonForIssues;
+                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
 
                     return reportRecord;
                 }).ToList();

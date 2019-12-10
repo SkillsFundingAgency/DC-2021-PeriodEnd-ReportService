@@ -40,6 +40,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             reportServiceContextMock.SetupGet(x => x.SubmissionDateTimeUtc).Returns(DateTime.UtcNow);
             reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(10036143);
             reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(1);
+            reportServiceContextMock.SetupGet(x => x.ReturnPeriodName).Returns("01");
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();

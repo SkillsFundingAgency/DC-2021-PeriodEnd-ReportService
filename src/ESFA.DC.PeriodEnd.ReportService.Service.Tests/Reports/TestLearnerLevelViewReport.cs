@@ -46,6 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             reportServiceContextMock.SetupGet(x => x.SubmissionDateTimeUtc).Returns(DateTime.UtcNow);
             reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(10036143);
             reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(1);
+            reportServiceContextMock.SetupGet(x => x.ReturnPeriodName).Returns("01");
 
             Mock<ILogger> logger = new Mock<ILogger>();
             Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();
@@ -147,11 +148,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].FamilyName.Should().Be("Banner");
             result[0].GivenNames.Should().Be("Bruce");
-            result[0].IssuesAmount.Should().Be(179);
+            result[0].IssuesAmount.Should().Be(226);
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].PaymentFundingLineType.Should().Be("16-18 Apprenticeship Non-Levy Contract (procured)");
-            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(157);
-            result[0].PlannedPaymentsToYouToDate.Should().Be(181);
+            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(206);
+            result[0].PlannedPaymentsToYouToDate.Should().Be(206);
             result[0].TotalCoInvestmentCollectedToDate.Should().Be(100);
             result[0].CoInvestmentOutstandingFromEmplToDate.Should().Be(-74);
         }

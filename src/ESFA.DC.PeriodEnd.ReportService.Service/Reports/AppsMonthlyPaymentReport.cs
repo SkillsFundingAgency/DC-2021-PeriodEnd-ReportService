@@ -78,22 +78,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var appsMonthlyPaymentDasInfo =
                 await _dasPaymentsProviderService.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport appsMonthlyPaymentDasInfo - {appsMonthlyPaymentDasInfo.Payments.Count} ");
 
             // get the DAS Earnings Event data
             var appsMonthlyPaymentDasEarningsInfo =
                 await _dasPaymentsProviderService.GetEarningsInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport appsMonthlyPaymentDasEarningsInfo - {appsMonthlyPaymentDasEarningsInfo.Earnings.Count} ");
 
             // get the ILR data
             var appsMonthlyPaymentIlrInfo =
                 await _ilrPeriodEndProviderService.GetILRInfoForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn, cancellationToken);
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport appsMonthlyPaymentIlrInfo - {appsMonthlyPaymentIlrInfo.Learners.Count} ");
 
             // Get the AEC data
             var appsMonthlyPaymentRulebaseInfo =
                 await _fm36ProviderService.GetRulebaseDataForAppsMonthlyPaymentReportAsync(
                     reportServiceContext.Ukprn,
                     cancellationToken);
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport appsMonthlyPaymentRulebaseInfo.priceEpisodes - {appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList.Count} ");
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport appsMonthlyPaymentRulebaseInfo.learningDeliveries - {appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList.Count} ");
 
             // Get the Fcs Contract data
             var appsMonthlyPaymentFcsInfo =
@@ -108,6 +113,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 await _larsProviderService.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
                     learnAimRefs,
                     cancellationToken);
+            _logger.LogDebug($"Performance-AppsMonthlyPaymentReport data gathering before model - {stopWatch.ElapsedMilliseconds} ms ");
 
             // Build the actual Apps Monthly Payment Report
             var appsMonthlyPaymentsModel = _modelBuilder.BuildAppsMonthlyPaymentModelList(

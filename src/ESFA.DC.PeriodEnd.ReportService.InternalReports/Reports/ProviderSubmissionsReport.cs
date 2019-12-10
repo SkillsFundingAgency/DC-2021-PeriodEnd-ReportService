@@ -71,7 +71,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             foreach (var providerReturn in providerReturns)
             {
-                fileDetails.Add(await _ilrPeriodEndProviderService.GetFileDetailsLatestSubmittedAsync(providerReturn.Ukprn, providerReturn.FileName, providerReturn.ReturnPeriod, cancellationToken));
+                var filename = providerReturn.FileName.Replace(".ZIP", ".XML");
+
+                fileDetails.Add(await _ilrPeriodEndProviderService.GetFileDetailsLatestSubmittedAsync(providerReturn.Ukprn, filename, providerReturn.ReturnPeriod, cancellationToken));
             }
 
             List<OrganisationCollectionModel> expectedReturners = (await _jobQueueManagerProviderService

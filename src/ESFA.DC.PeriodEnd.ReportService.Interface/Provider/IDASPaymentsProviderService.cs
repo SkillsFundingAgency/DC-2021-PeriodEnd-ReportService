@@ -23,5 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<IDictionary<long, string>> GetLegalEntityNameApprenticeshipIdDictionaryAsync(IEnumerable<long?> apprenticeshipIds, CancellationToken cancellationToken);
 
         Task<LearnerLevelViewDASDataLockInfo> GetDASDataLockInfoAsync(int ukPrn, CancellationToken cancellationToken);
+
+        Task<LearnerLevelViewHBCPInfo> GetHBCPInfoAsync(int ukPrn, CancellationToken cancellationToken);
     }
 }

@@ -93,6 +93,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     reportServiceContext.Ukprn,
                     cancellationToken);
 
+            // Get the HBCP information
+            var learnerLevelHBCPInfo = await _dasPaymentsProviderService.GetHBCPInfoAsync(
+                    reportServiceContext.Ukprn,
+                    cancellationToken);
+
             var paymentsDictionary = BuildPaymentInfoDictionary(appsMonthlyPaymentDasInfo);
             var aECPriceEpisodeDictionary = BuildAECPriceEpisodeDictionary(learnerLevelViewFM36Info?.AECApprenticeshipPriceEpisodePeriodisedValues);
             var aECLearningDeliveryDictionary = BuildAECLearningDeliveryDictionary(learnerLevelViewFM36Info?.AECLearningDeliveryPeriodisedValuesInfo);
@@ -103,6 +108,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 appsMonthlyPaymentIlrInfo,
                 appsCoInvestmentIlrInfo,
                 learnerLevelDatalockInfo,
+                learnerLevelHBCPInfo,
                 paymentsDictionary,
                 aECPriceEpisodeDictionary,
                 aECLearningDeliveryDictionary,

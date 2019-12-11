@@ -14,6 +14,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             LearnerLevelViewDASDataLockInfo learnerLevelViewDASDataLockInfo,
+            LearnerLevelViewHBCPInfo learnerLevelHBCPInfo,
             IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> paymentsDictionary,
             IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> aECPriceEpisodeDictionary,
             IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> aECLearningDeliveryDictionary,

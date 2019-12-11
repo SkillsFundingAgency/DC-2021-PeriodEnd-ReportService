@@ -43,5 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public byte? CollectionPeriod { get; set; }
 
         public decimal? Amount { get; set; }
+
+        public byte? NonPaymentReason { get; set; }
     }
 }

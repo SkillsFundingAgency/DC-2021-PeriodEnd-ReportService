@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
 {
@@ -149,6 +150,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         // Dates
         public static readonly DateTime BeginningOfYear = new DateTime(2019, 8, 1);
         public static readonly DateTime EndOfYear = new DateTime(2020, 7, 31, 23, 59, 59);
+
+        // Transaction and funding types for LLV report
+        public static readonly List<byte?> eSFATransactionTypes = new List<byte?> { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
+        public static readonly List<byte?> coInvestmentundingSources = new List<byte?> { 3 };
+        public static readonly List<byte?> coInvestmentTransactionTypes = new List<byte?> { 1, 2, 3 };
 
         // Value Provider
         public static string DateTimeMin = DateTime.MinValue.ToString("dd/MM/yyyy");

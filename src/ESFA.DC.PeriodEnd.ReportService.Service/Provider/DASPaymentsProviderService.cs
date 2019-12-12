@@ -81,6 +81,41 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public async Task<LearnerLevelViewHBCPInfo> GetHBCPInfoAsync(
+            int ukPrn,
+            CancellationToken cancellationToken)
+        {
+            LearnerLevelViewHBCPInfo hbcpInfo = null;
+
+            using (IDASPaymentsContext dasPaymentsContext = _dasPaymentsContextFactory())
+            {
+                hbcpInfo = new LearnerLevelViewHBCPInfo()
+                {
+                    UkPrn = ukPrn,
+                    HBCPModels = new List<LearnerLevelViewHBCPModel>()
+                };
+
+                var hbcpRecords = await dasPaymentsContext.RequiredPaymentEvents
+                    .Where(x => x.Ukprn == ukPrn)
+                    .Select(x => new LearnerLevelViewHBCPModel
+                    {
+                        UkPrn = x.Ukprn,
+                        LearnerReferenceNumber = x.LearnerReferenceNumber,
+                        LearnerUln = x.LearnerUln,
+                        CollectionPeriod = x.CollectionPeriod,
+                        DeliveryPeriod = x.DeliveryPeriod,
+                        LearningAimReference = x.LearningAimReference,
+                        NonPaymentReason = x.NonPaymentReason,
+                    })
+                    .Distinct()
+                    .ToListAsync(cancellationToken);
+
+                hbcpInfo.HBCPModels.AddRange(hbcpRecords);
+            }
+
+            return hbcpInfo;
+        }
+
         public async Task<LearnerLevelViewDASDataLockInfo> GetDASDataLockInfoAsync(
             int ukPrn,
             CancellationToken cancellationToken)
@@ -156,7 +191,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             ContractType = payment.ContractType,
                             DeliveryPeriod = payment.DeliveryPeriod,
                             EarningEventId = payment.EarningEventId,
-                            Amount = payment.Amount
+                            Amount = payment.Amount,
+                            NonPaymentReason = payment.NonPaymentReason
                         })
                         .ToListAsync(cancellationToken);
                 }

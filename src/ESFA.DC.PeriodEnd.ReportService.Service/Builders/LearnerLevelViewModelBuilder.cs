@@ -50,6 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             LearnerLevelViewDASDataLockInfo learnerLevelViewDASDataLockInfo,
+            LearnerLevelViewHBCPInfo learnerLevelHBCPInfo,
             IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> paymentsDictionary,
             IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> aECPriceEpisodeDictionary,
             IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> aECLearningDeliveryDictionary,
@@ -200,7 +201,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         reportRecord.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_Other;
                     }
 
-                    // TODO: Work out issues (HBCP)
+                    // Work out issues (HBCP)
+                    if ((learnerLevelHBCPInfo != null) &&
+                        learnerLevelHBCPInfo.HBCPModels.Any(p => p.UkPrn == ukprn && p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.NonPaymentReason == 0))
+                    {
+                        reportRecord.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_CompletionHoldbackPayment;
+                    }
 
                     // Work out reason for issues (Clawback)
                     if (reportRecord.ESFAPlannedPaymentsThisPeriod < 0)
@@ -347,12 +353,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            // TODO: Get rid of hardcodings to generics class
-            List<byte?> eSFATransactionTypes = new List<byte?> { 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16 };
-
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   eSFATransactionTypes.Contains(payment.TransactionType);
+                   Generics.eSFATransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
@@ -420,14 +423,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            // TODO: Get rid of hardcoding to generics class
-            List<byte?> coInvestmentundingSources = new List<byte?> { 3 };
-            List<byte?> coInvestmentTransactionTypes = new List<byte?> { 1, 2, 3 };
-
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   coInvestmentundingSources.Contains(payment.FundingSource) &&
-                   coInvestmentTransactionTypes.Contains(payment.TransactionType);
+                   Generics.coInvestmentundingSources.Contains(payment.FundingSource) &&
+                   Generics.coInvestmentTransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
@@ -464,11 +463,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     // NOTE: "i" is an index value created in the linq query
                     if ((yearToDate == true) && (pe.Periods != null))
                     {
-                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
+                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period - 1).Sum(o => o.pv);
                     }
                     else
                     {
-                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
+                        sum = sum + pe.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period - 1).Sum(o => o.pv);
                     }
                 }
             }
@@ -505,11 +504,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     // NOTE: "i" is an index value created in the linq query
                     if ((yearToDate == true) && (ld.Periods != null))
                     {
-                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period).Sum(o => o.pv);
+                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i <= period - 1).Sum(o => o.pv);
                     }
                     else
                     {
-                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period).Sum(o => o.pv);
+                        sum = sum + ld.Periods.Select((pv, i) => new { i, pv }).Where(a => a.i == period - 1).Sum(o => o.pv);
                     }
                 }
             }

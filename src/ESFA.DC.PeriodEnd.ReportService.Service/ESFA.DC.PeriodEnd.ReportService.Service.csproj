@@ -25,7 +25,7 @@
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.8.0" />
     <PackageReference Include="Autofac" Version="4.9.2" />
-    <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.102" />
+    <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.114" />
     <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
     <PackageReference Include="ESFA.DC.EAS1920.EF" Version="0.0.93" />

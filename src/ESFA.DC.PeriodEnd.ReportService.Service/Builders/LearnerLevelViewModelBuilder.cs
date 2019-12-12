@@ -202,7 +202,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     }
 
                     // Work out issues (HBCP)
-                    if (learnerLevelHBCPInfo.HBCPModels.Where(p => p.UkPrn == ukprn && p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.NonPaymentReason == 0).Count() > 0)
+                    if ((learnerLevelHBCPInfo != null) &&
+                        (learnerLevelHBCPInfo.HBCPModels.Where(p => p.UkPrn == ukprn && p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.NonPaymentReason == 0).Count() > 0))
                     {
                         reportRecord.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_CompletionHoldbackPayment;
                     }

@@ -121,7 +121,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             await WriteZipEntry(archive, $"{fileName}.csv", learnerLevelFinancialsRemovedCSV);
 
             // Create the json file which will be used by the WebUI to display the summary view
-            string summaryFile = CreateSummaryJson(learnerLevelViewModel, cancellationToken);
+            string summaryFile = CreateSummary(learnerLevelViewModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{summaryFileName}.csv", summaryFile, cancellationToken);
         }
 
@@ -148,7 +148,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 .ToDictionary(k => k.Key, v => v.ToList());
         }
 
-        private string CreateSummaryJson(IReadOnlyList<LearnerLevelViewModel> learnerLevelView, CancellationToken cancellationToken)
+        private string CreateSummary(IReadOnlyList<LearnerLevelViewModel> learnerLevelView, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -166,21 +166,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 {
                     Ukprn = learnerLevelView.FirstOrDefault()?.Ukprn,
                     NumberofLearners = learnerLevelView.Count(),
-                    TotalCostofClawback = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Sum(r => r.IssuesAmount),
-                    TotalCostOfHBCP = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Sum(r => r.IssuesAmount),
-                    TotalCostofOthers = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Other).Sum(r => r.IssuesAmount),
-                    TotalCostOfDataLocks = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Length > Generics.DLockErrorRuleNamePrefix.Length - 1 && p.ReasonForIssues.Substring(0, Generics.DLockErrorRuleNamePrefix.Length - 1) == Generics.DLockErrorRuleNamePrefix).Sum(r => r.IssuesAmount),
-                    ESFAPlannedPayments = learnerLevelView.Sum(r => r.ESFAPlannedPaymentsThisPeriod),
+                    TotalCostofClawbackForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Sum(r => r.IssuesAmount),
+                    TotalCostOfHBCPForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Sum(r => r.IssuesAmount),
+                    TotalCostofOthersForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Other).Sum(r => r.IssuesAmount),
+                    TotalCostOfDataLocksForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Length > Generics.DLockErrorRuleNamePrefix.Length - 1 && p.ReasonForIssues.Substring(0, Generics.DLockErrorRuleNamePrefix.Length - 1) == Generics.DLockErrorRuleNamePrefix).Sum(r => r.IssuesAmount),
+                    ESFAPlannedPaymentsForThisPeriod = learnerLevelView.Sum(r => r.ESFAPlannedPaymentsThisPeriod),
                     TotalEarningsForThisPeriod = learnerLevelView.Sum(r => r.TotalEarningsForPeriod),
-                    CoInvestmentPaymentsToCollect = learnerLevelView.Sum(r => r.CoInvestmentPaymentsToCollectThisPeriod)
+                    CoInvestmentPaymentsToCollectForThisPeriod = learnerLevelView.Sum(r => r.CoInvestmentPaymentsToCollectThisPeriod),
+                    TotalCoInvestmentCollectedToDate = learnerLevelView.Sum(r => r.TotalCoInvestmentCollectedToDate),
+                    TotalEarningsToDate = learnerLevelView.Sum(r => r.TotalEarningsToDate),
+                    TotalPaymentsToDate = learnerLevelView.Sum(r => r.PlannedPaymentsToYouToDate)
                 };
 
-                learnerLevelViewSummary.TotalPayments = learnerLevelViewSummary.TotalCostofClawback +
-                                                        learnerLevelViewSummary.TotalCostOfHBCP +
-                                                        learnerLevelViewSummary.TotalCostofOthers +
-                                                        learnerLevelViewSummary.TotalCostOfDataLocks +
-                                                        learnerLevelViewSummary.ESFAPlannedPayments +
-                                                        learnerLevelViewSummary.CoInvestmentPaymentsToCollect;
+                learnerLevelViewSummary.TotalPaymentsForThisPeriod = learnerLevelViewSummary.TotalCostofClawbackForThisPeriod +
+                                                                        learnerLevelViewSummary.TotalCostOfHBCPForThisPeriod +
+                                                                        learnerLevelViewSummary.TotalCostofOthersForThisPeriod +
+                                                                        learnerLevelViewSummary.TotalCostOfDataLocksForThisPeriod +
+                                                                        learnerLevelViewSummary.ESFAPlannedPaymentsForThisPeriod +
+                                                                        learnerLevelViewSummary.CoInvestmentPaymentsToCollectForThisPeriod;
                 learnerLevelViewSummaryModels.Add(learnerLevelViewSummary);
 
                 using (MemoryStream ms = new MemoryStream())

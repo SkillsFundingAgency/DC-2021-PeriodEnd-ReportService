@@ -177,7 +177,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             var result = builder.BuildPaymentInfoDictionary(paymentInfo);
 
+            var key = new AppsCoInvestmentRecordKey("MIXED", null, 0, 0, 0, 0);
+
             result.Should().HaveCount(1);
+
+            result.TryGetValue(key, out var check);
+
+            check.Should().NotBeNull();
+            check.Count.Should().Be(3);
         }
 
         private AppsCoInvestmentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, int aimSeqNumber)

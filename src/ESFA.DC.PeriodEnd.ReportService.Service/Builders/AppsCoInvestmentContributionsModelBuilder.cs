@@ -158,7 +158,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 .Payments
                 .GroupBy(
                 p => new AppsCoInvestmentRecordKey(p.LearnerReferenceNumber, p.LearningStartDate, p.LearningAimProgrammeType, p.LearningAimStandardCode, p.LearningAimFrameworkCode, p.LearningAimPathwayCode), new AppsCoInvestmentRecordKeyEqualityComparer())
-                .ToDictionary(k => k.Key, v => v.ToList());
+                .ToDictionary(k => k.Key, v => v.ToList(), new AppsCoInvestmentRecordKeyEqualityComparer());
         }
 
         public bool IsExcludedRow(AppsCoInvestmentContributionsModel row)

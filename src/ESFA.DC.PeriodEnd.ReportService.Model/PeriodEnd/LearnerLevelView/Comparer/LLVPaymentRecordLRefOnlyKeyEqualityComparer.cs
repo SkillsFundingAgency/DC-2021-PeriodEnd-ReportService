@@ -1,9 +1,6 @@
-﻿using System.Collections.Generic;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView.Comparer
 {
-    public class LLVPaymentRecordLRefOnlyKeyEqualityComparer : IEqualityComparer<LearnerLevelViewPaymentsKey>, ILLVPaymentRecordLRefOnlyKeyEqualityComparer
+    public class LLVPaymentRecordLRefOnlyKeyEqualityComparer : ILLVPaymentRecordLRefOnlyKeyEqualityComparer
     {
         public bool Equals(LearnerLevelViewPaymentsKey x, LearnerLevelViewPaymentsKey y)
         {

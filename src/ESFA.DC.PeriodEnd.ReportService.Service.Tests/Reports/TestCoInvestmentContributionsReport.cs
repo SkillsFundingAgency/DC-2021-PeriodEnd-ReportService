@@ -12,6 +12,7 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
@@ -70,7 +71,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
-            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(logger.Object);
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(new AppsCoInvestmentRecordKeyEqualityComparer(), logger.Object);
 
             var report = new AppsCoInvestmentContributionsReport(
                 logger.Object,
@@ -121,7 +122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             };
 
             Mock<ILogger> logger = new Mock<ILogger>();
-            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(logger.Object);
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(new AppsCoInvestmentRecordKeyEqualityComparer(), logger.Object);
 
             var result = appsCoInvestmentContributionsModelBuilder.UnionKeys(learnRefNumbers, ilrKeys, appsKeys);
 
@@ -136,7 +137,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             learnerDictionary.Add("LearnRef2", new LearnerInfo() { LearnRefNumber = "LearnRef2" });
             learnerDictionary.Add("LEARNREF3", new LearnerInfo() { LearnRefNumber = "LEARNREF3" });
 
-            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(null);
+            var appsCoInvestmentContributionsModelBuilder = new AppsCoInvestmentContributionsModelBuilder(new AppsCoInvestmentRecordKeyEqualityComparer(), null);
 
             var result = appsCoInvestmentContributionsModelBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey() { LearnerReferenceNumber = "LeaRnrEf1" });
 
@@ -173,11 +174,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 }
             };
 
-            var builder = new AppsCoInvestmentContributionsModelBuilder(null);
+            var builder = new AppsCoInvestmentContributionsModelBuilder(new AppsCoInvestmentRecordKeyEqualityComparer(), null);
 
             var result = builder.BuildPaymentInfoDictionary(paymentInfo);
 
+            var key = new AppsCoInvestmentRecordKey("MIXED", null, 0, 0, 0, 0);
+
             result.Should().HaveCount(1);
+
+            result.TryGetValue(key, out var check);
+
+            check.Should().NotBeNull();
+            check.Count.Should().Be(3);
         }
 
         private AppsCoInvestmentILRInfo BuildILRModel(int ukPrn, string ilrLearnRefNumber, string ilrLearnAimRef, int aimSeqNumber)

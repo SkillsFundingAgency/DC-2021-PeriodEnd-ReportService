@@ -26,9 +26,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
         private readonly ILogger _logger;
+        private readonly IEqualityComparer<AppsCoInvestmentRecordKey> _appsCoInvestmentEqualityComparer;
 
-        public AppsCoInvestmentContributionsModelBuilder(ILogger logger)
+        public AppsCoInvestmentContributionsModelBuilder(IEqualityComparer<AppsCoInvestmentRecordKey> appsCoInvestmentEqualityComparer, ILogger logger)
         {
+            _appsCoInvestmentEqualityComparer = appsCoInvestmentEqualityComparer;
             _logger = logger;
         }
 
@@ -157,8 +159,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return paymentsInfo
                 .Payments
                 .GroupBy(
-                p => new AppsCoInvestmentRecordKey(p.LearnerReferenceNumber, p.LearningStartDate, p.LearningAimProgrammeType, p.LearningAimStandardCode, p.LearningAimFrameworkCode, p.LearningAimPathwayCode), new AppsCoInvestmentRecordKeyEqualityComparer())
-                .ToDictionary(k => k.Key, v => v.ToList());
+                p => new AppsCoInvestmentRecordKey(p.LearnerReferenceNumber, p.LearningStartDate, p.LearningAimProgrammeType, p.LearningAimStandardCode, p.LearningAimFrameworkCode, p.LearningAimPathwayCode), _appsCoInvestmentEqualityComparer)
+                .ToDictionary(k => k.Key, v => v.ToList(), _appsCoInvestmentEqualityComparer);
         }
 
         public bool IsExcludedRow(AppsCoInvestmentContributionsModel row)
@@ -177,7 +179,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         {
             var relevantLearnRefNumbersHashSet = new HashSet<string>(relevantLearnRefNumbers, StringComparer.OrdinalIgnoreCase);
 
-            var filteredRecordsHashSet = new HashSet<AppsCoInvestmentRecordKey>(ilrRecords.Where(r => relevantLearnRefNumbersHashSet.Contains(r.LearnerReferenceNumber)), new AppsCoInvestmentRecordKeyEqualityComparer());
+            var filteredRecordsHashSet = new HashSet<AppsCoInvestmentRecordKey>(ilrRecords.Where(r => relevantLearnRefNumbersHashSet.Contains(r.LearnerReferenceNumber)), _appsCoInvestmentEqualityComparer);
 
             var filteredPaymentRecords = paymentsRecords.Where(r => relevantLearnRefNumbersHashSet.Contains(r.LearnerReferenceNumber));
 

@@ -9,6 +9,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
@@ -257,9 +258,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public IEnumerable<LearnerLevelViewPaymentsKey> UnionKeys(IEnumerable<LearnerLevelViewPaymentsKey> paymentRecords, IEnumerable<string> priceEpisodeRecords, IEnumerable<string> learningDeliveryRecords)
         {
-            var filteredPaymentRecordsHashSet = new HashSet<LearnerLevelViewPaymentsKey>(paymentRecords.Select(r => new LearnerLevelViewPaymentsKey(r.LearnerReferenceNumber, r.PaymentFundingLineType)), (IEqualityComparer<LearnerLevelViewPaymentsKey>)_lLVPaymentRecordKeyEqualityComparer);
-            var filteredPriceEpisodeRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(priceEpisodeRecords.Select(r => new LearnerLevelViewPaymentsKey(r.ToString(), string.Empty)), (IEqualityComparer<LearnerLevelViewPaymentsKey>)_lLVPaymentRecordLRefOnlyKeyEqualityComparer);
-            var filteredLearningDeliveryRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(learningDeliveryRecords.Select(r => new LearnerLevelViewPaymentsKey(r.ToString(), string.Empty)), (IEqualityComparer<LearnerLevelViewPaymentsKey>)_lLVPaymentRecordLRefOnlyKeyEqualityComparer);
+            var filteredPaymentRecordsHashSet = new HashSet<LearnerLevelViewPaymentsKey>(paymentRecords.Select(r => new LearnerLevelViewPaymentsKey(r.LearnerReferenceNumber, r.PaymentFundingLineType)), _lLVPaymentRecordKeyEqualityComparer);
+            var filteredPriceEpisodeRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(priceEpisodeRecords.Select(r => new LearnerLevelViewPaymentsKey(r.ToString(), string.Empty)), _lLVPaymentRecordLRefOnlyKeyEqualityComparer);
+            var filteredLearningDeliveryRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(learningDeliveryRecords.Select(r => new LearnerLevelViewPaymentsKey(r.ToString(), string.Empty)), _lLVPaymentRecordLRefOnlyKeyEqualityComparer);
 
             filteredPaymentRecordsHashSet.UnionWith(filteredPriceEpisodeRecordHashset);
             filteredPaymentRecordsHashSet.UnionWith(filteredLearningDeliveryRecordHashset);

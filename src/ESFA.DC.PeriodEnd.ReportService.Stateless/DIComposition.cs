@@ -41,6 +41,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
@@ -444,6 +445,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<LLVPaymentRecordKeyEqualityComparer>().As<ILLVPaymentRecordKeyEqualityComparer>().InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<LLVPaymentRecordLRefOnlyKeyEqualityComparer>().As<ILLVPaymentRecordLRefOnlyKeyEqualityComparer>().InstancePerLifetimeScope();
+
+            containerBuilder.RegisterType<AppsCoInvestmentRecordKeyEqualityComparer>().As<IEqualityComparer<AppsCoInvestmentRecordKey>>().InstancePerLifetimeScope();
         }
 
         private static void RegisterFundingSummaryReport(ContainerBuilder containerBuilder)

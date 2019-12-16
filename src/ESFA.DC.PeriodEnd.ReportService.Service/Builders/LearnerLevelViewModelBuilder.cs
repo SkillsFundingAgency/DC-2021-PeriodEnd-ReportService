@@ -84,13 +84,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     if (paymentsDictionary.TryGetValue(new LearnerLevelViewPaymentsKey(reportRecord.PaymentLearnerReferenceNumber, reportRecord.PaymentFundingLineType), out paymentValues))
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
-                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTTTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsNonZPTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicate(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsTTTypePredicate(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsNonZPTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
                         reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 

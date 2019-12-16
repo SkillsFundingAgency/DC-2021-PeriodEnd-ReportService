@@ -85,16 +85,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     if (paymentsDictionary.TryGetValue(new LearnerLevelViewPaymentsKey(reportRecord.PaymentLearnerReferenceNumber, reportRecord.PaymentFundingLineType), out paymentValues))
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsOneTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTwoTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
-                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsOneTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m) +
-                                                    paymentValues.Where(p => PeriodESFAPlannedPaymentsTwoTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicate(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsTTTypePredicate(p, _appsReturnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsNonZPTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
                         reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
 
                         // NOTE: Additional earigns calc required for this field
                         reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount ?? 0m);
+
+                        // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
+                        reportRecord.PaymentUniqueLearnerNumber = paymentValues.FirstOrDefault()?.LearnerUln;
                     }
 
                     // Extract ILR info
@@ -187,9 +192,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     // Work out calculated fields
                     // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them
-                    reportRecord.IssuesAmount = (reportRecord.TotalEarningsForPeriod
-                                                - reportRecord.ESFAPlannedPaymentsThisPeriod
-                                                - reportRecord.CoInvestmentPaymentsToCollectThisPeriod) * -1;
+                    // Following BR2 - if payments are => earnings, issues amount should be zero
+                    if ((reportRecord.ESFAPlannedPaymentsThisPeriod + reportRecord.CoInvestmentPaymentsToCollectThisPeriod) >= reportRecord.TotalEarningsForPeriod)
+                    {
+                        reportRecord.IssuesAmount = 0;
+                    }
+                    else
+                    {
+                        reportRecord.IssuesAmount = (reportRecord.TotalEarningsForPeriod
+                                                    - reportRecord.ESFAPlannedPaymentsThisPeriod
+                                                    - reportRecord.CoInvestmentPaymentsToCollectThisPeriod) * -1;
+                    }
 
                     // Work out what is remaining from employer by subtracting what they a have paid so far from their calculated payments.
                     reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate - reportRecord.TotalCoInvestmentCollectedToDate;
@@ -285,10 +298,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsOneTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        private bool PeriodESFAPlannedPaymentsFSTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                          TotalESFAPlannedPaymentsOneTypePredicate(payment);
+                          TotalESFAPlannedPaymentFSTypePredicate(payment);
 
             return result;
         }
@@ -300,24 +313,59 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsOneTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        private bool PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
         {
             bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalESFAPlannedPaymentsOneTypePredicate(payment);
+                          TotalESFAPlannedPaymentFSTypePredicate(payment);
 
             return result;
         }
 
-        private bool TotalESFAPlannedPaymentsOneTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        private bool TotalESFAPlannedPaymentFSTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
-            // TODO: Get rid of hardcodings to generics class
-            List<byte?> eSFAFundingSources = new List<byte?> { 1, 2, 5 };
-            List<byte?> eSFATransactionTypes = new List<byte?> { 1, 2, 3 };
-
             bool result = payment.AcademicYear == Generics.AcademicYear &&
                    payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   eSFAFundingSources.Contains(payment.FundingSource) &&
-                   eSFATransactionTypes.Contains(payment.TransactionType);
+                   Generics.eSFAFundingSources.Contains(payment.FundingSource) &&
+                   Generics.eSFAFSTransactionTypes.Contains(payment.TransactionType);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For transaction type 4 -> 16. (With the exception of maths and english types - 13 and 14)
+        /// /// </summary>
+        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
+        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
+        /// <returns>true if a Levy payment, otherwise false.</returns>
+        private bool PeriodESFAPlannedPaymentsTTTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        {
+            bool result = payment.CollectionPeriod == period &&
+                          TotalESFAPlannedPaymentsTTTypePredicate(payment);
+
+            return result;
+        }
+
+        /// <summary>
+        /// Returns true if the payment is an ESFA planned payment for a range of periods.
+        /// For transaction type 4 -> 16. (With the exception of maths and english types - 13 and 14)
+        /// </summary>
+        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
+        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
+        /// <returns>true if a Levy payment, otherwise false.</returns>
+        private bool PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        {
+            bool result = payment.CollectionPeriod <= toPeriod &&
+                          TotalESFAPlannedPaymentsTTTypePredicate(payment);
+
+            return result;
+        }
+
+        private bool TotalESFAPlannedPaymentsTTTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        {
+            bool result = payment.AcademicYear == Generics.AcademicYear &&
+                   payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
+                   Generics.eSFATransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
@@ -329,10 +377,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
+        private bool PeriodESFAPlannedPaymentsNonZPTypePredicate(AppsMonthlyPaymentDasPaymentModel payment, int period)
         {
             bool result = payment.CollectionPeriod == period &&
-                          TotalESFAPlannedPaymentsTwoTypePredicate(payment);
+                          TotalESFAPlannedPaymentsNonZPTypePredicate(payment);
 
             return result;
         }
@@ -344,19 +392,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
         /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
         /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsTwoTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
+        private bool PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(AppsMonthlyPaymentDasPaymentModel payment, int toPeriod)
         {
             bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalESFAPlannedPaymentsTwoTypePredicate(payment);
+                          TotalESFAPlannedPaymentsNonZPTypePredicate(payment);
 
             return result;
         }
 
-        private bool TotalESFAPlannedPaymentsTwoTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
+        private bool TotalESFAPlannedPaymentsNonZPTypePredicate(AppsMonthlyPaymentDasPaymentModel payment)
         {
             bool result = payment.AcademicYear == Generics.AcademicYear &&
-                   payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
-                   Generics.eSFATransactionTypes.Contains(payment.TransactionType);
+                   !payment.LearningAimReference.CaseInsensitiveEquals(Generics.ZPROG001) &&
+                   Generics.eSFANONZPTransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }

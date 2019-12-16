@@ -170,7 +170,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     TotalCostofClawbackForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Sum(r => r.IssuesAmount),
                     TotalCostOfHBCPForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Sum(r => r.IssuesAmount),
                     TotalCostofOthersForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Other).Sum(r => r.IssuesAmount),
-                    TotalCostOfDataLocksForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Length > Generics.DLockErrorRuleNamePrefix.Length - 1 && p.ReasonForIssues.Substring(0, Generics.DLockErrorRuleNamePrefix.Length - 1) == Generics.DLockErrorRuleNamePrefix).Sum(r => r.IssuesAmount),
+                    TotalCostOfDataLocksForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Contains(Generics.DLockErrorRuleNamePrefix)).Sum(r => r.IssuesAmount),
                     ESFAPlannedPaymentsForThisPeriod = learnerLevelView.Sum(r => r.ESFAPlannedPaymentsThisPeriod),
                     TotalEarningsForThisPeriod = learnerLevelView.Sum(r => r.TotalEarningsForPeriod),
                     CoInvestmentPaymentsToCollectForThisPeriod = learnerLevelView.Sum(r => r.CoInvestmentPaymentsToCollectThisPeriod),

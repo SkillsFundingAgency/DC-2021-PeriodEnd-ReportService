@@ -149,11 +149,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].FamilyName.Should().Be("Banner");
             result[0].GivenNames.Should().Be("Bruce");
-            result[0].IssuesAmount.Should().Be(229);
+            result[0].IssuesAmount.Should().Be(0);
             result[0].LearnerEmploymentStatusEmployerId.Should().Be(56789);
             result[0].PaymentFundingLineType.Should().Be("16-18 Apprenticeship Non-Levy Contract (procured)");
-            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(206);
-            result[0].PlannedPaymentsToYouToDate.Should().Be(206);
+            result[0].ESFAPlannedPaymentsThisPeriod.Should().Be(155);
+            result[0].PlannedPaymentsToYouToDate.Should().Be(155);
             result[0].TotalCoInvestmentCollectedToDate.Should().Be(100);
             result[0].CoInvestmentOutstandingFromEmplToDate.Should().Be(-74);
         }

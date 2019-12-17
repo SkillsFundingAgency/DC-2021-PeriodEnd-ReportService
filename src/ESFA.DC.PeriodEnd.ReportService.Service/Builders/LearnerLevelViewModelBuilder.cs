@@ -184,9 +184,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
 
                     // Get any missing funding line types from earnings
-                    if ((reportRecord.PaymentFundingLineType == null || reportRecord.PaymentFundingLineType == string.Empty) && learnerLevelDAsInfo != null && learnerLevelDAsInfo.AECPriceEpisodeFLTsInfo != null)
+                    if (string.IsNullOrEmpty(reportRecord.PaymentFundingLineType) && learnerLevelDAsInfo != null && learnerLevelDAsInfo.AECPriceEpisodeFLTsInfo != null)
                     {
-                        reportRecord.PaymentFundingLineType = learnerLevelDAsInfo.AECPriceEpisodeFLTsInfo.FirstOrDefault( p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber)?.PaymentFundingLineType;
+                        reportRecord.PaymentFundingLineType = learnerLevelDAsInfo.AECPriceEpisodeFLTsInfo.FirstOrDefault(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber)?.PaymentFundingLineType;
                     }
 
                     // Default any null valued records

@@ -100,9 +100,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             CancellationToken cancellationToken)
         {
             AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo = null;
-            try
-            {
-                appsMonthlyPaymentRulebaseInfo = new AppsMonthlyPaymentRulebaseInfo()
+
+            appsMonthlyPaymentRulebaseInfo = new AppsMonthlyPaymentRulebaseInfo()
                 {
                     UkPrn = ukPrn,
                     AecApprenticeshipPriceEpisodeInfoList =
@@ -110,41 +109,35 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     AecLearningDeliveryInfoList = new List<AppsMonthlyPaymentAECLearningDeliveryInfo>()
                 };
 
-                cancellationToken.ThrowIfCancellationRequested();
+            cancellationToken.ThrowIfCancellationRequested();
 
-                using (var ilrContext = _ilrRulebaseContextFactory())
-                {
-                    appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList =
-                        await ilrContext?.AEC_ApprenticeshipPriceEpisodes
-                            .Where(x => x.UKPRN == ukPrn)
-                            .Select(ape => new AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo
-                            {
-                                Ukprn = ape.UKPRN,
-                                LearnRefNumber = ape.LearnRefNumber,
-                                PriceEpisodeIdentifier = ape.PriceEpisodeIdentifier,
-                                AimSequenceNumber = (byte?)ape.PriceEpisodeAimSeqNumber,
-                                EpisodeStartDate = ape.EpisodeStartDate,
-                                PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
-                                PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
-                                PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
-                            }).ToListAsync(cancellationToken);
-
-                    appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList = await ilrContext.AEC_LearningDeliveries
-                        .Where(x => x.UKPRN == ukPrn)
-                        .Select(ald => new AppsMonthlyPaymentAECLearningDeliveryInfo
-                        {
-                            Ukprn = ald.UKPRN,
-                            LearnRefNumber = ald.LearnRefNumber,
-                            AimSequenceNumber = (byte?)ald.AimSeqNumber,
-                            LearnAimRef = ald.LearnAimRef,
-                            PlannedNumOnProgInstalm = ald.PlannedNumOnProgInstalm,
-                        }).ToListAsync(cancellationToken);
-                }
-            }
-            catch (Exception e)
+            using (var ilrContext = _ilrRulebaseContextFactory())
             {
-                _logger.LogError("Failed to get Rulebase data", e);
-                throw;
+                appsMonthlyPaymentRulebaseInfo.AecApprenticeshipPriceEpisodeInfoList =
+                    await ilrContext?.AEC_ApprenticeshipPriceEpisodes
+                        .Where(x => x.UKPRN == ukPrn)
+                        .Select(ape => new AppsMonthlyPaymentAECApprenticeshipPriceEpisodeInfo
+                        {
+                            Ukprn = ape.UKPRN,
+                            LearnRefNumber = ape.LearnRefNumber,
+                            PriceEpisodeIdentifier = ape.PriceEpisodeIdentifier,
+                            AimSequenceNumber = (byte?)ape.PriceEpisodeAimSeqNumber,
+                            EpisodeStartDate = ape.EpisodeStartDate,
+                            PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
+                            PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
+                            PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
+                        }).ToListAsync(cancellationToken);
+
+                appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList = await ilrContext.AEC_LearningDeliveries
+                    .Where(x => x.UKPRN == ukPrn)
+                    .Select(ald => new AppsMonthlyPaymentAECLearningDeliveryInfo
+                    {
+                        Ukprn = ald.UKPRN,
+                        LearnRefNumber = ald.LearnRefNumber,
+                        AimSequenceNumber = (byte?)ald.AimSeqNumber,
+                        LearnAimRef = ald.LearnAimRef,
+                        PlannedNumOnProgInstalm = ald.PlannedNumOnProgInstalm,
+                    }).ToListAsync(cancellationToken);
             }
 
             return appsMonthlyPaymentRulebaseInfo;

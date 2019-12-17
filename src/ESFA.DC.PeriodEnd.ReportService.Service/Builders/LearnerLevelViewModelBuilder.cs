@@ -52,6 +52,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsCoInvestmentILRInfo appsCoInvestmentIlrInfo,
             LearnerLevelViewDASDataLockInfo learnerLevelViewDASDataLockInfo,
             LearnerLevelViewHBCPInfo learnerLevelHBCPInfo,
+            LearnerLevelViewFM36Info learnerLevelDAsInfo,
             IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> paymentsDictionary,
             IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> aECPriceEpisodeDictionary,
             IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> aECLearningDeliveryDictionary,
@@ -182,6 +183,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName) +
                         CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName) +
                         CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord, Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName);
+
+                    // Get any missing funding line types from earnings
+                    if (string.IsNullOrEmpty(reportRecord.PaymentFundingLineType) && learnerLevelDAsInfo != null && learnerLevelDAsInfo.AECPriceEpisodeFLTsInfo != null)
+                    {
+                        reportRecord.PaymentFundingLineType = learnerLevelDAsInfo.AECPriceEpisodeFLTsInfo.FirstOrDefault(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber)?.PaymentFundingLineType;
+                    }
 
                     // Default any null valued records
                     reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod == null ? 0 : reportRecord.ESFAPlannedPaymentsThisPeriod;

@@ -13,5 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView
         public List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> AECApprenticeshipPriceEpisodePeriodisedValues { get; set; }
 
         public List<AECLearningDeliveryPeriodisedValuesInfo> AECLearningDeliveryPeriodisedValuesInfo { get; set; }
+
+        public List<LearnerLevelViewEarningsFLT> AECPriceEpisodeFLTsInfo { get; set; }
     }
 }

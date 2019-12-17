@@ -110,6 +110,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 appsCoInvestmentIlrInfo,
                 learnerLevelDatalockInfo,
                 learnerLevelHBCPInfo,
+                learnerLevelViewFM36Info,
                 paymentsDictionary,
                 aECPriceEpisodeDictionary,
                 aECLearningDeliveryDictionary,
@@ -168,9 +169,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     Ukprn = learnerLevelView.FirstOrDefault()?.Ukprn,
                     NumberofLearners = learnerLevelView.Count(),
                     TotalCostofClawbackForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Sum(r => r.IssuesAmount),
+                    NumberofClawbacks = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Clawback).Count(),
                     TotalCostOfHBCPForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Sum(r => r.IssuesAmount),
+                    NumberofHBCP = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_CompletionHoldbackPayment).Count(),
                     TotalCostofOthersForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Other).Sum(r => r.IssuesAmount),
+                    NumberofOthers = learnerLevelView.Where(p => p.ReasonForIssues == ReasonForIssues_Other).Count(),
                     TotalCostOfDataLocksForThisPeriod = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Contains(Generics.DLockErrorRuleNamePrefix)).Sum(r => r.IssuesAmount),
+                    NumberofDatalocks = learnerLevelView.Where(p => p.ReasonForIssues != null && p.ReasonForIssues.Contains(Generics.DLockErrorRuleNamePrefix)).Count(),
                     ESFAPlannedPaymentsForThisPeriod = learnerLevelView.Sum(r => r.ESFAPlannedPaymentsThisPeriod),
                     TotalEarningsForThisPeriod = learnerLevelView.Sum(r => r.TotalEarningsForPeriod),
                     CoInvestmentPaymentsToCollectForThisPeriod = learnerLevelView.Sum(r => r.CoInvestmentPaymentsToCollectThisPeriod),
@@ -235,6 +240,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         {
             cancellationToken.ThrowIfCancellationRequested();
 
+            IEnumerable<LearnerLevelViewModel> issuesOnlyLearners = learnerLevelViewModel.Where(p => p.IssuesAmount < Generics.MinimumIssuesAmount || p.ReasonForIssues != string.Empty);
+
             using (MemoryStream ms = new MemoryStream())
             {
                 UTF8Encoding utF8Encoding = new UTF8Encoding(false, true);
@@ -242,7 +249,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 {
                     using (CsvWriter csvWriter = new CsvWriter(textWriter))
                     {
-                        WriteCsvRecords<LearnerLevelViewFinancialsRemovedMapper, LearnerLevelViewModel>(csvWriter, learnerLevelViewModel);
+                        WriteCsvRecords<LearnerLevelViewFinancialsRemovedMapper, LearnerLevelViewModel>(csvWriter, issuesOnlyLearners);
 
                         csvWriter.Flush();
                         textWriter.Flush();

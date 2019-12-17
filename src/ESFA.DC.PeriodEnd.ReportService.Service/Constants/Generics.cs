@@ -8,6 +8,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         // Prefix for Data lock validation rule name (see data match report code)
         public const string DLockErrorRuleNamePrefix = "DLOCK_";
 
+        // Minimum issues amount value required for learner record to appear in LLV summary report
+        public const decimal MinimumIssuesAmount = -0.01M;
+
         public const string EmploymentStatusMonitoringTypeSEM = "SEM";
 
         // LearningDelivery FAM Codes

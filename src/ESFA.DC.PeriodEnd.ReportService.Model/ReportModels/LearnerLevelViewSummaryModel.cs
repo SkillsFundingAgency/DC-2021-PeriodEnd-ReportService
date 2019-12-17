@@ -10,6 +10,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public int NumberofLearners { get; set; }
 
+        public int NumberofDatalocks { get; set; }
+
+        public int NumberofClawbacks { get; set; }
+
+        public int NumberofHBCP { get; set; }
+
+        public int NumberofOthers { get; set; }
+
         public decimal? TotalEarningsForThisPeriod { get; set; }
 
         public decimal? TotalCostOfDataLocksForThisPeriod { get; set; }

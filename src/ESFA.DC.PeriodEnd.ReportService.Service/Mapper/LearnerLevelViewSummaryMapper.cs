@@ -13,7 +13,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 
             Map(m => m.Ukprn).Index(i++).Name("UKPRN");
             Map(m => m.NumberofLearners).Index(i++).Name("Number of Learners");
-
+            Map(m => m.NumberofDatalocks).Index(i++).Name("Number of Learners with Datalocks");
+            Map(m => m.NumberofClawbacks).Index(i++).Name("Number of Learners with Clawbacks");
+            Map(m => m.NumberofHBCP).Index(i++).Name("Number of Learners with Hold Back Completion Payments");
+            Map(m => m.NumberofOthers).Index(i++).Name("Number of Learners with Other Issues");
             Map(m => m.TotalEarningsForThisPeriod).Index(i++).Name("Total earnings for this period");
             Map(m => m.TotalCostOfDataLocksForThisPeriod).Index(i++).Name("Total cost of datalocks for this period");
             Map(m => m.TotalCostOfHBCPForThisPeriod).Index(i++).Name("Total cost of hold back completion payments for this period");

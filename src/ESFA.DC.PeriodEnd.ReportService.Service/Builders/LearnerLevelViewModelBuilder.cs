@@ -237,6 +237,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     return reportRecord;
                 }).ToList();
+
+                // Remove the zeroed results
+                learnerLevelViewModelList.RemoveAll(p => p.TotalEarningsToDate == 0 && p.PlannedPaymentsToYouToDate == 0 && p.TotalCoInvestmentCollectedToDate == 0
+                                                                       && p.CoInvestmentOutstandingFromEmplToDate == 0 && p.TotalEarningsForPeriod == 0 && p.ESFAPlannedPaymentsThisPeriod == 0
+                                                                       && p.CoInvestmentPaymentsToCollectThisPeriod == 0 && p.IssuesAmount == 0);
             }
             catch (Exception ex)
             {
@@ -472,18 +477,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             decimal? sum = 0;
 
             // Build a list of records we don't need to calculate for
-            var mathEngRecords = ldLearnerRecords.Where(p => p.LearnDelMathEng == true).Select(record =>
-                {
-                    var reportRecord = new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
-                    {
-                        LearnRefNumber = record.LearnRefNumber,
-                        AimSeqNumber = record.AimSeqNumber
-                    };
+            var mathEngRecords = ldLearnerRecords.Where(p => p.LearnDelMathEng == true).Select(record => new AECApprenticeshipPriceEpisodePeriodisedValuesInfo()
+            {
+                LearnRefNumber = record.LearnRefNumber,
+                AimSeqNumber = record.AimSeqNumber
+            });
 
-                    return reportRecord;
-                });
-
-            var peRecords = pelearnerRecords?.Where(pe => peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords);
+            var peRecords = pelearnerRecords?.Where(pe => peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords, new AECApprenticeshipPriceEpisodePeriodisedValuesInfoComparer());
 
             foreach (var pe in peRecords)
             {

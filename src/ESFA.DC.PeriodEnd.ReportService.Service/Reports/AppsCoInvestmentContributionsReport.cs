@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -9,11 +10,13 @@ using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
 using ReportTaskNameConstants = ESFA.DC.PeriodEnd.ReportService.Service.Constants.ReportTaskNameConstants;
@@ -26,6 +29,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
         private readonly IFM36PeriodEndProviderService _fm36PeriodEndProviderService;
         private readonly IAppsCoInvestmentContributionsModelBuilder _modelBuilder;
+        private readonly IPersistReportData _persistReportData;
 
         public AppsCoInvestmentContributionsReport(
             ILogger logger,
@@ -34,13 +38,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
             IDASPaymentsProviderService dasPaymentsProviderService,
             IFM36PeriodEndProviderService fm36PeriodEndProviderService,
-            IAppsCoInvestmentContributionsModelBuilder modelBuilder)
+            IAppsCoInvestmentContributionsModelBuilder modelBuilder,
+            IPersistReportData persistReportData)
         : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
             _fm36PeriodEndProviderService = fm36PeriodEndProviderService;
             _modelBuilder = modelBuilder;
+            _persistReportData = persistReportData;
         }
 
         public override string ReportFileName => "Apps Co-Investment Contributions Report";
@@ -62,11 +68,32 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(apprenticeshipIds, cancellationToken);
 
-            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, paymentsAppsCoInvestmentUniqueKeys, ilrAppsCoInvestmentUniqueKeys, apprenticeshipIdLegalEntityNameDictionary, reportServiceContext.JobId);
+            var appsCoInvestmentContributionsModels = _modelBuilder.BuildModel(appsCoInvestmentIlrInfo, appsCoInvestmentRulebaseInfo, appsCoInvestmentPaymentsInfo, paymentsAppsCoInvestmentUniqueKeys, ilrAppsCoInvestmentUniqueKeys, apprenticeshipIdLegalEntityNameDictionary, reportServiceContext.JobId).ToList();
 
             string csv = await GetCsv(appsCoInvestmentContributionsModels, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
+
+            if (reportServiceContext.DataPersistFeatureEnabled)
+            {
+                Stopwatch stopWatchLog = new Stopwatch();
+                stopWatchLog.Start();
+
+                await _persistReportData.PersistReportDataAsync(
+                    appsCoInvestmentContributionsModels,
+                    reportServiceContext.Ukprn,
+                    reportServiceContext.ReturnPeriod,
+                    TableNameConstants.AppsCoInvestmentContributions,
+                    reportServiceContext.ReportDataConnectionString,
+                    cancellationToken);
+
+                _logger.LogDebug($"Performance-AppsCoInvestmentContributionsReport logging took - {stopWatchLog.ElapsedMilliseconds} ms ");
+                stopWatchLog.Stop();
+            }
+            else
+            {
+                _logger.LogDebug(" Data Persist Feature is disabled.");
+            }
         }
 
         private async Task<string> GetCsv(IEnumerable<AppsCoInvestmentContributionsModel> appsCoInvestmentContributionsModels, CancellationToken cancellationToken)

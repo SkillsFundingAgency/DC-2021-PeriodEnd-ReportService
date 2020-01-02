@@ -1,8 +1,9 @@
 ﻿using System;
+using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
-    public class AppsCoInvestmentContributionsModel
+    public class AppsCoInvestmentContributionsModel : AbstractReportModel
     {
         public string LearnRefNumber { get; set; }
 
@@ -65,8 +66,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
         public decimal CoInvestmentDueFromEmployerForR13 { get; set; }
 
         public decimal CoInvestmentDueFromEmployerForR14 { get; set; }
-
-        public string OfficialSensitive { get; }
 
         public decimal CompletionEarningThisFundingYear { get; set; }
 

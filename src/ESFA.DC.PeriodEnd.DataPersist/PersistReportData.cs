@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.DataPersist
@@ -18,9 +19,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist
             _bulkInsert = bulkInsert;
             _logger = logger;
         }
-        public async Task PersistAppsAdditionalPaymentAsync(List<AppsMonthlyPaymentModel> monthlyPaymentModels,int ukPrn, int returnPeriod, string connectionString, CancellationToken cancellationToken)
+
+        public async Task PersistReportDataAsync<T>(List<T> models, int ukPrn, int returnPeriod, string tableName, string connectionString, CancellationToken cancellationToken) 
+            where T : AbstractReportModel
         {
-            AppsMonthlyPaymentModel.ReturnPeriodSetter = returnPeriod;
+            AbstractReportModel.ReturnPeriodSetter = returnPeriod;
 
             using (SqlConnection sqlConnection = new SqlConnection(connectionString))
             {
@@ -31,18 +34,19 @@ namespace ESFA.DC.PeriodEnd.DataPersist
                 {
                     try
                     {
-                        using (SqlCommand command = new SqlCommand($"DELETE FROM {TableNameConstants.AppsMonthlyPayment} WHERE ukPrn = {ukPrn} and returnPeriod = {returnPeriod}", sqlConnection, sqlTransaction))
+                        using (SqlCommand command = new SqlCommand($"DELETE FROM {tableName} WHERE ukPrn = {ukPrn} and returnPeriod = {returnPeriod}", sqlConnection, sqlTransaction))
                         {
                             command.ExecuteNonQuery();
                         }
-                        await _bulkInsert.Insert(TableNameConstants.AppsMonthlyPayment, monthlyPaymentModels, sqlConnection, sqlTransaction, cancellationToken);
+
+                        await _bulkInsert.Insert(tableName, models, sqlConnection, sqlTransaction, cancellationToken);
                         sqlTransaction.Commit();
                     }
                     catch (Exception ex)
                     {
-                        _logger.LogError($"Persisting Apps Monthly Payment Report Data failed attempting to rollback - {ex.Message}");
+                        _logger.LogError($"Persisting {tableName} failed attempting to rollback - {ex.Message}");
                         sqlTransaction.Rollback();
-                        _logger.LogDebug(" Persisting Apps Monthly Payment Report Data successfully rolled back");
+                        _logger.LogDebug($"Persisting {tableName} successfully rolled back");
 
                         throw;
                     }

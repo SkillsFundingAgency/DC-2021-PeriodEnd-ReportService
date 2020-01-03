@@ -134,10 +134,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             {
                 Stopwatch stopWatchLog = new Stopwatch();
                 stopWatchLog.Start();
-                await _persistReportData.PersistAppsAdditionalPaymentAsync(
+                await _persistReportData.PersistReportDataAsync(
                     (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
                     reportServiceContext.Ukprn,
                     reportServiceContext.ReturnPeriod,
+                    TableNameConstants.AppsMonthlyPayment,
                     reportServiceContext.ReportDataConnectionString,
                     cancellationToken);
                 _logger.LogDebug($"Performance-AppsMonthlyPaymentReport logging took - {stopWatchLog.ElapsedMilliseconds} ms ");

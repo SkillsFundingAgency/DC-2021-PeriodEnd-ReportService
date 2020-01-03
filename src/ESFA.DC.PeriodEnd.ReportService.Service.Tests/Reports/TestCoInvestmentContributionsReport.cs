@@ -9,6 +9,7 @@ using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.ILR1920.DataStore.EF.Valid;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
@@ -53,6 +54,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
             Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
+            Mock<IPersistReportData> persistReportDataMock = new Mock<IPersistReportData>();
 
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
@@ -80,7 +82,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 ilrPeriodEndProviderServiceMock.Object,
                 dasPaymentProviderMock.Object,
                 fm36ProviderServiceMock.Object,
-                appsCoInvestmentContributionsModelBuilder);
+                appsCoInvestmentContributionsModelBuilder,
+                persistReportDataMock.Object);
 
             await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 

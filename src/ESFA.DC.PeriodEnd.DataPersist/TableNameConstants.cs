@@ -3,5 +3,6 @@
     public static class TableNameConstants
     {
         public const string AppsMonthlyPayment = "AppsMonthlyPayment";
+        public const string AppsCoInvestmentContributions = "AppsCoInvestmentContribution";
     }
 }

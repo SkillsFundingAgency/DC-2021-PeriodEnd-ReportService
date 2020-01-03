@@ -335,3 +335,4 @@ ASALocalRun/
 
 # MFractors (Xamarin productivity tool) working folder 
 .mfractor/
+/src/ESFA.DC.PeriodEnd.ReportService/ApplicationParameters/TST Local.1Node.xml

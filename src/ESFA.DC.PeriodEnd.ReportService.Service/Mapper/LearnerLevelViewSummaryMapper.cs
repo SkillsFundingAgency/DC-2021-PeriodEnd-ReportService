@@ -17,6 +17,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.NumberofClawbacks).Index(i++).Name("Number of Learners with Clawbacks");
             Map(m => m.NumberofHBCP).Index(i++).Name("Number of Learners with Hold Back Completion Payments");
             Map(m => m.NumberofOthers).Index(i++).Name("Number of Learners with Other Issues");
+            Map(m => m.NumberofCoInvestmentsToCollect).Index(i++).Name("Number of Co Investments to collect");
+            Map(m => m.NumberofEarningsReleased).Index(i++).Name("Number of Earnings Released");
+            Map(m => m.EarningsReleased).Index(i++).Name("Earnings Released");
             Map(m => m.TotalEarningsForThisPeriod).Index(i++).Name("Total earnings for this period");
             Map(m => m.TotalCostOfDataLocksForThisPeriod).Index(i++).Name("Total cost of datalocks for this period");
             Map(m => m.TotalCostOfHBCPForThisPeriod).Index(i++).Name("Total cost of hold back completion payments for this period");

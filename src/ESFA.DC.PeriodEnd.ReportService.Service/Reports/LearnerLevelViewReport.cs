@@ -179,6 +179,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     ESFAPlannedPaymentsForThisPeriod = learnerLevelView.Sum(r => r.ESFAPlannedPaymentsThisPeriod),
                     TotalEarningsForThisPeriod = learnerLevelView.Sum(r => r.TotalEarningsForPeriod),
                     CoInvestmentPaymentsToCollectForThisPeriod = learnerLevelView.Sum(r => r.CoInvestmentPaymentsToCollectThisPeriod),
+                    NumberofCoInvestmentsToCollect = learnerLevelView.Count(r => r.CoInvestmentPaymentsToCollectThisPeriod != 0),
                     TotalCoInvestmentCollectedToDate = learnerLevelView.Sum(r => r.TotalCoInvestmentCollectedToDate),
                     TotalEarningsToDate = learnerLevelView.Sum(r => r.TotalEarningsToDate),
                     TotalPaymentsToDate = learnerLevelView.Sum(r => r.PlannedPaymentsToYouToDate)
@@ -190,6 +191,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                                                                         learnerLevelViewSummary.TotalCostOfDataLocksForThisPeriod +
                                                                         learnerLevelViewSummary.ESFAPlannedPaymentsForThisPeriod +
                                                                         learnerLevelViewSummary.CoInvestmentPaymentsToCollectForThisPeriod;
+                learnerLevelViewSummary.NumberofEarningsReleased = learnerLevelViewSummary.NumberofLearners;
+                learnerLevelViewSummary.EarningsReleased = learnerLevelViewSummary.TotalPaymentsForThisPeriod +
+                                                            learnerLevelViewSummary.CoInvestmentPaymentsToCollectForThisPeriod -
+                                                            learnerLevelViewSummary.TotalEarningsForThisPeriod;
+
                 learnerLevelViewSummaryModels.Add(learnerLevelViewSummary);
 
                 using (MemoryStream ms = new MemoryStream())

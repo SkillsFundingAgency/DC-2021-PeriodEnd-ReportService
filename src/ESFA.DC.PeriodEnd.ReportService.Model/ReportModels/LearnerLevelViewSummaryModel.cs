@@ -18,6 +18,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public int NumberofOthers { get; set; }
 
+        public int NumberofCoInvestmentsToCollect { get; set; }
+
+        public int NumberofEarningsReleased { get; set; }
+
+        public decimal? EarningsReleased { get; set; }
+
         public decimal? TotalEarningsForThisPeriod { get; set; }
 
         public decimal? TotalCostOfDataLocksForThisPeriod { get; set; }

@@ -5,6 +5,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {
     public class AppsCoInvestmentContributionsModel : AbstractReportModel
     {
+        public int? Ukprn { get; set; }
+
         public string LearnRefNumber { get; set; }
 
         public long? UniqueLearnerNumber { get; set; }

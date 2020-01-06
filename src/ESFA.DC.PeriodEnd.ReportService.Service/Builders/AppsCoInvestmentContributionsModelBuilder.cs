@@ -41,7 +41,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             List<AppsCoInvestmentRecordKey> paymentsAppsCoInvestmentUniqueKeys,
             List<AppsCoInvestmentRecordKey> ilrAppsCoInvestmentUniqueKeys,
             IDictionary<long, string> apprenticeshipIdLegalEntityNameDictionary,
-            long jobId)
+            long jobId,
+            int ukprn)
         {
             string errorMessage;
 
@@ -103,6 +104,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     var model = new AppsCoInvestmentContributionsModel
                     {
+                        Ukprn = ukprn,
                         LearnRefNumber = record.LearnerReferenceNumber,
                         UniqueLearnerNumber = GetUniqueOrEmpty(paymentRecords, p => p.LearnerUln),
                         LearningStartDate = record.LearningStartDate,

@@ -10,7 +10,7 @@
     [FrameworkCode] INT NULL, 
     [ApprenticeshipPathway] INT NULL, 
     [SoftwareSupplierAimIdentifier] VARCHAR(36) NULL, 
-    [LearningDeliveryFAMTypeApprenticeshipContractType] BIT NULL, 
+    [LearningDeliveryFAMTypeApprenticeshipContractType] TINYINT NULL, 
     [EmployerIdentifierAtStartOfLearning] INT NULL, 
     [EmployerNameFromApprenticeshipService] VARCHAR(100) NULL, 
     [TotalPMRPreviousFundingYears] DECIMAL(15,5) NULL, 

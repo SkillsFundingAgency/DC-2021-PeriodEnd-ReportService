@@ -1,6 +1,6 @@
 ﻿CREATE TABLE [dbo].[AppsCoInvestmentContribution]
 (
-	[Ukprn] INT NOT NULL PRIMARY KEY, 
+	[Ukprn] INT NOT NULL , 
     [ReturnPeriod] INT NOT NULL, 
     [LearnRefNumber] VARCHAR(12) NULL, 
     [UniqueLearnerNumber] BIGINT NULL, 

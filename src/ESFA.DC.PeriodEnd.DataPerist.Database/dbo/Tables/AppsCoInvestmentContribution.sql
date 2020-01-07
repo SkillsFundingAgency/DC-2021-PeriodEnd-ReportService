@@ -14,7 +14,7 @@
     [EmployerIdentifierAtStartOfLearning] INT NULL, 
     [EmployerNameFromApprenticeshipService] VARCHAR(100) NULL, 
     [TotalPMRPreviousFundingYears] DECIMAL(15,5) NULL, 
-    [TotalCoInvestmentDueFromEmployerInPreviousFundingYears] DECIMAL(15,5) NULL, 
+    [TotalCoInvestmentDueFromEmployerInPreviousFundingYears] DECIMAL(28,10) NULL, 
     [TotalPMRThisFundingYear] DECIMAL(15,5) NULL, 
     [TotalCoInvestmentDueFromEmployerThisFundingYear] DECIMAL(15,5) NULL, 
     [PercentageOfCoInvestmentCollected] DECIMAL(15,5) NOT NULL, 

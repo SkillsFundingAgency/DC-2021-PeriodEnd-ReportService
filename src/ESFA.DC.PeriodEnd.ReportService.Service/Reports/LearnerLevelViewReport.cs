@@ -66,8 +66,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             CancellationToken cancellationToken)
         {
             var externalFileName = GetFilename(reportServiceContext);
-            var summaryFileName = GetSummaryFilename(reportServiceContext);
-            var fileName = GetZipFilename(reportServiceContext);
+            var summaryFileName = GetCustomFilename(reportServiceContext, "Summary");
+            var fileName = GetCustomFilename(reportServiceContext, "Download");
 
             // get the main base DAS payments data
             var appsMonthlyPaymentDasInfo =
@@ -116,13 +116,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 aECLearningDeliveryDictionary,
                 reportServiceContext.ReturnPeriod);
 
+            // Write the full file containing calculated data
             string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", learnerLevelViewCSV, cancellationToken);
 
+            // Write the abridged report file downloadable by the user
             string learnerLevelFinancialsRemovedCSV = await GetLearnerLevelFinancialsRemovedViewCsv(learnerLevelViewModel, cancellationToken);
-            await WriteZipEntry(archive, $"{fileName}.csv", learnerLevelFinancialsRemovedCSV);
+            await _streamableKeyValuePersistenceService.SaveAsync($"{fileName}.csv", learnerLevelFinancialsRemovedCSV, cancellationToken);
 
-            // Create the json file which will be used by the WebUI to display the summary view
+            // Create the summary file which will be used by the WebUI to display the summary view
             string summaryFile = CreateSummary(learnerLevelViewModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{summaryFileName}.csv", summaryFile, cancellationToken);
         }

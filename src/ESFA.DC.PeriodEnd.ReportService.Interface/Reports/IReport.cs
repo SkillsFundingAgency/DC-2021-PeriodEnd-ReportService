@@ -12,7 +12,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 
         string GetFilename(IReportServiceContext reportServiceContext);
 
-        string GetSummaryFilename(IReportServiceContext reportServiceContext);
+        string GetCustomFilename(IReportServiceContext reportServiceContext, string postFix);
 
         string GetFilenameForInternalReport(IReportServiceContext reportServiceContext);
 

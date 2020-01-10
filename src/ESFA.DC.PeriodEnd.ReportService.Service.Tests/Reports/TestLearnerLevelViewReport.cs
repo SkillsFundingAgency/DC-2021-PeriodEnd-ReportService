@@ -25,6 +25,7 @@ using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
+using ESFA.DC.Serialization.Interfaces;
 using FluentAssertions;
 using Moq;
 using Xunit;
@@ -61,6 +62,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
                 .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
                 .Returns(Task.CompletedTask);
+            Mock<IJsonSerializationService> jsonSerializationServiceMock = new Mock<IJsonSerializationService>();
+            jsonSerializationServiceMock.Setup(x => x.Serialize<IEnumerable<LearnerLevelViewSummaryModel>>(It.IsAny<IEnumerable<LearnerLevelViewSummaryModel>>()))
+                .Returns(string.Empty);
 
             var appsMonthlyPaymentIlrInfo = BuildILRModel(ukPrn);
             var appsCoInvestIlrInfo = BuildILRCoInvestModel(ukPrn);
@@ -123,6 +127,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 dasPaymentProviderMock.Object,
                 dateTimeProviderMock.Object,
                 valueProvider,
+                jsonSerializationServiceMock.Object,
                 learnerLevelViewModelBuilder);
 
             await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);

@@ -25,6 +25,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract;
+using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 {
@@ -37,6 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
+        private readonly IJsonSerializationService _jsonSerializationService;
         private readonly ILearnerLevelViewModelBuilder _modelBuilder;
 
         public LearnerLevelViewReport(
@@ -47,12 +49,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IDASPaymentsProviderService dasPaymentsProviderService,
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
+            IJsonSerializationService jsonSerializationService,
             ILearnerLevelViewModelBuilder modelBuilder)
         : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
+            _jsonSerializationService = jsonSerializationService;
             _modelBuilder = modelBuilder;
         }
 
@@ -126,7 +130,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             // Create the summary file which will be used by the WebUI to display the summary view
             string summaryFile = CreateSummary(learnerLevelViewModel, cancellationToken);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{summaryFileName}.csv", summaryFile, cancellationToken);
+            await _streamableKeyValuePersistenceService.SaveAsync($"{summaryFileName}.json", summaryFile, cancellationToken);
         }
 
         public IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> BuildPaymentInfoDictionary(AppsMonthlyPaymentDASInfo paymentsInfo)
@@ -150,6 +154,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             return aECLearningDeliveryInfo
                 .GroupBy(p => p.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(k => k.Key, v => v.ToList());
+        }
+
+        private string GetJson(
+                        IEnumerable<LearnerLevelViewSummaryModel> learnerLeveViewModel,
+                        CancellationToken cancellationToken)
+        {
+            return _jsonSerializationService.Serialize<IEnumerable<LearnerLevelViewSummaryModel>>(learnerLeveViewModel);
         }
 
         private string CreateSummary(IReadOnlyList<LearnerLevelViewModel> learnerLevelView, CancellationToken cancellationToken)
@@ -200,21 +211,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
                 learnerLevelViewSummaryModels.Add(learnerLevelViewSummary);
 
-                using (MemoryStream ms = new MemoryStream())
-                {
-                    UTF8Encoding utF8Encoding = new UTF8Encoding(false, true);
-                    using (TextWriter textWriter = new StreamWriter(ms, utF8Encoding))
-                    {
-                        using (CsvWriter csvWriter = new CsvWriter(textWriter))
-                        {
-                            WriteCsvRecords<LearnerLevelViewSummaryMapper, LearnerLevelViewSummaryModel>(csvWriter, learnerLevelViewSummaryModels);
-
-                            csvWriter.Flush();
-                            textWriter.Flush();
-                            return Encoding.UTF8.GetString(ms.ToArray());
-                        }
-                    }
-                }
+                return GetJson(learnerLevelViewSummaryModels, cancellationToken);
             }
             catch (Exception ex)
             {

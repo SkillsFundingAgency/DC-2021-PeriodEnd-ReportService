@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport.M
 
         public string FundingSubCategory { get; set; }
 
-        public string FundLineGroup { get; set; }
+        public string FundLine { get; set; }
 
         public decimal Aug19 { get; set; }
 

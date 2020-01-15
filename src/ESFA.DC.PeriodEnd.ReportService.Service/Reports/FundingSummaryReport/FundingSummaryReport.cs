@@ -86,30 +86,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
             if (reportServiceContext.DataPersistFeatureEnabled)
             {
                 var persistModels = model.FundingCategories.SelectMany(fc => fc.FundingSubCategories.SelectMany(fsc =>
-                    fsc.FundLineGroups.Select(flg => new FundingSummaryPersistModel
+                    fsc.FundLineGroups.SelectMany(flg => flg.FundLines.Select(fl => new FundingSummaryPersistModel
                     {
                         Ukprn = reportServiceContext.Ukprn,
                         ContractNo = flg.ContractAllocationNumber,
                         FundingCategory = fc.FundingCategoryTitle,
                         FundingSubCategory = fsc.FundingSubCategoryTitle,
-                        FundLineGroup = flg.Title,
-                        Aug19 = flg.Period1,
-                        Sep19 = flg.Period2,
-                        Oct19 = flg.Period3,
-                        Nov19 = flg.Period4,
-                        Dec19 = flg.Period5,
-                        Jan20 = flg.Period6,
-                        Feb20 = flg.Period7,
-                        Mar20 = flg.Period8,
-                        Apr20 = flg.Period9,
-                        May20 = flg.Period10,
-                        Jun20 = flg.Period11,
-                        Jul20 = flg.Period12,
-                        AugMar = flg.Period1To8,
-                        AprJul = flg.Period9To12,
-                        YearToDate = flg.YearToDate,
-                        Total = flg.Total
-                    }))).ToList();
+                        FundLine = fl.Title,
+                        Aug19 = fl.Period1,
+                        Sep19 = fl.Period2,
+                        Oct19 = fl.Period3,
+                        Nov19 = fl.Period4,
+                        Dec19 = fl.Period5,
+                        Jan20 = fl.Period6,
+                        Feb20 = fl.Period7,
+                        Mar20 = fl.Period8,
+                        Apr20 = fl.Period9,
+                        May20 = fl.Period10,
+                        Jun20 = fl.Period11,
+                        Jul20 = fl.Period12,
+                        AugMar = fl.Period1To8,
+                        AprJul = fl.Period9To12,
+                        YearToDate = fl.YearToDate,
+                        Total = fl.Total
+                    })))).ToList();
 
                 Stopwatch stopWatchLog = new Stopwatch();
                 stopWatchLog.Start();

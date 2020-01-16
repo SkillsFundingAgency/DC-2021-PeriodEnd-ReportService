@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
@@ -39,6 +40,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             var referenceDataServiceMock = new Mock<IReferenceDataService>();
             var dateTimeProviderMock = new Mock<IDateTimeProvider>();
+            var persistReportDataMock = new Mock<IPersistReportData>();
 
             referenceDataServiceMock
                 .Setup(m => m.GetLatestIlrSubmissionFileNameAsync(10005788, It.IsAny<CancellationToken>()))
@@ -66,7 +68,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 excelService,
                 fundingSummaryReportRenderService,
                 periodisedValuesLookupProvider.Object,
-                fcsService.Object);
+                fcsService.Object,
+                persistReportDataMock.Object);
 
             excelService.ApplyLicense();
 
@@ -87,7 +90,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             IExcelService excelService = null,
             IRenderService<IFundingSummaryReport> fundingSummaryReportRenderService = null,
             IPeriodisedValuesLookupProviderService periodisedValuesLookupProviderService = null,
-            IFCSProviderService fcsProviderService = null)
+            IFCSProviderService fcsProviderService = null,
+            IPersistReportData persisteReportData = null)
         {
             return new FundingSummaryReport(
                 logger,
@@ -97,7 +101,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 excelService,
                 fundingSummaryReportRenderService,
                 periodisedValuesLookupProviderService,
-                fcsProviderService);
+                fcsProviderService,
+                persisteReportData);
         }
     }
 }

@@ -203,8 +203,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             }
 
             var totalCollected = (totalCollectedPreviousYear ?? 0) + (totalCollectedCurrentYear ?? 0);
-            var percent = Math.Round((totalCollected / totalDue) * 100, 2);
-            percent = percent > maxPercent ? maxPercent : percent < minPercent ? minPercent : percent;
+            var percent = (totalCollected / totalDue) * 100;
+            percent = percent > maxPercent ? maxPercent : percent;
+            percent = percent < minPercent ? minPercent : percent;
 
             return percent;
         }

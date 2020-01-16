@@ -76,27 +76,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Builders
 
             percent.Should().Be(min);
         }
-
-        [Fact]
-        public void GetPercentageOfInvestmentCollected_Returns_Two_Decimal_Places()
-        {
-            decimal? totalDueCurrentYear = 10M;
-            decimal? totalDuePreviousYear = 10M;
-            decimal? totalCollectedCurrentYear = 33.131313131313M;
-            decimal? totalCollectedPreviousYear = 0M;
-
-            var equalityComparerMock = new Mock<IEqualityComparer<AppsCoInvestmentRecordKey>>();
-            var loggerMock = new Mock<ILogger>();
-
-            var builder = new AppsCoInvestmentContributionsModelBuilder(equalityComparerMock.Object, loggerMock.Object);
-            var percent = builder.GetPercentageOfInvestmentCollected(
-                totalDueCurrentYear,
-                totalDuePreviousYear,
-                totalCollectedCurrentYear,
-                totalCollectedPreviousYear);
-
-            var percentString = percent.ToString();
-            percentString.Substring(percentString.IndexOf(".") + 1).Length.Should().Be(2);
-        }
     }
 }

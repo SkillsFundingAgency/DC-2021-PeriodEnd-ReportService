@@ -25,7 +25,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.TotalCoInvestmentDueFromEmployerInPreviousFundingYears).Index(i++).Name("Total co-investment (below band upper limit) due from employer in previous funding years");
             Map(m => m.TotalPMRThisFundingYear).Index(i++).Name("Total employer contribution collected (PMR) in this funding year");
             Map(m => m.TotalCoInvestmentDueFromEmployerThisFundingYear).Index(i++).Name("Total co-investment (below band upper limit) due from employer in this funding year");
-            Map(m => m.PercentageOfCoInvestmentCollected).Index(i++).Name("Percentage of co-investment collected (for all funding years)");
+            Map(m => m.PercentageOfCoInvestmentCollected).Index(i++).Name("Percentage of co-investment collected (for all funding years)").TypeConverterOption.Format("0.00");
             Map(m => m.LDM356Or361).Index(i++).Name("LDM 356 or 361?");
             Map(m => m.CompletionEarningThisFundingYear).Index(i++).Name("Completion earnings in this funding year");
             Map(m => m.CompletionPaymentsThisFundingYear).Index(i++).Name("Completion payments in this funding year (including employer co-investment)");

@@ -2,8 +2,10 @@
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 {
-    public class AppsAdditionalPaymentsModel
+    public class AppsAdditionalPaymentsModel : AbstractReportModel
     {
+        public int? Ukprn { get; set; }
+
         public string LearnerReferenceNumber { get; set; }
 
         public long UniqueLearnerNumber { get; set; }
@@ -77,7 +79,5 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
         public decimal TotalEarnings { get; set; }
 
         public decimal TotalPaymentsYearToDate { get; set; }
-
-        public string OfficialSensitive { get; }
     }
 }

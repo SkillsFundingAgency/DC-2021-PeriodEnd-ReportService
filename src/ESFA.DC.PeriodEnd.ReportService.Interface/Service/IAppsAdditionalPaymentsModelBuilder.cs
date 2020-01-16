@@ -12,6 +12,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service
             IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> apprenticeshipPriceEpisodes,
             IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
             IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
-            IDictionary<long, string> legalNameDictionary);
+            IDictionary<long, string> legalNameDictionary,
+            int ukPrn);
     }
 }

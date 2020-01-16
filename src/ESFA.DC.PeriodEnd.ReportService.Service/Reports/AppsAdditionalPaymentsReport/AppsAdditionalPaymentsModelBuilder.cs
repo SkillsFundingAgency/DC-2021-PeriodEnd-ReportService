@@ -39,7 +39,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             IList<AECApprenticeshipPriceEpisodePeriodisedValuesInfo> rulebasePriceEpisodes,
             IList<AECLearningDeliveryInfo> rulebaseLearningDeliveries,
             IList<DASPaymentInfo> appsAdditionalPaymentDasPaymentsInfo,
-            IDictionary<long, string> legalNameDictionary)
+            IDictionary<long, string> legalNameDictionary,
+            int ukPrn)
         {
             var learnerDictionary = appsAdditionalPaymentIlrInfo.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
 
@@ -95,6 +96,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
 
                     return new AppsAdditionalPaymentsModel
                     {
+                        Ukprn = ukPrn,
                         // group key fields
                         LearnerReferenceNumber = g.Key.PaymentLearnerReferenceNumber,
                         UniqueLearnerNumber = g.Key.PaymentUniqueLearnerNumber,

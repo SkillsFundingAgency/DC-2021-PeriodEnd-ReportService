@@ -5,5 +5,6 @@
         public const string AppsMonthlyPayment = "AppsMonthlyPayment";
         public const string AppsCoInvestmentContributions = "AppsCoInvestmentContribution";
         public const string FundingSummaryReport = "FundingSummaryReport";
+        public const string AppsAdditionalPayments = "AppsAdditionalPayments";
     }
 }

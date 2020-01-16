@@ -8,6 +8,7 @@ using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment;
@@ -82,6 +83,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
             var appsAdditionalPaymentsModelBuilder = new AppsAdditionalPaymentsModelBuilder();
+            Mock<IPersistReportData> persistReportDataMock = new Mock<IPersistReportData>();
 
             var report = new AppsAdditionalPaymentsReport(
                 logger.Object,
@@ -90,7 +92,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 fm36ProviderServiceMock.Object,
                 dateTimeProviderMock.Object,
                 dasPaymentProviderMock.Object,
-                appsAdditionalPaymentsModelBuilder);
+                appsAdditionalPaymentsModelBuilder,
+                persistReportDataMock.Object);
 
             await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 

@@ -66,6 +66,7 @@
   <ItemGroup>
     <Build Include="dbo\Tables\AppsMonthlyPayment.sql" />
     <Build Include="dbo\Tables\AppsCoInvestmentContribution.sql" />
+    <Build Include="dbo\Tables\AppsAdditionalPayments.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="zz.Script.PreDeployment.sql" />

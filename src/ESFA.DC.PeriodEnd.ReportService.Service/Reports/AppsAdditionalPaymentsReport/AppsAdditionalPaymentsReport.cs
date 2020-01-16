@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Diagnostics;
 using System.IO;
 using System.IO.Compression;
 using System.Linq;
@@ -9,6 +10,7 @@ using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
@@ -26,6 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
         private readonly IAppsAdditionalPaymentsModelBuilder _modelBuilder;
+        private readonly IPersistReportData _persistReportData;
 
         public AppsAdditionalPaymentsReport(
             ILogger logger,
@@ -34,13 +37,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
             IFM36PeriodEndProviderService fm36ProviderService,
             IDateTimeProvider dateTimeProvider,
             IDASPaymentsProviderService dasPaymentsProviderService,
-            IAppsAdditionalPaymentsModelBuilder modelBuilder)
+            IAppsAdditionalPaymentsModelBuilder modelBuilder,
+            IPersistReportData persistReportData)
         : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
             _modelBuilder = modelBuilder;
+            _persistReportData = persistReportData;
         }
 
         public override string ReportFileName => "Apps Additional Payments Report";
@@ -70,13 +75,35 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPayments
                 rulebaseApprenticeshipPriceEpisodes.Result,
                 rulebaseLearningDeliveries.Result,
                 appsAdditionalPaymentDasPaymentsInfo.Result,
-                legalNameDictionary);
+                legalNameDictionary,
+                reportServiceContext.Ukprn);
 
             _logger.LogInfo("Apps Additional Payments Report Creation End");
 
-            string csv = await GetCsv(appsAdditionalPaymentsModel, cancellationToken);
+            var appsAdditionalPaymentsModels = appsAdditionalPaymentsModel.ToList();
+            string csv = await GetCsv(appsAdditionalPaymentsModels, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
             await WriteZipEntry(archive, $"{fileName}.csv", csv);
+
+            if (reportServiceContext.DataPersistFeatureEnabled)
+            {
+                Stopwatch stopWatchLog = new Stopwatch();
+                stopWatchLog.Start();
+                await _persistReportData.PersistReportDataAsync(
+                    appsAdditionalPaymentsModels,
+                    reportServiceContext.Ukprn,
+                    reportServiceContext.ReturnPeriod,
+                    TableNameConstants.AppsAdditionalPayments,
+                    reportServiceContext.ReportDataConnectionString,
+                    cancellationToken);
+
+                _logger.LogDebug($"Performance-AppsAdditionalPayments logging took - {stopWatchLog.ElapsedMilliseconds} ms ");
+                stopWatchLog.Stop();
+            }
+            else
+            {
+                _logger.LogDebug(" Data Persist Feature is disabled.");
+            }
 
             _logger.LogInfo("Apps Additional Payments Persistence End");
         }

@@ -4,5 +4,6 @@
     {
         public const string AppsMonthlyPayment = "AppsMonthlyPayment";
         public const string AppsCoInvestmentContributions = "AppsCoInvestmentContribution";
+        public const string AppsAdditionalPayments = "AppsAdditionalPayments";
     }
 }

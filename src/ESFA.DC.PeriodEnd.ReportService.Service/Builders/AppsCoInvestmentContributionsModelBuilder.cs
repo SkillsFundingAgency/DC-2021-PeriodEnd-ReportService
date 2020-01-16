@@ -4,7 +4,6 @@ using System.Linq;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
-using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.Common;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
@@ -14,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsCoInvestmentContributionsModelBuilder : IAppsCoInvestmentContributionsModelBuilder
     {
         private const int _fundingSource = 3;
-        private readonly HashSet<int> _transactionTypes = new HashSet<int>()
+        private readonly HashSet<int> _transactionTypes = new HashSet<int>
         {
             Constants.DASPayments.TransactionType.Learning_On_Programme,
             Constants.DASPayments.TransactionType.Completion,
@@ -23,8 +22,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         private readonly DateTime _academicYearStart = new DateTime(2019, 8, 1);
         private readonly DateTime _nextAcademicYearStart = new DateTime(2020, 8, 1);
-
-        private readonly string _priceEpisodeCompletionPayment = "PriceEpisodeCompletionPayment";
         private readonly ILogger _logger;
         private readonly IEqualityComparer<AppsCoInvestmentRecordKey> _appsCoInvestmentEqualityComparer;
 
@@ -195,6 +192,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public decimal GetPercentageOfInvestmentCollected(decimal? totalDueCurrentYear, decimal? totalDuePreviousYear, decimal? totalCollectedCurrentYear, decimal? totalCollectedPreviousYear)
         {
+            const decimal maxPercent = 99999.99M;
+            const decimal minPercent = -99999.99M;
+
             var totalDue = (totalDuePreviousYear ?? 0) + (totalDueCurrentYear ?? 0);
 
             if (totalDue == 0)
@@ -203,8 +203,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             }
 
             var totalCollected = (totalCollectedPreviousYear ?? 0) + (totalCollectedCurrentYear ?? 0);
+            var percent = Math.Round((totalCollected / totalDue) * 100, 2);
+            percent = percent > maxPercent ? maxPercent : percent < minPercent ? minPercent : percent;
 
-            return (totalCollected / totalDue) * 100;
+            return percent;
         }
 
         public decimal GetPeriodisedValueFromDictionaryForPeriod(IDictionary<byte, decimal> periodisedDictionary, byte period)

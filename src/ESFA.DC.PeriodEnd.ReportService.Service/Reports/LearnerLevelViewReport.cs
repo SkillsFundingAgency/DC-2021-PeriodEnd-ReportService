@@ -198,14 +198,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                     TotalPaymentsToDate = learnerLevelView.Sum(r => r.PlannedPaymentsToYouToDate)
                 };
 
-                learnerLevelViewSummary.TotalPaymentsForThisPeriod = learnerLevelViewSummary.TotalCostofClawbackForThisPeriod +
-                                                                        learnerLevelViewSummary.TotalCostOfHBCPForThisPeriod +
-                                                                        learnerLevelViewSummary.TotalCostofOthersForThisPeriod +
-                                                                        learnerLevelViewSummary.TotalCostOfDataLocksForThisPeriod +
-                                                                        learnerLevelViewSummary.ESFAPlannedPaymentsForThisPeriod +
-                                                                        learnerLevelViewSummary.CoInvestmentPaymentsToCollectForThisPeriod;
                 learnerLevelViewSummary.NumberofEarningsReleased = learnerLevelViewSummary.NumberofLearners;
-                learnerLevelViewSummary.EarningsReleased = learnerLevelViewSummary.TotalPaymentsForThisPeriod +
+                learnerLevelViewSummary.EarningsReleased = learnerLevelViewSummary.TotalCostofClawbackForThisPeriod +
+                                                            learnerLevelViewSummary.TotalCostOfHBCPForThisPeriod +
+                                                            learnerLevelViewSummary.TotalCostofOthersForThisPeriod +
+                                                            learnerLevelViewSummary.TotalCostOfDataLocksForThisPeriod +
+                                                            learnerLevelViewSummary.ESFAPlannedPaymentsForThisPeriod +
                                                             learnerLevelViewSummary.CoInvestmentPaymentsToCollectForThisPeriod -
                                                             learnerLevelViewSummary.TotalEarningsForThisPeriod;
 

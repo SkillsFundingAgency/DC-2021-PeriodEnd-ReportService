@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Operations Version="1.0" xmlns="http://schemas.microsoft.com/sqlserver/dac/Serialization/2012/02">
+  <Operation Name="Rename Refactor" Key="1851dc52-1f73-4376-b2b5-cf05efc1f11a" ChangeDateTime="01/29/2020 13:35:48">
+    <Property Name="ElementName" Value="[dbo].[MCAGLA].[ProvideriderSpecifiedLearnerMonitoringB]" />
+    <Property Name="ElementType" Value="SqlSimpleColumn" />
+    <Property Name="ParentElementName" Value="[dbo].[MCAGLA]" />
+    <Property Name="ParentElementType" Value="SqlTable" />
+    <Property Name="NewName" Value="ProviderSpecifiedLearnerMonitoringB" />
+  </Operation>
+</Operations>

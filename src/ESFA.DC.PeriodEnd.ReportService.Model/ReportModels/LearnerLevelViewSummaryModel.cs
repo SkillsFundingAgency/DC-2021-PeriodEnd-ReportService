@@ -38,8 +38,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public decimal? CoInvestmentPaymentsToCollectForThisPeriod { get; set; }
 
-        public decimal? TotalPaymentsForThisPeriod { get; set; }
-
         public decimal? TotalEarningsToDate { get; set; }
 
         public decimal? TotalPaymentsToDate { get; set; }

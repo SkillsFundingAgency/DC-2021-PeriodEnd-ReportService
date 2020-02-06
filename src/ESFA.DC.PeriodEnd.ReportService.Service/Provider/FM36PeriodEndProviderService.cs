@@ -249,19 +249,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                     learnerLevelInfo.AECLearningDeliveryPeriodisedValuesInfo = await ilrContext
                         .AEC_LearningDelivery_PeriodisedValues
-                        .Where(x => x.UKPRN == ukPrn && (x.AttributeName == Generics.Fm36LearnSuppFundCashAttributeName ||
-                                                         x.AttributeName == Generics.Fm36MathEngOnProgPaymentAttributeName ||
+                        .Where(x => x.UKPRN == ukPrn && (x.AttributeName == Generics.Fm36MathEngOnProgPaymentAttributeName ||
+                                                         x.AttributeName == Generics.Fm36LearnSuppFundCashAttributeName ||
                                                          x.AttributeName == Generics.Fm36MathEngBalPayment ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName ||
-                                                         x.AttributeName == Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName))
+                                                         x.AttributeName == Generics.Fm36DisadvFirstPayment ||
+                                                         x.AttributeName == Generics.Fm36DisadvSecondPayment ||
+                                                         x.AttributeName == Generics.Fm36LearnDelFirstEmp1618Pay ||
+                                                         x.AttributeName == Generics.Fm36LearnDelSecondEmp1618Pay ||
+                                                         x.AttributeName == Generics.Fm36LearnDelFirstProv1618Pay ||
+                                                         x.AttributeName == Generics.Fm36LearnDelSecondProv1618Pay ||
+                                                         x.AttributeName == Generics.Fm36LearnDelLearnAddPayment ||
+                                                         x.AttributeName == Generics.Fm36LDApplic1618FrameworkUpliftBalancingPayment ||
+                                                         x.AttributeName == Generics.Fm36LDApplic1618FrameworkUpliftCompletionPayment ||
+                                                         x.AttributeName == Generics.Fm36LDApplic1618FrameworkUpliftOnProgPayment))
                         .Select(ld => new AECLearningDeliveryPeriodisedValuesInfo()
                         {
                             UKPRN = ukPrn,

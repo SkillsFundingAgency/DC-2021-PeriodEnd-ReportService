@@ -271,20 +271,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetailModel> fileDetails,
+            IEnumerable<FilePeriodInfo> fileDetails,
             CancellationToken cancellationToken)
         {
             List<DataQualityReturningProviders> returningProviders = new List<DataQualityReturningProviders>();
-            List<FilePeriodInfo> fd;
-
-            fd = fileDetails
-                .Select(f => new FilePeriodInfo
-                {
-                    UKPRN = f.Ukprn,
-                    Filename = f.Filename,
-                    PeriodNumber = GetPeriodReturn(f.SubmittedTime, returnPeriods),
-                    SubmittedTime = f.SubmittedTime
-                }).ToList();
+            var fd = fileDetails.ToList();
 
             var fds = fd.GroupBy(x => x.UKPRN)
                 .Select(x => new
@@ -374,24 +365,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             return top20RuleViolationsList;
         }
 
-        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FileDetailModel> fileDetails, CancellationToken cancellationToken)
+        public async Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(IEnumerable<FilePeriodInfo> fileDetails, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
-            List<int> validLearnerUkprns;
+            List<long> validLearnerUkprns;
             using (var ilrValidContext = _ilrValidContextFactory())
             {
                 validLearnerUkprns = await ilrValidContext
                     .Learners
-                    .Select(x => x.UKPRN)
+                    .Select(x => (long)x.UKPRN)
                     .Distinct()
                     .ToListAsync(cancellationToken);
             }
 
             List<ProviderWithoutValidLearners>
                 providersWithoutValidLearnersList = fileDetails
-                    .Where(x => !validLearnerUkprns.Contains(x.Ukprn))
-                    .GroupBy(x => x.Ukprn)
+                    .Where(x => !validLearnerUkprns.Contains(x.UKPRN))
+                    .GroupBy(x => x.UKPRN)
                     .Select(x => new ProviderWithoutValidLearners
                     {
                         Ukprn = x.Key,
@@ -406,7 +397,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         public async Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetailModel> fileDetails,
+            IEnumerable<FilePeriodInfo> fileDetails,
             CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();

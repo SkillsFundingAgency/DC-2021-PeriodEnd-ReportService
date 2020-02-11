@@ -4,7 +4,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityRepor
 {
     public sealed class FilePeriodInfo
     {
-        public int UKPRN { get; set; }
+        public long UKPRN { get; set; }
 
         public string Filename { get; set; }
 

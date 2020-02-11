@@ -89,7 +89,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport
                     fsc.FundLineGroups.SelectMany(flg => flg.FundLines.Select(fl => new FundingSummaryPersistModel
                     {
                         Ukprn = reportServiceContext.Ukprn,
-                        ContractNo = flg.ContractAllocationNumber,
+                        ContractNo = fc.ContractAllocationNumber,
                         FundingCategory = fc.FundingCategoryTitle,
                         FundingSubCategory = fsc.FundingSubCategoryTitle,
                         FundLine = fl.Title,

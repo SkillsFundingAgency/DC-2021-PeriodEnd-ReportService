@@ -29,18 +29,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<IEnumerable<DataQualityReturningProviders>> GetReturningProvidersAsync(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetailModel> fileDetails,
+            IEnumerable<FilePeriodInfo> fileDetails,
             CancellationToken cancellationToken);
 
         Task<IEnumerable<RuleViolationsInfo>> GetTop20RuleViolationsAsync(CancellationToken cancellationToken);
 
         Task<IEnumerable<ProviderWithoutValidLearners>> GetProvidersWithoutValidLearners(
-            IEnumerable<FileDetailModel> fileDetails, CancellationToken cancellationToken);
+            IEnumerable<FilePeriodInfo> fileDetails, CancellationToken cancellationToken);
 
         Task<IEnumerable<Top10ProvidersWithInvalidLearners>> GetProvidersWithInvalidLearners(
             int collectionYear,
             IEnumerable<ReturnPeriod> returnPeriods,
-            IEnumerable<FileDetailModel> fileDetails,
+            IEnumerable<FilePeriodInfo> fileDetails,
             CancellationToken cancellationToken);
 
         Task<AppsCoInvestmentILRInfo> GetILRInfoForAppsCoInvestmentReportAsync(int ukPrn, CancellationToken cancellationToken);

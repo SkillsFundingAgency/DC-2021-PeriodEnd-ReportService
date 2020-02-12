@@ -27,6 +27,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
         private readonly IDateTimeProvider _dateTimeProvider;
         private readonly IOrgProviderService _orgProviderService;
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
+        private readonly IJobQueueManagerProviderService _jobQueueManagerProviderService;
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
 
         public DataQualityReport(
@@ -34,6 +35,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             IDateTimeProvider dateTimeProvider,
             IOrgProviderService orgProviderService,
             IIlrPeriodEndProviderService ilrPeriodEndProviderService,
+            IJobQueueManagerProviderService jobQueueManagerProviderService,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IValueProvider valueProvider)
         : base(valueProvider, dateTimeProvider)
@@ -42,6 +44,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             _dateTimeProvider = dateTimeProvider;
             _orgProviderService = orgProviderService;
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
+            _jobQueueManagerProviderService = jobQueueManagerProviderService;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;
         }
 
@@ -55,7 +58,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             List<long> ukprns = new List<long>();
 
             string externalFileName = GetFilename(reportServiceContext);
-            List<FileDetailModel> fileDetails = (await _ilrPeriodEndProviderService.GetFileDetailsAsync(CancellationToken.None)).ToList();
+
+            int collectionId = await _jobQueueManagerProviderService.GetCollectionIdAsync(
+                $"{ReportTaskNameConstants.IlrCollectionName}{reportServiceContext.CollectionYear}",
+                cancellationToken);
+
+            var fileDetails = await _jobQueueManagerProviderService.GetFilePeriodInfoForCollection(collectionId, cancellationToken);
 
             IEnumerable<DataQualityReturningProviders> dataQualityModels = await _ilrPeriodEndProviderService.GetReturningProvidersAsync(
                 reportServiceContext.CollectionYear,
@@ -75,7 +83,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                 fileDetails,
                 CancellationToken.None)).ToList();
 
-            ukprns.AddRange(providersWithoutValidLearners.Select(x => (long)x.Ukprn));
+            ukprns.AddRange(providersWithoutValidLearners.Select(x => x.Ukprn));
             ukprns.AddRange(providersWithInvalidLearners.Select(x => x.Ukprn));
 
             IEnumerable<OrgModel> orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukprns.Distinct().ToList(), CancellationToken.None);

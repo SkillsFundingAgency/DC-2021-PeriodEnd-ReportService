@@ -48,6 +48,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             Mock<IOrgProviderService> orgProviderMock = new Mock<IOrgProviderService>();
             Mock<IIlrPeriodEndProviderService> ilrPeriodEndProviderServiceMock = new Mock<IIlrPeriodEndProviderService>();
             Mock<IStreamableKeyValuePersistenceService> storage = new Mock<IStreamableKeyValuePersistenceService>();
+            Mock<IJobQueueManagerProviderService> jobQueueManagerProviderServiceMock = new Mock<IJobQueueManagerProviderService>();
             IValueProvider valueProvider = new ValueProvider();
 
             storage.Setup(x => x.SaveAsync($"{filename}.xlsx", It.IsAny<Stream>(), It.IsAny<CancellationToken>()))
@@ -72,15 +73,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 
             orgProviderMock.Setup(x => x.GetOrgDetailsForUKPRNsAsync(It.IsAny<List<long>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(orgInfo);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetFileDetailsAsync(It.IsAny<CancellationToken>()))
+            jobQueueManagerProviderServiceMock
+                .Setup(x => x.GetCollectionIdAsync(It.IsAny<string>(), It.IsAny<CancellationToken>()))
+                .ReturnsAsync(8);
+            jobQueueManagerProviderServiceMock.Setup(x => x.GetFilePeriodInfoForCollection(It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(fileDetails);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetailModel>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetReturningProvidersAsync(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FilePeriodInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(dataQualityReturningInfo);
             ilrPeriodEndProviderServiceMock.Setup(x => x.GetTop20RuleViolationsAsync(It.IsAny<CancellationToken>()))
                 .ReturnsAsync(top20RuleViolations);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithoutValidLearners(It.IsAny<List<FileDetailModel>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithoutValidLearners(It.IsAny<List<FilePeriodInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(providerWithoutValidLearner);
-            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithInvalidLearners(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FileDetailModel>>(), It.IsAny<CancellationToken>()))
+            ilrPeriodEndProviderServiceMock.Setup(x => x.GetProvidersWithInvalidLearners(It.IsAny<int>(), It.IsAny<List<ReturnPeriod>>(), It.IsAny<List<FilePeriodInfo>>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(providerWithInValidLearner);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
@@ -91,6 +95,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                 dateTimeProvider: dateTimeProviderMock.Object,
                 orgProviderService : orgProviderMock.Object,
                 ilrPeriodEndProviderService: ilrPeriodEndProviderServiceMock.Object,
+                jobQueueManagerProviderService: jobQueueManagerProviderServiceMock.Object,
                 streamableKeyValuePersistenceService: storage.Object,
                 valueProvider: valueProvider);
 
@@ -107,14 +112,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
             wb.Worksheets[0].Name.Should().Be("Data Quality");
         }
 
-        private IEnumerable<FileDetailModel> BuildFileDetailsModel()
+        private IEnumerable<FilePeriodInfo> BuildFileDetailsModel()
         {
-            return new List<FileDetailModel>
+            return new List<FilePeriodInfo>
             {
-                new FileDetailModel
+                new FilePeriodInfo
                 {
-                     Filename = "10006341/ILR-10006341-1920-20190805-110110-35.XML",
-                     SubmittedTime = new DateTime(2019, 05, 01)
+                    Filename = "10006341/ILR-10006341-1920-20190805-110110-35.XML",
+                    SubmittedTime = new DateTime(2019, 05, 01),
+                    UKPRN = 10006341
                 }
             };
         }

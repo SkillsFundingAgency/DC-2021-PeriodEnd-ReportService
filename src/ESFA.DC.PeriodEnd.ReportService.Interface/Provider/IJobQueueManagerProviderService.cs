@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
@@ -17,6 +18,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
         Task<IEnumerable<long>> GetActualReturnersUKPRNsAsync(
             int collectionId,
             int returnPeriod,
+            CancellationToken cancellationToken);
+
+        Task<IEnumerable<FilePeriodInfo>> GetFilePeriodInfoForCollection(
+            int collectionId,
             CancellationToken cancellationToken);
 
         Task<IEnumerable<CollectionStatsModel>> GetCollectionStatsModels(

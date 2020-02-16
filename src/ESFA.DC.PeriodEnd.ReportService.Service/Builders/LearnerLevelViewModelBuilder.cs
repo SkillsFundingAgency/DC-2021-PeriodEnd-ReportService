@@ -520,16 +520,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 Generics.Fm36MathEngOnProgPaymentAttributeName,
                 Generics.Fm36LearnSuppFundCashAttributeName,
                 Generics.Fm36MathEngBalPayment,
-                Generics.Fm36PriceEpisodeFirstDisadvantagePaymentAttributeName,
-                Generics.Fm36PriceEpisodeSecondDisadvantagePaymentAttributeName,
-                Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName,
-                Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName,
-                Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName,
-                Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName,
-                Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName,
-                Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftOnProgPaymentAttributeName,
-                Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftBalancingAttributeName,
-                Generics.Fm36PriceEpisodeApplic1618FrameworkUpliftCompletionPaymentAttributeName
+                Generics.Fm36DisadvFirstPayment,
+                Generics.Fm36DisadvSecondPayment,
+                Generics.Fm36LearnDelFirstEmp1618Pay,
+                Generics.Fm36LearnDelSecondEmp1618Pay,
+                Generics.Fm36LearnDelFirstProv1618Pay,
+                Generics.Fm36LearnDelSecondProv1618Pay,
+                Generics.Fm36LearnDelLearnAddPayment,
+                Generics.Fm36LDApplic1618FrameworkUpliftBalancingPayment,
+                Generics.Fm36LDApplic1618FrameworkUpliftCompletionPayment,
+                Generics.Fm36LDApplic1618FrameworkUpliftOnProgPayment
             };
 
             decimal? sum = 0;

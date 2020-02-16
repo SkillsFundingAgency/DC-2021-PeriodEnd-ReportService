@@ -1,5 +1,7 @@
-﻿CREATE TABLE [dbo].[MCAGLA](
-	[Year] [VARCHAR](10) NOT NULL,
+﻿CREATE TABLE [dbo].[MCAGLA]
+(
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Year] [varchar](10) NOT NULL,
 	[Return] [int] NOT NULL,
 	[AcMnth] [int] NOT NULL,
 	[UKPRN] [int] NOT NULL,
@@ -139,8 +141,16 @@
 	[TotalLearningSupportEarnedCash] [decimal](15, 5) NULL,
 	[TotalEarnedCash] [decimal](15, 5) NULL,
 	[OFFICIALSENSITIVE] [varchar](100) NULL,
-	[CreatedDateTime] [datetime] NULL
-) ON [PRIMARY]
-GO
-
-
+	[CreatedDateTime] [datetime] NULL,
+	CONSTRAINT [PK_MCAGLA] PRIMARY KEY NONCLUSTERED 
+	(
+		[Year] ASC,
+		[Return] ASC,
+		[AcMnth] ASC,
+		[UKPRN] ASC,
+		[LearnerReferenceNumber] ASC,
+		[LearningAimReference] ASC,
+		[AimSeqNumber] ASC,
+		[Id] ASC
+	)
+)

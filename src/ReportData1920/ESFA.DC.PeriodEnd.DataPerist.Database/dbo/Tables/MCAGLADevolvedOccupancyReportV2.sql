@@ -1,4 +1,4 @@
-﻿CREATE TABLE [dbo].[MCAGLA]
+﻿CREATE TABLE [dbo].[McaGlaDevelovedOccupancyReportV2]
 (
 	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Year] [varchar](10) NOT NULL,

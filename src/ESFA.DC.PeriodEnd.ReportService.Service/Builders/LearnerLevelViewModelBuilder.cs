@@ -190,7 +190,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     // Work out issues (HBCP)
                     if ((learnerLevelHBCPInfo != null) &&
-                        learnerLevelHBCPInfo.HBCPModels.Any(p => p.UkPrn == ukprn && p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.NonPaymentReason == 0))
+                        learnerLevelHBCPInfo.HBCPModels.Any(p => p.UkPrn == ukprn &&
+                                                            p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
+                                                            p.NonPaymentReason == 0 &&
+                                                            p.DeliveryPeriod == _appsReturnPeriod))
                     {
                         reportRecord.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_CompletionHoldbackPayment;
                     }
@@ -201,11 +204,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         reportRecord.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_Clawback;
                     }
 
+                    // NOTE: As per WI93411, a level of rounding is required before the comparisions can be performed
                     if ((reportRecord.TotalEarningsForPeriod > reportRecord.ESFAPlannedPaymentsThisPeriod +
                                                                reportRecord.CoInvestmentPaymentsToCollectThisPeriod)
-                        && (reportRecord.TotalEarningsToDate == reportRecord.PlannedPaymentsToYouToDate +
-                                                                reportRecord.TotalCoInvestmentCollectedToDate +
-                                                                reportRecord.CoInvestmentOutstandingFromEmplToDate))
+                        && (decimal.Round(reportRecord.TotalEarningsToDate ?? 0, 2) == decimal.Round((reportRecord.PlannedPaymentsToYouToDate ?? 0) +
+                                                                (reportRecord.TotalCoInvestmentCollectedToDate ?? 0) +
+                                                                (reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0), 2)))
                     {
                         reportRecord.ReasonForIssues = Reports.LearnerLevelViewReport.ReasonForIssues_Clawback;
                     }

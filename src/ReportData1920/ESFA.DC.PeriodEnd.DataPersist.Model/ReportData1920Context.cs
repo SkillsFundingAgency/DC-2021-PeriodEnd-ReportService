@@ -127,10 +127,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                     .HasMaxLength(3)
                     .IsUnicode(false);
 
-                entity.Property(e => e.EsmtypeBenefitStatusIndicator)
-                    .HasColumnName("ESMTypeBenefitStatusIndicator")
-                    .HasMaxLength(3)
-                    .IsUnicode(false);
+                entity.Property(e => e.EsmtypeBenefitStatusIndicator).HasColumnName("ESMTypeBenefitStatusIndicator");
 
                 entity.Property(e => e.FebruaryAimAchievementEarnedCash).HasColumnType("decimal(15, 5)");
 
@@ -243,13 +240,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 
                 entity.Property(e => e.LdfamtypeLsfdateAppliesFromEarliest)
                     .HasColumnName("LDFAMTypeLSFDateAppliesFromEarliest")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                    .HasColumnType("date");
 
                 entity.Property(e => e.LdfamtypeLsfdateAppliesToLatest)
                     .HasColumnName("LDFAMTypeLSFDateAppliesToLatest")
-                    .HasMaxLength(20)
-                    .IsUnicode(false);
+                    .HasColumnType("date");
 
                 entity.Property(e => e.LdfamtypeRestartIndicator)
                     .HasColumnName("LDFAMTypeRestartIndicator")

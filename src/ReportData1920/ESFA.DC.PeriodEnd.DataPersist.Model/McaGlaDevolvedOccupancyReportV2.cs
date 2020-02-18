@@ -47,8 +47,8 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         public string LdfamtypeSourceOfFunding { get; set; }
         public string LdfamtypeFullOrCoFundingIndicator { get; set; }
         public string LdfamtypeLearningSupportFundingHighestApplicable { get; set; }
-        public string LdfamtypeLsfdateAppliesFromEarliest { get; set; }
-        public string LdfamtypeLsfdateAppliesToLatest { get; set; }
+        public DateTime? LdfamtypeLsfdateAppliesFromEarliest { get; set; }
+        public DateTime? LdfamtypeLsfdateAppliesToLatest { get; set; }
         public string LdfamtypeLdma { get; set; }
         public string LdfamtypeLdmb { get; set; }
         public string LdfamtypeLdmc { get; set; }
@@ -66,7 +66,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         public string ProviderSpecifiedDeliveryMonitoringC { get; set; }
         public string ProviderSpecifiedDeliveryMonitoringD { get; set; }
         public int? LearnerEmploymentStatus { get; set; }
-        public string EsmtypeBenefitStatusIndicator { get; set; }
+        public int? EsmtypeBenefitStatusIndicator { get; set; }
         public string FundingLineType { get; set; }
         public int? PlannedNumberOfOnProgrammeInstalments { get; set; }
         public decimal? AchievementElement { get; set; }

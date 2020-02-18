@@ -3,9 +3,8 @@ using System.Collections.Generic;
 
 namespace ESFA.DC.PeriodEnd.DataPersist.Model
 {
-    public partial class McaGlaDevelovedOccupancyReportV2
+    public partial class McaGlaDevolvedOccupancyReportV2
     {
-        public int Id { get; set; }
         public string Year { get; set; }
         public int Return { get; set; }
         public int AcMnth { get; set; }

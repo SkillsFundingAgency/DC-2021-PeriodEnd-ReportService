@@ -1,6 +1,5 @@
-﻿CREATE TABLE [dbo].[McaGlaDevelovedOccupancyReportV2]
+﻿CREATE TABLE [dbo].[McaGlaDevolvedOccupancyReportV2]
 (
-	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Year] [varchar](10) NOT NULL,
 	[Return] [int] NOT NULL,
 	[AcMnth] [int] NOT NULL,
@@ -149,8 +148,6 @@
 		[AcMnth] ASC,
 		[UKPRN] ASC,
 		[LearnerReferenceNumber] ASC,
-		[LearningAimReference] ASC,
-		[AimSeqNumber] ASC,
-		[Id] ASC
+		[AimSeqNumber] ASC
 	)
 )

@@ -1,4 +1,6 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using System;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Metadata;
 
 namespace ESFA.DC.PeriodEnd.DataPersist.Model
 {
@@ -13,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         {
         }
 
-        public virtual DbSet<McaGlaDevelovedOccupancyReportV2> McaGlaDevelovedOccupancyReportV2s { get; set; }
+        public virtual DbSet<McaGlaDevolvedOccupancyReportV2> McaGlaDevolvedOccupancyReportV2s { get; set; }
 
         // Unable to generate entity type for table 'dbo.AppsAdditionalPayments'. Please see the warning messages.
         // Unable to generate entity type for table 'dbo.AppsCoInvestmentContribution'. Please see the warning messages.
@@ -33,13 +35,13 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         {
             modelBuilder.HasAnnotation("ProductVersion", "2.2.6-servicing-10079");
 
-            modelBuilder.Entity<McaGlaDevelovedOccupancyReportV2>(entity =>
+            modelBuilder.Entity<McaGlaDevolvedOccupancyReportV2>(entity =>
             {
-                entity.HasKey(e => new { e.Year, e.Return, e.AcMnth, e.Ukprn, e.LearnerReferenceNumber, e.LearningAimReference, e.AimSeqNumber, e.Id })
+                entity.HasKey(e => new { e.Year, e.Return, e.AcMnth, e.Ukprn, e.LearnerReferenceNumber, e.AimSeqNumber })
                     .HasName("PK_MCAGLA")
                     .ForSqlServerIsClustered(false);
 
-                entity.ToTable("McaGlaDevelovedOccupancyReportV2");
+                entity.ToTable("McaGlaDevolvedOccupancyReportV2");
 
                 entity.Property(e => e.Year)
                     .HasMaxLength(10)
@@ -50,12 +52,6 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                 entity.Property(e => e.LearnerReferenceNumber)
                     .HasMaxLength(12)
                     .IsUnicode(false);
-
-                entity.Property(e => e.LearningAimReference)
-                    .HasMaxLength(8)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Id).ValueGeneratedOnAdd();
 
                 entity.Property(e => e.AchievementElement).HasColumnType("decimal(10, 5)");
 
@@ -266,6 +262,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                     .IsUnicode(false);
 
                 entity.Property(e => e.LearningActualEndDate).HasColumnType("date");
+
+                entity.Property(e => e.LearningAimReference)
+                    .IsRequired()
+                    .HasMaxLength(8)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.LearningAimTitle)
                     .HasMaxLength(254)

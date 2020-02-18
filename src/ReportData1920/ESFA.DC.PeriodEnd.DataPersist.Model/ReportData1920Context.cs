@@ -37,21 +37,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 
             modelBuilder.Entity<McaGlaDevolvedOccupancyReportV2>(entity =>
             {
-                entity.HasKey(e => new { e.Year, e.Return, e.AcMnth, e.Ukprn, e.LearnerReferenceNumber, e.AimSeqNumber })
-                    .HasName("PK_MCAGLA")
-                    .ForSqlServerIsClustered(false);
-
                 entity.ToTable("McaGlaDevolvedOccupancyReportV2");
-
-                entity.Property(e => e.Year)
-                    .HasMaxLength(10)
-                    .IsUnicode(false);
-
-                entity.Property(e => e.Ukprn).HasColumnName("UKPRN");
-
-                entity.Property(e => e.LearnerReferenceNumber)
-                    .HasMaxLength(12)
-                    .IsUnicode(false);
 
                 entity.Property(e => e.AchievementElement).HasColumnType("decimal(10, 5)");
 
@@ -60,14 +46,12 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                 entity.Property(e => e.AimValue).HasColumnType("decimal(18, 5)");
 
                 entity.Property(e => e.ApplicableAreaFromSourceOfFunding)
-                    .HasMaxLength(5)
+                    .HasMaxLength(10)
                     .IsUnicode(false);
 
                 entity.Property(e => e.ApplicableFundingRate).HasColumnType("decimal(10, 5)");
 
-                entity.Property(e => e.ApplicableFundingRateFromEsolhours)
-                    .HasColumnName("ApplicableFundingRateFromESOLHours")
-                    .HasColumnType("decimal(18, 5)");
+                entity.Property(e => e.ApplicableFundingRateFromESOLHours).HasColumnType("decimal(18, 5)");
 
                 entity.Property(e => e.ApplicableProgrammeWeighting)
                     .HasMaxLength(1)
@@ -127,8 +111,6 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                     .HasMaxLength(3)
                     .IsUnicode(false);
 
-                entity.Property(e => e.EsmtypeBenefitStatusIndicator).HasColumnName("ESMTypeBenefitStatusIndicator");
-
                 entity.Property(e => e.FebruaryAimAchievementEarnedCash).HasColumnType("decimal(15, 5)");
 
                 entity.Property(e => e.FebruaryBalancingPaymentEarnedcash).HasColumnType("decimal(15, 5)");
@@ -173,87 +155,73 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 
                 entity.Property(e => e.JuneOnProgrammeEarnedCash).HasColumnType("decimal(15, 5)");
 
-                entity.Property(e => e.LdfamtypeCommunityLearningProvisionType)
-                    .HasColumnName("LDFAMTypeCommunityLearningProvisionType")
+                entity.Property(e => e.LDFAMTypeCommunityLearningProvisionType)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeDama)
-                    .HasColumnName("LDFAMTypeDAMA")
+                entity.Property(e => e.LDFAMTypeDAMA)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeDamb)
-                    .HasColumnName("LDFAMTypeDAMB")
+                entity.Property(e => e.LDFAMTypeDAMB)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeDamc)
-                    .HasColumnName("LDFAMTypeDAMC")
+                entity.Property(e => e.LDFAMTypeDAMC)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeDamd)
-                    .HasColumnName("LDFAMTypeDAMD")
+                entity.Property(e => e.LDFAMTypeDAMD)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeFullOrCoFundingIndicator)
-                    .HasColumnName("LDFAMTypeFullOrCoFundingIndicator")
+                entity.Property(e => e.LDFAMTypeFullOrCoFundingIndicator)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLdma)
-                    .HasColumnName("LDFAMTypeLDMA")
+                entity.Property(e => e.LDFAMTypeLDMA)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLdmb)
-                    .HasColumnName("LDFAMTypeLDMB")
+                entity.Property(e => e.LDFAMTypeLDMB)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLdmc)
-                    .HasColumnName("LDFAMTypeLDMC")
+                entity.Property(e => e.LDFAMTypeLDMC)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLdmd)
-                    .HasColumnName("LDFAMTypeLDMD")
+                entity.Property(e => e.LDFAMTypeLDMD)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLdme)
-                    .HasColumnName("LDFAMTypeLDME")
+                entity.Property(e => e.LDFAMTypeLDME)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLdmf)
-                    .HasColumnName("LDFAMTypeLDMF")
+                entity.Property(e => e.LDFAMTypeLDMF)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLearningSupportFundingHighestApplicable)
-                    .HasColumnName("LDFAMTypeLearningSupportFundingHighestApplicable")
+                entity.Property(e => e.LDFAMTypeLSFDateAppliesFromEarliest).HasColumnType("date");
+
+                entity.Property(e => e.LDFAMTypeLSFDateAppliesToLatest).HasColumnType("date");
+
+                entity.Property(e => e.LDFAMTypeLearningSupportFundingHighestApplicable)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeLsfdateAppliesFromEarliest)
-                    .HasColumnName("LDFAMTypeLSFDateAppliesFromEarliest")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.LdfamtypeLsfdateAppliesToLatest)
-                    .HasColumnName("LDFAMTypeLSFDateAppliesToLatest")
-                    .HasColumnType("date");
-
-                entity.Property(e => e.LdfamtypeRestartIndicator)
-                    .HasColumnName("LDFAMTypeRestartIndicator")
+                entity.Property(e => e.LDFAMTypeRestartIndicator)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
-                entity.Property(e => e.LdfamtypeSourceOfFunding)
-                    .HasColumnName("LDFAMTypeSourceOfFunding")
+                entity.Property(e => e.LDFAMTypeSourceOfFunding)
                     .HasMaxLength(5)
+                    .IsUnicode(false);
+
+                entity.Property(e => e.LearnerReferenceNumber)
+                    .IsRequired()
+                    .HasMaxLength(12)
                     .IsUnicode(false);
 
                 entity.Property(e => e.LearningActualEndDate).HasColumnType("date");
@@ -274,8 +242,6 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                 entity.Property(e => e.LearningStartDatePostcode)
                     .HasMaxLength(8)
                     .IsUnicode(false);
-
-                entity.Property(e => e.LlddandHealthProblem).HasColumnName("LLDDandHealthProblem");
 
                 entity.Property(e => e.MarchAimAchievementEarnedCash).HasColumnType("decimal(15, 5)");
 
@@ -299,8 +265,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 
                 entity.Property(e => e.NonPublicFundedContribution).HasColumnType("decimal(10, 5)");
 
-                entity.Property(e => e.NotionalNvqlevel)
-                    .HasColumnName("NotionalNVQLevel")
+                entity.Property(e => e.NotionalNVQLevel)
                     .HasMaxLength(5)
                     .IsUnicode(false);
 
@@ -314,6 +279,10 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 
                 entity.Property(e => e.NovemberOnProgrammeEarnedCash).HasColumnType("decimal(15, 5)");
 
+                entity.Property(e => e.OFFICIALSENSITIVE)
+                    .HasMaxLength(100)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.OctoberAimAchievementEarnedCash).HasColumnType("decimal(15, 5)");
 
                 entity.Property(e => e.OctoberBalancingPaymentEarnedcash).HasColumnType("decimal(15, 5)");
@@ -324,20 +293,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 
                 entity.Property(e => e.OctoberOnProgrammeEarnedCash).HasColumnType("decimal(15, 5)");
 
-                entity.Property(e => e.Officialsensitive)
-                    .HasColumnName("OFFICIALSENSITIVE")
-                    .HasMaxLength(100)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.OriginalLearningStartDate).HasColumnType("date");
-
-                entity.Property(e => e.PartnerUkprn).HasColumnName("PartnerUKPRN");
 
                 entity.Property(e => e.PostcodePriorToEnrolment)
                     .HasMaxLength(8)
                     .IsUnicode(false);
-
-                entity.Property(e => e.PreMergerUkprn).HasColumnName("PreMergerUKPRN");
 
                 entity.Property(e => e.ProviderSpecifiedDeliveryMonitoringA)
                     .HasMaxLength(20)
@@ -395,6 +355,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
                 entity.Property(e => e.TotalLearningSupportEarnedCash).HasColumnType("decimal(15, 5)");
 
                 entity.Property(e => e.TotalOnProgrammeEarnedCash).HasColumnType("decimal(15, 5)");
+
+                entity.Property(e => e.Year)
+                    .IsRequired()
+                    .HasMaxLength(10)
+                    .IsUnicode(false);
             });
         }
     }

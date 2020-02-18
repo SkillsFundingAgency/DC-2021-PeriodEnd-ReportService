@@ -1,5 +1,6 @@
 ﻿CREATE TABLE [dbo].[McaGlaDevolvedOccupancyReportV2]
 (
+	[Id] [int] IDENTITY(1,1) NOT NULL,
 	[Year] [varchar](10) NOT NULL,
 	[Return] [int] NOT NULL,
 	[AcMnth] [int] NOT NULL,
@@ -38,7 +39,7 @@
 	[Outcome] [int] NULL,
 	[AdditionalDeliveryHours] [int] NULL,
 	[LearningStartDatePostcode] [varchar](8) NULL,
-	[ApplicableAreaFromSourceOfFunding] [varchar](5) NULL,
+	[ApplicableAreaFromSourceOfFunding] [varchar](10) NULL,
 	[LDFAMTypeSourceOfFunding] [varchar](5) NULL,
 	[LDFAMTypeFullOrCoFundingIndicator] [varchar](5) NULL,
 	[LDFAMTypeLearningSupportFundingHighestApplicable] [varchar](5) NULL,
@@ -140,14 +141,6 @@
 	[TotalLearningSupportEarnedCash] [decimal](15, 5) NULL,
 	[TotalEarnedCash] [decimal](15, 5) NULL,
 	[OFFICIALSENSITIVE] [varchar](100) NULL,
-	[CreatedDateTime] [datetime] NULL,
-	CONSTRAINT [PK_MCAGLA] PRIMARY KEY NONCLUSTERED 
-	(
-		[Year] ASC,
-		[Return] ASC,
-		[AcMnth] ASC,
-		[UKPRN] ASC,
-		[LearnerReferenceNumber] ASC,
-		[AimSeqNumber] ASC
-	)
+	[CreatedDateTime] [datetime] NULL, 
+    CONSTRAINT [PK_McaGlaDevolvedOccupancyReportV2] PRIMARY KEY ([Id]),
 )

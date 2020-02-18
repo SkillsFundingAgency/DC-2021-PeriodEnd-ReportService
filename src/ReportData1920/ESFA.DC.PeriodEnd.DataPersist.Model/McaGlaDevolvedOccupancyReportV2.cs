@@ -5,19 +5,20 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
 {
     public partial class McaGlaDevolvedOccupancyReportV2
     {
+        public int Id { get; set; }
         public string Year { get; set; }
         public int Return { get; set; }
         public int AcMnth { get; set; }
-        public int Ukprn { get; set; }
+        public int UKPRN { get; set; }
         public string LearnerReferenceNumber { get; set; }
         public long? UniqueLearnerNumber { get; set; }
         public DateTime? DateOfBirth { get; set; }
         public int Ethnicity { get; set; }
         public string Sex { get; set; }
-        public int? LlddandHealthProblem { get; set; }
+        public int? LLDDandHealthProblem { get; set; }
         public int? PriorAttainment { get; set; }
         public string PostcodePriorToEnrolment { get; set; }
-        public int? PreMergerUkprn { get; set; }
+        public int? PreMergerUKPRN { get; set; }
         public string CampusIdentifier { get; set; }
         public string ProviderSpecifiedLearnerMonitoringA { get; set; }
         public string ProviderSpecifiedLearnerMonitoringB { get; set; }
@@ -25,11 +26,11 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         public string LearningAimReference { get; set; }
         public string LearningAimTitle { get; set; }
         public string SoftwareSupplierAimIdentifier { get; set; }
-        public decimal? ApplicableFundingRateFromEsolhours { get; set; }
+        public decimal? ApplicableFundingRateFromESOLHours { get; set; }
         public decimal? ApplicableFundingRate { get; set; }
         public string ApplicableProgrammeWeighting { get; set; }
         public decimal? AimValue { get; set; }
-        public string NotionalNvqlevel { get; set; }
+        public string NotionalNVQLevel { get; set; }
         public string EntitlementCategoryLevel2or3 { get; set; }
         public decimal? Tier2SectorSubjectArea { get; set; }
         public int? FundingModel { get; set; }
@@ -44,36 +45,36 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         public int? AdditionalDeliveryHours { get; set; }
         public string LearningStartDatePostcode { get; set; }
         public string ApplicableAreaFromSourceOfFunding { get; set; }
-        public string LdfamtypeSourceOfFunding { get; set; }
-        public string LdfamtypeFullOrCoFundingIndicator { get; set; }
-        public string LdfamtypeLearningSupportFundingHighestApplicable { get; set; }
-        public DateTime? LdfamtypeLsfdateAppliesFromEarliest { get; set; }
-        public DateTime? LdfamtypeLsfdateAppliesToLatest { get; set; }
-        public string LdfamtypeLdma { get; set; }
-        public string LdfamtypeLdmb { get; set; }
-        public string LdfamtypeLdmc { get; set; }
-        public string LdfamtypeLdmd { get; set; }
-        public string LdfamtypeLdme { get; set; }
-        public string LdfamtypeLdmf { get; set; }
-        public string LdfamtypeDama { get; set; }
-        public string LdfamtypeDamb { get; set; }
-        public string LdfamtypeDamc { get; set; }
-        public string LdfamtypeDamd { get; set; }
-        public string LdfamtypeRestartIndicator { get; set; }
-        public string LdfamtypeCommunityLearningProvisionType { get; set; }
+        public string LDFAMTypeSourceOfFunding { get; set; }
+        public string LDFAMTypeFullOrCoFundingIndicator { get; set; }
+        public string LDFAMTypeLearningSupportFundingHighestApplicable { get; set; }
+        public DateTime? LDFAMTypeLSFDateAppliesFromEarliest { get; set; }
+        public DateTime? LDFAMTypeLSFDateAppliesToLatest { get; set; }
+        public string LDFAMTypeLDMA { get; set; }
+        public string LDFAMTypeLDMB { get; set; }
+        public string LDFAMTypeLDMC { get; set; }
+        public string LDFAMTypeLDMD { get; set; }
+        public string LDFAMTypeLDME { get; set; }
+        public string LDFAMTypeLDMF { get; set; }
+        public string LDFAMTypeDAMA { get; set; }
+        public string LDFAMTypeDAMB { get; set; }
+        public string LDFAMTypeDAMC { get; set; }
+        public string LDFAMTypeDAMD { get; set; }
+        public string LDFAMTypeRestartIndicator { get; set; }
+        public string LDFAMTypeCommunityLearningProvisionType { get; set; }
         public string ProviderSpecifiedDeliveryMonitoringA { get; set; }
         public string ProviderSpecifiedDeliveryMonitoringB { get; set; }
         public string ProviderSpecifiedDeliveryMonitoringC { get; set; }
         public string ProviderSpecifiedDeliveryMonitoringD { get; set; }
         public int? LearnerEmploymentStatus { get; set; }
-        public int? EsmtypeBenefitStatusIndicator { get; set; }
+        public int? ESMTypeBenefitStatusIndicator { get; set; }
         public string FundingLineType { get; set; }
         public int? PlannedNumberOfOnProgrammeInstalments { get; set; }
         public decimal? AchievementElement { get; set; }
         public decimal? AchievementPercentage { get; set; }
         public decimal? NonPublicFundedContribution { get; set; }
         public decimal? CappingFactor { get; set; }
-        public int? PartnerUkprn { get; set; }
+        public int? PartnerUKPRN { get; set; }
         public string DeliveryLocationPostcode { get; set; }
         public decimal? AreaUplift { get; set; }
         public decimal? DisadvantageUplift { get; set; }
@@ -144,7 +145,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist.Model
         public decimal? TotalJobOutcomeEarnedCash { get; set; }
         public decimal? TotalLearningSupportEarnedCash { get; set; }
         public decimal? TotalEarnedCash { get; set; }
-        public string Officialsensitive { get; set; }
+        public string OFFICIALSENSITIVE { get; set; }
         public DateTime? CreatedDateTime { get; set; }
     }
 }

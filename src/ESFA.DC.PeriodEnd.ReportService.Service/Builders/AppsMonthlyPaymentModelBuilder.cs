@@ -592,10 +592,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                         // NOTE: This code is dependent on the Earning Event Aim Sequence number being populated (done in the Earning Event population code)
                                         var ald = _appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList
                                             .SingleOrDefault(x => x != null &&
-                                                                  x.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                                  x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                                                  x.AimSequenceNumber == appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber &&
-                                                                  x.LearnAimRef == appsMonthlyPaymentModel?.PaymentLearningAimReference);
+                                                                  x.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                                                                  x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
+                                                                  x.AimSequenceNumber == appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber &&
+                                                                  x.LearnAimRef == appsMonthlyPaymentModel.PaymentLearningAimReference);
 
                                         // populate the AECLearningDelivery fields
                                         if (ald != null)

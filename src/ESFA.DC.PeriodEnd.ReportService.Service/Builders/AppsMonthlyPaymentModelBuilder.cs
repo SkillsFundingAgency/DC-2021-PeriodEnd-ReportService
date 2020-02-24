@@ -568,10 +568,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     {
                                         // process the AECPriceEpisode fields
                                         var ape = _appsMonthlyPaymentRulebaseInfo?.AecApprenticeshipPriceEpisodeInfoList
-                                            .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                        x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                                        x?.AimSequenceNumber == appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber &&
-                                                        x?.PriceEpisodeIdentifier == appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier)
+                                            .Where(x => x != null &&
+                                                        x.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                        x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
+                                                        x.AimSequenceNumber == appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber &&
+                                                        x.PriceEpisodeIdentifier.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentPriceEpisodeIdentifier))
                                             .OrderByDescending(x => x?.EpisodeStartDate)
                                             .FirstOrDefault();
 

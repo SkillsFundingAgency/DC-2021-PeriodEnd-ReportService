@@ -30,6 +30,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
 
         public int? LearningAimPathwayCode { get; set; }
 
+        public string LearningAimFundingLineType { get; set; }
+
         public DateTime? LearningStartDate { get; set; }
 
         public string AgreementId { get; set; }
@@ -43,5 +45,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment
         public DateTimeOffset? CreationDate { get; set; }
 
         public byte? LearningAimSequenceNumber { get; set; }
+
+        public decimal? SfaContributionPercentage { get; set; }
+
+        public string IlrFileName { get; set; }
+
+        public string EventType { get; set; }
     }
 }

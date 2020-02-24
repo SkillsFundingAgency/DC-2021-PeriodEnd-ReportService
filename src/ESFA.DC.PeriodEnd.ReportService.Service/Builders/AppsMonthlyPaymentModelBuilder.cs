@@ -5,6 +5,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Utils;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Service.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
@@ -108,7 +109,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 Note that English and maths aims do not have price episodes, so there should be just one row per aim.
                 */
                 appsMonthlyPaymentModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear == 1920)
+                    .Where(p => p.AcademicYear == 1920 /*&& p.LearnerReferenceNumber == "LR1001" && p.LearningAimReference == "ZPROG001"*/)
                     .GroupBy(r => new
                     {
                         r.Ukprn,
@@ -333,7 +334,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                             (x?.LearningAimFrameworkCode == null || x?.LearningAimFrameworkCode == appsMonthlyPaymentModel?.PaymentFrameworkCode) &&
                                             (x?.LearningAimPathwayCode == null || x?.LearningAimPathwayCode == appsMonthlyPaymentModel?.PaymentPathwayCode) &&
                                             x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentFundingLineType) &&
-                                            x?.PriceEpisodeIdentifier == appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier)
+                                            x?.PriceEpisodeIdentifier == appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier &&
+                                            x?.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
                                 .OrderByDescending(x => x?.AcademicYear)
                                 .ThenByDescending(x => x?.CollectionPeriod)
                                 .ThenByDescending(x => x?.DeliveryPeriod)
@@ -566,32 +568,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     if (_appsMonthlyPaymentRulebaseInfo?.AecApprenticeshipPriceEpisodeInfoList != null)
                                     {
                                         // process the AECPriceEpisode fields
-
-                                        // get the price episode with the latest start date before the payment start date
-                                        // NOTE: This code is dependent on the PaymentLearningStartDate being populated (done in the Learning Delivery population code)
                                         var ape = _appsMonthlyPaymentRulebaseInfo
                                             ?.AecApprenticeshipPriceEpisodeInfoList
                                             .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                        x.LearnRefNumber.CaseInsensitiveEquals(
-                                                            appsMonthlyPaymentModel
-                                                                ?.PaymentLearnerReferenceNumber) &&
-                                                        x?.AimSequenceNumber == appsMonthlyPaymentModel
-                                                            ?.PaymentEarningEventAimSeqNumber &&
-                                                        x?.EpisodeStartDate <= appsMonthlyPaymentModel
-                                                            ?.PaymentLearningStartDate)
+                                                        x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
+                                                        x?.AimSequenceNumber == appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber &&
+                                                        x?.PriceEpisodeIdentifier == appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier)
                                             .OrderByDescending(x => x?.EpisodeStartDate)
                                             .FirstOrDefault();
 
                                         // populate the appsMonthlyPaymentModel fields
                                         if (ape != null)
                                         {
-                                            appsMonthlyPaymentModel
-                                                    .RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier =
-                                                ape?.PriceEpisodeAgreeId;
-                                            appsMonthlyPaymentModel
-                                                    .RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate
-                                                =
-                                                ape?.PriceEpisodeActualEndDateIncEPA;
+                                            appsMonthlyPaymentModel.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier = ape?.PriceEpisodeAgreeId;
+                                            appsMonthlyPaymentModel.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate = ape?.PriceEpisodeActualEndDateIncEPA;
                                         }
                                     }
 

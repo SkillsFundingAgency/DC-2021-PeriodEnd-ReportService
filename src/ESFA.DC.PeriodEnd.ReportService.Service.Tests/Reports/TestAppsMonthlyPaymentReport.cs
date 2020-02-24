@@ -135,8 +135,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].ProviderSpecifiedLearnerMonitoringA.Should().BeEmpty();
             result[0].ProviderSpecifiedLearnerMonitoringB.Should().BeEmpty();
             result[0].PaymentEarningEventAimSeqNumber.Should().BeNull();
-            result[0].PaymentLearningAimReference.Should().Be("ZPROG001");
-            result[0].LarsLearningDeliveryLearningAimTitle.Should().Be("Maths & English");
+            result[0].PaymentLearningAimReference.Should().Be("50089080");
+            result[0].LarsLearningDeliveryLearningAimTitle.Should().Be("50089080 Aim Title");
             result[0].LearningDeliveryOriginalLearningStartDate.Should().BeNull();
             result[0].PaymentLearningStartDate.Should().Be(new DateTime(2018, 6, 16));
 //            result[0].LearningDeliveryLearningPlannedEndDate.Should().Be(new DateTime(2019, 10, 13));

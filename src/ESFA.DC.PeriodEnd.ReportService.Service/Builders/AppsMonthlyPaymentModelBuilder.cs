@@ -324,28 +324,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         if (_appsMonthlyPaymentDasInfo != null)
                         {
                             var paymentEarningEventId = _appsMonthlyPaymentDasInfo?.Payments
-                                .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                            x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                            x?.LearnerUln == appsMonthlyPaymentModel?.PaymentUniqueLearnerNumber &&
-                                            x.LearningAimReference.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearningAimReference) &&
-                                            x?.LearningStartDate == appsMonthlyPaymentModel?.PaymentLearningStartDate &&
-                                            (x?.LearningAimProgrammeType == null || x?.LearningAimProgrammeType == appsMonthlyPaymentModel?.PaymentProgrammeType) &&
-                                            (x?.LearningAimStandardCode == null || x?.LearningAimStandardCode == appsMonthlyPaymentModel?.PaymentStandardCode) &&
-                                            (x?.LearningAimFrameworkCode == null || x?.LearningAimFrameworkCode == appsMonthlyPaymentModel?.PaymentFrameworkCode) &&
-                                            (x?.LearningAimPathwayCode == null || x?.LearningAimPathwayCode == appsMonthlyPaymentModel?.PaymentPathwayCode) &&
-                                            x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentFundingLineType) &&
-                                            x?.PriceEpisodeIdentifier == appsMonthlyPaymentModel?.PaymentPriceEpisodeIdentifier &&
-                                            x?.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
-                                .OrderByDescending(x => x?.AcademicYear)
-                                .ThenByDescending(x => x?.CollectionPeriod)
-                                .ThenByDescending(x => x?.DeliveryPeriod)
+                                .Where(x => x != null &&
+                                            x.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                                            x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
+                                            x.LearnerUln == appsMonthlyPaymentModel.PaymentUniqueLearnerNumber &&
+                                            x.LearningAimReference.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
+                                            x?.LearningStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
+                                            (x.LearningAimProgrammeType == null || x.LearningAimProgrammeType == appsMonthlyPaymentModel.PaymentProgrammeType) &&
+                                            (x.LearningAimStandardCode == null || x.LearningAimStandardCode == appsMonthlyPaymentModel.PaymentStandardCode) &&
+                                            (x.LearningAimFrameworkCode == null || x.LearningAimFrameworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode) &&
+                                            (x.LearningAimPathwayCode == null || x.LearningAimPathwayCode == appsMonthlyPaymentModel.PaymentPathwayCode) &&
+                                            x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentFundingLineType) &&
+                                            x.PriceEpisodeIdentifier.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentPriceEpisodeIdentifier))
+                                .OrderByDescending(x => x.AcademicYear)
+                                .ThenByDescending(x => x.CollectionPeriod)
+                                .ThenByDescending(x => x.DeliveryPeriod)
                                 .FirstOrDefault()?.EarningEventId;
 
                             if (paymentEarningEventId != null)
                             {
                                 // get the matching sequence number for this earning event id from the Earning Event table
-                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = _appsMonthlyPaymentDasEarningsInfo?.Earnings
-                                   ?.SingleOrDefault(x => x?.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
+                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = _appsMonthlyPaymentDasEarningsInfo?.Earnings?.SingleOrDefault(x => x.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
                             }
                         }
 
@@ -568,8 +567,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     if (_appsMonthlyPaymentRulebaseInfo?.AecApprenticeshipPriceEpisodeInfoList != null)
                                     {
                                         // process the AECPriceEpisode fields
-                                        var ape = _appsMonthlyPaymentRulebaseInfo
-                                            ?.AecApprenticeshipPriceEpisodeInfoList
+                                        var ape = _appsMonthlyPaymentRulebaseInfo?.AecApprenticeshipPriceEpisodeInfoList
                                             .Where(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
                                                         x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
                                                         x?.AimSequenceNumber == appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber &&
@@ -580,8 +578,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                         // populate the appsMonthlyPaymentModel fields
                                         if (ape != null)
                                         {
-                                            appsMonthlyPaymentModel.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier = ape?.PriceEpisodeAgreeId;
-                                            appsMonthlyPaymentModel.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate = ape?.PriceEpisodeActualEndDateIncEPA;
+                                            appsMonthlyPaymentModel.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier = ape.PriceEpisodeAgreeId;
+                                            appsMonthlyPaymentModel.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDateIncEPA;
                                         }
                                     }
 
@@ -592,21 +590,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     {
                                         // NOTE: This code is dependent on the Earning Event Aim Sequence number being populated (done in the Earning Event population code)
                                         var ald = _appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList
-                                            .SingleOrDefault(x => x?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                                 x.LearnRefNumber.CaseInsensitiveEquals(
-                                                                     appsMonthlyPaymentModel
-                                                                         ?.PaymentLearnerReferenceNumber) &&
-                                                                 x?.AimSequenceNumber == appsMonthlyPaymentModel
-                                                                     ?.PaymentEarningEventAimSeqNumber &&
-                                                                 x?.LearnAimRef == appsMonthlyPaymentModel
-                                                                     ?.PaymentLearningAimReference);
+                                            .SingleOrDefault(x => x != null &&
+                                                                  x.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
+                                                                  x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
+                                                                  x.AimSequenceNumber == appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber &&
+                                                                  x.LearnAimRef == appsMonthlyPaymentModel?.PaymentLearningAimReference);
 
                                         // populate the AECLearningDelivery fields
                                         if (ald != null)
                                         {
-                                            appsMonthlyPaymentModel
-                                                    .RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim
-                                                = ald?.PlannedNumOnProgInstalm;
+                                            appsMonthlyPaymentModel.RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim = ald.PlannedNumOnProgInstalm;
                                         }
                                     }
 
@@ -615,23 +608,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     // Note: This code is dependent on the LearningDelivery.LearnStartDate so this code must
                                     //       be done after processing the Learning Delivery data
                                     //--------------------------------------------------------------------------------------
-                                    if (ilrLearner?.LearnerEmploymentStatus != null)
+                                    if (ilrLearner.LearnerEmploymentStatus != null)
                                     {
                                         if (learningDeliveryModel.LearnStartDate != null)
                                         {
-                                            var ilrLearnerEmploymentStatus = ilrLearner?.LearnerEmploymentStatus?
-                                                .Where(les => les?.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                                              les.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                                              les?.DateEmpStatApp <= learningDeliveryModel?.LearnStartDate)
-                                                .OrderByDescending(les => les?.DateEmpStatApp)
+                                            var ilrLearnerEmploymentStatus = ilrLearner.LearnerEmploymentStatus
+                                                .Where(les => les != null &&
+                                                              les.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                                                              les.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
+                                                              les.DateEmpStatApp <= learningDeliveryModel.LearnStartDate)
+                                                .OrderByDescending(les => les.DateEmpStatApp)
                                                 .FirstOrDefault();
 
                                             if (ilrLearnerEmploymentStatus != null)
                                             {
                                                 // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.
-                                                appsMonthlyPaymentModel.LearnerEmploymentStatusEmployerId = ilrLearnerEmploymentStatus?.EmpdId;
-                                                appsMonthlyPaymentModel.LearnerEmploymentStatus = ilrLearnerEmploymentStatus?.EmpStat;
-                                                appsMonthlyPaymentModel.LearnerEmploymentStatusDate = ilrLearnerEmploymentStatus?.DateEmpStatApp;
+                                                appsMonthlyPaymentModel.LearnerEmploymentStatusEmployerId = ilrLearnerEmploymentStatus.EmpdId;
+                                                appsMonthlyPaymentModel.LearnerEmploymentStatus = ilrLearnerEmploymentStatus.EmpStat;
+                                                appsMonthlyPaymentModel.LearnerEmploymentStatusDate = ilrLearnerEmploymentStatus.DateEmpStatApp;
                                             }
                                         }
                                     }

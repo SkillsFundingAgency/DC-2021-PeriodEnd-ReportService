@@ -2475,16 +2475,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = string.Empty,
                     IlrSubmissionDateTime = new DateTime(2020, 2, 19, 11, 40, 9),
                     EventTime = new DateTime(2020, 2, 19, 11, 57, 46),
                     CreationDate = new DateTime(2020, 2, 19, 11, 58, 14),
-                    LearningAimSequenceNumber = 1,
-                    SfaContributionPercentage = null,
-                    IlrFileName = "10000001/ILR-10000001-1920-20200206-121448-01-Valid.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.Act1FunctionalSkillEarningsEvent"
+                    LearningAimSequenceNumber = 1
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //9875758    660E861F-1520-4F49-B84E-D75099483B1F  10000001  1             4       1920          LR1001          1000000001  50089638
@@ -2509,16 +2505,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2019, 04, 13),
                     AgreementId = string.Empty,
                     IlrSubmissionDateTime = new DateTime(2019, 12, 6, 16, 6, 4),
                     EventTime = new DateTime(2019, 12, 6, 20, 57, 7),
                     CreationDate = new DateTime(2019, 12, 6, 20, 57, 31),
-                    LearningAimSequenceNumber = 3,
-                    SfaContributionPercentage = null,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191205-152222-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.Act1FunctionalSkillEarningsEvent"
+                    LearningAimSequenceNumber = 3
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //14658992   F65B7E77-C958-430A-8247-81A503B93B19  10000001  1             5       1920          LR1001          1000000001  50089638
@@ -2543,16 +2535,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2019, 04, 13),
                     AgreementId = string.Empty,
                     IlrSubmissionDateTime = new DateTime(2020, 1, 8, 14, 13, 51),
                     EventTime = new DateTime(2020, 1, 8, 14, 56, 48),
                     CreationDate = new DateTime(2020, 1, 8, 14, 56, 59),
-                    LearningAimSequenceNumber = 3,
-                    SfaContributionPercentage = null,
-                    IlrFileName = "10000001/ILR-10000001-1920-20200107-155216-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.Act1FunctionalSkillEarningsEvent"
+                    LearningAimSequenceNumber = 3
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //20249225   39048CD9-67E9-4AE7-8723-173094DB1B5C  10000001  1             6       1920          LR1001          1000000001  50089638
@@ -2577,16 +2565,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2019, 04, 13),
                     AgreementId = string.Empty,
                     IlrSubmissionDateTime = new DateTime(2020, 2, 17, 17, 28, 44),
                     EventTime = new DateTime(2020, 2, 7, 18, 56, 52),
                     CreationDate = new DateTime(2020, 2, 7, 18, 58, 42),
-                    LearningAimSequenceNumber = 3,
-                    SfaContributionPercentage = null,
-                    IlrFileName = "10000001/ILR-10000001-1920-20200206-121448-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.Act1FunctionalSkillEarningsEvent"
+                    LearningAimSequenceNumber = 3
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //1376649    01C050C2-9C0B-4F03-A2C9-C4BD08CEB9FE  10000001  1             2       1920          LR1001          1000000001  ZPROG001
@@ -2611,16 +2595,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2019, 10, 4, 9, 39, 58),
                     EventTime = new DateTime(2019, 10, 4, 9, 34, 43),
                     CreationDate = new DateTime(2019, 10, 4, 9, 43, 6),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191004-101447-01-Valid.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.Act1FunctionalSkillEarningsEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //1443478    79F8C510-3E59-45E9-A615-E302F4DFCAE1  10000001  1             2       1920          LR1001          1000000001  ZPROG001
@@ -2645,16 +2625,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2019, 10, 4, 11, 21, 48),
                     EventTime = new DateTime(2019, 10, 4, 11, 24, 40),
                     CreationDate = new DateTime(2019, 10, 4, 11, 24, 48),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191004-121117-01-Valid.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //1618582    23F84DCA-ADD4-4D9A-9551-C4B328F7214C  10000001  1             2       1920          LR1001          1000000001  ZPROG001
@@ -2679,16 +2655,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2019, 10, 4, 11, 21, 48),
                     EventTime = new DateTime(2019, 10, 4, 15, 3, 22),
                     CreationDate = new DateTime(2019, 10, 4, 15, 3, 24),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191004-155137-01-Valid.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //1776657    BC7FADB1-D943-454F-8591-809BD4A30E02  10000001  1             2       1920          LR1001          1000000001  ZPROG001
@@ -2713,16 +2685,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = "19 + Apprenticeship(Employer on App Service)",
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2019, 10, 4, 19, 1, 48),
                     EventTime = new DateTime(2019, 10, 4, 19, 22, 29),
                     CreationDate = new DateTime(2019, 10, 4, 19, 22, 24),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191004-155137-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //4677582    6D022948-C5E2-491C-9301-E858D7A99A9E  10000001  1             3       1920          LR1001          1000000001  ZPROG001
@@ -2747,16 +2715,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = string.Empty,
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2019, 11, 6, 20, 40, 23),
                     EventTime = new DateTime(2019, 11, 7, 21, 17, 48),
                     CreationDate = new DateTime(2019, 11, 7, 21, 43, 46),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191105-211349-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //24351538   CDD5249F-F265-4E0E-AF2F-DA4B0D42E3B4  10000001  1             7       1920          LR1001          1000000001  ZPROG001
@@ -2781,16 +2745,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = string.Empty,
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2020, 2, 19, 11, 40, 9),
                     EventTime = new DateTime(2020, 2, 19, 11, 57, 46),
                     CreationDate = new DateTime(2020, 2, 19, 11, 58, 14),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20200206-121448-01-Valid.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //9875760    5C60B697-C04F-43CA-9E03-5E3B008A4189  10000001  1             4       1920          LR1001          1000000001  ZPROG001
@@ -2815,16 +2775,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = string.Empty,
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2019, 12, 6, 16, 6, 4),
                     EventTime = new DateTime(2019, 12, 16, 20, 56, 7),
                     CreationDate = new DateTime(2019, 12, 6, 20, 57, 31),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20191205-152222-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //14658993   822572E4-290E-4BBD-A414-7EDCC8D3B597  10000001  1             5       1920          LR1001          1000000001  ZPROG001
@@ -2849,16 +2805,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = string.Empty,
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2020, 1, 8, 14, 13, 51),
                     EventTime = new DateTime(2020, 1, 8, 14, 56, 48),
                     CreationDate = new DateTime(2020, 1, 8, 14, 56, 59),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20200107-155216-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
                 //Id         EventId                               Ukprn     ContractType  Period  AcademicYear  LearnRefNumber  LearnerUln  LearningAimReference
                 //20249229   5AC5396C-B665-4084-9134-E7550546433A  10000001  1             6       1920          LR1001          1000000001  ZPROG001
@@ -2883,16 +2835,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     LearningAimStandardCode = 0,
                     LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
-                    LearningAimFundingLineType = string.Empty,
                     LearningStartDate = new DateTime(2018, 06, 16),
                     AgreementId = "5YJB6B",
                     IlrSubmissionDateTime = new DateTime(2020, 2, 7, 17, 28, 44),
                     EventTime = new DateTime(2020, 2, 7, 18, 56, 52),
                     CreationDate = new DateTime(2020, 2, 7, 18, 58, 42),
-                    LearningAimSequenceNumber = 6,
-                    SfaContributionPercentage = 0m,
-                    IlrFileName = "10000001/ILR-10000001-1920-20200206-121448-01.XML",
-                    EventType = "SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent"
+                    LearningAimSequenceNumber = 6
                 },
             };
 

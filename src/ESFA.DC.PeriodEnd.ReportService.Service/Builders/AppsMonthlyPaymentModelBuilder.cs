@@ -109,7 +109,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 Note that English and maths aims do not have price episodes, so there should be just one row per aim.
                 */
                 appsMonthlyPaymentModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear == 1920 /*&& p.LearnerReferenceNumber == "LR1001" && p.LearningAimReference == "ZPROG001"*/)
+                    .Where(p => p.AcademicYear == 1920)
                     .GroupBy(r => new
                     {
                         r.Ukprn,

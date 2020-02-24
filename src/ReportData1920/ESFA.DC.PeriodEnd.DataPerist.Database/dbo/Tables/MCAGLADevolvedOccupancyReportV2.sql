@@ -1,5 +1,7 @@
-﻿CREATE TABLE [dbo].[MCAGLA](
-	[Year] [VARCHAR](10) NOT NULL,
+﻿CREATE TABLE [dbo].[McaGlaDevolvedOccupancyReportV2]
+(
+	[Id] [int] IDENTITY(1,1) NOT NULL,
+	[Year] [varchar](10) NOT NULL,
 	[Return] [int] NOT NULL,
 	[AcMnth] [int] NOT NULL,
 	[UKPRN] [int] NOT NULL,
@@ -37,12 +39,12 @@
 	[Outcome] [int] NULL,
 	[AdditionalDeliveryHours] [int] NULL,
 	[LearningStartDatePostcode] [varchar](8) NULL,
-	[ApplicableAreaFromSourceOfFunding] [varchar](5) NULL,
+	[ApplicableAreaFromSourceOfFunding] [varchar](10) NULL,
 	[LDFAMTypeSourceOfFunding] [varchar](5) NULL,
 	[LDFAMTypeFullOrCoFundingIndicator] [varchar](5) NULL,
 	[LDFAMTypeLearningSupportFundingHighestApplicable] [varchar](5) NULL,
-	[LDFAMTypeLSFDateAppliesFromEarliest] [varchar](20) NULL,
-	[LDFAMTypeLSFDateAppliesToLatest] [varchar](20) NULL,
+	[LDFAMTypeLSFDateAppliesFromEarliest] [date] NULL,
+	[LDFAMTypeLSFDateAppliesToLatest] [date] NULL,
 	[LDFAMTypeLDMA] [varchar](5) NULL,
 	[LDFAMTypeLDMB] [varchar](5) NULL,
 	[LDFAMTypeLDMC] [varchar](5) NULL,
@@ -60,7 +62,7 @@
 	[ProviderSpecifiedDeliveryMonitoringC] [varchar](20) NULL,
 	[ProviderSpecifiedDeliveryMonitoringD] [varchar](20) NULL,
 	[LearnerEmploymentStatus] [int] NULL,
-	[ESMTypeBenefitStatusIndicator] [varchar](3) NULL,
+	[ESMTypeBenefitStatusIndicator] [int] NULL,
 	[FundingLineType] [varchar](100) NULL,
 	[PlannedNumberOfOnProgrammeInstalments] [int] NULL,
 	[AchievementElement] [decimal](10, 5) NULL,
@@ -139,8 +141,6 @@
 	[TotalLearningSupportEarnedCash] [decimal](15, 5) NULL,
 	[TotalEarnedCash] [decimal](15, 5) NULL,
 	[OFFICIALSENSITIVE] [varchar](100) NULL,
-	[CreatedDateTime] [datetime] NULL
-) ON [PRIMARY]
-GO
-
-
+	[CreatedDateTime] [datetime] NULL, 
+    CONSTRAINT [PK_McaGlaDevolvedOccupancyReportV2] PRIMARY KEY ([Id]),
+)

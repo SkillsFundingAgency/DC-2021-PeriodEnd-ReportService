@@ -68,7 +68,7 @@
     <Build Include="dbo\Tables\AppsCoInvestmentContribution.sql" />
     <Build Include="dbo\Tables\AppsAdditionalPayments.sql" />
     <Build Include="dbo\Tables\FundingSummaryReport.sql" />
-    <Build Include="dbo\Tables\MCAGLADevelopedOccupancyReportV2.sql" />
+    <Build Include="dbo\Tables\McaGlaDevolvedOccupancyReportV2.sql" />
   </ItemGroup>
   <ItemGroup>
     <PreDeploy Include="zz.Script.PreDeployment.sql" />

@@ -441,7 +441,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 {
                                     // populate the Learning Delivery fields in the appsMonthlyPaymentModel payment.
                                     appsMonthlyPaymentModel.LearningDeliveryOriginalLearningStartDate = learningDeliveryModel?.OrigLearnStartDate;
-                                    appsMonthlyPaymentModel.PaymentLearningStartDate = learningDeliveryModel?.LearnStartDate;
                                     appsMonthlyPaymentModel.LearningDeliveryLearningPlannedEndDate = learningDeliveryModel?.LearnPlanEndDate;
                                     appsMonthlyPaymentModel.LearningDeliveryCompletionStatus = learningDeliveryModel?.CompStatus;
                                     appsMonthlyPaymentModel.LearningDeliveryLearningActualEndDate = learningDeliveryModel?.LearnActEndDate;
@@ -451,17 +450,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     appsMonthlyPaymentModel.LearningDeliverySoftwareSupplierAimIdentifier = learningDeliveryModel?.SwSupAimId;
                                     appsMonthlyPaymentModel.LearningDeliveryEndPointAssessmentOrganisation = learningDeliveryModel?.EpaOrgId;
                                     appsMonthlyPaymentModel.LearningDeliverySubContractedOrPartnershipUkprn = learningDeliveryModel?.PartnerUkprn;
-
-                                    // The LD.AimSequenceNumber should match the PaymentEarningEventAimSeqNumber but may not if the PaymentEarningEventAimSeqNumber
-                                    // was empty and we matched the Learning Delivery data by using the Prog fields. If they are different we assign the
-                                    // LD AimSequenceNumber to the PaymentEarningEventAimSeqNumber so that we have consistent LD related data (FAMs and
-                                    // ProvSpecDelMons) matching the LD data
-                                    if (appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber != learningDeliveryModel?.AimSeqNumber)
-                                    {
-                                        appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = learningDeliveryModel?.AimSeqNumber;
-
-                                        // TODO: log the difference between EarningsEvent AimSeqNumber and the Learning Delivery AimSequence
-                                    }
 
                                     //-----------------------------------------------------------------------------------
                                     // populate the Learning Delivery FAM fields in the appsMonthlyPaymentModel payment.

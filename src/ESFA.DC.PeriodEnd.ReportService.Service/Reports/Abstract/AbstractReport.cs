@@ -19,8 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
     {
         protected readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
         protected readonly ILogger _logger;
-
-        private readonly IDateTimeProvider _dateTimeProvider;
+        protected readonly IDateTimeProvider _dateTimeProvider;
 
         protected AbstractReport(IDateTimeProvider dateTimeProvider, IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService, ILogger logger)
         {
@@ -42,7 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports.Abstract
         public string GetCustomFilename(IReportServiceContext reportServiceContext, string postFix)
         {
             DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
-            return $"{reportServiceContext.ReturnPeriodName}_{reportServiceContext.Ukprn}_{reportServiceContext.Ukprn} {ReportFileName} {postFix}";
+            return $"{reportServiceContext.ReturnPeriodName}/{reportServiceContext.Ukprn}/{reportServiceContext.Ukprn} {ReportFileName} {postFix}";
         }
 
         public string GetFilenameForInternalReport(IReportServiceContext reportServiceContext)

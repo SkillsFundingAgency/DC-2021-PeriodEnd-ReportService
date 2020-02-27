@@ -5,6 +5,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.JobQueueManager.Data;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ProviderSubmissions;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
@@ -103,6 +104,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         Ukprn = s.Job.Ukprn.Value,
                         ReturnPeriod = s.PeriodNumber,
                         FileName = s.FileName
+                    }).ToListAsync(cancellationToken);
+            }
+        }
+
+        public async Task<IEnumerable<FilePeriodInfo>> GetFilePeriodInfoForCollection(int collectionId, CancellationToken cancellationToken)
+        {
+            using (var jobQueueContext = _jobQueueDataFactory())
+            {
+                return await jobQueueContext.FileUploadJobMetaData
+                    .Include(x => x.Job)
+                    .ThenInclude(x => x.Collection)
+                    .Where(x => x.Job.CollectionId == collectionId
+                                && x.Job.Ukprn.HasValue
+                                && x.Job.Status == JobQueue.Status.Completed)
+                    .Select(s => new FilePeriodInfo
+                    {
+                        UKPRN = s.Job.Ukprn.Value,
+                        Filename = s.FileName,
+                        PeriodNumber = s.PeriodNumber,
+                        SubmittedTime = s.Job.DateTimeCreatedUtc,
                     }).ToListAsync(cancellationToken);
             }
         }

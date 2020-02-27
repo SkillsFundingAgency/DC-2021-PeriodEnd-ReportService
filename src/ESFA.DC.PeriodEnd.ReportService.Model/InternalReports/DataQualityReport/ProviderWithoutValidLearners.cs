@@ -4,7 +4,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityRepor
 {
     public sealed class ProviderWithoutValidLearners
     {
-        public int Ukprn { get; set; }
+        public long Ukprn { get; set; }
 
         public DateTime? LatestFileSubmitted { get; set; }
 

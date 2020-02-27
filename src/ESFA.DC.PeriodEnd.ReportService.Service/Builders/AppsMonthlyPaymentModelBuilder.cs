@@ -423,19 +423,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 //--------------------------------------------------------------------------------------------------
                                 // process the learning delivery fields
                                 //--------------------------------------------------------------------------------------------------
-                                // Note: This code has a dependency on the Payment.EarningEvent.LearningAimSequenceNumber which should have been populated prior to reaching this point in the code.
                                 AppsMonthlyPaymentLearningDeliveryModel learningDeliveryModel = null;
 
-                                if (appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber != null)
-                                {
-                                    learningDeliveryModel = ilrLearner?.LearningDeliveries?
-                                        .Where(ld => ld?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                     ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                         ?.PaymentLearnerReferenceNumber) &&
-                                                     ld?.AimSeqNumber == appsMonthlyPaymentModel
-                                                         ?.PaymentEarningEventAimSeqNumber)
-                                        .SingleOrDefault();
-                                }
+                                // Note: The EarningEvent AimSeqNum is not a reliable method to find the matching ILR data (see defect 92411)
+                                //       so we use the normal multiple fields to find the matching ILR as follows:
+                                //
+                                // Payments2.Payment                     Valid.LearningDelivery
+                                // -----------------                     ----------------------
+                                // Ukprn                                 Ukprn
+                                // LearnerReferenceNumber                LearnRefNumber
+                                // LearningAimReference                  LearnAimRef
+                                // LearningStartDate                     LearnStartDate
+                                // LearningAimProgrammeType              ProgType
+                                // LearningAimStandardCode               StdCode
+                                // LearningAimFrameworkCode              FworkCode
+                                // LearningAimPathwayCode                PwayCode
+
+                                learningDeliveryModel = ilrLearner?.LearningDeliveries?
+                                    .Where(ld => ld != null &&
+                                           ld.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                                           ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
+                                           ld.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
+                                           ld.LearnStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
+                                           (ld.ProgType == 0 || ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType) &&
+                                           (ld.StdCode == 0 || ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode) &&
+                                           (ld.FworkCode == 0 || ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode) &&
+                                           (ld.PwayCode == 0 || ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode))
+                                    .SingleOrDefault();
 
                                 if (learningDeliveryModel != null)
                                 {

@@ -7,6 +7,7 @@ using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
 using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.FileService.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -38,7 +39,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         [Fact]
         public async Task TestLearnerLevelViewReportGeneration()
         {
-            string csv = string.Empty;
             DateTime dateTime = DateTime.UtcNow;
             int ukPrn = 10036143;
             string filename = $"R01_10036143_10036143 Learner Level View Report {dateTime:yyyyMMdd-HHmmss}";
@@ -60,12 +60,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
             Mock<IFCSProviderService> fcsProviderServiceMock = new Mock<IFCSProviderService>();
             IValueProvider valueProvider = new ValueProvider();
-            storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
-                .Returns(Task.CompletedTask);
             Mock<IJsonSerializationService> jsonSerializationServiceMock = new Mock<IJsonSerializationService>();
             jsonSerializationServiceMock.Setup(x => x.Serialize<IEnumerable<LearnerLevelViewSummaryModel>>(It.IsAny<IEnumerable<LearnerLevelViewSummaryModel>>()))
                 .Returns(string.Empty);
+
+            // We need three streams
+            FileStream[] fs = new FileStream[3] { new FileStream("1.csv", FileMode.Create), new FileStream("2.csv", FileMode.Create), new FileStream("3.csv", FileMode.Create) };
+            Mock<IFileService> fileServiceMock = new Mock<IFileService>();
+            var index = 0;
+            fileServiceMock
+                .Setup(x => x.OpenWriteStreamAsync(It.IsAny<string>(), It.IsAny<string>(), It.IsAny<CancellationToken>())).ReturnsAsync(() => fs[index++]);
 
             var appsMonthlyPaymentIlrInfo = BuildILRModel(ukPrn);
             var appsCoInvestIlrInfo = BuildILRCoInvestModel(ukPrn);
@@ -129,15 +133,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 dateTimeProviderMock.Object,
                 valueProvider,
                 jsonSerializationServiceMock.Object,
-                learnerLevelViewModelBuilder);
+                learnerLevelViewModelBuilder,
+                fileServiceMock.Object);
 
             await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 
-            csv.Should().NotBeNullOrEmpty();
-            File.WriteAllText($"{filename}.csv", csv);
             List<LearnerLevelViewModel> result;
-            TestCsvHelper.CheckCsv(csv, new CsvEntry(new LearnerLevelViewMapper(), 1));
-            using (var reader = new StreamReader($"{filename}.csv"))
+            using (var reader = new StreamReader(fs[0].Name))
             {
                 using (var csvReader = new CsvReader(reader))
                 {

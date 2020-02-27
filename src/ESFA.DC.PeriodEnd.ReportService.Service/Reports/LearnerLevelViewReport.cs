@@ -9,6 +9,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
+using ESFA.DC.FileService.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
@@ -35,11 +36,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         public const string ReasonForIssues_Clawback = "Clawback";
         public const string ReasonForIssues_Other = "Other Issue";
 
+        private readonly UTF8Encoding _encoding = new UTF8Encoding(true, true);
+
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IFM36PeriodEndProviderService _fm36ProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;
         private readonly IJsonSerializationService _jsonSerializationService;
         private readonly ILearnerLevelViewModelBuilder _modelBuilder;
+        private readonly IFileService _fileService;
 
         public LearnerLevelViewReport(
             ILogger logger,
@@ -50,13 +54,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IDateTimeProvider dateTimeProvider,
             IValueProvider valueProvider,
             IJsonSerializationService jsonSerializationService,
-            ILearnerLevelViewModelBuilder modelBuilder)
+            ILearnerLevelViewModelBuilder modelBuilder,
+            IFileService fileService)
         : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
             _fm36ProviderService = fm36ProviderService;
             _dasPaymentsProviderService = dasPaymentsProviderService;
             _jsonSerializationService = jsonSerializationService;
+            _fileService = fileService;
             _modelBuilder = modelBuilder;
         }
 
@@ -69,7 +75,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             ZipArchive archive,
             CancellationToken cancellationToken)
         {
-            var externalFileName = GetFilename(reportServiceContext);
+            DateTime dateTime = _dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc);
+            var externalFileName = GetCustomFilename(reportServiceContext, $"{dateTime:yyyyMMdd-HHmmss}");
             var summaryFileName = GetCustomFilename(reportServiceContext, "Summary");
             var fileName = GetCustomFilename(reportServiceContext, "Download");
 
@@ -122,15 +129,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             // Write the full file containing calculated data
             string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", learnerLevelViewCSV, cancellationToken);
+            await WriteAsync($"{externalFileName}.csv", learnerLevelViewCSV, cancellationToken);
 
             // Write the abridged report file downloadable by the user
             string learnerLevelFinancialsRemovedCSV = await GetLearnerLevelFinancialsRemovedViewCsv(learnerLevelViewModel, cancellationToken);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{fileName}.csv", learnerLevelFinancialsRemovedCSV, cancellationToken);
+            await WriteAsync($"{fileName}.csv", learnerLevelFinancialsRemovedCSV, cancellationToken);
 
             // Create the summary file which will be used by the WebUI to display the summary view
             string summaryFile = CreateSummary(learnerLevelViewModel, cancellationToken);
-            await _streamableKeyValuePersistenceService.SaveAsync($"{summaryFileName}.json", summaryFile, cancellationToken);
+            await WriteAsync($"{summaryFileName}.json", summaryFile, cancellationToken);
+        }
+
+        public async Task WriteAsync(string fileName, string csvData, CancellationToken cancellationToken)
+        {
+            using (Stream stream = await _fileService.OpenWriteStreamAsync(fileName, "periodend1920-files", cancellationToken))
+            {
+                using (TextWriter textWriter = new StreamWriter(stream, _encoding))
+                {
+                    textWriter.Write(csvData);
+                }
+            }
         }
 
         public IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> BuildPaymentInfoDictionary(AppsMonthlyPaymentDASInfo paymentsInfo)

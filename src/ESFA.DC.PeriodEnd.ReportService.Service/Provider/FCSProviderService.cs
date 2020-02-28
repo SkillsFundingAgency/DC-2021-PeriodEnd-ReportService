@@ -106,11 +106,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         {
             using (var context = _fcsContextFunc())
             {
-                return await context
+                var allocations = await context
                     .ContractAllocations
                     .Where(ca => ca.DeliveryUkprn == ukprn)
                     .GroupBy(ca => ca.FundingStreamPeriodCode)
-                    .ToDictionaryAsync(ca => ca.Key, ca => ca.OrderByDescending(a => a.Id).First().ContractAllocationNumber, StringComparer.OrdinalIgnoreCase, cancellationToken);
+                    .ToListAsync(cancellationToken);
+
+                return allocations.ToDictionary(ca => ca.Key, ca => string.Join(";", ca.OrderByDescending(a => a.Id).Select(a => a.ContractAllocationNumber), StringComparer.OrdinalIgnoreCase));
             }
         }
     }

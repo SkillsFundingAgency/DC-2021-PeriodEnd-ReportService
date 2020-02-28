@@ -12,12 +12,12 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 {
-    public sealed class FcsProviderService : IFCSProviderService
+    public sealed class FCSProviderService : IFCSProviderService
     {
         private readonly ILogger _logger;
         private readonly Func<IFcsContext> _fcsContextFunc;
 
-        public FcsProviderService(ILogger logger, Func<IFcsContext> fcsContext)
+        public FCSProviderService(ILogger logger, Func<IFcsContext> fcsContext)
         {
             _logger = logger;
             _fcsContextFunc = fcsContext;

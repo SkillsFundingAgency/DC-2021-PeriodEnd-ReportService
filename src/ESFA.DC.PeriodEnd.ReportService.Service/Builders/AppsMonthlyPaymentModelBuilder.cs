@@ -445,10 +445,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                            ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
                                            ld.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
                                            ld.LearnStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
-                                           (ld.ProgType == 0 || ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType) &&
-                                           (ld.StdCode == 0 || ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode) &&
-                                           (ld.FworkCode == 0 || ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode) &&
-                                           (ld.PwayCode == 0 || ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode))
+                                           ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType &&
+                                           ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode &&
+                                           ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode &&
+                                           ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode)
                                     .SingleOrDefault();
 
                                 if (learningDeliveryModel != null)

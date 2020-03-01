@@ -371,18 +371,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?
                                 .PaymentFundingLineType);
 
-                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) &&
-                            _appsMonthlyPaymentFcsInfo.Contracts != null)
+                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) && _appsMonthlyPaymentFcsInfo.Contracts != null)
                         {
-                            var contractAllocationNumber = _appsMonthlyPaymentFcsInfo.Contracts
+                            var contractAllocationsNumbers = _appsMonthlyPaymentFcsInfo.Contracts
                                 .SelectMany(x => x?.ContractAllocations)
-                                .SingleOrDefault(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))?.ContractAllocationNumber;
+                                .Where(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
+                                .Select(y => y.ContractAllocationNumber);
 
-                            // populate the contract data fields in the appsMonthlyPaymentModel payment.
-                            if (contractAllocationNumber != null)
+                            if (contractAllocationsNumbers == null || contractAllocationsNumbers.Count() == 0)
                             {
-                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber =
-                                    contractAllocationNumber;
+                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = "No contract";
+                            }
+                            else
+                            {
+                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = string.Join(";", contractAllocationsNumbers);
                             }
                         }
 
@@ -445,10 +447,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                            ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
                                            ld.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
                                            ld.LearnStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
-                                           (ld.ProgType == 0 || ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType) &&
-                                           (ld.StdCode == 0 || ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode) &&
-                                           (ld.FworkCode == 0 || ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode) &&
-                                           (ld.PwayCode == 0 || ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode))
+                                           ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType &&
+                                           ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode &&
+                                           ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode &&
+                                           ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode)
                                     .SingleOrDefault();
 
                                 if (learningDeliveryModel != null)

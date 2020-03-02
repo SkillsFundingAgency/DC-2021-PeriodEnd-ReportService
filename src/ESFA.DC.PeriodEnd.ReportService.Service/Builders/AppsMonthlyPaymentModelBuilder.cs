@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsMonthlyPaymentModelBuilder : IAppsMonthlyPaymentModelBuilder
     {
         private const string ZPROG001 = "ZPROG001";
-        private const string NoContract = "NoContract";
+        private const string NoContract = "No Contract";
 
         private AppsMonthlyPaymentILRInfo _appsMonthlyPaymentIlrInfo;
         private AppsMonthlyPaymentRulebaseInfo _appsMonthlyPaymentRulebaseInfo;

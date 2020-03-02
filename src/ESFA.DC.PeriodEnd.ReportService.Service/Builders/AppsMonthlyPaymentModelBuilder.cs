@@ -13,6 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsMonthlyPaymentModelBuilder : IAppsMonthlyPaymentModelBuilder
     {
         private const string ZPROG001 = "ZPROG001";
+        private const string NoContract = "No Contract";
 
         private AppsMonthlyPaymentILRInfo _appsMonthlyPaymentIlrInfo;
         private AppsMonthlyPaymentRulebaseInfo _appsMonthlyPaymentRulebaseInfo;
@@ -371,19 +372,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                             Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?
                                 .PaymentFundingLineType);
 
-                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) &&
-                            _appsMonthlyPaymentFcsInfo.Contracts != null)
+                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) && _appsMonthlyPaymentFcsInfo.Contracts != null)
                         {
-                            var contractAllocationNumber = _appsMonthlyPaymentFcsInfo.Contracts
+                            var contractAllocationsNumbers = _appsMonthlyPaymentFcsInfo.Contracts
                                 .SelectMany(x => x?.ContractAllocations)
-                                .SingleOrDefault(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))?.ContractAllocationNumber;
+                                .Where(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
+                                .Select(y => y.ContractAllocationNumber);
 
-                            // populate the contract data fields in the appsMonthlyPaymentModel payment.
-                            if (contractAllocationNumber != null)
-                            {
-                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber =
-                                    contractAllocationNumber;
-                            }
+                            var contractAllocationsString = string.Join(";", contractAllocationsNumbers);
+
+                            appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = !string.IsNullOrEmpty(contractAllocationsString) ? contractAllocationsString : NoContract;
                         }
 
                         //--------------------------------------------------------------------------------------------------

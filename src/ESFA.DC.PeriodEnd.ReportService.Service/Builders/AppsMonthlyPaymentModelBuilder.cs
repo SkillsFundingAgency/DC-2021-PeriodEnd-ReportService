@@ -13,6 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsMonthlyPaymentModelBuilder : IAppsMonthlyPaymentModelBuilder
     {
         private const string ZPROG001 = "ZPROG001";
+        private const string NoContract = "No Contract";
 
         private AppsMonthlyPaymentILRInfo _appsMonthlyPaymentIlrInfo;
         private AppsMonthlyPaymentRulebaseInfo _appsMonthlyPaymentRulebaseInfo;
@@ -378,14 +379,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 .Where(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
                                 .Select(y => y.ContractAllocationNumber);
 
-                            if (contractAllocationsNumbers == null || contractAllocationsNumbers.Count() == 0)
-                            {
-                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = "No contract";
-                            }
-                            else
-                            {
-                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = string.Join(";", contractAllocationsNumbers);
-                            }
+                            var contractAllocationsString = string.Join(";", contractAllocationsNumbers);
+
+                            appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = !string.IsNullOrEmpty(contractAllocationsString) ? contractAllocationsString : NoContract;
                         }
 
                         //--------------------------------------------------------------------------------------------------

@@ -109,7 +109,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 Note that English and maths aims do not have price episodes, so there should be just one row per aim.
                 */
                 appsMonthlyPaymentModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear == 1920)
+                    .Where(p => p.AcademicYear == Generics.AcademicYear)
                     .GroupBy(r => new
                     {
                         r.Ukprn,
@@ -472,53 +472,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     //-----------------------------------------------------------------------------------
                                     if (learningDeliveryModel?.LearningDeliveryFams != null)
                                     {
-                                        var ilrLearningDeliveryFamInfoList = learningDeliveryModel?.LearningDeliveryFams
-                                            ?
-                                            .Where(fam => fam?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                          fam.LearnRefNumber.CaseInsensitiveEquals(
-                                                              appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                                          fam?.AimSeqNumber == appsMonthlyPaymentModel
-                                                              ?.PaymentEarningEventAimSeqNumber)
-                                            .ToList();
+                                        var ldmsarray = learningDeliveryModel?.LearningDeliveryFams
+                                            ?.Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)).ToFixedLengthArray(6);
 
-                                        if (ilrLearningDeliveryFamInfoList != null)
-                                        {
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM1"))
-                                                    ?.LearnDelFAMCode;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM2"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM3"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM4"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM5"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM6"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-                                        }
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA = ldmsarray[0]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB = ldmsarray[1]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC = ldmsarray[2]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD = ldmsarray[3]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE = ldmsarray[4]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF = ldmsarray[5]?.LearnDelFAMCode;
                                     }
 
                                     //--------------------------------------------------------------------------------------------------

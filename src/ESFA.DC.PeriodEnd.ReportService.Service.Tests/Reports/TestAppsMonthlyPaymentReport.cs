@@ -671,6 +671,46 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                         AimSeqNumber = 6,
                                         LearnDelFAMType = "ACT",
                                         LearnDelFAMCode = "1",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "356",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "357",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "358",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "359",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "360",
                                     }
                                 }
                             },

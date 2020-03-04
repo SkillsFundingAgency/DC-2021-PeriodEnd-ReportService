@@ -112,7 +112,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                     .GroupBy(ca => ca.FundingStreamPeriodCode)
                     .ToListAsync(cancellationToken);
 
-                return allocations.ToDictionary(ca => ca.Key, ca => string.Join(";", ca.OrderByDescending(a => a.Id).Select(a => a.ContractAllocationNumber), StringComparer.OrdinalIgnoreCase));
+                return allocations.ToDictionary(ca => ca.Key, ca => string.Join(";", ca.OrderByDescending(a => a.Id).Select(a => a.ContractAllocationNumber).ToList(), StringComparer.OrdinalIgnoreCase));
             }
         }
     }

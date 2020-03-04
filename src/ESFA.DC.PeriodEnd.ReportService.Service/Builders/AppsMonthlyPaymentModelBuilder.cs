@@ -13,6 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsMonthlyPaymentModelBuilder : IAppsMonthlyPaymentModelBuilder
     {
         private const string ZPROG001 = "ZPROG001";
+        private const string NoContract = "No Contract";
 
         private AppsMonthlyPaymentILRInfo _appsMonthlyPaymentIlrInfo;
         private AppsMonthlyPaymentRulebaseInfo _appsMonthlyPaymentRulebaseInfo;
@@ -364,23 +365,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         //--------------------------------------------------------------------------------------------------
                         // process the FCS Contract fields
                         //--------------------------------------------------------------------------------------------------
-                        string fundingStreamPeriodCode =
-                            Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?
-                                .PaymentFundingLineType);
+                        string fundingStreamPeriodCode = Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?.PaymentFundingLineType);
 
-                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) &&
-                            _appsMonthlyPaymentFcsInfo.Contracts != null)
+                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) && _appsMonthlyPaymentFcsInfo.Contracts != null)
                         {
-                            var contractAllocationNumber = _appsMonthlyPaymentFcsInfo.Contracts
+                            var contractAllocationsNumbers = _appsMonthlyPaymentFcsInfo.Contracts
                                 .SelectMany(x => x?.ContractAllocations)
-                                .SingleOrDefault(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))?.ContractAllocationNumber;
+                                .Where(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
+                                .Select(y => y.ContractAllocationNumber);
 
-                            // populate the contract data fields in the appsMonthlyPaymentModel payment.
-                            if (contractAllocationNumber != null)
-                            {
-                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber =
-                                    contractAllocationNumber;
-                            }
+                            var contractAllocationsString = string.Join(";", contractAllocationsNumbers);
+
+                            appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = !string.IsNullOrEmpty(contractAllocationsString) ? contractAllocationsString : NoContract;
                         }
 
                         //--------------------------------------------------------------------------------------------------
@@ -467,53 +463,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     //-----------------------------------------------------------------------------------
                                     if (learningDeliveryModel?.LearningDeliveryFams != null)
                                     {
-                                        var ilrLearningDeliveryFamInfoList = learningDeliveryModel?.LearningDeliveryFams
-                                            ?
-                                            .Where(fam => fam?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                          fam.LearnRefNumber.CaseInsensitiveEquals(
-                                                              appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                                          fam?.AimSeqNumber == appsMonthlyPaymentModel
-                                                              ?.PaymentEarningEventAimSeqNumber)
-                                            .ToList();
+                                        var ldmsarray = learningDeliveryModel?.LearningDeliveryFams
+                                            ?.Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)).ToFixedLengthArray(6);
 
-                                        if (ilrLearningDeliveryFamInfoList != null)
-                                        {
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM1"))
-                                                    ?.LearnDelFAMCode;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM2"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM3"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM4"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM5"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM6"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-                                        }
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA = ldmsarray[0]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB = ldmsarray[1]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC = ldmsarray[2]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD = ldmsarray[3]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE = ldmsarray[4]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF = ldmsarray[5]?.LearnDelFAMCode;
                                     }
 
                                     //--------------------------------------------------------------------------------------------------

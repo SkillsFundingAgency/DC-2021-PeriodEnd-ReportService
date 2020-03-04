@@ -161,7 +161,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].LearningDeliverySubContractedOrPartnershipUkprn.Should().BeNull();
             result[0].PaymentPriceEpisodeStartDate.Should().Be("01/08/2019");
             result[0].RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate.Should().BeNull();
-            result[0].FcsContractContractAllocationContractAllocationNumber.Should().BeNullOrEmpty();
+            result[0].FcsContractContractAllocationContractAllocationNumber.Should().Be("YNLP-1157;YNLP-1158");
             result[0].PaymentFundingLineType.Should().Be("19 + Apprenticeship(Employer on App Service) Levy funding");
             result[0].PaymentApprenticeshipContractType.Should().Be(1);
             result[0].LearnerEmploymentStatusEmployerId.Should().BeNull();
@@ -668,6 +668,46 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                         AimSeqNumber = 6,
                                         LearnDelFAMType = "ACT",
                                         LearnDelFAMCode = "1",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "356",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "357",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "358",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "359",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "360",
                                     }
                                 }
                             },
@@ -992,9 +1032,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 {
                     new AppsMonthlyPaymentContractInfo()
                     {
-                        ContractNumber = "NLAP-1503",
-                        ContractVersionNumber = "2",
-                        StartDate = new DateTime(2019, 08, 13),
+                        ContractNumber = "NLAP-1157",
+                        ContractVersionNumber = "1",
+                        StartDate = new DateTime(2019, 08, 1),
                         EndDate = new DateTime(2020, 7, 31),
                         Provider = new AppsMonthlyPaymentContractorInfo()
                         {
@@ -1006,10 +1046,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         {
                             new AppsMonthlyPaymentContractAllocationInfo()
                             {
-                                ContractAllocationNumber = "YNLP-1503",
-                                FundingStreamPeriodCode = "16-18NLAP2018",
-                                FundingStreamCode = "16-18NLA",
-                                Period = "1",
+                                ContractAllocationNumber = "YNLP-1157",
+                                FundingStreamPeriodCode = "LEVY1799",
+                                FundingStreamCode = "16-18NLAP",
+                                Period = "2019",
+                                PeriodTypeCode = "NONLEVY"
+                            }
+                        }
+                    },
+                    new AppsMonthlyPaymentContractInfo()
+                    {
+                        ContractNumber = "NLAP-1158",
+                        ContractVersionNumber = "2",
+                        StartDate = new DateTime(2019, 08, 1),
+                        EndDate = new DateTime(2020, 7, 31),
+                        Provider = new AppsMonthlyPaymentContractorInfo()
+                        {
+                            UkPrn = ukPrn,
+                            OrganisationIdentifier = "Manchester College",
+                            LegalName = "Manchester College Ltd",
+                        },
+                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
+                        {
+                            new AppsMonthlyPaymentContractAllocationInfo()
+                            {
+                                ContractAllocationNumber = "YNLP-1158",
+                                FundingStreamPeriodCode = "LEVY1799",
+                                FundingStreamCode = "LEVY",
+                                Period = "2019",
                                 PeriodTypeCode = "NONLEVY"
                             }
                         }

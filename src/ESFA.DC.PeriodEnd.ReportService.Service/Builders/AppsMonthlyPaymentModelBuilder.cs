@@ -19,44 +19,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         private AppsMonthlyPaymentRulebaseInfo _appsMonthlyPaymentRulebaseInfo;
         private AppsMonthlyPaymentDASInfo _appsMonthlyPaymentDasInfo;
         private AppsMonthlyPaymentDasEarningsInfo _appsMonthlyPaymentDasEarningsInfo;
-        private AppsMonthlyPaymentFcsInfo _appsMonthlyPaymentFcsInfo;
-
-        private IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo>
-            _appsMonthlyPaymentLarsLearningDeliveryInfoList;
-
-        private readonly string[] _collectionPeriods =
-        {
-            "1920-R01",
-            "1920-R02",
-            "1920-R03",
-            "1920-R04",
-            "1920-R05",
-            "1920-R06",
-            "1920-R07",
-            "1920-R08",
-            "1920-R09",
-            "1920-R10",
-            "1920-R11",
-            "1920-R12",
-            "1920-R13",
-            "1920-R14"
-        };
+        private IDictionary<string, string> _appsMonthlyPaymentFcsInfo;
+        private IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> _appsMonthlyPaymentLarsLearningDeliveryInfoList;
 
         private readonly HashSet<byte?> _fundingSourceLevyPayments = new HashSet<byte?>() { 1, 5 };
         private readonly HashSet<byte?> _fundingSourceCoInvestmentPayments = new HashSet<byte?>() { 2 };
         private readonly HashSet<byte?> _fundingSourceCoInvestmentDueFromEmployer = new HashSet<byte?>() { 3 };
-
         private readonly HashSet<byte?> _transactionTypesLevyPayments = new HashSet<byte?>() { 1, 2, 3 };
-
         private readonly HashSet<byte?> _transactionTypesCoInvestmentPayments = new HashSet<byte?>() { 1, 2, 3 };
         private readonly HashSet<byte?> _transactionTypesCoInvestmentDueFromEmployer = new HashSet<byte?>() { 1, 2, 3 };
-
         private readonly HashSet<byte?> _transactionTypesEmployerAdditionalPayments = new HashSet<byte?>() { 4, 6 };
         private readonly HashSet<byte?> _transactionTypesProviderAdditionalPayments = new HashSet<byte?>() { 5, 7 };
         private readonly HashSet<byte?> _transactionTypesApprenticeshipAdditionalPayments = new HashSet<byte?>() { 16 };
-
         private readonly HashSet<byte?> _transactionTypesEnglishAndMathsPayments = new HashSet<byte?>() { 13, 14 };
-
         private readonly HashSet<byte?> _transactionTypesLearningSupportPayments = new HashSet<byte?>() { 8, 9, 10, 11, 12, 15 };
 
         public IReadOnlyList<AppsMonthlyPaymentModel> BuildAppsMonthlyPaymentModelList(
@@ -64,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo,
             AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
             AppsMonthlyPaymentDasEarningsInfo appsMonthlyPaymentDasEarningsInfo,
-            AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo,
+            IDictionary<string, string> appsMonthlyPaymentFcsInfo,
             IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList)
         {
             // cache the passed in data for use in the private 'Get' methods
@@ -365,26 +340,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         //--------------------------------------------------------------------------------------------------
                         // process the FCS Contract fields
                         //--------------------------------------------------------------------------------------------------
-                        //string fundingStreamPeriodCode = Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?.PaymentFundingLineType);
-
-                        //if (!string.IsNullOrEmpty(fundingStreamPeriodCode) && _appsMonthlyPaymentFcsInfo.Contracts != null)
-                        //{
-                        //    var contractAllocationsNumbers = _appsMonthlyPaymentFcsInfo.Contracts
-                        //        .SelectMany(x => x?.ContractAllocations)
-                        //        .Where(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
-                        //        .Select(y => y.ContractAllocationNumber);
-
-                        //    var contractAllocationsString = string.Join(";", contractAllocationsNumbers);
-
-                        //    appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = !string.IsNullOrEmpty(contractAllocationsString) ? contractAllocationsString : NoContract;
-                        //}
-
-                        //--------------------------------------------------------------------------------------------------
-                        // process the FCS Contract fields
-                        //--------------------------------------------------------------------------------------------------
                         string fundingStreamPeriodCode = Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?.PaymentFundingLineType);
-                        appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = _appsMonthlyPaymentReportDataModel?.appsMonthlyPaymentFcsInfo?.GetValueOrDefault(fundingStreamPeriodCode ?? string.Empty, NoContract);
-
+                        appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = _appsMonthlyPaymentFcsInfo?.GetValueOrDefault(fundingStreamPeriodCode ?? string.Empty, NoContract);
 
                         //--------------------------------------------------------------------------------------------------
                         // process the learner fields

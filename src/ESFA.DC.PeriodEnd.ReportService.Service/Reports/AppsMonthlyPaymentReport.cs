@@ -101,10 +101,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _logger.LogDebug($"Performance-AppsMonthlyPaymentReport appsMonthlyPaymentRulebaseInfo.learningDeliveries - {appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList.Count} ");
 
             // Get the Fcs Contract data
-            var appsMonthlyPaymentFcsInfo =
-                await _fcsProviderService.GetFcsInfoForAppsMonthlyPaymentReportAsync(
-                    reportServiceContext.Ukprn,
-                    cancellationToken);
+            var appsMonthlyPaymentFcsInfo = await _fcsProviderService.GetContractAllocationNumberFSPCodeLookupAsync(reportServiceContext.Ukprn, cancellationToken);
 
             // Get the name's of the learning aims
             string[] learnAimRefs = appsMonthlyPaymentIlrInfo.Learners.SelectMany(x => x.LearningDeliveries)

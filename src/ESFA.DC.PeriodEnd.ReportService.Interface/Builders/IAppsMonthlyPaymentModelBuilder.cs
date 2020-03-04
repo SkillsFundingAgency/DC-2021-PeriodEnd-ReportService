@@ -11,7 +11,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
             AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo,
             AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
             AppsMonthlyPaymentDasEarningsInfo appsMonthlyPaymentDasEarningsInfo,
-            AppsMonthlyPaymentFcsInfo appsMonthlyPaymentFcsInfo,
+            IDictionary<string, string> appsMonthlyPaymentFcsInfo,
             IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList);
     }
 }

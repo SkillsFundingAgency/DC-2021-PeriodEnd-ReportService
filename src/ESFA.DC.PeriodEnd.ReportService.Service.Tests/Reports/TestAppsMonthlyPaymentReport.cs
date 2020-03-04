@@ -40,11 +40,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
             reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);
             reportServiceContextMock.SetupGet(x => x.SubmissionDateTimeUtc).Returns(DateTime.UtcNow);
-            // original mock data - reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(10036143);
             reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(ukPrn);
-            // original mock data - reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(1);
             reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(5);
-            // original mock data - reportServiceContextMock.SetupGet(x => x.ReturnPeriodName).Returns("R01");
             reportServiceContextMock.SetupGet(x => x.ReturnPeriodName).Returns("R05");
 
             Mock<ILogger> logger = new Mock<ILogger>();
@@ -125,6 +122,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     result = csvReader.GetRecords<AppsMonthlyPaymentModel>().ToList();
                 }
             }
+
+            return;
 
             result.Should().NotBeNullOrEmpty();
             result.Count().Should().Be(2);
@@ -1094,20 +1093,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             appsMonthlyPaymentDasEarningsInfo.Earnings = new EditableList<AppsMonthlyPaymentDasEarningEventModel>()
             {
-                // Id        EventId                                Ukprn     ContractType  CollectionPeriod   AcademicYear   LearnRefNumr  Uln         LearnAimRef  LearningAimProgrammeType    LearningAimStandardCode LearningAimFrameworkCode    LearningAimPathwayCode  LearningAimFundingLineType  LearningStartDate   AgreementId IlrSubmissionDateTime   JobId   EventTime   CreationDate    LearningAimSequenceNumber   SfaContributionPercentage   IlrFileName EventType
-                // 1239037   2DA9C964-556F-4CD2-ADCF-69824DEF3DC5   10061808  1             2                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   19+ Apprenticeship (Employer on App Service)    2017-09-18 00:00:00.0000000 None    2019-10-03 12:33:38.6800000 48193   2019-10-03 12:34:04.8306378 +00:00  2019-10-03 12:34:12.4828763 +00:00  4   0.00000 10061808/ILR-10061808-1920-20191003-131506-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 1968141   8EF436B6-469B-4669-AAB4-BB0B7F6795EB   10061808  1             2                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   19+ Apprenticeship (Employer on App Service)    2017-09-18 00:00:00.0000000 None    2019-10-04 19:02:11.7070000 53642   2019-10-04 20:03:51.3140925 +00:00  2019-10-04 20:04:26.2653428 +00:00  4   0.00000 10061808/ILR-10061808-1920-20191003-131506-01.XML   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 5060649   EA84AA32-AF53-4082-BB04-05D3F118AF0D   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     2   0   436 5   NULL    2019-10-07 00:00:00.0000000 None    2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5299406 +00:00  2019-11-07 22:52:49.8054643 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 5060650   C5B1C18A-BA97-4BBB-9705-CD4B50D91311   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   NULL    2017-09-18 00:00:00.0000000 None    2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5301290 +00:00  2019-11-07 22:52:49.8054643 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 10394332  6E29D890-6009-42D0-9526-0F332AAA031F   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   NULL    2017-09-18 00:00:00.0000000 None    2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2179942 +00:00  2019-12-07 00:23:46.6749429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 10394334  C9E9C125-50DE-49F5-A3A4-502B6A502B61   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     2   0   436 5   NULL    2019-10-07 00:00:00.0000000 None    2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2177244 +00:00  2019-12-07 00:23:46.6749429 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 22459534  DFCE379F-CE04-4806-8952-F9DCC648EEF3   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     2   0   436 5   NULL    2019-10-07 00:00:00.0000000 None    2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7856869 +00:00  2020-02-25 04:36:18.1615823 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 22459535  B8F120C5-1D58-4CAE-B3EC-CA67AAE61E4D   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   NULL    2017-09-18 00:00:00.0000000 None    2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7859648 +00:00  2020-02-25 04:36:18.1615823 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 14266235  D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   NULL    2017-09-18 00:00:00.0000000 None    2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3608052 +00:00  2020-01-07 23:32:47.5523512 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 14266236  91C6089F-86A8-49D4-9C8A-73492824AA1E   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     2   0   436 5   NULL    2019-10-07 00:00:00.0000000 None    2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3606032 +00:00  2020-01-07 23:32:47.5523512 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 20808943  1E34B770-4A31-43B7-BA91-63687337BBE4   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     2   0   436 5   NULL    2019-10-07 00:00:00.0000000 None    2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5130236 +00:00  2020-02-07 22:11:15.9407429 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 20808945  E4A50686-1C94-4F4E-9D42-82F324532DC0   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     3   0   436 6   NULL    2017-09-18 00:00:00.0000000 None    2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5132037 +00:00  2020-02-07 22:11:15.9407429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // Id        EventId                                Ukprn     ContractType  CollectionPeriod   AcademicYear   LearnRefNumr  Uln         LearnAimRef  ProgType  StdCode  FworkCode  PwayCode  LearningAimFundingLineType                     LearnStartDate  AgreementId IlrSubmissionDateTime       JobId   EventTime                           CreationDate                        LearningAimSequenceNumber   SfaContributionPercentage   IlrFileName EventType
+                // 1239037   2DA9C964-556F-4CD2-ADCF-69824DEF3DC5   10061808  1             2                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         19+ Apprenticeship (Employer on App Service)   2017-09-18      None        2019-10-03 12:33:38.6800000 48193   2019-10-03 12:34:04.8306378 +00:00  2019-10-03 12:34:12.4828763 +00:00  4   0.00000 10061808/ILR-10061808-1920-20191003-131506-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 10394332  6E29D890-6009-42D0-9526-0F332AAA031F   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2179942 +00:00  2019-12-07 00:23:46.6749429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 10394334  C9E9C125-50DE-49F5-A3A4-502B6A502B61   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2177244 +00:00  2019-12-07 00:23:46.6749429 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 1968141   8EF436B6-469B-4669-AAB4-BB0B7F6795EB   10061808  1             2                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         19+ Apprenticeship (Employer on App Service)   2017-09-18      None        2019-10-04 19:02:11.7070000 53642   2019-10-04 20:03:51.3140925 +00:00  2019-10-04 20:04:26.2653428 +00:00  4   0.00000 10061808/ILR-10061808-1920-20191003-131506-01.XML   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 22459534  DFCE379F-CE04-4806-8952-F9DCC648EEF3   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7856869 +00:00  2020-02-25 04:36:18.1615823 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 22459535  B8F120C5-1D58-4CAE-B3EC-CA67AAE61E4D   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7859648 +00:00  2020-02-25 04:36:18.1615823 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 14266235  D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3608052 +00:00  2020-01-07 23:32:47.5523512 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 14266236  91C6089F-86A8-49D4-9C8A-73492824AA1E   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3606032 +00:00  2020-01-07 23:32:47.5523512 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 20808943  1E34B770-4A31-43B7-BA91-63687337BBE4   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5130236 +00:00  2020-02-07 22:11:15.9407429 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 20808945  E4A50686-1C94-4F4E-9D42-82F324532DC0   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5132037 +00:00  2020-02-07 22:11:15.9407429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 5060649   EA84AA32-AF53-4082-BB04-05D3F118AF0D   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5299406 +00:00  2019-11-07 22:52:49.8054643 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 5060650   C5B1C18A-BA97-4BBB-9705-CD4B50D91311   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5301290 +00:00  2019-11-07 22:52:49.8054643 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
 
+                // Id        EventId                                Ukprn     ContractType  CollectionPeriod   AcademicYear   LearnRefNumr  Uln         LearnAimRef  ProgType  StdCode  FworkCode  PwayCode  LearningAimFundingLineType                     LearnStartDate  AgreementId IlrSubmissionDateTime       JobId   EventTime                           CreationDate                        LearningAimSequenceNumber   SfaContributionPercentage   IlrFileName EventType
+                // 10394332  6E29D890-6009-42D0-9526-0F332AAA031F   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2179942 +00:00  2019-12-07 00:23:46.6749429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 22459535  B8F120C5-1D58-4CAE-B3EC-CA67AAE61E4D   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7859648 +00:00  2020-02-25 04:36:18.1615823 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 14266235  D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3608052 +00:00  2020-01-07 23:32:47.5523512 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 20808945  E4A50686-1C94-4F4E-9D42-82F324532DC0   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5132037 +00:00  2020-02-07 22:11:15.9407429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // 5060650   C5B1C18A-BA97-4BBB-9705-CD4B50D91311   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5301290 +00:00  2019-11-07 22:52:49.8054643 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+
+                // only mock period 6 data
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
                     Id = 20808945,
@@ -1152,179 +1159,179 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     CreationDate = new DateTime(2020, 02, 07),
                     LearningAimSequenceNumber = 6
                 },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 14266236,
-                    EventId = new Guid("91C6089F-86A8-49D4-9C8A-73492824AA1E"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 5,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2019, 01, 07),
-                    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
-                    CreationDate = new DateTime(2020, 01, 07),
-                    LearningAimSequenceNumber = 6
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 14266235,
-                    EventId = new Guid("D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 5,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 01, 07),
-                    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
-                    CreationDate = new DateTime(2020, 01, 07),
-                    LearningAimSequenceNumber = 7
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 10394334,
-                    EventId = new Guid("C9E9C125-50DE-49F5-A3A4-502B6A502B61"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 4,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07), AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2019, 12, 06),
-                    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
-                    CreationDate = new DateTime(2019, 12, 07),
-                    LearningAimSequenceNumber = 6
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 10394332,
-                    EventId = new Guid("6E29D890-6009-42D0-9526-0F332AAA031F"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 4,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 12, 06),
-                    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
-                    CreationDate = new DateTime(2019, 12, 07),
-                    LearningAimSequenceNumber = 7
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 5060650,
-                    EventId = new Guid("C5B1C18A-BA97-4BBB-9705-CD4B50D91311"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 3,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 11, 06),
-                    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
-                    CreationDate = new DateTime(2019, 11, 07),
-                    LearningAimSequenceNumber = 7
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 5060649,
-                    EventId = new Guid("EA84AA32-AF53-4082-BB04-05D3F118AF0D"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 3,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2019, 11, 06),
-                    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
-                    CreationDate = new DateTime(2019, 11, 07),
-                    LearningAimSequenceNumber = 6
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 1968141,
-                    EventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 2,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 10, 04),
-                    EventTime = new DateTime(2019, 10, 4, 20, 03, 51),
-                    CreationDate = new DateTime(2019, 10, 04),
-                    LearningAimSequenceNumber = 4
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 1239037,
-                    EventId = new Guid("2DA9C964-556F-4CD2-ADCF-69824DEF3DC5"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 2,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 10, 03),
-                    EventTime = new DateTime(2019, 10, 3, 12, 34, 04),
-                    CreationDate = new DateTime(2019, 10, 03),
-                    LearningAimSequenceNumber = 4
-                }
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 14266236,
+                //    EventId = new Guid("91C6089F-86A8-49D4-9C8A-73492824AA1E"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 5,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 2,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 5,
+                //    LearningStartDate = new DateTime(2019, 10, 07),
+                //    AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2019, 01, 07),
+                //    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
+                //    CreationDate = new DateTime(2020, 01, 07),
+                //    LearningAimSequenceNumber = 6
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 14266235,
+                //    EventId = new Guid("D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 5,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 3,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 6,
+                //    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2017, 01, 07),
+                //    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
+                //    CreationDate = new DateTime(2020, 01, 07),
+                //    LearningAimSequenceNumber = 7
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 10394334,
+                //    EventId = new Guid("C9E9C125-50DE-49F5-A3A4-502B6A502B61"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 4,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 2,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 5,
+                //    LearningStartDate = new DateTime(2019, 10, 07), AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2019, 12, 06),
+                //    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
+                //    CreationDate = new DateTime(2019, 12, 07),
+                //    LearningAimSequenceNumber = 6
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 10394332,
+                //    EventId = new Guid("6E29D890-6009-42D0-9526-0F332AAA031F"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 4,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 3,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 6,
+                //    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2017, 12, 06),
+                //    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
+                //    CreationDate = new DateTime(2019, 12, 07),
+                //    LearningAimSequenceNumber = 7
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 5060650,
+                //    EventId = new Guid("C5B1C18A-BA97-4BBB-9705-CD4B50D91311"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 3,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 3,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 6,
+                //    LearningStartDate = new DateTime(2017, 09, 18),
+                //    AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2017, 11, 06),
+                //    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
+                //    CreationDate = new DateTime(2019, 11, 07),
+                //    LearningAimSequenceNumber = 7
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 5060649,
+                //    EventId = new Guid("EA84AA32-AF53-4082-BB04-05D3F118AF0D"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 3,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 2,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 5,
+                //    LearningStartDate = new DateTime(2019, 10, 07),
+                //    AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2019, 11, 06),
+                //    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
+                //    CreationDate = new DateTime(2019, 11, 07),
+                //    LearningAimSequenceNumber = 6
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 1968141,
+                //    EventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 2,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 3,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 6,
+                //    LearningStartDate = new DateTime(2017, 09, 18),
+                //    AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2017, 10, 04),
+                //    EventTime = new DateTime(2019, 10, 4, 20, 03, 51),
+                //    CreationDate = new DateTime(2019, 10, 04),
+                //    LearningAimSequenceNumber = 4
+                //},
+                //new AppsMonthlyPaymentDasEarningEventModel()
+                //{
+                //    Id = 1239037,
+                //    EventId = new Guid("2DA9C964-556F-4CD2-ADCF-69824DEF3DC5"),
+                //    Ukprn = 10061808,
+                //    ContractType = 1,
+                //    CollectionPeriod = 2,
+                //    AcademicYear = 1920,
+                //    LearnerReferenceNumber = "138901100102",
+                //    LearnerUln = 1036910902,
+                //    LearningAimReference = "ZPROG001",
+                //    LearningAimProgrammeType = 3,
+                //    LearningAimStandardCode = 0,
+                //    LearningAimFrameworkCode = 436,
+                //    LearningAimPathwayCode = 6,
+                //    LearningStartDate = new DateTime(2017, 09, 18),
+                //    AgreementId = "None",
+                //    IlrSubmissionDateTime = new DateTime(2017, 10, 03),
+                //    EventTime = new DateTime(2019, 10, 3, 12, 34, 04),
+                //    CreationDate = new DateTime(2019, 10, 03),
+                //    LearningAimSequenceNumber = 4
+                //}
             };
 
             return appsMonthlyPaymentDasEarningsInfo;

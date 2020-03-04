@@ -220,7 +220,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         var datalock = learnerLevelViewDASDataLockInfo.DASDataLocks
                                                 .FirstOrDefault(x => x.UkPrn == reportRecord.Ukprn &&
                                                         x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
-                                                        x.CollectionPeriod == _appsReturnPeriod);
+                                                        x.DeliveryPeriod == _appsReturnPeriod);
 
                         // Check to see if any records returned
                         if (datalock != null)

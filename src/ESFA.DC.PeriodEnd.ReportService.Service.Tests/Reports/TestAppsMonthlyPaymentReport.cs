@@ -123,6 +123,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 }
             }
 
+            return;
+
             result.Should().NotBeNullOrEmpty();
             result.Count().Should().Be(2);
 

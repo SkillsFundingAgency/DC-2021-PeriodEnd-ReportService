@@ -86,9 +86,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
                     It.IsAny<string[]>(),
                     It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
-            fcsProviderServiceMock.Setup(x => x.GetFcsInfoForAppsMonthlyPaymentReportAsync(
-                It.IsAny<int>(),
-                It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
+
+            fcsProviderServiceMock.Setup(x => x.GetContractAllocationNumberFSPCodeLookupAsync(
+            It.IsAny<int>(),
+            It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
@@ -1023,63 +1024,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             };
         }
 
-        private AppsMonthlyPaymentFcsInfo BuildFcsModel(int ukPrn)
+        private IDictionary<string, string> BuildFcsModel(int ukPrn)
         {
-            return new AppsMonthlyPaymentFcsInfo()
+            IDictionary<string, string> allocationNumbers = null;
+
+            allocationNumbers = new Dictionary<string, string>
             {
-                UkPrn = ukPrn,
-                Contracts = new List<AppsMonthlyPaymentContractInfo>()
-                {
-                    new AppsMonthlyPaymentContractInfo()
-                    {
-                        ContractNumber = "NLAP-1157",
-                        ContractVersionNumber = "1",
-                        StartDate = new DateTime(2019, 08, 1),
-                        EndDate = new DateTime(2020, 7, 31),
-                        Provider = new AppsMonthlyPaymentContractorInfo()
-                        {
-                            UkPrn = ukPrn,
-                            OrganisationIdentifier = "Manchester College",
-                            LegalName = "Manchester College Ltd",
-                        },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
-                        {
-                            new AppsMonthlyPaymentContractAllocationInfo()
-                            {
-                                ContractAllocationNumber = "YNLP-1157",
-                                FundingStreamPeriodCode = "LEVY1799",
-                                FundingStreamCode = "16-18NLAP",
-                                Period = "2019",
-                                PeriodTypeCode = "NONLEVY"
-                            }
-                        }
-                    },
-                    new AppsMonthlyPaymentContractInfo()
-                    {
-                        ContractNumber = "NLAP-1158",
-                        ContractVersionNumber = "2",
-                        StartDate = new DateTime(2019, 08, 1),
-                        EndDate = new DateTime(2020, 7, 31),
-                        Provider = new AppsMonthlyPaymentContractorInfo()
-                        {
-                            UkPrn = ukPrn,
-                            OrganisationIdentifier = "Manchester College",
-                            LegalName = "Manchester College Ltd",
-                        },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
-                        {
-                            new AppsMonthlyPaymentContractAllocationInfo()
-                            {
-                                ContractAllocationNumber = "YNLP-1158",
-                                FundingStreamPeriodCode = "LEVY1799",
-                                FundingStreamCode = "LEVY",
-                                Period = "2019",
-                                PeriodTypeCode = "NONLEVY"
-                            }
-                        }
-                    }
-                }
+                { "LEVY1799", "YNLP-1157;YNLP-1158" }
             };
+
+            return allocationNumbers;
         }
 
         private AppsMonthlyPaymentDasEarningsInfo BuildDasEarningsModel(int ukPrn)

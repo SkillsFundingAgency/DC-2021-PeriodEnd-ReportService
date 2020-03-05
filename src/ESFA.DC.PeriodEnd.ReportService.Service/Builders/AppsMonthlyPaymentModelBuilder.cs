@@ -13,6 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
     public class AppsMonthlyPaymentModelBuilder : IAppsMonthlyPaymentModelBuilder
     {
         private const string ZPROG001 = "ZPROG001";
+        private const string NoContract = "No Contract";
 
         private AppsMonthlyPaymentILRInfo _appsMonthlyPaymentIlrInfo;
         private AppsMonthlyPaymentRulebaseInfo _appsMonthlyPaymentRulebaseInfo;
@@ -109,7 +110,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 Note that English and maths aims do not have price episodes, so there should be just one row per aim.
                 */
                 appsMonthlyPaymentModelList = appsMonthlyPaymentDasInfo.Payments?
-                    .Where(p => p.AcademicYear == 1920)
+                    .Where(p => p.AcademicYear == Generics.AcademicYear)
                     .GroupBy(r => new
                     {
                         r.Ukprn,
@@ -135,180 +136,209 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         .ThenBy(o => o.Key.LearningAimPathwayCode)
                         .ThenBy(o => o.Key.ReportingAimFundingLineType)
                         .ThenBy(o => o.Key.PriceEpisodeIdentifier)
-                    .Select(g => new AppsMonthlyPaymentModel
+                    .Select(g =>
                     {
-                        Ukprn = g.Key.Ukprn,
+                        byte? aimSequenceNumber = null;
 
-                        // Br3 key columns
-                        PaymentLearnerReferenceNumber = g?.Key.LearnerReferenceNumber,
-                        PaymentUniqueLearnerNumber = g?.Key.LearnerUln,
-                        PaymentLearningAimReference = g?.Key.LearningAimReference,
-                        PaymentLearningStartDate = g?.Key.LearningStartDate,
-                        PaymentProgrammeType = g?.Key.LearningAimProgrammeType,
-                        PaymentStandardCode = g?.Key.LearningAimStandardCode,
-                        PaymentFrameworkCode = g?.Key.LearningAimFrameworkCode,
-                        PaymentPathwayCode = g?.Key.LearningAimPathwayCode,
-                        PaymentFundingLineType = g?.Key.ReportingAimFundingLineType,
-                        PaymentPriceEpisodeIdentifier = g?.Key.PriceEpisodeIdentifier,
+                        var paymentEarningEventIds = g
+                            .Select(a => a.EarningEventId)
+                            .ToList();
 
-                        PaymentApprenticeshipContractType = g?.FirstOrDefault().ContractType,
+                        var earningsEvents = appsMonthlyPaymentDasEarningsInfo?.Earnings?
+                            .Where(x => paymentEarningEventIds.Contains(x.EventId))
+                            .ToList();
 
-                        // The PriceEpisodeStartDate isn't part of the Br3 grouping but is the last 10 characters of the PriceEpisodeIdentifier
-                        // so will only have the one group row
-                        PaymentPriceEpisodeStartDate = (!string.IsNullOrEmpty(g.Key?.PriceEpisodeIdentifier) && g.Key?.PriceEpisodeIdentifier.Length > 10) ? g.Key?.PriceEpisodeIdentifier.Substring(g.Key.PriceEpisodeIdentifier.Length - 10, 10) : string.Empty,
+                        var distinctLearnAimSequenceNumbers = earningsEvents.Select(e => e.LearningAimSequenceNumber).Distinct().ToList();
+                        var distinctLearnAimSequenceNumbersCount = distinctLearnAimSequenceNumbers.Count();
 
-                        // Official Sensitive is always empty so can be set as part of the grouping.
-                        OfficialSensitive = string.Empty,
+                        if (distinctLearnAimSequenceNumbersCount > 1)
+                        {
+                            var latestPayment = g.OrderByDescending(p => p.AcademicYear).ThenByDescending(p => p.CollectionPeriod).ThenByDescending(p => p.DeliveryPeriod).First();
 
-                        // August payments - summed
-                        AugustLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
-                        AugustLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            aimSequenceNumber = earningsEvents?.FirstOrDefault(e => e.EventId == latestPayment.EarningEventId)?.LearningAimSequenceNumber;
+                        }
+                        else if (distinctLearnAimSequenceNumbersCount == 1)
+                        {
+                            aimSequenceNumber = distinctLearnAimSequenceNumbers.First();
+                        }
 
-                        // September payments - summed
-                        SeptemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
-                        SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                        return new AppsMonthlyPaymentModel
+                        {
+                            Ukprn = g.Key.Ukprn,
 
-                        // October payments - summed
-                        OctoberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
-                        OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            // Br3 key columns
+                            PaymentLearnerReferenceNumber = g?.Key.LearnerReferenceNumber,
+                            PaymentUniqueLearnerNumber = g?.Key.LearnerUln,
+                            PaymentLearningAimReference = g?.Key.LearningAimReference,
+                            PaymentLearningStartDate = g?.Key.LearningStartDate,
+                            PaymentProgrammeType = g?.Key.LearningAimProgrammeType,
+                            PaymentStandardCode = g?.Key.LearningAimStandardCode,
+                            PaymentFrameworkCode = g?.Key.LearningAimFrameworkCode,
+                            PaymentPathwayCode = g?.Key.LearningAimPathwayCode,
+                            PaymentFundingLineType = g?.Key.ReportingAimFundingLineType,
+                            PaymentPriceEpisodeIdentifier = g?.Key.PriceEpisodeIdentifier,
 
-                        // November payments - summed
-                        NovemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
-                        NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            PaymentApprenticeshipContractType = g?.FirstOrDefault().ContractType,
 
-                        // December payments - summed
-                        DecemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
-                        DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            // The PriceEpisodeStartDate isn't part of the Br3 grouping but is the last 10 characters of the PriceEpisodeIdentifier
+                            // so will only have the one group row
+                            PaymentPriceEpisodeStartDate = (!string.IsNullOrEmpty(g.Key?.PriceEpisodeIdentifier) && g.Key?.PriceEpisodeIdentifier.Length > 10) ? g.Key?.PriceEpisodeIdentifier.Substring(g.Key.PriceEpisodeIdentifier.Length - 10, 10) : string.Empty,
 
-                        // January payments - summed
-                        JanuaryLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
-                        JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            // Official Sensitive is always empty so can be set as part of the grouping.
+                            OfficialSensitive = string.Empty,
 
-                        // February payments - summed
-                        FebruaryLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
-                        FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            PaymentEarningEventAimSeqNumber = aimSequenceNumber,
 
-                        // March payments - summed
-                        MarchLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
-                        MarchLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            // August payments - summed
+                            AugustLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
+                            AugustLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 1)).Sum(c => c.Amount ?? 0m),
 
-                        // April payments - summed
-                        AprilLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
-                        AprilLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            // September payments - summed
+                            SeptemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
+                            SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 2)).Sum(c => c.Amount ?? 0m),
 
-                        // May payments - summed
-                        MayLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
-                        MayLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            // October payments - summed
+                            OctoberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
+                            OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 3)).Sum(c => c.Amount ?? 0m),
 
-                        // June payments - summed
-                        JuneLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
-                        JuneLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            // November payments - summed
+                            NovemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
+                            NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 4)).Sum(c => c.Amount ?? 0m),
 
-                        // July payments - summed
-                        JulyLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
-                        JulyLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            // December payments - summed
+                            DecemberLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
+                            DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 5)).Sum(c => c.Amount ?? 0m),
 
-                        // R13 payments - summed
-                        R13LevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13CoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13CoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13EmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13ProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13ApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13EnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
-                        R13LearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            // January payments - summed
+                            JanuaryLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
+                            JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 6)).Sum(c => c.Amount ?? 0m),
 
-                        // R14 payments - summed
-                        R14LevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14CoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14CoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14EmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14ProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14ApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14EnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
-                        R14LearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            // February payments - summed
+                            FebruaryLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
+                            FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 7)).Sum(c => c.Amount ?? 0m),
 
-                        // Total payments
-                        TotalLevyPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalCoInvestmentPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalCoInvestmentDueFromEmployerPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalEmployerAdditionalPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalProviderAdditionalPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalApprenticeAdditionalPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalEnglishAndMathsPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
-                        TotalLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m)
+                            // March payments - summed
+                            MarchLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+                            MarchLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 8)).Sum(c => c.Amount ?? 0m),
+
+                            // April payments - summed
+                            AprilLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+                            AprilLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 9)).Sum(c => c.Amount ?? 0m),
+
+                            // May payments - summed
+                            MayLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+                            MayLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 10)).Sum(c => c.Amount ?? 0m),
+
+                            // June payments - summed
+                            JuneLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+                            JuneLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 11)).Sum(c => c.Amount ?? 0m),
+
+                            // July payments - summed
+                            JulyLevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyCoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyCoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyEmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyEnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+                            JulyLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 12)).Sum(c => c.Amount ?? 0m),
+
+                            // R13 payments - summed
+                            R13LevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13CoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13CoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13EmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13ProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13ApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13EnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+                            R13LearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 13)).Sum(c => c.Amount ?? 0m),
+
+                            // R14 payments - summed
+                            R14LevyPayments = g.Where(p => PeriodLevyPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14CoInvestmentPayments = g.Where(p => PeriodCoInvestmentPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14CoInvestmentDueFromEmployerPayments = g.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14EmployerAdditionalPayments = g.Where(p => PeriodEmployerAdditionalPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14ProviderAdditionalPayments = g.Where(p => PeriodProviderAdditionalPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14ApprenticeAdditionalPayments = g.Where(p => PeriodApprenticeAdditionalPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14EnglishAndMathsPayments = g.Where(p => PeriodEnglishAndMathsPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+                            R14LearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(p => PeriodLearningSupportDisadvantageAndFrameworkUpliftPaymentsTypePredicate(p, 14)).Sum(c => c.Amount ?? 0m),
+
+                            // Total payments
+                            TotalLevyPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalCoInvestmentPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalCoInvestmentDueFromEmployerPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalEmployerAdditionalPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalProviderAdditionalPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalApprenticeAdditionalPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalEnglishAndMathsPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m),
+                            TotalLearningSupportDisadvantageAndFrameworkUpliftPayments = g.Where(TotalLevyPaymentsTypePredicate).Sum(c => c.Amount ?? 0m)
+                        };
                     }).ToList();
 
                 // populate the appsMonthlyPaymentModel payment related fields
@@ -316,38 +346,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 {
                     foreach (var appsMonthlyPaymentModel in appsMonthlyPaymentModelList)
                     {
-                        //------------------------------------------------------------------------------------------------------------------
-                        // Aim Sequence Number processing
-                        // Get the Earning Event Id for the latest payment in the group of payments
-                        // (there may be multiple payment rows that were rolled up into a single row as part of the grouping)
-                        //------------------------------------------------------------------------------------------------------------------
-                        if (_appsMonthlyPaymentDasInfo != null)
-                        {
-                            var paymentEarningEventId = _appsMonthlyPaymentDasInfo?.Payments
-                                .Where(x => x != null &&
-                                            x.Ukprn == appsMonthlyPaymentModel.Ukprn &&
-                                            x.LearnerReferenceNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
-                                            x.LearnerUln == appsMonthlyPaymentModel.PaymentUniqueLearnerNumber &&
-                                            x.LearningAimReference.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
-                                            x?.LearningStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
-                                            (x.LearningAimProgrammeType == null || x.LearningAimProgrammeType == appsMonthlyPaymentModel.PaymentProgrammeType) &&
-                                            (x.LearningAimStandardCode == null || x.LearningAimStandardCode == appsMonthlyPaymentModel.PaymentStandardCode) &&
-                                            (x.LearningAimFrameworkCode == null || x.LearningAimFrameworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode) &&
-                                            (x.LearningAimPathwayCode == null || x.LearningAimPathwayCode == appsMonthlyPaymentModel.PaymentPathwayCode) &&
-                                            x.ReportingAimFundingLineType.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentFundingLineType) &&
-                                            x.PriceEpisodeIdentifier.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentPriceEpisodeIdentifier))
-                                .OrderByDescending(x => x.AcademicYear)
-                                .ThenByDescending(x => x.CollectionPeriod)
-                                .ThenByDescending(x => x.DeliveryPeriod)
-                                .FirstOrDefault()?.EarningEventId;
-
-                            if (paymentEarningEventId != null)
-                            {
-                                // get the matching sequence number for this earning event id from the Earning Event table
-                                appsMonthlyPaymentModel.PaymentEarningEventAimSeqNumber = _appsMonthlyPaymentDasEarningsInfo?.Earnings?.SingleOrDefault(x => x.EventId == paymentEarningEventId)?.LearningAimSequenceNumber;
-                            }
-                        }
-
                         //--------------------------------------------------------------------------------------------------
                         // process the LARS fields
                         //--------------------------------------------------------------------------------------------------
@@ -367,23 +365,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         //--------------------------------------------------------------------------------------------------
                         // process the FCS Contract fields
                         //--------------------------------------------------------------------------------------------------
-                        string fundingStreamPeriodCode =
-                            Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?
-                                .PaymentFundingLineType);
+                        string fundingStreamPeriodCode = Utils.GetFundingStreamPeriodForFundingLineType(appsMonthlyPaymentModel?.PaymentFundingLineType);
 
-                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) &&
-                            _appsMonthlyPaymentFcsInfo.Contracts != null)
+                        if (!string.IsNullOrEmpty(fundingStreamPeriodCode) && _appsMonthlyPaymentFcsInfo.Contracts != null)
                         {
-                            var contractAllocationNumber = _appsMonthlyPaymentFcsInfo.Contracts
+                            var contractAllocationsNumbers = _appsMonthlyPaymentFcsInfo.Contracts
                                 .SelectMany(x => x?.ContractAllocations)
-                                .SingleOrDefault(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))?.ContractAllocationNumber;
+                                .Where(y => y.FundingStreamPeriodCode.CaseInsensitiveEquals(fundingStreamPeriodCode))
+                                .Select(y => y.ContractAllocationNumber);
 
-                            // populate the contract data fields in the appsMonthlyPaymentModel payment.
-                            if (contractAllocationNumber != null)
-                            {
-                                appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber =
-                                    contractAllocationNumber;
-                            }
+                            var contractAllocationsString = string.Join(";", contractAllocationsNumbers);
+
+                            appsMonthlyPaymentModel.FcsContractContractAllocationContractAllocationNumber = !string.IsNullOrEmpty(contractAllocationsString) ? contractAllocationsString : NoContract;
                         }
 
                         //--------------------------------------------------------------------------------------------------
@@ -423,19 +416,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 //--------------------------------------------------------------------------------------------------
                                 // process the learning delivery fields
                                 //--------------------------------------------------------------------------------------------------
-                                // Note: This code has a dependency on the Payment.EarningEvent.LearningAimSequenceNumber which should have been populated prior to reaching this point in the code.
                                 AppsMonthlyPaymentLearningDeliveryModel learningDeliveryModel = null;
 
-                                if (appsMonthlyPaymentModel?.PaymentEarningEventAimSeqNumber != null)
-                                {
-                                    learningDeliveryModel = ilrLearner?.LearningDeliveries?
-                                        .Where(ld => ld?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                     ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
-                                                         ?.PaymentLearnerReferenceNumber) &&
-                                                     ld?.AimSeqNumber == appsMonthlyPaymentModel
-                                                         ?.PaymentEarningEventAimSeqNumber)
-                                        .SingleOrDefault();
-                                }
+                                // Note: The EarningEvent AimSeqNum is not a reliable method to find the matching ILR data (see defect 92411)
+                                //       so we use the normal multiple fields to find the matching ILR as follows:
+                                //
+                                // Payments2.Payment                     Valid.LearningDelivery
+                                // -----------------                     ----------------------
+                                // Ukprn                                 Ukprn
+                                // LearnerReferenceNumber                LearnRefNumber
+                                // LearningAimReference                  LearnAimRef
+                                // LearningStartDate                     LearnStartDate
+                                // LearningAimProgrammeType              ProgType
+                                // LearningAimStandardCode               StdCode
+                                // LearningAimFrameworkCode              FworkCode
+                                // LearningAimPathwayCode                PwayCode
+
+                                learningDeliveryModel = ilrLearner?.LearningDeliveries?
+                                    .Where(ld => ld != null &&
+                                           ld.Ukprn == appsMonthlyPaymentModel.Ukprn &&
+                                           ld.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearnerReferenceNumber) &&
+                                           ld.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel.PaymentLearningAimReference) &&
+                                           ld.LearnStartDate == appsMonthlyPaymentModel.PaymentLearningStartDate &&
+                                           ld.ProgType == appsMonthlyPaymentModel.PaymentProgrammeType &&
+                                           ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode &&
+                                           ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode &&
+                                           ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode)
+                                    .SingleOrDefault();
 
                                 if (learningDeliveryModel != null)
                                 {
@@ -456,53 +463,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     //-----------------------------------------------------------------------------------
                                     if (learningDeliveryModel?.LearningDeliveryFams != null)
                                     {
-                                        var ilrLearningDeliveryFamInfoList = learningDeliveryModel?.LearningDeliveryFams
-                                            ?
-                                            .Where(fam => fam?.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
-                                                          fam.LearnRefNumber.CaseInsensitiveEquals(
-                                                              appsMonthlyPaymentModel?.PaymentLearnerReferenceNumber) &&
-                                                          fam?.AimSeqNumber == appsMonthlyPaymentModel
-                                                              ?.PaymentEarningEventAimSeqNumber)
-                                            .ToList();
+                                        var ldmsarray = learningDeliveryModel?.LearningDeliveryFams
+                                            ?.Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(Generics.LearningDeliveryFAMCodeLDM)).ToFixedLengthArray(6);
 
-                                        if (ilrLearningDeliveryFamInfoList != null)
-                                        {
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM1"))
-                                                    ?.LearnDelFAMCode;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM2"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM3"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM4"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM5"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-
-                                            appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF =
-                                                ilrLearningDeliveryFamInfoList?
-                                                    .SingleOrDefault(x =>
-                                                        (x?.LearnDelFAMType).CaseInsensitiveEquals("LDM6"))
-                                                    ?.LearnDelFAMCode ?? string.Empty;
-                                        }
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringA = ldmsarray[0]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringB = ldmsarray[1]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringC = ldmsarray[2]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringD = ldmsarray[3]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringE = ldmsarray[4]?.LearnDelFAMCode;
+                                        appsMonthlyPaymentModel.LearningDeliveryFamTypeLearningDeliveryMonitoringF = ldmsarray[5]?.LearnDelFAMCode;
                                     }
 
                                     //--------------------------------------------------------------------------------------------------

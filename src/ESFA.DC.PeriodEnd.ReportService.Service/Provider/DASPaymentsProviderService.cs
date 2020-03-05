@@ -140,6 +140,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                         DataLockFailureId = x.DataLockFailureId,
                         LearningAimSequenceNumber = x.LearningAimSequenceNumber,
                         CollectionPeriod = x.CollectionPeriod,
+                        DeliveryPeriod = x.DeliveryPeriod
                     })
                     .Distinct()
                     .ToListAsync(cancellationToken);

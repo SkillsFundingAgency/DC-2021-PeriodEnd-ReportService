@@ -86,9 +86,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 .Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
                     It.IsAny<string[]>(),
                     It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
-            fcsProviderServiceMock.Setup(x => x.GetFcsInfoForAppsMonthlyPaymentReportAsync(
-                It.IsAny<int>(),
-                It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
+
+            fcsProviderServiceMock.Setup(x => x.GetContractAllocationNumberFSPCodeLookupAsync(
+            It.IsAny<int>(),
+            It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
             dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
@@ -123,8 +124,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 }
             }
 
-            return;
-
             result.Should().NotBeNullOrEmpty();
             result.Count().Should().Be(2);
 
@@ -133,26 +132,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].LearnerCampusIdentifier.Should().Be("C0471802");
             result[0].ProviderSpecifiedLearnerMonitoringA.Should().Be("001");
             result[0].ProviderSpecifiedLearnerMonitoringB.Should().Be("100102");
-            result[0].PaymentEarningEventAimSeqNumber.Should().Be(4);
+            result[0].PaymentEarningEventAimSeqNumber.Should().Be(6);
             result[0].PaymentLearningAimReference.Should().Be("ZPROG001");
             result[0].LarsLearningDeliveryLearningAimTitle.Should().Be("Generic code to identify ILR programme aims");
             result[0].LearningDeliveryOriginalLearningStartDate.Should().BeNull();
-            result[0].PaymentLearningStartDate.Should().Be(new DateTime(2017, 9, 18));
-            result[0].LearningDeliveryLearningPlannedEndDate.Should().Be(new DateTime(2019, 9, 19));
-            result[0].LearningDeliveryLearningActualEndDate.Should().Be(new DateTime(2019, 9, 11));
+            result[0].PaymentLearningStartDate.Should().Be(new DateTime(2019, 10, 7));
+            result[0].LearningDeliveryLearningPlannedEndDate.Should().Be(new DateTime(2020, 8, 10));
+            result[0].LearningDeliveryLearningActualEndDate.Should().BeNull();
             result[0].LearningDeliveryAchievementDate.Should().BeNull();
-            result[0].LearningDeliveryOutcome.Should().Be(1);
-            result[0].PaymentProgrammeType.Should().Be(3);
+            result[0].LearningDeliveryOutcome.Should().BeNull();
+            result[0].PaymentProgrammeType.Should().Be(2);
             result[0].PaymentStandardCode.Should().Be(0);
             result[0].PaymentFrameworkCode.Should().Be(436);
-            result[0].PaymentPathwayCode.Should().Be(6);
+            result[0].PaymentPathwayCode.Should().Be(5);
             result[0].LearningDeliveryAimType.Should().Be(1);
-            result[0].LearningDeliverySoftwareSupplierAimIdentifier.Should().Be("E8FC9ECD-01DC-4D10-AB8D-E177BD21B259");
-            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringA.Should().BeNullOrEmpty();
-            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringB.Should().BeNullOrEmpty();
-            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringC.Should().BeNullOrEmpty();
-            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringD.Should().BeNullOrEmpty();
-            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringE.Should().BeNullOrEmpty();
+            result[0].LearningDeliverySoftwareSupplierAimIdentifier.Should().Be("62993A2E-3D84-4BFA-8D32-0B72F286C0B8");
+            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringA.Should().Be("356");
+            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringB.Should().Be("357");
+            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringC.Should().Be("358");
+            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringD.Should().Be("359");
+            result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringE.Should().Be("360");
             result[0].LearningDeliveryFamTypeLearningDeliveryMonitoringF.Should().BeNullOrEmpty();
             result[0].ProviderSpecifiedDeliveryMonitoringA.Should().Be("1920");
             result[0].ProviderSpecifiedDeliveryMonitoringB.Should().Be("E5072");
@@ -161,15 +160,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].LearningDeliveryEndPointAssessmentOrganisation.Should().BeNullOrEmpty();
             result[0].RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim.Should().BeNull();
             result[0].LearningDeliverySubContractedOrPartnershipUkprn.Should().BeNull();
-            result[0].PaymentPriceEpisodeStartDate.Should().Be("01/08/2019");
+            result[0].PaymentPriceEpisodeStartDate.Should().Be("07/10/2019");
             result[0].RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate.Should().BeNull();
             result[0].FcsContractContractAllocationContractAllocationNumber.Should().Be("YNLP-1157;YNLP-1158");
             result[0].PaymentFundingLineType.Should().Be("19 + Apprenticeship(Employer on App Service) Levy funding");
             result[0].PaymentApprenticeshipContractType.Should().Be(1);
-            result[0].LearnerEmploymentStatusEmployerId.Should().BeNull();
+            result[0].LearnerEmploymentStatusEmployerId.Should().Be(905118782);
             result[0].RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier.Should().BeNullOrEmpty();
-            result[0].LearnerEmploymentStatus.Should().BeNull();
-            result[0].LearnerEmploymentStatusDate.Should().BeNull();
+            result[0].LearnerEmploymentStatus.Should().Be(10);
+            result[0].LearnerEmploymentStatusDate.Should().Be(new DateTime(2019, 10, 7));
 
             // payments, Learner 1, Aim 1
 
@@ -1025,63 +1024,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             };
         }
 
-        private AppsMonthlyPaymentFcsInfo BuildFcsModel(int ukPrn)
+        private IDictionary<string, string> BuildFcsModel(int ukPrn)
         {
-            return new AppsMonthlyPaymentFcsInfo()
+            IDictionary<string, string> allocationNumbers = null;
+
+            allocationNumbers = new Dictionary<string, string>
             {
-                UkPrn = ukPrn,
-                Contracts = new List<AppsMonthlyPaymentContractInfo>()
-                {
-                    new AppsMonthlyPaymentContractInfo()
-                    {
-                        ContractNumber = "NLAP-1157",
-                        ContractVersionNumber = "1",
-                        StartDate = new DateTime(2019, 08, 1),
-                        EndDate = new DateTime(2020, 7, 31),
-                        Provider = new AppsMonthlyPaymentContractorInfo()
-                        {
-                            UkPrn = ukPrn,
-                            OrganisationIdentifier = "Manchester College",
-                            LegalName = "Manchester College Ltd",
-                        },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
-                        {
-                            new AppsMonthlyPaymentContractAllocationInfo()
-                            {
-                                ContractAllocationNumber = "YNLP-1157",
-                                FundingStreamPeriodCode = "LEVY1799",
-                                FundingStreamCode = "16-18NLAP",
-                                Period = "2019",
-                                PeriodTypeCode = "NONLEVY"
-                            }
-                        }
-                    },
-                    new AppsMonthlyPaymentContractInfo()
-                    {
-                        ContractNumber = "NLAP-1158",
-                        ContractVersionNumber = "2",
-                        StartDate = new DateTime(2019, 08, 1),
-                        EndDate = new DateTime(2020, 7, 31),
-                        Provider = new AppsMonthlyPaymentContractorInfo()
-                        {
-                            UkPrn = ukPrn,
-                            OrganisationIdentifier = "Manchester College",
-                            LegalName = "Manchester College Ltd",
-                        },
-                        ContractAllocations = new List<AppsMonthlyPaymentContractAllocationInfo>()
-                        {
-                            new AppsMonthlyPaymentContractAllocationInfo()
-                            {
-                                ContractAllocationNumber = "YNLP-1158",
-                                FundingStreamPeriodCode = "LEVY1799",
-                                FundingStreamCode = "LEVY",
-                                Period = "2019",
-                                PeriodTypeCode = "NONLEVY"
-                            }
-                        }
-                    }
-                }
+                { "LEVY1799", "YNLP-1157;YNLP-1158" }
             };
+
+            return allocationNumbers;
         }
 
         private AppsMonthlyPaymentDasEarningsInfo BuildDasEarningsModel(int ukPrn)
@@ -1107,14 +1059,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 // 5060649   EA84AA32-AF53-4082-BB04-05D3F118AF0D   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5299406 +00:00  2019-11-07 22:52:49.8054643 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
                 // 5060650   C5B1C18A-BA97-4BBB-9705-CD4B50D91311   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5301290 +00:00  2019-11-07 22:52:49.8054643 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
 
-                // Id        EventId                                Ukprn     ContractType  CollectionPeriod   AcademicYear   LearnRefNumr  Uln         LearnAimRef  ProgType  StdCode  FworkCode  PwayCode  LearningAimFundingLineType                     LearnStartDate  AgreementId IlrSubmissionDateTime       JobId   EventTime                           CreationDate                        LearningAimSequenceNumber   SfaContributionPercentage   IlrFileName EventType
-                // 10394332  6E29D890-6009-42D0-9526-0F332AAA031F   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2179942 +00:00  2019-12-07 00:23:46.6749429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 22459535  B8F120C5-1D58-4CAE-B3EC-CA67AAE61E4D   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7859648 +00:00  2020-02-25 04:36:18.1615823 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 14266235  D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3608052 +00:00  2020-01-07 23:32:47.5523512 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 20808945  E4A50686-1C94-4F4E-9D42-82F324532DC0   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5132037 +00:00  2020-02-07 22:11:15.9407429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 5060650   C5B1C18A-BA97-4BBB-9705-CD4B50D91311   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5301290 +00:00  2019-11-07 22:52:49.8054643 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-
-                // only mock period 6 data
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
                     Id = 20808945,
@@ -1159,179 +1103,179 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     CreationDate = new DateTime(2020, 02, 07),
                     LearningAimSequenceNumber = 6
                 },
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 14266236,
-                //    EventId = new Guid("91C6089F-86A8-49D4-9C8A-73492824AA1E"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 5,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 2,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 5,
-                //    LearningStartDate = new DateTime(2019, 10, 07),
-                //    AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2019, 01, 07),
-                //    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
-                //    CreationDate = new DateTime(2020, 01, 07),
-                //    LearningAimSequenceNumber = 6
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 14266235,
-                //    EventId = new Guid("D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 5,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 3,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 6,
-                //    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2017, 01, 07),
-                //    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
-                //    CreationDate = new DateTime(2020, 01, 07),
-                //    LearningAimSequenceNumber = 7
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 10394334,
-                //    EventId = new Guid("C9E9C125-50DE-49F5-A3A4-502B6A502B61"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 4,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 2,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 5,
-                //    LearningStartDate = new DateTime(2019, 10, 07), AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2019, 12, 06),
-                //    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
-                //    CreationDate = new DateTime(2019, 12, 07),
-                //    LearningAimSequenceNumber = 6
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 10394332,
-                //    EventId = new Guid("6E29D890-6009-42D0-9526-0F332AAA031F"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 4,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 3,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 6,
-                //    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2017, 12, 06),
-                //    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
-                //    CreationDate = new DateTime(2019, 12, 07),
-                //    LearningAimSequenceNumber = 7
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 5060650,
-                //    EventId = new Guid("C5B1C18A-BA97-4BBB-9705-CD4B50D91311"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 3,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 3,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 6,
-                //    LearningStartDate = new DateTime(2017, 09, 18),
-                //    AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2017, 11, 06),
-                //    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
-                //    CreationDate = new DateTime(2019, 11, 07),
-                //    LearningAimSequenceNumber = 7
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 5060649,
-                //    EventId = new Guid("EA84AA32-AF53-4082-BB04-05D3F118AF0D"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 3,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 2,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 5,
-                //    LearningStartDate = new DateTime(2019, 10, 07),
-                //    AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2019, 11, 06),
-                //    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
-                //    CreationDate = new DateTime(2019, 11, 07),
-                //    LearningAimSequenceNumber = 6
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 1968141,
-                //    EventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 2,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 3,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 6,
-                //    LearningStartDate = new DateTime(2017, 09, 18),
-                //    AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2017, 10, 04),
-                //    EventTime = new DateTime(2019, 10, 4, 20, 03, 51),
-                //    CreationDate = new DateTime(2019, 10, 04),
-                //    LearningAimSequenceNumber = 4
-                //},
-                //new AppsMonthlyPaymentDasEarningEventModel()
-                //{
-                //    Id = 1239037,
-                //    EventId = new Guid("2DA9C964-556F-4CD2-ADCF-69824DEF3DC5"),
-                //    Ukprn = 10061808,
-                //    ContractType = 1,
-                //    CollectionPeriod = 2,
-                //    AcademicYear = 1920,
-                //    LearnerReferenceNumber = "138901100102",
-                //    LearnerUln = 1036910902,
-                //    LearningAimReference = "ZPROG001",
-                //    LearningAimProgrammeType = 3,
-                //    LearningAimStandardCode = 0,
-                //    LearningAimFrameworkCode = 436,
-                //    LearningAimPathwayCode = 6,
-                //    LearningStartDate = new DateTime(2017, 09, 18),
-                //    AgreementId = "None",
-                //    IlrSubmissionDateTime = new DateTime(2017, 10, 03),
-                //    EventTime = new DateTime(2019, 10, 3, 12, 34, 04),
-                //    CreationDate = new DateTime(2019, 10, 03),
-                //    LearningAimSequenceNumber = 4
-                //}
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 14266236,
+                    EventId = new Guid("91C6089F-86A8-49D4-9C8A-73492824AA1E"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 5,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 5,
+                    LearningStartDate = new DateTime(2019, 10, 07),
+                    AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2019, 01, 07),
+                    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
+                    CreationDate = new DateTime(2020, 01, 07),
+                    LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 14266235,
+                    EventId = new Guid("D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 5,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 3,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 6,
+                    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2017, 01, 07),
+                    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
+                    CreationDate = new DateTime(2020, 01, 07),
+                    LearningAimSequenceNumber = 7
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 10394334,
+                    EventId = new Guid("C9E9C125-50DE-49F5-A3A4-502B6A502B61"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 4,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 5,
+                    LearningStartDate = new DateTime(2019, 10, 07), AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2019, 12, 06),
+                    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
+                    CreationDate = new DateTime(2019, 12, 07),
+                    LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 10394332,
+                    EventId = new Guid("6E29D890-6009-42D0-9526-0F332AAA031F"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 4,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 3,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 6,
+                    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2017, 12, 06),
+                    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
+                    CreationDate = new DateTime(2019, 12, 07),
+                    LearningAimSequenceNumber = 7
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 5060650,
+                    EventId = new Guid("C5B1C18A-BA97-4BBB-9705-CD4B50D91311"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 3,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 3,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 6,
+                    LearningStartDate = new DateTime(2017, 09, 18),
+                    AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2017, 11, 06),
+                    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
+                    CreationDate = new DateTime(2019, 11, 07),
+                    LearningAimSequenceNumber = 7
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 5060649,
+                    EventId = new Guid("EA84AA32-AF53-4082-BB04-05D3F118AF0D"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 3,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 5,
+                    LearningStartDate = new DateTime(2019, 10, 07),
+                    AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2019, 11, 06),
+                    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
+                    CreationDate = new DateTime(2019, 11, 07),
+                    LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 1968141,
+                    EventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 2,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 3,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 6,
+                    LearningStartDate = new DateTime(2017, 09, 18),
+                    AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2017, 10, 04),
+                    EventTime = new DateTime(2019, 10, 4, 20, 03, 51),
+                    CreationDate = new DateTime(2019, 10, 04),
+                    LearningAimSequenceNumber = 4
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 1239037,
+                    EventId = new Guid("2DA9C964-556F-4CD2-ADCF-69824DEF3DC5"),
+                    Ukprn = 10061808,
+                    ContractType = 1,
+                    CollectionPeriod = 2,
+                    AcademicYear = 1920,
+                    LearnerReferenceNumber = "138901100102",
+                    LearnerUln = 1036910902,
+                    LearningAimReference = "ZPROG001",
+                    LearningAimProgrammeType = 3,
+                    LearningAimStandardCode = 0,
+                    LearningAimFrameworkCode = 436,
+                    LearningAimPathwayCode = 6,
+                    LearningStartDate = new DateTime(2017, 09, 18),
+                    AgreementId = "None",
+                    IlrSubmissionDateTime = new DateTime(2017, 10, 03),
+                    EventTime = new DateTime(2019, 10, 3, 12, 34, 04),
+                    CreationDate = new DateTime(2019, 10, 03),
+                    LearningAimSequenceNumber = 4
+                }
             };
 
             return appsMonthlyPaymentDasEarningsInfo;
@@ -1546,892 +1490,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 }
             };
 
-            #region Original Mock Data commented out for defect 93224
-            // learner 1, first payments
-            //for (byte i = 1; i < 15; i++)
-            //{
-            //    var levyPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 1,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 11m
-            //    };
-
-            //    var coInvestmentPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearningAimReference = "50117889",
-            //        LearnerUln = 12345,
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-            //        ContractType = 2,
-
-            //        TransactionType = 2,
-            //        FundingSource = 2,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 12m
-            //    };
-
-            //    var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-            //        ContractType = 2,
-
-            //        TransactionType = 2,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 13m
-            //    };
-
-            //    var employerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-            //        ContractType = 2,
-
-            //        TransactionType = 4,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 14m
-            //    };
-
-            //    var providerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 5,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 15m
-            //    };
-
-            //    var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 16,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 16m
-            //    };
-
-            //    var englishAndMathsPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 13,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 17m
-            //    };
-
-            //    var paymentsForLearningSupport = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 8,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 18m
-            //    };
-
-            //    appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentDueFromEmployerPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(employerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(providerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(apprenticeAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(englishAndMathsPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(paymentsForLearningSupport);
-            //}
-
-            //// learner 1, second payments
-            //for (byte i = 1; i < 15; i++)
-            //{
-            //    var levyPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 1,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 22m
-            //    };
-
-            //    var coInvestmentPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 2,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 24m
-            //    };
-
-            //    var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 26m
-            //    };
-
-            //    var employerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 4,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 28m
-            //    };
-
-            //    var providerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 5,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 30m
-            //    };
-
-            //    var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 16,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 32m
-            //    };
-
-            //    var englishAndMathsPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 13,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 34m
-            //    };
-
-            //    var paymentsForLearningSupport = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "A12345",
-            //        LearnerUln = 12345,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 8,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 36m
-            //    };
-
-            //    appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentDueFromEmployerPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(employerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(providerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(apprenticeAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(englishAndMathsPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(paymentsForLearningSupport);
-            //}
-
-            //// Learner 2, first payments
-            //for (byte i = 1; i < 15; i++)
-            //{
-            //    var levyPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 1,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 11m
-            //    };
-
-            //    var coInvestmentPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 1,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 12m
-            //    };
-
-            //    var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-            //        ContractType = 2,
-
-            //        TransactionType = 2,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 13m
-            //    };
-
-            //    var employerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 4,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 14m
-            //    };
-
-            //    var providerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 5,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 15m
-            //    };
-
-            //    var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 16,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 16m
-            //    };
-
-            //    var englishAndMathsPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 13,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 17m
-            //    };
-
-            //    var paymentsForLearningSupport = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "50117889",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 8,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 18m
-            //    };
-
-            //    appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentDueFromEmployerPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(employerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(providerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(apprenticeAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(englishAndMathsPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(paymentsForLearningSupport);
-            //}
-
-            //// learner 2, second payments
-            //for (byte i = 1; i < 15; i++)
-            //{
-            //    var levyPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 1,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 22m
-            //    };
-
-            //    var coInvestmentPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 2,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 24m
-            //    };
-
-            //    var coInvestmentDueFromEmployerPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 2,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 26m
-            //    };
-
-            //    var employerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 4,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 28m
-            //    };
-
-            //    var providerAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 5,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 30m
-            //    };
-
-            //    var apprenticeAdditionalPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 16,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 32m
-            //    };
-
-            //    var englishAndMathsPayments = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 13,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 34m
-            //    };
-
-            //    var paymentsForLearningSupport = new AppsMonthlyPaymentDasPaymentModel()
-            //    {
-            //        AcademicYear = 1920,
-            //        Ukprn = ukPrn,
-            //        LearnerReferenceNumber = "B12345",
-            //        LearnerUln = 54321,
-            //        LearningAimReference = "ZPROG001",
-            //        LearningStartDate = new DateTime(2019, 08, 28),
-            //        EarningEventId = new Guid("4A2BC8C3-A646-4DE7-A253-410B6825C815"),
-            //        LearningAimProgrammeType = 1,
-            //        LearningAimStandardCode = 1,
-            //        LearningAimFrameworkCode = 1,
-            //        LearningAimPathwayCode = 1,
-            //        LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)",
-            //        PriceEpisodeIdentifier = "123428/08/2019",
-
-            //        ContractType = 2,
-            //        TransactionType = 8,
-            //        FundingSource = 3,
-            //        DeliveryPeriod = 1,
-            //        CollectionPeriod = i,
-
-            //        Amount = 36m
-            //    };
-
-            //    appsMonthlyPaymentDasInfo.Payments.Add(levyPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(coInvestmentDueFromEmployerPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(employerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(providerAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(apprenticeAdditionalPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(englishAndMathsPayments);
-            //    appsMonthlyPaymentDasInfo.Payments.Add(paymentsForLearningSupport);
-            //}
-
-            #endregion
             return appsMonthlyPaymentDasInfo;
         }
     }

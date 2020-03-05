@@ -170,7 +170,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                 using (var context = _dasPaymentsContextFactory())
                 {
                     appsMonthlyPaymentDasInfo.Payments = await context.Payments
-                        .Where(x => x.Ukprn == ukPrn && x.AcademicYear == 1920)
+                        .Where(x => x.Ukprn == ukPrn && x.AcademicYear == Generics.AcademicYear)
                         .Select(payment => new AppsMonthlyPaymentDasPaymentModel
                         {
                             Ukprn = (int?)payment.Ukprn,

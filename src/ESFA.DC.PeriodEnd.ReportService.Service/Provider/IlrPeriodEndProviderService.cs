@@ -125,30 +125,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                List<Learner> learnersList;
                 using (var ilrContext = _ilrValidContextFactory())
                 {
-                    learnersList = await ilrContext.Learners
-                        .Include(x => x.LearningDeliveries).ThenInclude(y => y.LearningDeliveryFAMs)
-                        .Include(x => x.LearningDeliveries).ThenInclude(y => y.ProviderSpecDeliveryMonitorings)
-                        .Include(x => x.ProviderSpecLearnerMonitorings)
-                        .Include(x => x.LearnerEmploymentStatuses)
-                        .Where(x => x.UKPRN == ukPrn &&
-                                    x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
-                        .ToListAsync(cancellationToken);
-                }
-
-                foreach (var learner in learnersList)
-                {
-                    var learnerInfo = new AppsMonthlyPaymentLearnerModel
-                    {
-                        Ukprn = learner.UKPRN,
-                        LearnRefNumber = learner.LearnRefNumber,
-                        UniqueLearnerNumber = learner.ULN,
-                        FamilyName = learner.FamilyName,
-                        GivenNames = learner.GivenNames,
-                        CampId = learner.CampId,
-                        LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                    appsMonthlyPaymentIlrInfo.Learners = await ilrContext.Learners
+                        .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
+                        .Select(learner =>
+                            new AppsMonthlyPaymentLearnerModel
+                            {
+                                Ukprn = learner.UKPRN,
+                                LearnRefNumber = learner.LearnRefNumber,
+                                UniqueLearnerNumber = learner.ULN,
+                                FamilyName = learner.FamilyName,
+                                GivenNames = learner.GivenNames,
+                                CampId = learner.CampId,
+                                LearningDeliveries = learner
+                                                 .LearningDeliveries
+                                                 .Where(ld => ld.FundModel == ApprenticeshipsFundModel)
+                                                 .Select(x =>
                                                  new AppsMonthlyPaymentLearningDeliveryModel
                                                  {
                                                      Ukprn = x.UKPRN,
@@ -194,8 +187,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                              LearnDelFAMType = y.LearnDelFAMType,
                                                              LearnDelFAMCode = y.LearnDelFAMCode
                                                          }).ToList(),
-                                                 }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryModel>(),
-                        ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                                                 }).ToList(),
+                                ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
                             new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
                             {
                                 Ukprn = x.UKPRN,
@@ -203,7 +196,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 ProvSpecLearnMon = x.ProvSpecLearnMon,
                                 ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
                             }).ToList(),
-                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
+                                LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
                         new AppsMonthlyPaymentLearnerEmploymentStatusInfo
                         {
                             Ukprn = x.UKPRN,
@@ -213,9 +206,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             EmpdId = x.EmpId,
                             AgreeId = x.AgreeId
                         }).ToList()
-                    };
-
-                    appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);
+                            }).ToListAsync(cancellationToken);
                 }
             }
             catch (Exception e)

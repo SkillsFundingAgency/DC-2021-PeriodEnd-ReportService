@@ -125,30 +125,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                List<Learner> learnersList;
                 using (var ilrContext = _ilrValidContextFactory())
                 {
-                    learnersList = await ilrContext.Learners
-                        .Include(x => x.LearningDeliveries).ThenInclude(y => y.LearningDeliveryFAMs)
-                        .Include(x => x.LearningDeliveries).ThenInclude(y => y.ProviderSpecDeliveryMonitorings)
-                        .Include(x => x.ProviderSpecLearnerMonitorings)
-                        .Include(x => x.LearnerEmploymentStatuses)
-                        .Where(x => x.UKPRN == ukPrn &&
-                                    x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
-                        .ToListAsync(cancellationToken);
-                }
-
-                foreach (var learner in learnersList)
-                {
-                    var learnerInfo = new AppsMonthlyPaymentLearnerModel
-                    {
-                        Ukprn = learner.UKPRN,
-                        LearnRefNumber = learner.LearnRefNumber,
-                        UniqueLearnerNumber = learner.ULN,
-                        FamilyName = learner.FamilyName,
-                        GivenNames = learner.GivenNames,
-                        CampId = learner.CampId,
-                        LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                    appsMonthlyPaymentIlrInfo.Learners = await ilrContext.Learners
+                        .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
+                        .Select(learner =>
+                            new AppsMonthlyPaymentLearnerModel
+                            {
+                                Ukprn = learner.UKPRN,
+                                LearnRefNumber = learner.LearnRefNumber,
+                                UniqueLearnerNumber = learner.ULN,
+                                FamilyName = learner.FamilyName,
+                                GivenNames = learner.GivenNames,
+                                CampId = learner.CampId,
+                                LearningDeliveries = learner
+                                                 .LearningDeliveries
+                                                 .Where(ld => ld.FundModel == ApprenticeshipsFundModel)
+                                                 .Select(x =>
                                                  new AppsMonthlyPaymentLearningDeliveryModel
                                                  {
                                                      Ukprn = x.UKPRN,
@@ -194,8 +187,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                                              LearnDelFAMType = y.LearnDelFAMType,
                                                              LearnDelFAMCode = y.LearnDelFAMCode
                                                          }).ToList(),
-                                                 }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryModel>(),
-                        ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                                                 }).ToList(),
+                                ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
                             new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
                             {
                                 Ukprn = x.UKPRN,
@@ -203,7 +196,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                                 ProvSpecLearnMon = x.ProvSpecLearnMon,
                                 ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
                             }).ToList(),
-                        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
+                                LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
                         new AppsMonthlyPaymentLearnerEmploymentStatusInfo
                         {
                             Ukprn = x.UKPRN,
@@ -213,10 +206,87 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             EmpdId = x.EmpId,
                             AgreeId = x.AgreeId
                         }).ToList()
-                    };
-
-                    appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);
+                            }).ToListAsync(cancellationToken);
                 }
+
+                //foreach (var learner in learnersList)
+                //{
+                //    var learnerInfo = new AppsMonthlyPaymentLearnerModel
+                //    {
+                //        Ukprn = learner.UKPRN,
+                //        LearnRefNumber = learner.LearnRefNumber,
+                //        UniqueLearnerNumber = learner.ULN,
+                //        FamilyName = learner.FamilyName,
+                //        GivenNames = learner.GivenNames,
+                //        CampId = learner.CampId,
+                //        LearningDeliveries = learner.LearningDeliveries.Select(x =>
+                //                                 new AppsMonthlyPaymentLearningDeliveryModel
+                //                                 {
+                //                                     Ukprn = x.UKPRN,
+                //                                     LearnRefNumber = x.LearnRefNumber,
+                //                                     LearnAimRef = x.LearnAimRef,
+                //                                     AimType = x.AimType,
+                //                                     AimSeqNumber = (byte)x.AimSeqNumber,
+                //                                     LearnStartDate = x.LearnStartDate,
+                //                                     OrigLearnStartDate = x.OrigLearnStartDate,
+                //                                     LearnPlanEndDate = x.LearnPlanEndDate,
+                //                                     FundModel = x.FundModel,
+                //                                     ProgType = x.ProgType ?? 0,
+                //                                     StdCode = x.StdCode ?? 0,
+                //                                     FworkCode = x.FworkCode ?? 0,
+                //                                     PwayCode = x.PwayCode ?? 0,
+                //                                     PartnerUkprn = x.PartnerUKPRN,
+                //                                     ConRefNumber = x.ConRefNumber,
+                //                                     EpaOrgId = x.EPAOrgID,
+                //                                     SwSupAimId = x.SWSupAimId,
+                //                                     CompStatus = x.CompStatus,
+                //                                     LearnActEndDate = x.LearnActEndDate,
+                //                                     Outcome = x.Outcome,
+                //                                     AchDate = x.AchDate,
+
+                //                                     ProviderSpecDeliveryMonitorings = x
+                //                                         .ProviderSpecDeliveryMonitorings
+                //                                         .Select(y =>
+                //                                             new
+                //                                                 AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo
+                //                                             {
+                //                                                 Ukprn = y.UKPRN,
+                //                                                 LearnRefNumber = y.LearnRefNumber,
+                //                                                 AimSeqNumber = (byte?)y.AimSeqNumber,
+                //                                                 ProvSpecDelMon = y.ProvSpecDelMon,
+                //                                                 ProvSpecDelMonOccur = y.ProvSpecDelMonOccur
+                //                                             }).ToList(),
+                //                                     LearningDeliveryFams = x.LearningDeliveryFAMs.Select(y =>
+                //                                         new AppsMonthlyPaymentLearningDeliveryFAMInfo
+                //                                         {
+                //                                             Ukprn = y.UKPRN,
+                //                                             LearnRefNumber = y.LearnRefNumber,
+                //                                             AimSeqNumber = (byte?)y.AimSeqNumber,
+                //                                             LearnDelFAMType = y.LearnDelFAMType,
+                //                                             LearnDelFAMCode = y.LearnDelFAMCode
+                //                                         }).ToList(),
+                //                                 }).ToList() ?? new List<AppsMonthlyPaymentLearningDeliveryModel>(),
+                //        ProviderSpecLearnerMonitorings = learner.ProviderSpecLearnerMonitorings.Select(x =>
+                //            new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo
+                //            {
+                //                Ukprn = x.UKPRN,
+                //                LearnRefNumber = x.LearnRefNumber,
+                //                ProvSpecLearnMon = x.ProvSpecLearnMon,
+                //                ProvSpecLearnMonOccur = x.ProvSpecLearnMonOccur
+                //            }).ToList(),
+                //        LearnerEmploymentStatus = learner.LearnerEmploymentStatuses.Select(x =>
+                //        new AppsMonthlyPaymentLearnerEmploymentStatusInfo
+                //        {
+                //            Ukprn = x.UKPRN,
+                //            LearnRefNumber = x.LearnRefNumber,
+                //            DateEmpStatApp = x.DateEmpStatApp,
+                //            EmpStat = x.EmpStat,
+                //            EmpdId = x.EmpId,
+                //            AgreeId = x.AgreeId
+                //        }).ToList()
+                //    };
+
+                //appsMonthlyPaymentIlrInfo.Learners.Add(learnerInfo);
             }
             catch (Exception e)
             {

@@ -138,13 +138,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             using (var ctx = _jobQueueDataFactory())
             {
                 models = await ctx.Job
-                    .Include(x => x.Collection)
-                    .ThenInclude(x => x.CollectionType)
-                    .Include(x => x.FileUploadJobMetaData)
                     .Where(x => x.Collection.CollectionYear == collectionYear
-                                && x.FileUploadJobMetaData.Single().PeriodNumber == collectionPeriod
-                                && _collectionTypes.Contains(x.Collection.CollectionType.Type, StringComparer.OrdinalIgnoreCase)
-                                && _jobStatuses.Contains(x.Status))
+                                && _collectionTypes.Contains(x.Collection.CollectionType.Type)
+                                && _jobStatuses.Contains(x.Status)
+                                && x.FileUploadJobMetaData.Single().PeriodNumber == collectionPeriod)
                     .GroupBy(x => x.Collection.Name)
                     .Select(x => new CollectionStatsModel
                     {

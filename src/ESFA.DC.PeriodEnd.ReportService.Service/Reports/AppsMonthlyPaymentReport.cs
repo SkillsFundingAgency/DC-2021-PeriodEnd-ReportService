@@ -119,7 +119,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 appsMonthlyPaymentDasInfo,
                 appsMonthlyPaymentDasEarningsInfo,
                 appsMonthlyPaymentFcsInfo,
-                appsMonthlyPaymentLarsLearningDeliveryInfos);
+                appsMonthlyPaymentLarsLearningDeliveryInfos).ToList();
 
             string csv = await GetCsv(appsMonthlyPaymentsModel, cancellationToken);
             await _streamableKeyValuePersistenceService.SaveAsync($"{externalFileName}.csv", csv, cancellationToken);
@@ -132,7 +132,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 Stopwatch stopWatchLog = new Stopwatch();
                 stopWatchLog.Start();
                 await _persistReportData.PersistReportDataAsync(
-                    (List<AppsMonthlyPaymentModel>)appsMonthlyPaymentsModel,
+                    appsMonthlyPaymentsModel,
                     reportServiceContext.Ukprn,
                     reportServiceContext.ReturnPeriod,
                     TableNameConstants.AppsMonthlyPayment,
@@ -150,7 +150,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _logger.LogDebug($"Performance-AppsMonthlyPaymentReport Total generation time - {stopWatch.ElapsedMilliseconds} ms ");
         }
 
-        private async Task<string> GetCsv(IOrderedEnumerable<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
+        private async Task<string> GetCsv(IEnumerable<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 

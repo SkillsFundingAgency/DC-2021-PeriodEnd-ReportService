@@ -136,7 +136,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             result[0].PaymentLearningAimReference.Should().Be("ZPROG001");
             result[0].LarsLearningDeliveryLearningAimTitle.Should().Be("Generic code to identify ILR programme aims");
             result[0].LearningDeliveryOriginalLearningStartDate.Should().BeNull();
-            result[0].PaymentLearningStartDate.Should().Be(new DateTime(2019, 10, 7));
+            result[0].PaymentLearningStartDate.Should().Be(new DateTime(2019, 4, 13));
             result[0].LearningDeliveryLearningPlannedEndDate.Should().Be(new DateTime(2020, 8, 10));
             result[0].LearningDeliveryLearningActualEndDate.Should().BeNull();
             result[0].LearningDeliveryAchievementDate.Should().BeNull();
@@ -421,27 +421,1143 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
                         LearningDeliveries = new List<AppsMonthlyPaymentLearningDeliveryModel>
                         {
+                            // Mock data for 93224
                             new AppsMonthlyPaymentLearningDeliveryModel()
                             {
                                 Ukprn = ukPrn,
                                 LearnRefNumber = "LR1001",
-                                LearnAimRef = "ZPROG001",
-                                AimType = 1,
-                                AimSeqNumber = 6,
-                                LearnStartDate = new DateTime(2019, 10, 7),
+                                LearnAimRef = "60154020",
+                                AimType = 3,
+                                AimSeqNumber = 1,
+                                LearnStartDate = new DateTime(2018, 6, 16),
                                 OrigLearnStartDate = null,
-                                LearnPlanEndDate = new DateTime(2020, 8, 10),
+                                LearnPlanEndDate = new DateTime(2020, 4, 16),
                                 FundModel = 36,
                                 ProgType = 2,
-                                FworkCode = 436,
-                                PwayCode = 5,
+                                FworkCode = 445,
+                                PwayCode = 3,
                                 StdCode = 0,
                                 ConRefNumber = string.Empty,
                                 EpaOrgId = string.Empty,
                                 SwSupAimId = "62993A2E-3D84-4BFA-8D32-0B72F286C0B8",
-                                CompStatus = 1,
-                                LearnActEndDate = null,
-                                Outcome = null,
+                                CompStatus = 2,
+                                LearnActEndDate = new DateTime(2019, 10, 8),
+                                Outcome = 1,
+                                AchDate = null,
+                                ProviderSpecDeliveryMonitorings =
+                                    new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
+                                    {
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        }
+                                    },
+                                LearningDeliveryFams = new List<AppsMonthlyPaymentLearningDeliveryFAMInfo>()
+                                {
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "HHS",
+                                        LearnDelFAMCode = "98"
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "SOF",
+                                        LearnDelFAMCode = "105",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "ACT",
+                                        LearnDelFAMCode = "1",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "356",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "357",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "358",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "359",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "360",
+                                    }
+                                }
+                            },
+                            new AppsMonthlyPaymentLearningDeliveryModel()
+                            {
+                                Ukprn = ukPrn,
+                                LearnRefNumber = "LR1001",
+                                LearnAimRef = "50115893",
+                                AimType = 4,
+                                AimSeqNumber = 2,
+                                LearnStartDate = new DateTime(2018, 6, 16),
+                                LearnPlanEndDate = new DateTime(2019, 6, 16),
+                                FundModel = 99,
+                                ProgType = 0,
+                                StdCode = 0,
+                                FworkCode = 0,
+                                PwayCode = 0,
+                                ConRefNumber = string.Empty,
+                                EpaOrgId = string.Empty,
+                                SwSupAimId = "E8FC9ECD-01DC-4D10-AB8D-E177BD21B259",
+                                CompStatus = 2,
+                                LearnActEndDate = new DateTime(2019, 5, 7),
+                                Outcome = 1,
+                                AchDate = null,
+                                ProviderSpecDeliveryMonitorings =
+                                    new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
+                                    {
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        }
+                                    },
+                                LearningDeliveryFams = new List<AppsMonthlyPaymentLearningDeliveryFAMInfo>()
+                                {
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 7,
+                                        LearnDelFAMType = "SOF",
+                                        LearnDelFAMCode = "105"
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 3,
+                                        LearnDelFAMType = "ACT",
+                                        LearnDelFAMCode = "1",
+                                    }
+                                }
+                            },
+                            new AppsMonthlyPaymentLearningDeliveryModel()
+                            {
+                                Ukprn = ukPrn,
+                                LearnRefNumber = "LR1001",
+                                LearnAimRef = "50089638",
+                                AimType = 3,
+                                AimSeqNumber = 3,
+                                LearnStartDate = new DateTime(2019, 4, 14),
+                                OrigLearnStartDate = null,
+                                LearnPlanEndDate = new DateTime(2019, 10, 13),
+                                FundModel = 36,
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
+                                StdCode = 0,
+                                ConRefNumber = string.Empty,
+                                EpaOrgId = string.Empty,
+                                SwSupAimId = "62993A2E-3D84-4BFA-8D32-0B72F286C0B8",
+                                CompStatus = 2,
+                                LearnActEndDate = new DateTime(2019, 10, 8),
+                                Outcome = 1,
+                                AchDate = null,
+                                ProviderSpecDeliveryMonitorings =
+                                    new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
+                                    {
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        }
+                                    },
+                                LearningDeliveryFams = new List<AppsMonthlyPaymentLearningDeliveryFAMInfo>()
+                                {
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "HHS",
+                                        LearnDelFAMCode = "98"
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "SOF",
+                                        LearnDelFAMCode = "105",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "ACT",
+                                        LearnDelFAMCode = "1",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "356",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "357",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "358",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "359",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "360",
+                                    }
+                                }
+                            },
+                            new AppsMonthlyPaymentLearningDeliveryModel()
+                            {
+                                Ukprn = ukPrn,
+                                LearnRefNumber = "LR1001",
+                                LearnAimRef = "50085098",
+                                AimType = 3,
+                                AimSeqNumber = 4,
+                                LearnStartDate = new DateTime(2019, 3, 17),
+                                OrigLearnStartDate = null,
+                                LearnPlanEndDate = new DateTime(2020, 4, 16),
+                                FundModel = 36,
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
+                                StdCode = 0,
+                                ConRefNumber = string.Empty,
+                                EpaOrgId = string.Empty,
+                                SwSupAimId = "62993A2E-3D84-4BFA-8D32-0B72F286C0B8",
+                                CompStatus = 2,
+                                LearnActEndDate = new DateTime(2019, 9, 16),
+                                Outcome = 1,
+                                AchDate = null,
+                                ProviderSpecDeliveryMonitorings =
+                                    new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
+                                    {
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 1,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 2,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 3,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 4,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 5,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        },
+
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "A",
+                                            ProvSpecDelMon = "1920"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "B",
+                                            ProvSpecDelMon = "E5072"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "3070",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "C",
+                                            ProvSpecDelMon = "CHILD"
+                                        },
+                                        new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                                        {
+                                            Ukprn = ukPrn,
+                                            LearnRefNumber = "LR1001",
+                                            AimSeqNumber = 6,
+                                            ProvSpecDelMonOccur = "D",
+                                            ProvSpecDelMon = "D006801"
+                                        }
+                                    },
+                                LearningDeliveryFams = new List<AppsMonthlyPaymentLearningDeliveryFAMInfo>()
+                                {
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "HHS",
+                                        LearnDelFAMCode = "98"
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "SOF",
+                                        LearnDelFAMCode = "105",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "ACT",
+                                        LearnDelFAMCode = "1",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "356",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "357",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "358",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "359",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "360",
+                                    }
+                                }
+                            },
+                            new AppsMonthlyPaymentLearningDeliveryModel()
+                            {
+                                Ukprn = ukPrn,
+                                LearnRefNumber = "LR1001",
+                                LearnAimRef = "50089080",
+                                AimType = 3,
+                                AimSeqNumber = 5,
+                                LearnStartDate = new DateTime(2018, 6, 16),
+                                OrigLearnStartDate = null,
+                                LearnPlanEndDate = new DateTime(2019, 6, 16),
+                                FundModel = 36,
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
+                                StdCode = 0,
+                                ConRefNumber = string.Empty,
+                                EpaOrgId = string.Empty,
+                                SwSupAimId = "62993A2E-3D84-4BFA-8D32-0B72F286C0B8",
+                                CompStatus = 2,
+                                LearnActEndDate = new DateTime(2019, 3, 27),
+                                Outcome = 1,
                                 AchDate = null,
                                 ProviderSpecDeliveryMonitorings =
                                     new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
@@ -718,19 +1834,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                 LearnRefNumber = "LR1001",
                                 LearnAimRef = "ZPROG001",
                                 AimType = 1,
-                                AimSeqNumber = 7,
-                                LearnStartDate = new DateTime(2017, 9, 18),
-                                LearnPlanEndDate = new DateTime(2019, 9, 19),
+                                AimSeqNumber = 6,
+                                LearnStartDate = new DateTime(2018, 6, 16),
+                                OrigLearnStartDate = null,
+                                LearnPlanEndDate = new DateTime(2020, 4, 16),
                                 FundModel = 36,
-                                ProgType = 3,
+                                ProgType = 2,
+                                FworkCode = 445,
+                                PwayCode = 3,
                                 StdCode = 0,
-                                FworkCode = 436,
-                                PwayCode = 6,
                                 ConRefNumber = string.Empty,
                                 EpaOrgId = string.Empty,
-                                SwSupAimId = "E8FC9ECD-01DC-4D10-AB8D-E177BD21B259",
+                                SwSupAimId = "62993A2E-3D84-4BFA-8D32-0B72F286C0B8",
                                 CompStatus = 2,
-                                LearnActEndDate = new DateTime(2019, 9, 11),
+                                LearnActEndDate = new DateTime(2019, 10, 8),
                                 Outcome = 1,
                                 AchDate = null,
                                 ProviderSpecDeliveryMonitorings =
@@ -940,17 +2057,65 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                                     {
                                         Ukprn = ukPrn,
                                         LearnRefNumber = "LR1001",
-                                        AimSeqNumber = 7,
-                                        LearnDelFAMType = "SOF",
-                                        LearnDelFAMCode = "105"
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "HHS",
+                                        LearnDelFAMCode = "98"
                                     },
                                     new AppsMonthlyPaymentLearningDeliveryFAMInfo()
                                     {
                                         Ukprn = ukPrn,
                                         LearnRefNumber = "LR1001",
-                                        AimSeqNumber = 3,
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "SOF",
+                                        LearnDelFAMCode = "105",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
                                         LearnDelFAMType = "ACT",
                                         LearnDelFAMCode = "1",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "356",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "357",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "358",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "359",
+                                    },
+                                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                                    {
+                                        Ukprn = ukPrn,
+                                        LearnRefNumber = "LR1001",
+                                        AimSeqNumber = 6,
+                                        LearnDelFAMType = "LDM",
+                                        LearnDelFAMCode = "360",
                                     }
                                 }
                             }
@@ -1045,236 +2210,128 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             appsMonthlyPaymentDasEarningsInfo.Earnings = new EditableList<AppsMonthlyPaymentDasEarningEventModel>()
             {
-                // Id        EventId                                Ukprn     ContractType  CollectionPeriod   AcademicYear   LearnRefNumr  Uln         LearnAimRef  ProgType  StdCode  FworkCode  PwayCode  LearningAimFundingLineType                     LearnStartDate  AgreementId IlrSubmissionDateTime       JobId   EventTime                           CreationDate                        LearningAimSequenceNumber   SfaContributionPercentage   IlrFileName EventType
-                // 1239037   2DA9C964-556F-4CD2-ADCF-69824DEF3DC5   10061808  1             2                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         19+ Apprenticeship (Employer on App Service)   2017-09-18      None        2019-10-03 12:33:38.6800000 48193   2019-10-03 12:34:04.8306378 +00:00  2019-10-03 12:34:12.4828763 +00:00  4   0.00000 10061808/ILR-10061808-1920-20191003-131506-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 10394332  6E29D890-6009-42D0-9526-0F332AAA031F   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2179942 +00:00  2019-12-07 00:23:46.6749429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 10394334  C9E9C125-50DE-49F5-A3A4-502B6A502B61   10061808  1             4                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2019-12-06 16:06:06.7800000 132257  2019-12-07 00:23:44.2177244 +00:00  2019-12-07 00:23:46.6749429 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191129-142049-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 1968141   8EF436B6-469B-4669-AAB4-BB0B7F6795EB   10061808  1             2                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         19+ Apprenticeship (Employer on App Service)   2017-09-18      None        2019-10-04 19:02:11.7070000 53642   2019-10-04 20:03:51.3140925 +00:00  2019-10-04 20:04:26.2653428 +00:00  4   0.00000 10061808/ILR-10061808-1920-20191003-131506-01.XML   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 22459534  DFCE379F-CE04-4806-8952-F9DCC648EEF3   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7856869 +00:00  2020-02-25 04:36:18.1615823 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 22459535  B8F120C5-1D58-4CAE-B3EC-CA67AAE61E4D   10061808  1             7                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-25 04:35:26.5870000 136102  2020-02-25 04:36:08.7859648 +00:00  2020-02-25 04:36:18.1615823 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01-Valid.XML SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 14266235  D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3608052 +00:00  2020-01-07 23:32:47.5523512 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 14266236  91C6089F-86A8-49D4-9C8A-73492824AA1E   10061808  1             5                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2020-01-07 19:55:43.2300000 154851  2020-01-07 23:32:41.3606032 +00:00  2020-01-07 23:32:47.5523512 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200106-081642-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 20808943  1E34B770-4A31-43B7-BA91-63687337BBE4   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5130236 +00:00  2020-02-07 22:11:15.9407429 +00:00  6   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 20808945  E4A50686-1C94-4F4E-9D42-82F324532DC0   10061808  1             6                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2020-02-07 17:29:00.5600000 182558  2020-02-07 22:11:06.5132037 +00:00  2020-02-07 22:11:15.9407429 +00:00  7   0.00000 10061808/ILR-10061808-1920-20200203-185022-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 5060649   EA84AA32-AF53-4082-BB04-05D3F118AF0D   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     2         0        436        5         NULL                                           2019-10-07      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5299406 +00:00  2019-11-07 22:52:49.8054643 +00:00  6   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
-                // 5060650   C5B1C18A-BA97-4BBB-9705-CD4B50D91311   10061808  1             3                  1920           138901100102  1036910902  ZPROG001     3         0        436        6         NULL                                           2017-09-18      None        2019-11-06 20:40:41.7300000 94338   2019-11-07 21:57:03.5301290 +00:00  2019-11-07 22:52:49.8054643 +00:00  7   0.00000 10061808/ILR-10061808-1920-20191104-092448-01.ZIP   SFA.DAS.Payments.EarningEvents.Messages.Events.ApprenticeshipContractType1EarningEvent
+                // mock data for defect 93224
 
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
-                    Id = 20808945,
-                    EventId = new Guid("E4A50686-1C94-4F4E-9D42-82F324532DC0"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 6,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 02, 07),
-                    EventTime = new DateTime(2020, 2, 7, 22, 11, 06),
-                    CreationDate = new DateTime(2020, 02, 07),
-                    LearningAimSequenceNumber = 7
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 20808943,
-                    EventId = new Guid("1E34B770-4A31-43B7-BA91-63687337BBE4"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 6,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2019, 02, 07),
-                    EventTime = new DateTime(2020, 2, 7, 22, 11, 06),
-                    CreationDate = new DateTime(2020, 02, 07),
-                    LearningAimSequenceNumber = 6
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 14266236,
-                    EventId = new Guid("91C6089F-86A8-49D4-9C8A-73492824AA1E"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 5,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2019, 01, 07),
-                    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
-                    CreationDate = new DateTime(2020, 01, 07),
-                    LearningAimSequenceNumber = 6
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 14266235,
-                    EventId = new Guid("D6804CC5-6478-4C2B-9DDF-9AF9819BFAB2"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 5,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 01, 07),
-                    EventTime = new DateTime(2020, 1, 7, 23, 32, 41),
-                    CreationDate = new DateTime(2020, 01, 07),
-                    LearningAimSequenceNumber = 7
-                },
-                new AppsMonthlyPaymentDasEarningEventModel()
-                {
-                    Id = 10394334,
-                    EventId = new Guid("C9E9C125-50DE-49F5-A3A4-502B6A502B61"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 4,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07), AgreementId = "None",
+                    Id = 9875758, EventId = new Guid("660E861F-1520-4F49-B84E-D75099483B1F"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 4, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "50089638", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2019, 04, 13), AgreementId = string.Empty,
                     IlrSubmissionDateTime = new DateTime(2019, 12, 06),
-                    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
-                    CreationDate = new DateTime(2019, 12, 07),
-                    LearningAimSequenceNumber = 6
+                    EventTime = new DateTime(2019, 12, 6, 20, 56, 7),
+                    CreationDate = new DateTime(2019, 12, 06), LearningAimSequenceNumber = 3
                 },
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
-                    Id = 10394332,
-                    EventId = new Guid("6E29D890-6009-42D0-9526-0F332AAA031F"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 4,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18), AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 12, 06),
-                    EventTime = new DateTime(2019, 12, 7, 00, 23, 44),
-                    CreationDate = new DateTime(2019, 12, 07),
-                    LearningAimSequenceNumber = 7
+                    Id = 14658992, EventId = new Guid("F65B7E77-C958-430A-8247-81A503B93B19"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 5, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "50089638", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2019, 04, 13), AgreementId = string.Empty,
+                    IlrSubmissionDateTime = new DateTime(2019, 01, 08),
+                    EventTime = new DateTime(2020, 1, 8, 14, 56, 48),
+                    CreationDate = new DateTime(2020, 01, 08), LearningAimSequenceNumber = 3
                 },
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
-                    Id = 5060650,
-                    EventId = new Guid("C5B1C18A-BA97-4BBB-9705-CD4B50D91311"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 3,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 11, 06),
-                    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
-                    CreationDate = new DateTime(2019, 11, 07),
-                    LearningAimSequenceNumber = 7
+                    Id = 20249225, EventId = new Guid("39048CD9-67E9-4AE7-8723-173094DB1B5C"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 6, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "50089638", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2019, 04, 13), AgreementId = string.Empty,
+                    IlrSubmissionDateTime = new DateTime(2019, 02, 07),
+                    EventTime = new DateTime(2020, 2, 7, 18, 56, 52),
+                    CreationDate = new DateTime(2020, 02, 07), LearningAimSequenceNumber = 3
                 },
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
-                    Id = 5060649,
-                    EventId = new Guid("EA84AA32-AF53-4082-BB04-05D3F118AF0D"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 3,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    LearningStartDate = new DateTime(2019, 10, 07),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2019, 11, 06),
-                    EventTime = new DateTime(2019, 11, 7, 21, 57, 03),
-                    CreationDate = new DateTime(2019, 11, 07),
-                    LearningAimSequenceNumber = 6
+                    Id = 1376649, EventId = new Guid("01C050C2-9C0B-4F03-A2C9-C4BD08CEB9FE"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 2, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 10, 04),
+                    EventTime = new DateTime(2019, 10, 4, 9, 43, 4),
+                    CreationDate = new DateTime(2019, 10, 04), LearningAimSequenceNumber = 6
                 },
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
-                    Id = 1968141,
-                    EventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 2,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 10, 04),
-                    EventTime = new DateTime(2019, 10, 4, 20, 03, 51),
-                    CreationDate = new DateTime(2019, 10, 04),
-                    LearningAimSequenceNumber = 4
+                    Id = 1443478, EventId = new Guid("79F8C510-3E59-45E9-A615-E302F4DFCAE1"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 2, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 10, 04),
+                    EventTime = new DateTime(2019, 10, 4, 11, 24, 40),
+                    CreationDate = new DateTime(2019, 10, 04), LearningAimSequenceNumber = 6
                 },
                 new AppsMonthlyPaymentDasEarningEventModel()
                 {
-                    Id = 1239037,
-                    EventId = new Guid("2DA9C964-556F-4CD2-ADCF-69824DEF3DC5"),
-                    Ukprn = 10061808,
-                    ContractType = 1,
-                    CollectionPeriod = 2,
-                    AcademicYear = 1920,
-                    LearnerReferenceNumber = "138901100102",
-                    LearnerUln = 1036910902,
-                    LearningAimReference = "ZPROG001",
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    LearningStartDate = new DateTime(2017, 09, 18),
-                    AgreementId = "None",
-                    IlrSubmissionDateTime = new DateTime(2017, 10, 03),
-                    EventTime = new DateTime(2019, 10, 3, 12, 34, 04),
-                    CreationDate = new DateTime(2019, 10, 03),
-                    LearningAimSequenceNumber = 4
+                    Id = 1618582, EventId = new Guid("23F84DCA-ADD4-4D9A-9551-C4B328F7214C"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 2, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 10, 04),
+                    EventTime = new DateTime(2019, 10, 4, 15, 3, 22),
+                    CreationDate = new DateTime(2019, 10, 04), LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 1776657, EventId = new Guid("BC7FADB1-D943-454F-8591-809BD4A30E02"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 2, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 10, 04),
+                    EventTime = new DateTime(2019, 10, 4, 19, 22, 29),
+                    CreationDate = new DateTime(2019, 10, 04), LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 4677582, EventId = new Guid("6D022948-C5E2-491C-9301-E858D7A99A9E"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 3, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 11, 06),
+                    EventTime = new DateTime(2019, 11, 7,  21, 17, 48),
+                    CreationDate = new DateTime(2019, 11, 07), LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 9875760, EventId = new Guid("5C60B697-C04F-43CA-9E03-5E3B008A4189"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 4, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 12, 06),
+                    EventTime = new DateTime(2019, 12, 6, 20, 56, 7),
+                    CreationDate = new DateTime(2019, 12, 06), LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 14658993, EventId = new Guid("822572E4-290E-4BBD-A414-7EDCC8D3B597"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 5, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 01, 08),
+                    EventTime = new DateTime(2020, 1, 8, 14, 56, 48),
+                    CreationDate = new DateTime(2020, 01, 08), LearningAimSequenceNumber = 6
+                },
+                new AppsMonthlyPaymentDasEarningEventModel()
+                {
+                    Id = 20249229, EventId = new Guid("5AC5396C-B665-4084-9134-E7550546433A"), Ukprn = 10000001,
+                    ContractType = 1, CollectionPeriod = 6, AcademicYear = 1920, LearnerReferenceNumber = "LR1001",
+                    LearnerUln = 1000000001, LearningAimReference = "ZPROG001", LearningAimProgrammeType = 2,
+                    LearningAimStandardCode = 0, LearningAimFrameworkCode = 445, LearningAimPathwayCode = 3,
+                    LearningStartDate = new DateTime(2018, 06, 16), AgreementId = "5YJB6B",
+                    IlrSubmissionDateTime = new DateTime(2018, 02, 07),
+                    EventTime = new DateTime(2020, 2, 7, 18, 56, 52),
+                    CreationDate = new DateTime(2020, 02, 07), LearningAimSequenceNumber = 6
                 }
             };
 
@@ -1290,203 +2347,116 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             appsMonthlyPaymentDasInfo.Payments = new List<AppsMonthlyPaymentDasPaymentModel>()
             {
-                // mock data for defect 92411
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType                                PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding  2-436-5-07/10/2019      1             1               1              3               3                 EA84AA32-AF53-4082-BB04-05D3F118AF0D
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding  2-436-5-07/10/2019      1             1               1              4               4                 C9E9C125-50DE-49F5-A3A4-502B6A502B61
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding  2-436-5-07/10/2019      1             1               1              5               5                 91C6089F-86A8-49D4-9C8A-73492824AA1E
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding  2-436-5-07/10/2019      1             1               1              6               6                 1E34B770-4A31-43B7-BA91-63687337BBE4
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding  2-436-5-07/10/2019      1             1               1              7               7                 DFCE379F-CE04-4806-8952-F9DCC648EEF3
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2017-09-18      3         0        436        6         19+ Apprenticeship (Employer on App Service) Levy funding  3-436-6-01/08/2019      1             1               1              1               2                 8EF436B6-469B-4669-AAB4-BB0B7F6795EB
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2017-09-18      3         0        436        6         19+ Apprenticeship (Employer on App Service) Levy funding  3-436-6-01/08/2019      1             2               1              2               2                 8EF436B6-469B-4669-AAB4-BB0B7F6795EB
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 2-436-5-07/10/2019      1             1               1              3               3                 EA84AA32-AF53-4082-BB04-05D3F118AF0D
+                // mock data for defect 93224
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2019, 10, 7),
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "2-436-5-07/10/2019",
-                    ContractType = 1,
-                    TransactionType = 1,
-                    FundingSource = 1,
-                    DeliveryPeriod = 3,
-                    CollectionPeriod = 3,
-                    EarningEventId = new Guid("EA84AA32-AF53-4082-BB04-05D3F118AF0D")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "50089638", LearningStartDate = new DateTime(2019, 04, 13),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = string.Empty, ContractType = 1, TransactionType = 13, FundingSource = 4,
+                    DeliveryPeriod = 2, CollectionPeriod = 4,
+                    EarningEventId = new Guid("660E861F-1520-4F49-B84E-D75099483B1F")
                 },
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 2-436-5-07/10/2019      1             1               1              4               4                 C9E9C125-50DE-49F5-A3A4-502B6A502B61
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2019, 10, 7),
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "2-436-5-07/10/2019",
-                    ContractType = 1,
-                    TransactionType = 1,
-                    FundingSource = 1,
-                    DeliveryPeriod = 4,
-                    CollectionPeriod = 4,
-                    EarningEventId = new Guid("C9E9C125-50DE-49F5-A3A4-502B6A502B61")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "50089638", LearningStartDate = new DateTime(2019, 04, 13),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = string.Empty, ContractType = 1, TransactionType = 13, FundingSource = 4,
+                    DeliveryPeriod = 1, CollectionPeriod = 4,
+                    EarningEventId = new Guid("660E861F-1520-4F49-B84E-D75099483B1F")
                 },
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 2-436-5-07/10/2019      1             1               1              5               5                 91C6089F-86A8-49D4-9C8A-73492824AA1E
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2019, 10, 7),
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "2-436-5-07/10/2019",
-                    ContractType = 1,
-                    TransactionType = 1,
-                    FundingSource = 1,
-                    DeliveryPeriod = 5,
-                    CollectionPeriod = 5,
-                    EarningEventId = new Guid("91C6089F-86A8-49D4-9C8A-73492824AA1E")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 1,
+                    FundingSource = 1, DeliveryPeriod = 2, CollectionPeriod = 2,
+                    EarningEventId = new Guid("BC7FADB1-D943-454F-8591-809BD4A30E02")
                 },
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 2-436-5-07/10/2019      1             1               1              6               6                 1E34B770-4A31-43B7-BA91-63687337BBE4
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2019, 10, 7),
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "2-436-5-07/10/2019",
-                    ContractType = 1,
-                    TransactionType = 1,
-                    FundingSource = 1,
-                    DeliveryPeriod = 6,
-                    CollectionPeriod = 6,
-                    EarningEventId = new Guid("1E34B770-4A31-43B7-BA91-63687337BBE4")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 1,
+                    FundingSource = 1, DeliveryPeriod = 1, CollectionPeriod = 2,
+                    EarningEventId = new Guid("BC7FADB1-D943-454F-8591-809BD4A30E02")
                 },
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2019-10-07      2         0        436        5         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 2-436-5-07/10/2019      1             1               1              7               7                 DFCE379F-CE04-4806-8952-F9DCC648EEF3
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2019, 10, 7),
-                    LearningAimProgrammeType = 2,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 5,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "2-436-5-07/10/2019",
-                    ContractType = 1,
-                    TransactionType = 1,
-                    FundingSource = 1,
-                    DeliveryPeriod = 7,
-                    CollectionPeriod = 7,
-                    EarningEventId = new Guid("DFCE379F-CE04-4806-8952-F9DCC648EEF3")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 1,
+                    FundingSource = 1, DeliveryPeriod = 3, CollectionPeriod = 3,
+                    EarningEventId = new Guid("6D022948-C5E2-491C-9301-E858D7A99A9E")
                 },
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2017-09-18      3         0        436        6         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 3-436-6-01/08/2019      1             1               1              1               2                 8EF436B6-469B-4669-AAB4-BB0B7F6795EB
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2017, 9, 18),
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "3-436-6-01/08/2019",
-                    ContractType = 1,
-                    TransactionType = 1,
-                    FundingSource = 1,
-                    DeliveryPeriod = 1,
-                    CollectionPeriod = 2,
-                    EarningEventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 1,
+                    FundingSource = 1, DeliveryPeriod = 4, CollectionPeriod = 4,
+                    EarningEventId = new Guid("5C60B697-C04F-43CA-9E03-5E3B008A4189")
                 },
-
-                // AcademicYear  Ukprn     LearnRefNum   Uln         LearnAimRef  LearnStartDate  ProgType  StdCode  FworkCode  PwayCode  ReportingAimFundingLineType
-                // 1920          10061808  138901100102  1036910902  ZPROG001     2017-09-18      3         0        436        6         19+ Apprenticeship (Employer on App Service) Levy funding
-
-                // PriceEpisodeIdentifier  ContractType  TransactionType FundingSource  DeliveryPeriod  CollectionPeriod  EarningEventId
-                // 3-436-6-01/08/2019      1             2               1              2               2                 8EF436B6-469B-4669-AAB4-BB0B7F6795EB
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
-                    AcademicYear = 1920,
-                    Ukprn = 10000001,
-                    LearnerReferenceNumber = "LR1001",
-                    LearnerUln = 1000000001,
-                    LearningAimReference = "ZPROG001",
-                    LearningStartDate = new DateTime(2017, 9, 18),
-                    LearningAimProgrammeType = 3,
-                    LearningAimStandardCode = 0,
-                    LearningAimFrameworkCode = 436,
-                    LearningAimPathwayCode = 6,
-                    ReportingAimFundingLineType = "19 + Apprenticeship(Employer on App Service) Levy funding",
-                    PriceEpisodeIdentifier = "3-436-6-01/08/2019",
-                    ContractType = 1,
-                    TransactionType = 2,
-                    FundingSource = 1,
-                    DeliveryPeriod = 2,
-                    CollectionPeriod = 2,
-                    EarningEventId = new Guid("8EF436B6-469B-4669-AAB4-BB0B7F6795EB")
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 2,
+                    FundingSource = 1, DeliveryPeriod = 3, CollectionPeriod = 5,
+                    EarningEventId = new Guid("822572E4-290E-4BBD-A414-7EDCC8D3B597")
+                },
+                new AppsMonthlyPaymentDasPaymentModel()
+                {
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 1,
+                    FundingSource = 1, DeliveryPeriod = 4, CollectionPeriod = 5,
+                    EarningEventId = new Guid("822572E4-290E-4BBD-A414-7EDCC8D3B597")
+                },
+                new AppsMonthlyPaymentDasPaymentModel()
+                {
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 3,
+                    FundingSource = 1, DeliveryPeriod = 3, CollectionPeriod = 5,
+                    EarningEventId = new Guid("822572E4-290E-4BBD-A414-7EDCC8D3B597")
+                },
+                new AppsMonthlyPaymentDasPaymentModel()
+                {
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = "2-445-3-01/08/2019", ContractType = 1, TransactionType = 1,
+                    FundingSource = 1, DeliveryPeriod = 3, CollectionPeriod = 5,
+                    EarningEventId = new Guid("822572E4-290E-4BBD-A414-7EDCC8D3B597")
                 }
             };
 

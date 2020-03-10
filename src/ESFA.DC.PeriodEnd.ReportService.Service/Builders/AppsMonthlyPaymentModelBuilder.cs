@@ -595,14 +595,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     // process the AECPriceEpisode fields
                                     var ape = appsMonthlyPaymentRulebaseInfo?.AecApprenticeshipPriceEpisodeInfoList
                                         .Where(x => x != null &&
+                                                    appsMonthlyPaymentModel != null &&
                                                     x.Ukprn == appsMonthlyPaymentModel?.Ukprn &&
                                                     x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
                                                         .PaymentLearnerReferenceNumber) &&
-                                                    x.AimSequenceNumber == appsMonthlyPaymentModel
-                                                        .PaymentEarningEventAimSeqNumber &&
                                                     x.PriceEpisodeIdentifier.CaseInsensitiveEquals(
                                                         appsMonthlyPaymentModel.PaymentPriceEpisodeIdentifier))
-                                        .OrderByDescending(x => x?.EpisodeStartDate)
+                                        .OrderByDescending(x => x.EpisodeStartDate)
                                         .FirstOrDefault();
 
                                     // populate the appsMonthlyPaymentModel fields

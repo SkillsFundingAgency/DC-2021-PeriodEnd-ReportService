@@ -397,7 +397,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     //--------------------------------------------------------------------------------------------------
                     if (appsMonthlyPaymentLarsLearningDeliveryInfoList != null)
                     {
-                        var larsInfo = appsMonthlyPaymentLarsLearningDeliveryInfoList?.SingleOrDefault(x =>
+                        var larsInfo = appsMonthlyPaymentLarsLearningDeliveryInfoList?.FirstOrDefault(x =>
                             x.LearnAimRef.CaseInsensitiveEquals(appsMonthlyPaymentModel
                                 ?.PaymentLearningAimReference));
 
@@ -425,7 +425,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         var ilrLearner = appsMonthlyPaymentIlrInfo?.Learners?
                             .Where(x => x.LearnRefNumber.CaseInsensitiveEquals(appsMonthlyPaymentModel
                                 ?.PaymentLearnerReferenceNumber))
-                            .SingleOrDefault();
+                            .FirstOrDefault();
 
                         // populate the Learner data fields in the appsMonthlyPaymentModel payment.
                         if (ilrLearner != null)
@@ -450,12 +450,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                     // populate the Provider Specified Learner Monitoring fields in the appsMonthlyPaymentModel payment.
                                     appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringA =
                                         ilrProviderSpecifiedLearnerMonitoringInfoList
-                                            ?.SingleOrDefault(
+                                            ?.FirstOrDefault(
                                                 x => (x?.ProvSpecLearnMonOccur).CaseInsensitiveEquals("A"))
                                             ?.ProvSpecLearnMon;
                                     appsMonthlyPaymentModel.ProviderSpecifiedLearnerMonitoringB =
                                         ilrProviderSpecifiedLearnerMonitoringInfoList
-                                            ?.SingleOrDefault(
+                                            ?.FirstOrDefault(
                                                 x => (x?.ProvSpecLearnMonOccur).CaseInsensitiveEquals("B"))
                                             ?.ProvSpecLearnMon;
                                 }
@@ -495,7 +495,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                              ld.StdCode == appsMonthlyPaymentModel.PaymentStandardCode &&
                                              ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode &&
                                              ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode)
-                                .SingleOrDefault();
+                                .FirstOrDefault();
+                                //.SingleOrDefault();
 
                             if (learningDeliveryModel != null)
                             {
@@ -563,25 +564,25 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                         // populate the Provider Specified Delivery Monitoring fields in the appsMonthlyPaymentModel payment.
                                         appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringA =
                                             ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                                .SingleOrDefault(x =>
+                                                .FirstOrDefault(x =>
                                                     (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("A"))
                                                 ?.ProvSpecDelMon ?? string.Empty;
 
                                         appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringB =
                                             ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                                .SingleOrDefault(x =>
+                                                .FirstOrDefault(x =>
                                                     (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("B"))
                                                 ?.ProvSpecDelMon ?? string.Empty;
 
                                         appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringC =
                                             ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                                .SingleOrDefault(x =>
+                                                .FirstOrDefault(x =>
                                                     (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("C"))
                                                 ?.ProvSpecDelMon ?? string.Empty;
 
                                         appsMonthlyPaymentModel.ProviderSpecifiedDeliveryMonitoringD =
                                             ilrLearningDeliveryProviderSpecDeliveryMonitoringInfoList?
-                                                .SingleOrDefault(x =>
+                                                .FirstOrDefault(x =>
                                                     (x?.ProvSpecDelMonOccur).CaseInsensitiveEquals("D"))
                                                 ?.ProvSpecDelMon ?? string.Empty;
                                     }
@@ -623,7 +624,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                 {
                                     // NOTE: This code is dependent on the Earning Event Aim Sequence number being populated (done in the Earning Event population code)
                                     var ald = appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList
-                                        .SingleOrDefault(x => x != null &&
+                                        .FirstOrDefault(x => x != null &&
                                                               x.Ukprn == appsMonthlyPaymentModel.Ukprn &&
                                                               x.LearnRefNumber.CaseInsensitiveEquals(
                                                                   appsMonthlyPaymentModel

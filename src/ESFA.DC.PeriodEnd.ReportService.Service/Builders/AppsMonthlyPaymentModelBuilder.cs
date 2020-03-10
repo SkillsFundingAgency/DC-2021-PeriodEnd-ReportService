@@ -496,7 +496,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                                              ld.FworkCode == appsMonthlyPaymentModel.PaymentFrameworkCode &&
                                              ld.PwayCode == appsMonthlyPaymentModel.PaymentPathwayCode)
                                 .FirstOrDefault();
-                                //.SingleOrDefault();
 
                             if (learningDeliveryModel != null)
                             {

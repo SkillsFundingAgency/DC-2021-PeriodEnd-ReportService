@@ -17,6 +17,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
         private readonly ILogger _logger;
         private readonly Func<IFcsContext> _fcsContextFunc;
 
+        private readonly DateTime _academicYearStartDate = new DateTime(2019, 08, 01);
+        private readonly DateTime _academicYearEndDate = new DateTime(2020, 07, 31);
+
         public FCSProviderService(ILogger logger, Func<IFcsContext> fcsContext)
         {
             _logger = logger;
@@ -108,7 +111,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             {
                 var allocations = await context
                     .ContractAllocations
-                    .Where(ca => ca.DeliveryUkprn == ukprn)
+                    .Where(ca => ca.DeliveryUkprn == ukprn
+                                 && ca.StartDate <= _academicYearEndDate
+                                 && (!ca.EndDate.HasValue || ca.EndDate >= _academicYearStartDate))
                     .GroupBy(ca => ca.FundingStreamPeriodCode)
                     .ToListAsync(cancellationToken);
 

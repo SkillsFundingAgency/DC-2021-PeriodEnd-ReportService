@@ -129,20 +129,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
 
             // Write the full file containing calculated data
             string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
-            await WriteAsync($"{externalFileName}.csv", learnerLevelViewCSV, cancellationToken);
+            await WriteAsync($"{externalFileName}.csv", learnerLevelViewCSV, reportServiceContext.Container, cancellationToken);
 
             // Write the abridged report file downloadable by the user
             string learnerLevelFinancialsRemovedCSV = await GetLearnerLevelFinancialsRemovedViewCsv(learnerLevelViewModel, cancellationToken);
-            await WriteAsync($"{fileName}.csv", learnerLevelFinancialsRemovedCSV, cancellationToken);
+            await WriteAsync($"{fileName}.csv", learnerLevelFinancialsRemovedCSV, reportServiceContext.Container, cancellationToken);
 
             // Create the summary file which will be used by the WebUI to display the summary view
             string summaryFile = CreateSummary(learnerLevelViewModel, cancellationToken);
-            await WriteAsync($"{summaryFileName}.json", summaryFile, cancellationToken);
+            await WriteAsync($"{summaryFileName}.json", summaryFile, reportServiceContext.Container, cancellationToken);
         }
 
-        public async Task WriteAsync(string fileName, string csvData, CancellationToken cancellationToken)
+        public async Task WriteAsync(string fileName, string csvData, string container, CancellationToken cancellationToken)
         {
-            using (Stream stream = await _fileService.OpenWriteStreamAsync(fileName, "periodend1920-files", cancellationToken))
+            using (Stream stream = await _fileService.OpenWriteStreamAsync(fileName, container, cancellationToken))
             {
                 using (TextWriter textWriter = new StreamWriter(stream, _encoding))
                 {

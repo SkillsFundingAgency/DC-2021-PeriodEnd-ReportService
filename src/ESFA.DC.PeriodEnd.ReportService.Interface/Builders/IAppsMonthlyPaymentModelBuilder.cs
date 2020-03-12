@@ -7,12 +7,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
 {
     public interface IAppsMonthlyPaymentModelBuilder
     {
-        IOrderedEnumerable<AppsMonthlyPaymentModel> BuildAppsMonthlyPaymentModelList(
-            AppsMonthlyPaymentILRInfo appsMonthlyPaymentIlrInfo,
-            AppsMonthlyPaymentRulebaseInfo appsMonthlyPaymentRulebaseInfo,
-            AppsMonthlyPaymentDASInfo appsMonthlyPaymentDasInfo,
-            AppsMonthlyPaymentDasEarningsInfo appsMonthlyPaymentDasEarningsInfo,
-            IDictionary<string, string> appsMonthlyPaymentFcsInfo,
-            IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> appsMonthlyPaymentLarsLearningDeliveryInfoList);
+        IOrderedEnumerable<AppsMonthlyPaymentReportRowModel> BuildAppsMonthlyPaymentModelList(
+            AppsMonthlyPaymentILRInfo ilrData,
+            AppsMonthlyPaymentRulebaseInfo rulebaseData,
+            AppsMonthlyPaymentDASInfo paymentsData,
+            AppsMonthlyPaymentDasEarningsInfo earningsData,
+            IDictionary<string, string> fcsData,
+            IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> larsData);
     }
 }

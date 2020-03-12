@@ -133,6 +133,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string ProviderSpecifiedLearnerMonitoringA = "A";
         public const string ProviderSpecifiedLearnerMonitoringB = "B";
 
+        public const string ProviderSpecifiedDeliveryMonitoringA = "A";
+        public const string ProviderSpecifiedDeliveryMonitoringB = "B";
+        public const string ProviderSpecifiedDeliveryMonitoringC = "C";
+        public const string ProviderSpecifiedDeliveryMonitoringD = "D";
+
         // Fin Types
         public const string PMR = "PMR";
 

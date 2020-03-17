@@ -1,343 +1,651 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Threading;
-using System.Threading.Tasks;
 using Castle.Components.DictionaryAdapter;
-using CsvHelper;
-using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.IO.Interfaces;
-using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.DataPersist;
-using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
-using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
-using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
+using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using FluentAssertions;
-using Moq;
 using Xunit;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
+namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports.AppsMonthlyPaymentReport
 {
-    public sealed class TestAppsMonthlyPaymentReport
+    public class AppsMonthlyPaymentReport_MethodTests
     {
-        [Fact]
-        public async Task TestAppsMonthlyPaymentReportGeneration()
+        private AppsMonthlyPaymentModelBuilder _modelBuilder;
+        private int _ukprn;
+        private string _learnerReferenceNumber;
+        private string _learningAimReferenceNumber;
+        private byte _learningAimSequenceNumber;
+        private DateTime _learningStartDate;
+        private string _priceEpisodeIdentifier;
+        private int _programmeType;
+        private int _standardCode;
+        private int _frameworkCode;
+        private int _pathwayCode;
+
+        private AppsMonthlyPaymentILRInfo _ilrData;
+        private AppsMonthlyPaymentRulebaseInfo _rulebaseData;
+        private AppsMonthlyPaymentDASInfo _paymentsData;
+        private AppsMonthlyPaymentDasEarningsInfo _earningsData;
+        private IDictionary<string, string> _fcsData;
+        private IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> _larsData;
+
+        public AppsMonthlyPaymentReport_MethodTests()
         {
-            string csv = string.Empty;
-            DateTime dateTime = DateTime.UtcNow;
-            // original mock data - int ukPrn = 10036143;
-            int ukPrn = 10000001;
-            // original mock data - string filename = $"R01_10036143_10036143 Apps Monthly Payment Report {dateTime:yyyyMMdd-HHmmss}";
-            string filename = $"R05_10000001_10000001 Apps Monthly Payment Report {dateTime:yyyyMMdd-HHmmss}";
+            _modelBuilder = new AppsMonthlyPaymentModelBuilder();
+            _ukprn = 10000001;
+            _learnerReferenceNumber = "LR1001";
+            _learningAimReferenceNumber = Generics.ZPROG001;
+            _learningAimSequenceNumber = 6;
+            _learningStartDate = new DateTime(2018, 6, 16);
+            _priceEpisodeIdentifier = "2-445-3-01/08/2019";
+            _programmeType = 2;
+            _standardCode = 0;
+            _frameworkCode = 445;
+            _pathwayCode = 3;
 
-            Mock<IReportServiceContext> reportServiceContextMock = new Mock<IReportServiceContext>();
-            reportServiceContextMock.SetupGet(x => x.JobId).Returns(1);
-            reportServiceContextMock.SetupGet(x => x.SubmissionDateTimeUtc).Returns(DateTime.UtcNow);
-            reportServiceContextMock.SetupGet(x => x.Ukprn).Returns(ukPrn);
-            reportServiceContextMock.SetupGet(x => x.ReturnPeriod).Returns(5);
-            reportServiceContextMock.SetupGet(x => x.ReturnPeriodName).Returns("R05");
+            _ilrData = BuildILRModel(_ukprn);
+            _rulebaseData = BuildRulebaseModel(_ukprn);
+            _paymentsData = BuildDasPaymentsModel(_ukprn);
+            _earningsData = BuildDasEarningsModel(_ukprn);
+            _fcsData = BuildFcsModel(_ukprn);
+            _larsData = BuildLarsDeliveryInfoModel();
+        }
 
-            Mock<ILogger> logger = new Mock<ILogger>();
-            Mock<IDateTimeProvider> dateTimeProviderMock = new Mock<IDateTimeProvider>();
-            Mock<IStreamableKeyValuePersistenceService> storage = new Mock<IStreamableKeyValuePersistenceService>();
-            Mock<IIlrPeriodEndProviderService> IlrPeriodEndProviderServiceMock =
-                new Mock<IIlrPeriodEndProviderService>();
-            Mock<IDASPaymentsProviderService> dasPaymentProviderMock = new Mock<IDASPaymentsProviderService>();
-            Mock<IFM36PeriodEndProviderService> fm36ProviderServiceMock = new Mock<IFM36PeriodEndProviderService>();
-            Mock<ILarsProviderService> larsProviderServiceMock = new Mock<ILarsProviderService>();
-            Mock<IFCSProviderService> fcsProviderServiceMock = new Mock<IFCSProviderService>();
+        [Fact]
+        public void TestLookupPriceEpisodeStartDate()
+        {
+            string priceEpisodeStartDate = _modelBuilder.LookupPriceEpisodeStartDate(_priceEpisodeIdentifier);
 
-            storage.Setup(x => x.SaveAsync($"{filename}.csv", It.IsAny<string>(), It.IsAny<CancellationToken>()))
-                .Callback<string, string, CancellationToken>((key, value, ct) => csv = value)
-                .Returns(Task.CompletedTask);
+            priceEpisodeStartDate.Should().Be("01/08/2019");
+        }
 
-            var appsMonthlyPaymentIlrInfo = BuildILRModel(ukPrn);
-            var appsMonthlyPaymentRulebaseInfo = BuildRulebaseModel(ukPrn);
-            var appsMonthlyPaymentDasInfo = BuildDasPaymentsModel(ukPrn);
-            var appsMonthlyPaymentDasEarningsInfo = BuildDasEarningsModel(ukPrn);
-            var appsMonthlyPaymentFcsInfo = BuildFcsModel(ukPrn);
-            var larsDeliveryInfoModel = BuildLarsDeliveryInfoModel();
-
-            IlrPeriodEndProviderServiceMock
-                .Setup(
-                    x => x.GetILRInfoForAppsMonthlyPaymentReportAsync(It.IsAny<int>(), It.IsAny<CancellationToken>()))
-                .ReturnsAsync(appsMonthlyPaymentIlrInfo);
-            fm36ProviderServiceMock
-                .Setup(x => x.GetRulebaseDataForAppsMonthlyPaymentReportAsync(
-                    It.IsAny<int>(),
-                    It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentRulebaseInfo);
-            dasPaymentProviderMock
-                .Setup(x => x.GetPaymentsInfoForAppsMonthlyPaymentReportAsync(
-                    It.IsAny<int>(),
-                    It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasInfo);
-
-            dasPaymentProviderMock
-                .Setup(x => x.GetEarningsInfoForAppsMonthlyPaymentReportAsync(
-                    It.IsAny<int>(),
-                    It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentDasEarningsInfo);
-
-            larsProviderServiceMock
-                .Setup(x => x.GetLarsLearningDeliveryInfoForAppsMonthlyPaymentReportAsync(
-                    It.IsAny<string[]>(),
-                    It.IsAny<CancellationToken>())).ReturnsAsync(larsDeliveryInfoModel);
-
-            fcsProviderServiceMock.Setup(x => x.GetContractAllocationNumberFSPCodeLookupAsync(
-                It.IsAny<int>(),
-                It.IsAny<CancellationToken>())).ReturnsAsync(appsMonthlyPaymentFcsInfo);
-
-            dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);
-            dateTimeProviderMock.Setup(x => x.ConvertUtcToUk(It.IsAny<DateTime>())).Returns(dateTime);
-            var appsMonthlyPaymentModelBuilder = new AppsMonthlyPaymentModelBuilder();
-
-            Mock<IPersistReportData> persistReportDataMock = new Mock<IPersistReportData>();
-
-            var report = new AppsMonthlyPaymentReport(
-                logger.Object,
-                storage.Object,
-                IlrPeriodEndProviderServiceMock.Object,
-                fm36ProviderServiceMock.Object,
-                dasPaymentProviderMock.Object,
-                larsProviderServiceMock.Object,
-                fcsProviderServiceMock.Object,
-                dateTimeProviderMock.Object,
-                appsMonthlyPaymentModelBuilder,
-                persistReportDataMock.Object);
-
-            await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
-
-            csv.Should().NotBeNullOrEmpty();
-            File.WriteAllText($"{filename}.csv", csv);
-            List<AppsMonthlyPaymentReportRowModel> result;
-            TestCsvHelper.CheckCsv(csv, new CsvEntry(new AppsMonthlyPaymentMapper(), 1));
-            using (var reader = new StreamReader($"{filename}.csv"))
-            {
-                using (var csvReader = new CsvReader(reader))
+        [Fact]
+        public void TestGetPaymentAimSequenceNumber()
+        {
+            var reportRowModels = _paymentsData.Payments?
+                .GroupBy(r => new
                 {
-                    csvReader.Configuration.RegisterClassMap<AppsMonthlyPaymentMapper>();
-                    result = csvReader.GetRecords<AppsMonthlyPaymentReportRowModel>().ToList();
+                    r.LearnerReferenceNumber,
+                    r.LearnerUln,
+                    r.LearningAimReference,
+                    r.LearningStartDate,
+                    r.LearningAimProgrammeType,
+                    r.LearningAimStandardCode,
+                    r.LearningAimFrameworkCode,
+                    r.LearningAimPathwayCode,
+                    r.ReportingAimFundingLineType,
+                    r.PriceEpisodeIdentifier
+                })
+                .Select(g =>
+                {
+                    var aimSequenceNumber = _modelBuilder.GetPaymentAimSequenceNumber(g, _earningsData);
+
+                    return new AppsMonthlyPaymentReportRowModel
+                    {
+                        PaymentLearningAimReference = g.Key.LearningAimReference,
+                        PaymentEarningEventAimSeqNumber = aimSequenceNumber
+                    };
+                }).ToList();
+
+            reportRowModels?.FirstOrDefault(r => r.PaymentLearningAimReference.Equals(Generics.ZPROG001))?.PaymentEarningEventAimSeqNumber?.Should().Be(6);
+        }
+
+        [Fact]
+        public void TestLookupAimTitle()
+        {
+            var aimTitle = _modelBuilder.LookupAimTitle(_learningAimReferenceNumber, _larsData);
+
+            aimTitle.Should().Be("Generic code to identify ILR programme aims");
+        }
+
+        [Fact]
+        public void TestLookupContractAllocationNumber()
+        {
+            var contractAllocationNumber = _modelBuilder.LookupContractAllocationNumber("19+ Apprenticeship (Employer on App Service) Levy funding", _fcsData);
+
+            contractAllocationNumber.Should().Be("YNLP-1157;YNLP-1158");
+        }
+
+        [Fact]
+        public void TestLookupLearner()
+        {
+            var ilrLearnerForThisPayment = _modelBuilder.LookupLearner(_learnerReferenceNumber, _ilrData);
+
+            ilrLearnerForThisPayment.Should().NotBeNull();
+            ilrLearnerForThisPayment.LearnRefNumber.Should().Be(_learnerReferenceNumber);
+            ilrLearnerForThisPayment.UniqueLearnerNumber.Should().Be(1000000001);
+        }
+
+        [Fact]
+        public void TestLookupProvSpecLearnMon()
+        {
+            const string provSpecLearnMonA = "101";
+            const string provSpecLearnMonB = "102";
+
+            var providerSpecLearnerMonitorings = new List<AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo>()
+            {
+                new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    ProvSpecLearnMonOccur = Generics.ProviderSpecifiedLearnerMonitoringA,
+                    ProvSpecLearnMon = provSpecLearnMonA
+                },
+                new AppsMonthlyPaymentProviderSpecLearnerMonitoringInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    ProvSpecLearnMonOccur = Generics.ProviderSpecifiedLearnerMonitoringB,
+                    ProvSpecLearnMon = provSpecLearnMonB
                 }
-            }
+            };
 
-            result.Should().NotBeNullOrEmpty();
-            result.Count().Should().Be(2);
+            var providerSpecifiedLearnerMonitoringA = _modelBuilder.LookupProvSpecLearnMon(providerSpecLearnerMonitorings, Generics.ProviderSpecifiedLearnerMonitoringA);
+            var providerSpecifiedLearnerMonitoringB = _modelBuilder.LookupProvSpecLearnMon(providerSpecLearnerMonitorings, Generics.ProviderSpecifiedLearnerMonitoringB);
 
-            var testValue = result.FirstOrDefault(r => r.PaymentLearningAimReference.Equals("ZPROG001"));
+            providerSpecifiedLearnerMonitoringA.Should().Be(provSpecLearnMonA);
+            providerSpecifiedLearnerMonitoringB.Should().Be(provSpecLearnMonB);
+        }
 
-            testValue?.PaymentLearnerReferenceNumber.Should().Be("LR1001");
-            testValue?.PaymentUniqueLearnerNumber.Should().Be(1000000001);
-            testValue?.LearnerCampusIdentifier.Should().Be("C0471802");
-            testValue?.ProviderSpecifiedLearnerMonitoringA.Should().Be("001");
-            testValue?.ProviderSpecifiedLearnerMonitoringB.Should().Be("100102");
-            testValue?.PaymentEarningEventAimSeqNumber.Should().Be(6);
-            testValue?.PaymentLearningAimReference.Should().Be("ZPROG001");
-            testValue?.LarsLearningDeliveryLearningAimTitle.Should().Be("Generic code to identify ILR programme aims");
-            testValue?.LearningDeliveryOriginalLearningStartDate.Should().BeNull();
-            testValue?.PaymentLearningStartDate.Should().Be(new DateTime(2018, 6, 16));
-            testValue?.LearningDeliveryLearningPlannedEndDate.Should().Be(new DateTime(2020, 4, 16));
-            testValue?.LearningDeliveryLearningActualEndDate.Should().Be(new DateTime(2019, 10, 8));
-            testValue?.LearningDeliveryAchievementDate.Should().BeNull();
-            testValue?.LearningDeliveryOutcome.Should().Be(1);
-            testValue?.PaymentProgrammeType.Should().Be(2);
-            testValue?.PaymentStandardCode.Should().Be(0);
-            testValue?.PaymentFrameworkCode.Should().Be(445);
-            testValue?.PaymentPathwayCode.Should().Be(3);
-            testValue?.LearningDeliveryAimType.Should().Be(1);
-            testValue?.LearningDeliverySoftwareSupplierAimIdentifier.Should().Be("62993A2E-3D84-4BFA-8D32-0B72F286C0B8");
-            testValue?.LearningDeliveryFamTypeLearningDeliveryMonitoringA.Should().Be("356");
-            testValue?.LearningDeliveryFamTypeLearningDeliveryMonitoringB.Should().Be("357");
-            testValue?.LearningDeliveryFamTypeLearningDeliveryMonitoringC.Should().Be("358");
-            testValue?.LearningDeliveryFamTypeLearningDeliveryMonitoringD.Should().Be("359");
-            testValue?.LearningDeliveryFamTypeLearningDeliveryMonitoringE.Should().Be("360");
-            testValue?.LearningDeliveryFamTypeLearningDeliveryMonitoringF.Should().BeNullOrEmpty();
-            testValue?.ProviderSpecifiedDeliveryMonitoringA.Should().Be("1920");
-            testValue?.ProviderSpecifiedDeliveryMonitoringB.Should().Be("E5072");
-            testValue?.ProviderSpecifiedDeliveryMonitoringC.Should().Be("CHILD");
-            testValue?.ProviderSpecifiedDeliveryMonitoringD.Should().Be("D006801");
-            testValue?.LearningDeliveryEndPointAssessmentOrganisation.Should().BeNullOrEmpty();
-            testValue?.RulebaseAecLearningDeliveryPlannedNumberOfOnProgrammeInstalmentsForAim.Should().BeNull();
-            testValue?.LearningDeliverySubContractedOrPartnershipUkprn.Should().BeNull();
-            testValue?.PaymentPriceEpisodeStartDate.Should().Be("01/08/2019");
-            testValue?.RulebaseAecApprenticeshipPriceEpisodePriceEpisodeActualEndDate.Should().Be(new DateTime(2019, 10, 8));
-            testValue?.FcsContractContractAllocationContractAllocationNumber.Should().Be("YNLP-1157;YNLP-1158");
-            testValue?.PaymentFundingLineType.Should().Be("19+ Apprenticeship (Employer on App Service) Levy funding");
-            testValue?.PaymentApprenticeshipContractType.Should().Be(1);
-            testValue?.LearnerEmploymentStatusEmployerId.Should().BeNull();
-            testValue?.RulebaseAecApprenticeshipPriceEpisodeAgreementIdentifier.Should().Be("5YJB6B");
-            testValue?.LearnerEmploymentStatus.Should().BeNull();
-            testValue?.LearnerEmploymentStatusDate.Should().BeNull();
+        [Fact]
+        public void TestLookupLearningDelivery()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                Ukprn = _ukprn,
+                PaymentLearnerReferenceNumber = _learnerReferenceNumber,
+                PaymentLearningAimReference = _learningAimReferenceNumber,
+                PaymentLearningStartDate = _learningStartDate,
+                PaymentProgrammeType = _programmeType,
+                PaymentStandardCode = _standardCode,
+                PaymentFrameworkCode = _frameworkCode,
+                PaymentPathwayCode = _pathwayCode
+            };
+            var learner = _modelBuilder.LookupLearner(_learnerReferenceNumber, _ilrData);
 
-            // payments, Learner 1, Aim 1
+            var learningDelivery = _modelBuilder.LookupLearningDelivery(reportRowModel, learner);
 
-            // August
-            testValue?.AugustLevyPayments.Should().Be(0);
-            testValue?.AugustCoInvestmentPayments.Should().Be(0);
-            testValue?.AugustCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.AugustEmployerAdditionalPayments.Should().Be(0);
-            testValue?.AugustProviderAdditionalPayments.Should().Be(0);
-            testValue?.AugustApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.AugustEnglishAndMathsPayments.Should().Be(0);
-            testValue?.AugustLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.AugustTotalPayments.Should().Be(0);
+            learningDelivery?.Ukprn.Should().Be(_ukprn);
+            learningDelivery?.LearnRefNumber.Should().Be(_learnerReferenceNumber);
+            learningDelivery?.LearnAimRef.Should().Be(_learningAimReferenceNumber);
+            learningDelivery?.LearnStartDate.Should().Be(_learningStartDate);
+            learningDelivery?.ProgType.Should().Be(_programmeType);
+            learningDelivery?.StdCode.Should().Be(_standardCode);
+            learningDelivery?.FworkCode.Should().Be(_frameworkCode);
+            learningDelivery?.PwayCode.Should().Be(_pathwayCode);
+        }
 
-            // September
-            testValue?.SeptemberLevyPayments.Should().Be(0);
-            testValue?.SeptemberCoInvestmentPayments.Should().Be(0);
-            testValue?.SeptemberCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.SeptemberEmployerAdditionalPayments.Should().Be(0);
-            testValue?.SeptemberProviderAdditionalPayments.Should().Be(0);
-            testValue?.SeptemberApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.SeptemberEnglishAndMathsPayments.Should().Be(0);
-            testValue?.SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.SeptemberTotalPayments.Should().Be(0);
+        [Fact]
+        public void TestLookupLearningDeliveryLdmFams()
+        {
+            List<AppsMonthlyPaymentLearningDeliveryFAMInfo> ldmFamData =
+                new List<AppsMonthlyPaymentLearningDeliveryFAMInfo>()
+                {
+                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                    {
+                        Ukprn = _ukprn,
+                        LearnRefNumber = _learnerReferenceNumber,
+                        AimSeqNumber = 6,
+                        LearnDelFAMType = Generics.LearningDeliveryFAMCodeLDM,
+                        LearnDelFAMCode = "101",
+                    },
+                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                    {
+                        Ukprn = _ukprn,
+                        LearnRefNumber = _learnerReferenceNumber,
+                        AimSeqNumber = 6,
+                        LearnDelFAMType = Generics.LearningDeliveryFAMCodeLDM,
+                        LearnDelFAMCode = "102",
+                    },
+                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                    {
+                        Ukprn = _ukprn,
+                        LearnRefNumber = _learnerReferenceNumber,
+                        AimSeqNumber = 6,
+                        LearnDelFAMType = Generics.LearningDeliveryFAMCodeLDM,
+                        LearnDelFAMCode = "103",
+                    },
+                    new AppsMonthlyPaymentLearningDeliveryFAMInfo()
+                    {
+                        Ukprn = _ukprn,
+                        LearnRefNumber = _learnerReferenceNumber,
+                        AimSeqNumber = 6,
+                        LearnDelFAMType = Generics.LearningDeliveryFAMCodeLDM,
+                        LearnDelFAMCode = "104",
+                    }
+                };
 
-            // October
-            testValue?.OctoberLevyPayments.Should().Be(0);
-            testValue?.OctoberCoInvestmentPayments.Should().Be(0);
-            testValue?.OctoberCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.OctoberEmployerAdditionalPayments.Should().Be(0);
-            testValue?.OctoberProviderAdditionalPayments.Should().Be(0);
-            testValue?.OctoberApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.OctoberEnglishAndMathsPayments.Should().Be(0);
-            testValue?.OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.OctoberTotalPayments.Should().Be(0);
+            var ldmFams = _modelBuilder.LookupLearningDeliveryLdmFams(ldmFamData, Generics.LearningDeliveryFAMCodeLDM);
 
-            // November
-            testValue?.NovemberLevyPayments.Should().Be(0);
-            testValue?.NovemberCoInvestmentPayments.Should().Be(0);
-            testValue?.NovemberCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.NovemberEmployerAdditionalPayments.Should().Be(0);
-            testValue?.NovemberProviderAdditionalPayments.Should().Be(0);
-            testValue?.NovemberApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.NovemberEnglishAndMathsPayments.Should().Be(0);
-            testValue?.NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.NovemberTotalPayments.Should().Be(0);
+            ldmFams?.Length.Should().Be(6);
+            ldmFams?[0]?.LearnDelFAMCode.Should().Be("101");
+            ldmFams?[1]?.LearnDelFAMCode.Should().Be("102");
+            ldmFams?[2]?.LearnDelFAMCode.Should().Be("103");
+            ldmFams?[3]?.LearnDelFAMCode.Should().Be("104");
+            ldmFams?[4]?.LearnDelFAMCode.Should().BeNullOrEmpty();
+            ldmFams?[5].Should().BeNull();
+        }
 
-            // December
-            testValue?.DecemberLevyPayments.Should().Be(0);
-            testValue?.DecemberCoInvestmentPayments.Should().Be(0);
-            testValue?.DecemberCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.DecemberEmployerAdditionalPayments.Should().Be(0);
-            testValue?.DecemberProviderAdditionalPayments.Should().Be(0);
-            testValue?.DecemberApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.DecemberEnglishAndMathsPayments.Should().Be(0);
-            testValue?.DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.DecemberTotalPayments.Should().Be(0);
+        [Fact]
+        public void TestLookupProvSpecDelMon()
+        {
+            var provSpecDelMons = new List<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo>()
+            {
+                new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    AimSeqNumber = 1,
+                    ProvSpecDelMonOccur = Generics.ProviderSpecifiedDeliveryMonitoringA,
+                    ProvSpecDelMon = "1920"
+                },
+                new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    AimSeqNumber = 1,
+                    ProvSpecDelMonOccur = Generics.ProviderSpecifiedDeliveryMonitoringB,
+                    ProvSpecDelMon = "E5072"
+                },
+                new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    AimSeqNumber = 1,
+                    ProvSpecDelMonOccur = Generics.ProviderSpecifiedDeliveryMonitoringC,
+                    ProvSpecDelMon = "CHILD"
+                },
+                new AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    AimSeqNumber = 1,
+                    ProvSpecDelMonOccur = Generics.ProviderSpecifiedDeliveryMonitoringD,
+                    ProvSpecDelMon = "D006801"
+                }
+            };
 
-            // January
-            testValue?.JanuaryLevyPayments.Should().Be(0);
-            testValue?.JanuaryCoInvestmentPayments.Should().Be(0);
-            testValue?.JanuaryCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.JanuaryEmployerAdditionalPayments.Should().Be(0);
-            testValue?.JanuaryProviderAdditionalPayments.Should().Be(0);
-            testValue?.JanuaryApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.JanuaryEnglishAndMathsPayments.Should().Be(0);
-            testValue?.JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.JanuaryTotalPayments.Should().Be(0);
+            var provSpecDelMonA = _modelBuilder.LookupProvSpecDelMon(provSpecDelMons, Generics.ProviderSpecifiedDeliveryMonitoringA);
+            var provSpecDelMonB = _modelBuilder.LookupProvSpecDelMon(provSpecDelMons, Generics.ProviderSpecifiedDeliveryMonitoringB);
+            var provSpecDelMonC = _modelBuilder.LookupProvSpecDelMon(provSpecDelMons, Generics.ProviderSpecifiedDeliveryMonitoringC);
+            var provSpecDelMonD = _modelBuilder.LookupProvSpecDelMon(provSpecDelMons, Generics.ProviderSpecifiedDeliveryMonitoringD);
 
-            // February
-            testValue?.FebruaryLevyPayments.Should().Be(0);
-            testValue?.FebruaryCoInvestmentPayments.Should().Be(0);
-            testValue?.FebruaryCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.FebruaryEmployerAdditionalPayments.Should().Be(0);
-            testValue?.FebruaryProviderAdditionalPayments.Should().Be(0);
-            testValue?.FebruaryApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.FebruaryEnglishAndMathsPayments.Should().Be(0);
-            testValue?.FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.FebruaryTotalPayments.Should().Be(0);
+            provSpecDelMonA?.Should().Be("1920");
+            provSpecDelMonB?.Should().Be("E5072");
+            provSpecDelMonC?.Should().Be("CHILD");
+            provSpecDelMonD?.Should().Be("D006801");
+        }
 
-            // March
-            testValue?.MarchLevyPayments.Should().Be(0);
-            testValue?.MarchCoInvestmentPayments.Should().Be(0);
-            testValue?.MarchCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.MarchEmployerAdditionalPayments.Should().Be(0);
-            testValue?.MarchProviderAdditionalPayments.Should().Be(0);
-            testValue?.MarchApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.MarchEnglishAndMathsPayments.Should().Be(0);
-            testValue?.MarchLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.MarchTotalPayments.Should().Be(0);
+        [Fact]
+        public void TestLookupAecPriceEpisode()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                Ukprn = _ukprn,
+                PaymentLearnerReferenceNumber = _learnerReferenceNumber,
+                PaymentPriceEpisodeIdentifier = _priceEpisodeIdentifier
+            };
 
-            // April
-            testValue?.AprilLevyPayments.Should().Be(0);
-            testValue?.AprilCoInvestmentPayments.Should().Be(0);
-            testValue?.AprilCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.AprilEmployerAdditionalPayments.Should().Be(0);
-            testValue?.AprilProviderAdditionalPayments.Should().Be(0);
-            testValue?.AprilApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.AprilEnglishAndMathsPayments.Should().Be(0);
-            testValue?.AprilLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.AprilTotalPayments.Should().Be(0);
+            var aecPriceEpisode = _modelBuilder.LookupAecPriceEpisode(reportRowModel, _rulebaseData);
 
-            // May
-            testValue?.MayLevyPayments.Should().Be(0);
-            testValue?.MayCoInvestmentPayments.Should().Be(0);
-            testValue?.MayCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.MayEmployerAdditionalPayments.Should().Be(0);
-            testValue?.MayProviderAdditionalPayments.Should().Be(0);
-            testValue?.MayApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.MayEnglishAndMathsPayments.Should().Be(0);
-            testValue?.MayLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.MayTotalPayments.Should().Be(0);
+            aecPriceEpisode?.Ukprn.Should().Be(_ukprn);
+            aecPriceEpisode?.LearnRefNumber.Should().Be(_learnerReferenceNumber);
+            aecPriceEpisode?.PriceEpisodeIdentifier.Should().Be(_priceEpisodeIdentifier);
+        }
 
-            // June
-            testValue?.JuneLevyPayments.Should().Be(0);
-            testValue?.JuneCoInvestmentPayments.Should().Be(0);
-            testValue?.JuneCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.JuneEmployerAdditionalPayments.Should().Be(0);
-            testValue?.JuneProviderAdditionalPayments.Should().Be(0);
-            testValue?.JuneApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.JuneEnglishAndMathsPayments.Should().Be(0);
-            testValue?.JuneLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.JuneTotalPayments.Should().Be(0);
+        [Fact]
+        public void TestLookupAecLearningDelivery()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                Ukprn = _ukprn,
+                PaymentLearnerReferenceNumber = _learnerReferenceNumber,
+                PaymentEarningEventAimSeqNumber = _learningAimSequenceNumber,
+                PaymentLearningAimReference = _learningAimReferenceNumber,
+            };
 
-            // July
-            testValue?.JulyLevyPayments.Should().Be(0);
-            testValue?.JulyCoInvestmentPayments.Should().Be(0);
-            testValue?.JulyCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.JulyEmployerAdditionalPayments.Should().Be(0);
-            testValue?.JulyProviderAdditionalPayments.Should().Be(0);
-            testValue?.JulyApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.JulyEnglishAndMathsPayments.Should().Be(0);
-            testValue?.JulyLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.JulyTotalPayments.Should().Be(0);
+            var aecLearningDelivery = _modelBuilder.LookupAecLearningDelivery(reportRowModel, _rulebaseData, _learningAimSequenceNumber);
 
-            // R13
-            testValue?.R13LevyPayments.Should().Be(0);
-            testValue?.R13CoInvestmentPayments.Should().Be(0);
-            testValue?.R13CoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.R13EmployerAdditionalPayments.Should().Be(0);
-            testValue?.R13ProviderAdditionalPayments.Should().Be(0);
-            testValue?.R13ApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.R13EnglishAndMathsPayments.Should().Be(0);
-            testValue?.R13LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.R13TotalPayments.Should().Be(0);
+            aecLearningDelivery?.Ukprn.Should().Be(_ukprn);
+            aecLearningDelivery?.LearnRefNumber.Should().Be(_learnerReferenceNumber);
+            aecLearningDelivery?.AimSequenceNumber.Should().Be(_learningAimSequenceNumber);
+            aecLearningDelivery?.LearnAimRef.Should().Be(_learningAimReferenceNumber);
+        }
 
-            // R14
-            testValue?.R14LevyPayments.Should().Be(0);
-            testValue?.R14CoInvestmentPayments.Should().Be(0);
-            testValue?.R14CoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.R14EmployerAdditionalPayments.Should().Be(0);
-            testValue?.R14ProviderAdditionalPayments.Should().Be(0);
-            testValue?.R14ApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.R14EnglishAndMathsPayments.Should().Be(0);
-            testValue?.R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.R14TotalPayments.Should().Be(0);
+        [Fact]
+        public void TestLookupLearnerEmploymentStatus()
+        {
+            var learnerEmploymentStatusData = new List<AppsMonthlyPaymentLearnerEmploymentStatusInfo>()
+            {
+                new AppsMonthlyPaymentLearnerEmploymentStatusInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    DateEmpStatApp = new DateTime(2018, 8, 1),
+                    EmpStat = 10, // 10 In paid employment
+                    EmpdId = 905118782,
+                    AgreeId = "5YJB5B"
+                },
+                new AppsMonthlyPaymentLearnerEmploymentStatusInfo()
+                {
+                    Ukprn = _ukprn,
+                    LearnRefNumber = _learnerReferenceNumber,
+                    DateEmpStatApp = new DateTime(2019, 10, 7),
+                    EmpStat = 10, // 10 In paid employment
+                    EmpdId = 905118782,
+                    AgreeId = "5YJB6B"
+                }
+            };
 
-            testValue?.TotalLevyPayments.Should().Be(0);
-            testValue?.TotalCoInvestmentPayments.Should().Be(0);
-            testValue?.TotalCoInvestmentDueFromEmployerPayments.Should().Be(0);
-            testValue?.TotalEmployerAdditionalPayments.Should().Be(0);
-            testValue?.TotalProviderAdditionalPayments.Should().Be(0);
-            testValue?.TotalApprenticeAdditionalPayments.Should().Be(0);
-            testValue?.TotalEnglishAndMathsPayments.Should().Be(0);
-            testValue?.TotalLearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
-            testValue?.TotalPayments.Should().Be(0);
+            var employmentStatus = _modelBuilder.LookupLearnerEmploymentStatus(learnerEmploymentStatusData, _learningStartDate);
+
+            employmentStatus?.Ukprn.Should().Be(_ukprn);
+            employmentStatus?.LearnRefNumber.Should().Be(_learnerReferenceNumber);
+            employmentStatus?.DateEmpStatApp.Should().Be(new DateTime(2018, 8, 1));
+            employmentStatus?.EmpStat.Should().Be(10);
+            employmentStatus?.EmpdId.Should().Be(905118782);
+            employmentStatus?.AgreeId.Should().Be("5YJB5B");
+        }
+
+        [Fact]
+        public void TestGetPaymentTypeTotals()
+        {
+            var total = _modelBuilder.GetPaymentTypeTotals(1, 2, 3, 4, 5, 6, 7);
+
+            total.Should().Be(28);
+        }
+
+        [Fact]
+        public void TestGetAugPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                AugustLevyPayments = 1,
+                AugustCoInvestmentPayments = 2,
+                AugustEmployerAdditionalPayments = 3,
+                AugustProviderAdditionalPayments = 4,
+                AugustApprenticeAdditionalPayments = 5,
+                AugustEnglishAndMathsPayments = 6,
+                AugustLearningSupportDisadvantageAndFrameworkUpliftPayments = 7
+            };
+
+            reportRowModel.AugustTotalPayments = _modelBuilder.GetAugPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.AugustTotalPayments.Should().Be(28);
+        }
+
+        [Fact]
+        public void TestGetSepPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                SeptemberLevyPayments = 2,
+                SeptemberCoInvestmentPayments = 3,
+                SeptemberEmployerAdditionalPayments = 4,
+                SeptemberProviderAdditionalPayments = 5,
+                SeptemberApprenticeAdditionalPayments = 6,
+                SeptemberEnglishAndMathsPayments = 7,
+                SeptemberLearningSupportDisadvantageAndFrameworkUpliftPayments = 8
+            };
+
+            reportRowModel.SeptemberTotalPayments = _modelBuilder.GetSepPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.SeptemberTotalPayments.Should().Be(35);
+        }
+
+        [Fact]
+        public void TestGetOctPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                OctoberLevyPayments = 3,
+                OctoberCoInvestmentPayments = 4,
+                OctoberEmployerAdditionalPayments = 5,
+                OctoberProviderAdditionalPayments = 6,
+                OctoberApprenticeAdditionalPayments = 7,
+                OctoberEnglishAndMathsPayments = 8,
+                OctoberLearningSupportDisadvantageAndFrameworkUpliftPayments = 9
+            };
+
+            reportRowModel.OctoberTotalPayments = _modelBuilder.GetOctPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.OctoberTotalPayments.Should().Be(42);
+        }
+
+        [Fact]
+        public void TestGetNovPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                NovemberLevyPayments = 4,
+                NovemberCoInvestmentPayments = 5,
+                NovemberEmployerAdditionalPayments = 6,
+                NovemberProviderAdditionalPayments = 7,
+                NovemberApprenticeAdditionalPayments = 8,
+                NovemberEnglishAndMathsPayments = 9,
+                NovemberLearningSupportDisadvantageAndFrameworkUpliftPayments = 10
+            };
+
+            reportRowModel.NovemberTotalPayments = _modelBuilder.GetNovPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.NovemberTotalPayments.Should().Be(49);
+        }
+
+        [Fact]
+        public void TestGetDecPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                DecemberLevyPayments = 5,
+                DecemberCoInvestmentPayments = 6,
+                DecemberEmployerAdditionalPayments = 7,
+                DecemberProviderAdditionalPayments = 8,
+                DecemberApprenticeAdditionalPayments = 9,
+                DecemberEnglishAndMathsPayments = 10,
+                DecemberLearningSupportDisadvantageAndFrameworkUpliftPayments = 11
+            };
+
+            reportRowModel.DecemberTotalPayments = _modelBuilder.GetDecPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.DecemberTotalPayments.Should().Be(56);
+        }
+
+        [Fact]
+        public void TestGetJanPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                JanuaryLevyPayments = 6,
+                JanuaryCoInvestmentPayments = 7,
+                JanuaryEmployerAdditionalPayments = 8,
+                JanuaryProviderAdditionalPayments = 9,
+                JanuaryApprenticeAdditionalPayments = 10,
+                JanuaryEnglishAndMathsPayments = 11,
+                JanuaryLearningSupportDisadvantageAndFrameworkUpliftPayments = 12
+            };
+
+            reportRowModel.JanuaryTotalPayments = _modelBuilder.GetJanPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.JanuaryTotalPayments.Should().Be(63);
+        }
+
+        [Fact]
+        public void TestGetFebPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                FebruaryLevyPayments = 7,
+                FebruaryCoInvestmentPayments = 8,
+                FebruaryEmployerAdditionalPayments = 9,
+                FebruaryProviderAdditionalPayments = 10,
+                FebruaryApprenticeAdditionalPayments = 11,
+                FebruaryEnglishAndMathsPayments = 12,
+                FebruaryLearningSupportDisadvantageAndFrameworkUpliftPayments = 13
+            };
+
+            reportRowModel.FebruaryTotalPayments = _modelBuilder.GetFebPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.FebruaryTotalPayments.Should().Be(70);
+        }
+
+        [Fact]
+        public void TestGetMarPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                MarchLevyPayments = 8,
+                MarchCoInvestmentPayments = 9,
+                MarchEmployerAdditionalPayments = 10,
+                MarchProviderAdditionalPayments = 11,
+                MarchApprenticeAdditionalPayments = 12,
+                MarchEnglishAndMathsPayments = 13,
+                MarchLearningSupportDisadvantageAndFrameworkUpliftPayments = 14
+            };
+
+            reportRowModel.MarchTotalPayments = _modelBuilder.GetMarPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.MarchTotalPayments.Should().Be(77);
+        }
+
+        [Fact]
+        public void TestGetAprPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                AprilLevyPayments = 9,
+                AprilCoInvestmentPayments = 10,
+                AprilEmployerAdditionalPayments = 11,
+                AprilProviderAdditionalPayments = 12,
+                AprilApprenticeAdditionalPayments = 13,
+                AprilEnglishAndMathsPayments = 14,
+                AprilLearningSupportDisadvantageAndFrameworkUpliftPayments = 15
+            };
+
+            reportRowModel.AprilTotalPayments = _modelBuilder.GetAprPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.AprilTotalPayments.Should().Be(84);
+        }
+
+        [Fact]
+        public void TestGetMayPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                MayLevyPayments = 10,
+                MayCoInvestmentPayments = 11,
+                MayEmployerAdditionalPayments = 12,
+                MayProviderAdditionalPayments = 13,
+                MayApprenticeAdditionalPayments = 14,
+                MayEnglishAndMathsPayments = 15,
+                MayLearningSupportDisadvantageAndFrameworkUpliftPayments = 16
+            };
+
+            reportRowModel.MayTotalPayments = _modelBuilder.GetMayPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.MayTotalPayments.Should().Be(91);
+        }
+
+        [Fact]
+        public void TestGetJunPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                JuneLevyPayments = 11,
+                JuneCoInvestmentPayments = 12,
+                JuneEmployerAdditionalPayments = 13,
+                JuneProviderAdditionalPayments = 14,
+                JuneApprenticeAdditionalPayments = 15,
+                JuneEnglishAndMathsPayments = 16,
+                JuneLearningSupportDisadvantageAndFrameworkUpliftPayments = 17
+            };
+
+            reportRowModel.JuneTotalPayments = _modelBuilder.GetJunPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.JuneTotalPayments.Should().Be(98);
+        }
+
+        [Fact]
+        public void TestGetJulPaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                JulyLevyPayments = 12,
+                JulyCoInvestmentPayments = 13,
+                JulyEmployerAdditionalPayments = 14,
+                JulyProviderAdditionalPayments = 15,
+                JulyApprenticeAdditionalPayments = 16,
+                JulyEnglishAndMathsPayments = 17,
+                JulyLearningSupportDisadvantageAndFrameworkUpliftPayments = 18
+            };
+
+            reportRowModel.JulyTotalPayments = _modelBuilder.GetJulPaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.JulyTotalPayments.Should().Be(105);
+        }
+
+        [Fact]
+        public void TestGetR13PaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                R13LevyPayments = 13,
+                R13CoInvestmentPayments = 14,
+                R13EmployerAdditionalPayments = 15,
+                R13ProviderAdditionalPayments = 16,
+                R13ApprenticeAdditionalPayments = 17,
+                R13EnglishAndMathsPayments = 18,
+                R13LearningSupportDisadvantageAndFrameworkUpliftPayments = 19
+            };
+
+            reportRowModel.R13TotalPayments = _modelBuilder.GetR13PaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.R13TotalPayments.Should().Be(112);
+        }
+
+        [Fact]
+        public void TestGetR14PaymentTypeTotals()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                R14LevyPayments = 14,
+                R14CoInvestmentPayments = 15,
+                R14EmployerAdditionalPayments = 16,
+                R14ProviderAdditionalPayments = 17,
+                R14ApprenticeAdditionalPayments = 18,
+                R14EnglishAndMathsPayments = 19,
+                R14LearningSupportDisadvantageAndFrameworkUpliftPayments = 20
+            };
+
+            reportRowModel.R14TotalPayments = _modelBuilder.GetR14PaymentTypeTotals(reportRowModel);
+
+            reportRowModel?.R14TotalPayments.Should().Be(119);
+        }
+
+        [Fact]
+        public void TestCalculateTotalPayments()
+        {
+            var reportRowModel = new AppsMonthlyPaymentReportRowModel()
+            {
+                AugustTotalPayments = 28,
+                SeptemberTotalPayments = 35,
+                OctoberTotalPayments = 42,
+                NovemberTotalPayments = 49,
+                DecemberTotalPayments = 56,
+                JanuaryTotalPayments = 63,
+                FebruaryTotalPayments = 70,
+                MarchTotalPayments = 77,
+                AprilTotalPayments = 84,
+                MayTotalPayments = 91,
+                JuneTotalPayments = 98,
+                JulyTotalPayments = 105,
+                R13TotalPayments = 112,
+                R14TotalPayments = 119
+            };
+
+            reportRowModel.TotalPayments = _modelBuilder.CalculateTotalPayments(reportRowModel);
         }
 
         private List<AppsMonthlyPaymentLarsLearningDeliveryInfo> BuildLarsDeliveryInfoModel()
@@ -2383,6 +2691,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 new AppsMonthlyPaymentDasPaymentModel()
                 {
                     AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
+                    LearningAimReference = "50089638", LearningStartDate = new DateTime(2019, 04, 13),
+                    LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
+                    LearningAimPathwayCode = 3,
+                    ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding",
+                    PriceEpisodeIdentifier = string.Empty, ContractType = 1, TransactionType = 13, FundingSource = 4,
+                    DeliveryPeriod = 1, CollectionPeriod = 4,
+                    EarningEventId = new Guid("00000000-0000-0000-0000-000000000000")
+                },
+                new AppsMonthlyPaymentDasPaymentModel()
+                {
+                    AcademicYear = 1920, Ukprn = 10000001, LearnerReferenceNumber = "LR1001", LearnerUln = 1000000001,
                     LearningAimReference = "ZPROG001", LearningStartDate = new DateTime(2018, 06, 16),
                     LearningAimProgrammeType = 2, LearningAimStandardCode = 0, LearningAimFrameworkCode = 445,
                     LearningAimPathwayCode = 3,
@@ -2584,3 +2903,4 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
         }
     }
 }
+

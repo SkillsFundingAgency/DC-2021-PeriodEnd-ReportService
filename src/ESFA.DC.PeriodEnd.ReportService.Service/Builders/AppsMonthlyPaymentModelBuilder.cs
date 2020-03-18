@@ -473,23 +473,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             List<AppsMonthlyPaymentDasPaymentModel> group = g.ToList();
 
             var paymentEarningEventIds = group
-                .Where(a => a.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
-                .Select(a => a.EarningEventId)
+                .Where(a => a?.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
+                .Select(a => a?.EarningEventId)
                 .ToList();
 
             var earningsEvents = earningsData?.Earnings?
                 .Where(x => paymentEarningEventIds.Contains(x.EventId))
                 .ToList();
 
-            var distinctEarningEventAimSequenceNumbers = earningsEvents?.Select(e => e.LearningAimSequenceNumber).Distinct().ToList();
+            var distinctEarningEventAimSequenceNumbers = earningsEvents?.Select(e => e?.LearningAimSequenceNumber).Distinct().ToList();
             var distinctEarningEventAimSequenceNumbersCount = distinctEarningEventAimSequenceNumbers?.Count();
 
             if (distinctEarningEventAimSequenceNumbersCount > 1)
             {
-                var latestPayment = group.OrderByDescending(p => p.AcademicYear).ThenByDescending(p => p.CollectionPeriod)
-                    .ThenByDescending(p => p.DeliveryPeriod).First();
+                var latestPayment = group.OrderByDescending(p => p?.AcademicYear).ThenByDescending(p => p?.CollectionPeriod)
+                    .ThenByDescending(p => p?.DeliveryPeriod).First();
 
-                aimSequenceNumber = earningsEvents?.FirstOrDefault(e => e.EventId == latestPayment.EarningEventId)
+                aimSequenceNumber = earningsEvents.FirstOrDefault(e => e.EventId == latestPayment?.EarningEventId)
                     ?.LearningAimSequenceNumber;
             }
             else if (distinctEarningEventAimSequenceNumbersCount == 1)
@@ -529,18 +529,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             return ilrLearnerForThisPayment?.LearningDeliveries?.FirstOrDefault(ld => ld != null &&
                 reportRowModel != null &&
                 ld.Ukprn == reportRowModel.Ukprn &&
-                ld.LearnRefNumber.CaseInsensitiveEquals(reportRowModel?.PaymentLearnerReferenceNumber) &&
-                ld.LearnAimRef.CaseInsensitiveEquals(reportRowModel?.PaymentLearningAimReference) &&
-                ld.LearnStartDate == reportRowModel?.PaymentLearningStartDate &&
-                ld.ProgType == reportRowModel?.PaymentProgrammeType &&
-                ld.StdCode == reportRowModel?.PaymentStandardCode &&
-                ld.FworkCode == reportRowModel?.PaymentFrameworkCode &&
-                ld.PwayCode == reportRowModel?.PaymentPathwayCode);
+                ld.LearnRefNumber.CaseInsensitiveEquals(reportRowModel.PaymentLearnerReferenceNumber) &&
+                ld.LearnAimRef.CaseInsensitiveEquals(reportRowModel.PaymentLearningAimReference) &&
+                ld.LearnStartDate == reportRowModel.PaymentLearningStartDate &&
+                ld.ProgType == reportRowModel.PaymentProgrammeType &&
+                ld.StdCode == reportRowModel.PaymentStandardCode &&
+                ld.FworkCode == reportRowModel.PaymentFrameworkCode &&
+                ld.PwayCode == reportRowModel.PaymentPathwayCode);
         }
 
         public AppsMonthlyPaymentLearningDeliveryFAMInfo[] LookupLearningDeliveryLdmFams(IEnumerable<AppsMonthlyPaymentLearningDeliveryFAMInfo> ldmFams, string learnDelFamType)
         {
-            return ldmFams?.Where(fam => fam.LearnDelFAMType.CaseInsensitiveEquals(learnDelFamType)).ToFixedLengthArray(6);
+            return ldmFams?.Where(fam => fam != null &&
+                !string.IsNullOrEmpty(learnDelFamType) &&
+                fam.LearnDelFAMType.CaseInsensitiveEquals(learnDelFamType)).ToFixedLengthArray(6);
         }
 
         public string LookupProvSpecDelMon(IEnumerable<AppsMonthlyPaymentProviderSpecDeliveryMonitoringInfo> providerSpecDeliveryMonitorings, string provSpecDelMonOccur)
@@ -571,8 +573,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public AppsMonthlyPaymentLearnerEmploymentStatusInfo LookupLearnerEmploymentStatus(IEnumerable<AppsMonthlyPaymentLearnerEmploymentStatusInfo> employmentStatusData, DateTime? learningDeliveryLearnStartDate)
         {
-            return employmentStatusData
-                .Where(les => les?.DateEmpStatApp <= learningDeliveryLearnStartDate)
+            return employmentStatusData?
+                .Where(les => les != null &&
+                    learningDeliveryLearnStartDate != null &&
+                    les.DateEmpStatApp <= learningDeliveryLearnStartDate)
                 .OrderByDescending(les => les.DateEmpStatApp)
                 .FirstOrDefault();
         }

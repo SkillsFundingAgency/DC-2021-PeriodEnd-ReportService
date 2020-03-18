@@ -32,10 +32,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             IDictionary<string, string> fcsData,
             IReadOnlyList<AppsMonthlyPaymentLarsLearningDeliveryInfo> larsData)
         {
-            List<AppsMonthlyPaymentReportRowModel> reportRowModels = null;
-
             // Payments are retrieved by UKPRN and AcademicYear in the payments provider code
-            reportRowModels = paymentsData.Payments?
+            var reportRowModels = paymentsData.Payments?
                 .GroupBy(r => new
                 {
                     r.LearnerReferenceNumber,
@@ -511,10 +509,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public string LookupContractAllocationNumber(string fundingLineType, IDictionary<string, string> fcsData)
         {
-            const string NoContract = "No Contract";
             string fundingStreamPeriodCode = Utils.GetFundingStreamPeriodForFundingLineType(fundingLineType);
 
-            return fcsData?.GetValueOrDefault(fundingStreamPeriodCode ?? string.Empty, NoContract);
+            return fcsData?.GetValueOrDefault(fundingStreamPeriodCode ?? string.Empty, Generics.NoContract);
         }
 
         public AppsMonthlyPaymentLearnerModel LookupLearner(string learnerReferenceNumber, AppsMonthlyPaymentILRInfo ilrData)

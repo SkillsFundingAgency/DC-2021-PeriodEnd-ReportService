@@ -155,6 +155,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Constants
         public const string NotApplicable = "n/a";
         public const string NotAvailable = "Not available";
 
+        // General Constants
+        public const string NoContract = "No Contract";
+
         // Dates
         public static readonly DateTime BeginningOfYear = new DateTime(2019, 8, 1);
         public static readonly DateTime EndOfYear = new DateTime(2020, 7, 31, 23, 59, 59);

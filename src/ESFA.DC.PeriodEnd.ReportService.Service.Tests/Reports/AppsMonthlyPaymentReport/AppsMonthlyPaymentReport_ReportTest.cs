@@ -329,7 +329,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             testValue?.R14LearningSupportDisadvantageAndFrameworkUpliftPayments.Should().Be(0);
             testValue?.R14TotalPayments.Should().Be(0);
 
-            testValue?.TotalLevyPayments.Should().Be(0);
+            testValue?.TotalLevyPayments.Should().Be(200);
             testValue?.TotalCoInvestmentPayments.Should().Be(0);
             testValue?.TotalCoInvestmentDueFromEmployerPayments.Should().Be(0);
             testValue?.TotalEmployerAdditionalPayments.Should().Be(0);

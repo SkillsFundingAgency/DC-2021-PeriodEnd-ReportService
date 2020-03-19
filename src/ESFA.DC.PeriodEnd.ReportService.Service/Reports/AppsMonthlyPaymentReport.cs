@@ -150,7 +150,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _logger.LogDebug($"Performance-AppsMonthlyPaymentReport Total generation time - {stopWatch.ElapsedMilliseconds} ms ");
         }
 
-        private async Task<string> GetCsv(IEnumerable<AppsMonthlyPaymentModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
+        private async Task<string> GetCsv(IEnumerable<AppsMonthlyPaymentReportRowModel> appsMonthlyPaymentsModel, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -161,7 +161,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 {
                     using (CsvWriter csvWriter = new CsvWriter(textWriter))
                     {
-                        WriteCsvRecords<AppsMonthlyPaymentMapper, AppsMonthlyPaymentModel>(csvWriter, appsMonthlyPaymentsModel);
+                        WriteCsvRecords<AppsMonthlyPaymentMapper, AppsMonthlyPaymentReportRowModel>(csvWriter, appsMonthlyPaymentsModel);
 
                         csvWriter.Flush();
                         textWriter.Flush();

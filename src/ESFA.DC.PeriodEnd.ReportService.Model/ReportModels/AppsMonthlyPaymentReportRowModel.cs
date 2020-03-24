@@ -2,7 +2,7 @@
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 {
-    public class AppsMonthlyPaymentModel : AbstractReportModel
+    public class AppsMonthlyPaymentReportRowModel : AbstractReportModel
     {
         public int? Ukprn { get; set; }
 

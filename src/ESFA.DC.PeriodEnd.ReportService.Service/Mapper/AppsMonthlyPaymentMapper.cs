@@ -3,7 +3,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 {
-    public class AppsMonthlyPaymentMapper : ClassMap<AppsMonthlyPaymentModel>
+    public class AppsMonthlyPaymentMapper : ClassMap<AppsMonthlyPaymentReportRowModel>
     {
         public AppsMonthlyPaymentMapper()
         {

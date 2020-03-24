@@ -56,6 +56,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
             IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> paymentsDictionary,
             IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> aECPriceEpisodeDictionary,
             IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> aECLearningDeliveryDictionary,
+            IDictionary<long, string> employerNameDictionary,
             int returnPeriod)
         {
             // cache the passed in data for use in the private 'Get' methods
@@ -100,6 +101,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
                         reportRecord.PaymentUniqueLearnerNumber = paymentValues.FirstOrDefault()?.LearnerUln;
+
+                        // Extract company name
+                        string employerName;
+                        if ( employerNameDictionary.TryGetValue(paymentValues.FirstOrDefault().ApprenticeshipId ?? 0, out employerName))
+                        {
+                            reportRecord.EmployerName = employerName;
+                        }
+                        else
+                        {
+                            reportRecord.EmployerName = string.Empty;
+                        }
                     }
 
                     // Extract ILR info

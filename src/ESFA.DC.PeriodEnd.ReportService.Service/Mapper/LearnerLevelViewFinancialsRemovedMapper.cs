@@ -18,9 +18,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
             Map(m => m.GivenNames).Index(i++).Name("Given Names");
 
             Map(m => m.LearnerEmploymentStatusEmployerId).Index(i++).Name("Employer identifier (ERN)");
+            Map(m => m.EmployerName).Index(i++).Name("Latest employer name");
 
             Map(m => m.ReasonForIssues).Index(i++).Name("Reasons for issues");
-            Map(m => m.RuleDescription).Index(i++).Name("Rule description");
+            Map(m => m.RuleDescription).Index(i++).Name("Data lock description");
 
             Map(m => m.PaymentFundingLineType).Index(i++).Name("Funding line type");
         }

@@ -114,6 +114,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var aECPriceEpisodeDictionary = BuildAECPriceEpisodeDictionary(learnerLevelViewFM36Info?.AECApprenticeshipPriceEpisodePeriodisedValues);
             var aECLearningDeliveryDictionary = BuildAECLearningDeliveryDictionary(learnerLevelViewFM36Info?.AECLearningDeliveryPeriodisedValuesInfo);
 
+            // Get the employer name information
+            var apprenticeshipIds = appsMonthlyPaymentDasInfo.Payments.Select(p => p.ApprenticeshipId);
+            var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(apprenticeshipIds, cancellationToken);
+
             // Build the actual Apps Monthly Payment Report
             var learnerLevelViewModel = _modelBuilder.BuildLearnerLevelViewModelList(
                 reportServiceContext.Ukprn,
@@ -125,6 +129,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 paymentsDictionary,
                 aECPriceEpisodeDictionary,
                 aECLearningDeliveryDictionary,
+                apprenticeshipIdLegalEntityNameDictionary,
                 reportServiceContext.ReturnPeriod);
 
             // Write the full file containing calculated data

@@ -18,6 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 
         public int? LearnerEmploymentStatusEmployerId { get; set; }
 
+        public string EmployerName { get; set; }
+
         public decimal? TotalEarningsToDate { get; set; }
 
         public decimal? PlannedPaymentsToYouToDate { get; set; }

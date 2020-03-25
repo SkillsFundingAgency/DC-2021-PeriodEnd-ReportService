@@ -16,6 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Mapper
 
             Map(m => m.PaymentFundingLineType).Index(i++).Name("Funding line type");
             Map(m => m.LearnerEmploymentStatusEmployerId).Index(i++).Name("Employer identifier on employment status date");
+            Map(m => m.EmployerName).Index(i++).Name("Latest employer name");
 
             Map(m => m.Ukprn).Index(i++).Name("UKPRN");
             Map(m => m.FamilyName).Index(i++).Name("Family Name");

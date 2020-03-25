@@ -104,7 +104,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         // Extract company name
                         string employerName;
-                        if ( employerNameDictionary.TryGetValue(paymentValues.FirstOrDefault().ApprenticeshipId ?? 0, out employerName))
+                        if ((employerNameDictionary != null) && employerNameDictionary.TryGetValue(paymentValues.FirstOrDefault().ApprenticeshipId ?? 0, out employerName))
                         {
                             reportRecord.EmployerName = employerName;
                         }

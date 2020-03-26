@@ -489,7 +489,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
         {
             List<AppsMonthlyPaymentDasPaymentModel> group = g.ToList();
 
-            var latestPaymentWithEarningEvent = group?.ToList()
+            var latestPaymentWithEarningEvent = group
                 .Where(p => p.EarningEventId != null && p.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
                 .OrderByDescending(p => p.CollectionPeriod)
                 .ThenByDescending(p => p.DeliveryPeriod)
@@ -504,19 +504,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 // To find an associated positive payment we will need to search the main list of payments as it's not in this group of payments
                 var anyGroupPayment = group.FirstOrDefault();
 
-                latestPaymentWithEarningEvent = paymentsData?.Payments.Where(p => p != null && anyGroupPayment != null &&
-                    p.Ukprn == anyGroupPayment.Ukprn &&
-                    p.LearnerReferenceNumber.CaseInsensitiveEquals(anyGroupPayment.LearnerReferenceNumber) &&
-                    p.LearningAimReference.CaseInsensitiveEquals(anyGroupPayment.LearningAimReference) &&
-                    p.LearningAimProgrammeType == anyGroupPayment.LearningAimProgrammeType &&
-                    p.LearningAimStandardCode == anyGroupPayment.LearningAimStandardCode &&
-                    p.LearningAimFrameworkCode == anyGroupPayment.LearningAimFrameworkCode &&
-                    p.LearningAimPathwayCode == anyGroupPayment.LearningAimPathwayCode &&
-                    p.EarningEventId != null &&
-                    p.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
-                    .OrderByDescending(p => p.CollectionPeriod)
-                    .ThenByDescending(p => p.DeliveryPeriod)
-                    .FirstOrDefault();
+                if (anyGroupPayment != null)
+                {
+                    latestPaymentWithEarningEvent = paymentsData?.Payments.Where(p =>
+                            p != null &&
+                            p.Ukprn == anyGroupPayment.Ukprn &&
+                            p.LearnerReferenceNumber.CaseInsensitiveEquals(anyGroupPayment.LearnerReferenceNumber) &&
+                            p.LearningAimReference.CaseInsensitiveEquals(anyGroupPayment.LearningAimReference) &&
+                            p.LearningAimProgrammeType == anyGroupPayment.LearningAimProgrammeType &&
+                            p.LearningAimStandardCode == anyGroupPayment.LearningAimStandardCode &&
+                            p.LearningAimFrameworkCode == anyGroupPayment.LearningAimFrameworkCode &&
+                            p.LearningAimPathwayCode == anyGroupPayment.LearningAimPathwayCode &&
+                            p.EarningEventId != null &&
+                            p.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
+                        .OrderByDescending(p => p.CollectionPeriod)
+                        .ThenByDescending(p => p.DeliveryPeriod)
+                        .FirstOrDefault();
+                }
             }
 
             return earningsData?.Earnings

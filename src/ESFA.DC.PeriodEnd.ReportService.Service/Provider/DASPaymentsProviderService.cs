@@ -193,7 +193,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
                             DeliveryPeriod = payment.DeliveryPeriod,
                             EarningEventId = payment.EarningEventId,
                             Amount = payment.Amount,
-                            NonPaymentReason = payment.NonPaymentReason
+                            NonPaymentReason = payment.NonPaymentReason,
+                            ApprenticeshipId = payment.ApprenticeshipId
                         })
                         .ToListAsync(cancellationToken);
                 }

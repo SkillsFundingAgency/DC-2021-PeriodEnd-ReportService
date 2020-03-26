@@ -19,6 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Builders
             IDictionary<LearnerLevelViewPaymentsKey, List<AppsMonthlyPaymentDasPaymentModel>> paymentsDictionary,
             IDictionary<string, List<AECApprenticeshipPriceEpisodePeriodisedValuesInfo>> aECPriceEpisodeDictionary,
             IDictionary<string, List<AECLearningDeliveryPeriodisedValuesInfo>> aECLearningDeliveryDictionary,
+            IDictionary<long, string> employerNameDictionary,
             int returnPeriod);
     }
 }

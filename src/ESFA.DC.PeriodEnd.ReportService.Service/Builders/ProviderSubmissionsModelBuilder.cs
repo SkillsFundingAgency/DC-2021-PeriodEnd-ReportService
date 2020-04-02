@@ -21,7 +21,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
         public IEnumerable<ProviderSubmissionModel> BuildModel(
             List<ProviderSubmissionModel> models,
-            IEnumerable<OrgModel> orgDetails,
+            IDictionary<string, ProviderSubmissionModel> fileDetails,
+            IDictionary<long, string> orgDetails,
             List<OrganisationCollectionModel> expectedReturners,
             IEnumerable<long> actualReturners,
             IEnumerable<ReturnPeriod> periods,
@@ -43,11 +44,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     continue;
                 }
 
+                orgDetails.TryGetValue(org.Ukprn, out var orgName);
+
                 models.Add(new ProviderSubmissionModel
                 {
                     Expected = org.Expected(period.StartDateTimeUtc, period.EndDateTimeUtc),
                     LatestReturn = string.Empty,
-                    Name = string.Empty,
+                    Name = orgName ?? string.Empty,
                     Returned = false,
                     SubmittedDateTime = DateTime.MinValue,
                     TotalErrors = 0,
@@ -56,11 +59,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     TotalWarnings = 0,
                     Ukprn = org.Ukprn
                 });
-            }
-
-            foreach (var orgDetail in orgDetails)
-            {
-                models.Single(x => x.Ukprn == orgDetail.Ukprn).Name = orgDetail.Name;
             }
 
             return models;

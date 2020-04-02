@@ -61,20 +61,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 
             var externalFileName = GetFilename(reportServiceContext);
 
-            List<ProviderSubmissionModel> fileDetails = new List<ProviderSubmissionModel>();
-
             int collectionId = await _jobQueueManagerProviderService.GetCollectionIdAsync(
                 $"{ReportTaskNameConstants.IlrCollectionName}{reportServiceContext.CollectionYear}",
                 cancellationToken);
 
             var providerReturns = (await _jobQueueManagerProviderService.GetReturnersAndPeriodsAsync(collectionId, reportServiceContext.ReturnPeriod, cancellationToken)).ToList();
 
-            foreach (var providerReturn in providerReturns)
-            {
-                var filename = providerReturn.FileName.Replace(".ZIP", ".XML");
+            var ilrFileDetails = await _ilrPeriodEndProviderService.GeFileDetailsSubmittedAsync(cancellationToken);
 
-                fileDetails.Add(await _ilrPeriodEndProviderService.GetFileDetailsLatestSubmittedAsync(providerReturn.Ukprn, filename, providerReturn.ReturnPeriod, cancellationToken));
-            }
+            providerReturns = providerReturns.Select(x => new ProviderReturnPeriod
+            {
+                Ukprn = x.Ukprn,
+                ReturnPeriod = x.ReturnPeriod,
+                FileName = x.FileName.Replace(".ZIP", ".XML")
+            }).ToList();
+
+            var fileDetails = providerReturns.Select(x => Convert(x, ilrFileDetails)).Where(x => x != null).ToList();
 
             List<OrganisationCollectionModel> expectedReturners = (await _jobQueueManagerProviderService
                 .GetExpectedReturnersUKPRNsAsync(
@@ -88,11 +90,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
                     cancellationToken);
 
             var ukPrns = providerReturns.Select(x => x.Ukprn).Union(expectedReturners.Select(x => x.Ukprn)).ToList();
-            var orgDetails = await _orgProviderService.GetOrgDetailsForUKPRNsAsync(ukPrns, cancellationToken);
+            var orgDetails = await _orgProviderService.GetOrgDetailsDictionaryForUKPRNSAsync(ukPrns, cancellationToken);
 
             IEnumerable<ProviderSubmissionModel> providerSubmissionsModel = _providerSubmissionsModelBuilder
                 .BuildModel(
                     fileDetails,
+                    ilrFileDetails,
                     orgDetails,
                     expectedReturners,
                     actualReturners,
@@ -140,6 +143,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             designer.Process();
 
             return workbook;
+        }
+
+        private ProviderSubmissionModel Convert(ProviderReturnPeriod providerReturn, IDictionary<string, ProviderSubmissionModel> fileDetails)
+        {
+            fileDetails.TryGetValue(providerReturn.FileName, out var model);
+
+            return model;
         }
     }
 }

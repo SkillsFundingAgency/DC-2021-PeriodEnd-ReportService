@@ -10,7 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service
     {
         IEnumerable<ProviderSubmissionModel> BuildModel(
             List<ProviderSubmissionModel> models,
-            IEnumerable<OrgModel> orgDetails,
+            IDictionary<string, ProviderSubmissionModel> fileDetails,
+            IDictionary<long, string> orgDetails,
             List<OrganisationCollectionModel> expectedReturners,
             IEnumerable<long> actualReturners,
             IEnumerable<ReturnPeriod> periods,

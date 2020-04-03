@@ -81,7 +81,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports.AppsMonthlyPayme
                 })
                 .Select(g =>
                 {
-                    var aimSequenceNumber = _modelBuilder.GetPaymentAimSequenceNumber(g, _earningsData);
+                    var aimSequenceNumber = _modelBuilder.GetPaymentAimSequenceNumber(_paymentsData, g, _earningsData);
 
                     return new AppsMonthlyPaymentReportRowModel
                     {

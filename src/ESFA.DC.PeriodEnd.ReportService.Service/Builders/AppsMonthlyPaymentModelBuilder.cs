@@ -49,7 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 })
                 .Select(g =>
                 {
-                    var aimSequenceNumber = GetPaymentAimSequenceNumber(g, earningsData);
+                    var aimSequenceNumber = GetPaymentAimSequenceNumber(paymentsData, g, earningsData);
 
                     return new AppsMonthlyPaymentReportRowModel
                     {
@@ -485,37 +485,47 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 : string.Empty;
         }
 
-        public byte? GetPaymentAimSequenceNumber(IEnumerable<AppsMonthlyPaymentDasPaymentModel> g, AppsMonthlyPaymentDasEarningsInfo earningsData)
+        public byte? GetPaymentAimSequenceNumber(AppsMonthlyPaymentDASInfo paymentsData, IEnumerable<AppsMonthlyPaymentDasPaymentModel> g, AppsMonthlyPaymentDasEarningsInfo earningsData)
         {
-            byte? aimSequenceNumber = null;
             List<AppsMonthlyPaymentDasPaymentModel> group = g.ToList();
 
-            var paymentEarningEventIds = group
-                .Where(a => a?.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
-                .Select(a => a?.EarningEventId)
-                .ToList();
+            var latestPaymentWithEarningEvent = group
+                .Where(p => p.EarningEventId != null && p.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
+                .OrderByDescending(p => p.CollectionPeriod)
+                .ThenByDescending(p => p.DeliveryPeriod)
+                .FirstOrDefault();
 
-            var earningsEvents = earningsData?.Earnings?
-                .Where(x => paymentEarningEventIds.Contains(x.EventId))
-                .ToList();
-
-            var distinctEarningEventAimSequenceNumbers = earningsEvents?.Select(e => e?.LearningAimSequenceNumber).Distinct().ToList();
-            var distinctEarningEventAimSequenceNumbersCount = distinctEarningEventAimSequenceNumbers?.Count();
-
-            if (distinctEarningEventAimSequenceNumbersCount > 1)
+            if (latestPaymentWithEarningEvent == null)
             {
-                var latestPayment = group.OrderByDescending(p => p?.AcademicYear).ThenByDescending(p => p?.CollectionPeriod)
-                    .ThenByDescending(p => p?.DeliveryPeriod).First();
+                // defect 96908 - missing aim sequence number on the report
+                // In addition to negative payments (refunds) not having an Earning Event, they may also not have a Learning Start Date
+                // LearningStartDate is one of the 'grouping' fields for the payments (BR1) so the negative payments without a Learning Start Date
+                // are in a separate group of payments to the associated positive payment.
+                // To find an associated positive payment we will need to search the main list of payments as it's not in this group of payments
+                var anyGroupPayment = group.FirstOrDefault();
 
-                aimSequenceNumber = earningsEvents.FirstOrDefault(e => e.EventId == latestPayment?.EarningEventId)
-                    ?.LearningAimSequenceNumber;
-            }
-            else if (distinctEarningEventAimSequenceNumbersCount == 1)
-            {
-                aimSequenceNumber = distinctEarningEventAimSequenceNumbers.First();
+                if (anyGroupPayment != null)
+                {
+                    latestPaymentWithEarningEvent = paymentsData?.Payments.Where(p =>
+                            p != null &&
+                            p.Ukprn == anyGroupPayment.Ukprn &&
+                            p.LearnerReferenceNumber.CaseInsensitiveEquals(anyGroupPayment.LearnerReferenceNumber) &&
+                            p.LearningAimReference.CaseInsensitiveEquals(anyGroupPayment.LearningAimReference) &&
+                            p.LearningAimProgrammeType == anyGroupPayment.LearningAimProgrammeType &&
+                            p.LearningAimStandardCode == anyGroupPayment.LearningAimStandardCode &&
+                            p.LearningAimFrameworkCode == anyGroupPayment.LearningAimFrameworkCode &&
+                            p.LearningAimPathwayCode == anyGroupPayment.LearningAimPathwayCode &&
+                            p.EarningEventId != null &&
+                            p.EarningEventId != new Guid("00000000-0000-0000-0000-000000000000"))
+                        .OrderByDescending(p => p.CollectionPeriod)
+                        .ThenByDescending(p => p.DeliveryPeriod)
+                        .FirstOrDefault();
+                }
             }
 
-            return aimSequenceNumber;
+            return earningsData?.Earnings
+                .FirstOrDefault(e => e.EventId == latestPaymentWithEarningEvent?.EarningEventId)
+                ?.LearningAimSequenceNumber;
         }
 
         public string LookupAimTitle(string aimReferenceNumber, IEnumerable<AppsMonthlyPaymentLarsLearningDeliveryInfo> larsData)

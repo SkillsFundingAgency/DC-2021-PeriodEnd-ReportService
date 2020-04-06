@@ -95,7 +95,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
             IEnumerable<ProviderSubmissionModel> providerSubmissionsModel = _providerSubmissionsModelBuilder
                 .BuildModel(
                     fileDetails,
-                    ilrFileDetails,
                     orgDetails,
                     expectedReturners,
                     actualReturners,

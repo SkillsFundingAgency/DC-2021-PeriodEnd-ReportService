@@ -121,31 +121,41 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             CancellationToken cancellationToken)
         {
             LearnerLevelViewDASDataLockInfo dataLockInfo = null;
-
-            using (IDASPaymentsContext dasPaymentsContext = _dasPaymentsContextFactory())
+            try
             {
-                dataLockInfo = new LearnerLevelViewDASDataLockInfo()
+                using (IDASPaymentsContext dasPaymentsContext = _dasPaymentsContextFactory())
                 {
-                    UkPrn = ukPrn,
-                    DASDataLocks = new List<LearnerLevelViewDASDataLockModel>()
-                };
-
-                var dataLockValidationErrors = await dasPaymentsContext.DataMatchReport
-                    .Where(x => x.UkPrn == ukPrn)
-                    .Select(x => new LearnerLevelViewDASDataLockModel
+                    dataLockInfo = new LearnerLevelViewDASDataLockInfo()
                     {
-                        UkPrn = x.UkPrn,
-                        LearnerReferenceNumber = x.LearnerReferenceNumber,
-                        LearnerUln = x.LearnerUln,
-                        DataLockFailureId = x.DataLockFailureId,
-                        LearningAimSequenceNumber = x.LearningAimSequenceNumber,
-                        CollectionPeriod = x.CollectionPeriod,
-                        DeliveryPeriod = x.DeliveryPeriod
-                    })
-                    .Distinct()
-                    .ToListAsync(cancellationToken);
+                        UkPrn = ukPrn,
+                        DASDataLocks = new List<LearnerLevelViewDASDataLockModel>()
+                    };
 
-                dataLockInfo.DASDataLocks.AddRange(dataLockValidationErrors);
+                    if (dasPaymentsContext.DataMatchReport.Any(x => x.UkPrn == ukPrn))
+                    {
+                        var dataLockValidationErrors = await dasPaymentsContext.DataMatchReport
+                            .Where(x => x.UkPrn == ukPrn)
+                            .Select(x => new LearnerLevelViewDASDataLockModel
+                            {
+                                UkPrn = x.UkPrn,
+                                LearnerReferenceNumber = x.LearnerReferenceNumber,
+                                LearnerUln = x.LearnerUln,
+                                DataLockFailureId = x.DataLockFailureId,
+                                LearningAimSequenceNumber = x.LearningAimSequenceNumber,
+                                CollectionPeriod = x.CollectionPeriod,
+                                DeliveryPeriod = x.DeliveryPeriod
+                            })
+                            .Distinct()
+                            .ToListAsync(cancellationToken);
+
+                        dataLockInfo.DASDataLocks.AddRange(dataLockValidationErrors);
+                    }
+                }
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError("Failed to get DASDataLockInfo data", ex);
+                throw;
             }
 
             return dataLockInfo;

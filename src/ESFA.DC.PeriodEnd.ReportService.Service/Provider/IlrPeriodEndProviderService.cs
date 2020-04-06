@@ -110,6 +110,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Provider
             }
         }
 
+        public async Task<IDictionary<string, ProviderSubmissionModel>> GeFileDetailsSubmittedAsync(CancellationToken cancellationToken)
+        {
+            using (var ilrContext = _ilrContextFactory())
+            {
+                return await ilrContext.FileDetails
+                    .ToDictionaryAsync(x => x.Filename, x => new ProviderSubmissionModel
+                    {
+                        Ukprn = x.UKPRN,
+                        SubmittedDateTime = x.SubmittedTime.GetValueOrDefault(),
+                        TotalErrors = x.TotalErrorCount.GetValueOrDefault(),
+                        TotalInvalid = x.TotalInvalidLearnersSubmitted.GetValueOrDefault(),
+                        TotalValid = x.TotalValidLearnersSubmitted.GetValueOrDefault(),
+                        TotalWarnings = x.TotalWarningCount.GetValueOrDefault()
+                    }, StringComparer.OrdinalIgnoreCase, cancellationToken);
+            }
+        }
+
         public async Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn,
             CancellationToken cancellationToken)
         {

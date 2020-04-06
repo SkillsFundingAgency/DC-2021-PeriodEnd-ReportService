@@ -22,6 +22,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Provider
 
         Task<ProviderSubmissionModel> GetFileDetailsLatestSubmittedAsync(long ukPrn, string fileName, int returnPeriod, CancellationToken cancellationToken);
 
+        Task<IDictionary<string, ProviderSubmissionModel>> GeFileDetailsSubmittedAsync(CancellationToken cancellationToken);
+
         Task<AppsMonthlyPaymentILRInfo> GetILRInfoForAppsMonthlyPaymentReportAsync(int ukPrn, CancellationToken cancellationToken);
 
         Task<List<AppsAdditionalPaymentLearnerInfo>> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken);

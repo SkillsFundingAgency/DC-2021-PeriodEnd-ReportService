@@ -67,6 +67,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
             try
             {
+                // Lookup for employer IDs to employer name
+                IDictionary<int, string> employerNamesToIDs = new Dictionary<int, string>();
+
                 // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(paymentsDictionary.Keys, aECPriceEpisodeDictionary.Keys, aECLearningDeliveryDictionary.Keys);
 
@@ -82,6 +85,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         PaymentLearnerReferenceNumber = record.LearnerReferenceNumber,
                         PaymentFundingLineType = record.PaymentFundingLineType
                     };
+
+                    // Extract ILR info
+                    var ilrRecord = appsMonthlyPaymentIlrInfo.Learners.FirstOrDefault(p => p.Ukprn == ukprn && p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
+                    if (ilrRecord != null)
+                    {
+                        reportRecord.FamilyName = ilrRecord.FamilyName;
+                        reportRecord.GivenNames = ilrRecord.GivenNames;
+                        reportRecord.PaymentUniqueLearnerNumber = ilrRecord.UniqueLearnerNumber;
+                        if ((ilrRecord.LearnerEmploymentStatus != null) && (ilrRecord.LearnerEmploymentStatus.Count > 0))
+                        {
+                            reportRecord.LearnerEmploymentStatusEmployerId = ilrRecord.LearnerEmploymentStatus.Where(les => les?.Ukprn == ukprn &&
+                                                                                                                        les.LearnRefNumber.CaseInsensitiveEquals(reportRecord.PaymentLearnerReferenceNumber) &&
+                                                                                                                        les?.EmpStat == 10)
+                                                                                                                .OrderByDescending(les => les?.DateEmpStatApp)
+                                                                                                                .FirstOrDefault()?.EmpdId;
+                        }
+                    }
 
                     if (paymentsDictionary.TryGetValue(new LearnerLevelViewPaymentsKey(reportRecord.PaymentLearnerReferenceNumber, reportRecord.PaymentFundingLineType), out List<AppsMonthlyPaymentDasPaymentModel> paymentValues))
                     {
@@ -107,27 +127,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                         if ((employerNameDictionary != null) && employerNameDictionary.TryGetValue(paymentValues.FirstOrDefault().ApprenticeshipId ?? 0, out employerName))
                         {
                             reportRecord.EmployerName = employerName;
+                            if ((reportRecord.LearnerEmploymentStatusEmployerId != null) && !employerNamesToIDs.ContainsKey(reportRecord.LearnerEmploymentStatusEmployerId ?? 0))
+                            {
+                                employerNamesToIDs.Add(new KeyValuePair<int, string>(reportRecord.LearnerEmploymentStatusEmployerId ?? 0, reportRecord.EmployerName));
+                            }
                         }
                         else
                         {
                             reportRecord.EmployerName = string.Empty;
-                        }
-                    }
-
-                    // Extract ILR info
-                    var ilrRecord = appsMonthlyPaymentIlrInfo.Learners.FirstOrDefault(p => p.Ukprn == ukprn && p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
-                    if (ilrRecord != null)
-                    {
-                        reportRecord.FamilyName = ilrRecord.FamilyName;
-                        reportRecord.GivenNames = ilrRecord.GivenNames;
-                        reportRecord.PaymentUniqueLearnerNumber = ilrRecord.UniqueLearnerNumber;
-                        if ((ilrRecord.LearnerEmploymentStatus != null) && (ilrRecord.LearnerEmploymentStatus.Count > 0))
-                        {
-                            reportRecord.LearnerEmploymentStatusEmployerId = ilrRecord.LearnerEmploymentStatus.Where(les => les?.Ukprn == ukprn &&
-                                                                                                                        les.LearnRefNumber.CaseInsensitiveEquals(reportRecord.PaymentLearnerReferenceNumber) &&
-                                                                                                                        les?.EmpStat == 10)
-                                                                                                                .OrderByDescending(les => les?.DateEmpStatApp)
-                                                                                                                .FirstOrDefault()?.EmpdId;
                         }
                     }
 
@@ -259,6 +266,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                 learnerLevelViewModelList.RemoveAll(p => p.TotalEarningsToDate == 0 && p.PlannedPaymentsToYouToDate == 0 && p.TotalCoInvestmentCollectedToDate == 0
                                                                        && p.CoInvestmentOutstandingFromEmplToDate == 0 && p.TotalEarningsForPeriod == 0 && p.ESFAPlannedPaymentsThisPeriod == 0
                                                                        && p.CoInvestmentPaymentsToCollectThisPeriod == 0 && p.IssuesAmount == 0);
+
+                // Set the missing employer names
+                foreach (var llvr in learnerLevelViewModelList.Where(w => w.EmployerName == string.Empty || w.EmployerName == null))
+                {
+                    string employerName;
+                    if (employerNamesToIDs.TryGetValue(llvr.LearnerEmploymentStatusEmployerId ?? 0, out employerName))
+                    {
+                        llvr.EmployerName = employerName;
+                    }
+                }
             }
             catch (Exception ex)
             {

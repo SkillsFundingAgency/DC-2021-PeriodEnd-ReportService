@@ -87,7 +87,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     };
 
                     // Extract ILR info
-                    var ilrRecord = appsMonthlyPaymentIlrInfo.Learners.FirstOrDefault(p => p.Ukprn == ukprn && p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
+                    var ilrRecord = appsMonthlyPaymentIlrInfo.Learners.FirstOrDefault(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
                     if (ilrRecord != null)
                     {
                         reportRecord.FamilyName = ilrRecord.FamilyName;
@@ -145,7 +145,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                         if (ilrInfo != null)
                         {
-                            var learningDeliveries = ilrInfo.LearningDeliveries.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber && p.UKPRN == ukprn);
+                            var learningDeliveries = ilrInfo.LearningDeliveries.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
                             if ((learningDeliveries != null) && (learningDeliveries.Count() > 0))
                             {
                                 foreach (var learningDelivery in learningDeliveries)
@@ -209,8 +209,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
 
                     // Work out issues (HBCP)
                     if ((learnerLevelHBCPInfo != null) &&
-                        learnerLevelHBCPInfo.HBCPModels.Any(p => p.UkPrn == ukprn &&
-                                                            p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
+                        learnerLevelHBCPInfo.HBCPModels.Any(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
                                                             p.NonPaymentReason == 0 &&
                                                             p.DeliveryPeriod == _appsReturnPeriod))
                     {
@@ -237,8 +236,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Builders
                     if ((learnerLevelViewDASDataLockInfo != null) && (learnerLevelViewDASDataLockInfo.DASDataLocks != null))
                     {
                         var datalock = learnerLevelViewDASDataLockInfo.DASDataLocks
-                                                .FirstOrDefault(x => x.UkPrn == reportRecord.Ukprn &&
-                                                        x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
+                                                .FirstOrDefault(x => x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
                                                         x.DeliveryPeriod == _appsReturnPeriod);
 
                         // Check to see if any records returned

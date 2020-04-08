@@ -83,7 +83,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
                 .ReturnsAsync(expectedReturner);
             jobQueueManagerMock.Setup(x => x.GetActualReturnersUKPRNsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>()))
                 .ReturnsAsync(actualReturner);
-            providerSubmissionModelBuilderMock.Setup(x => x.BuildModel(It.IsAny<List<ProviderSubmissionModel>>(), It.IsAny<IEnumerable<OrgModel>>(), It.IsAny<List<OrganisationCollectionModel>>(), It.IsAny<IEnumerable<long>>(), It.IsAny<IEnumerable<ReturnPeriod>>(), It.IsAny<int>()))
+            providerSubmissionModelBuilderMock.Setup(x => x.BuildModel(It.IsAny<List<ProviderSubmissionModel>>(), It.IsAny<IDictionary<long, string>>(), It.IsAny<List<OrganisationCollectionModel>>(), It.IsAny<IEnumerable<long>>(), It.IsAny<IEnumerable<ReturnPeriod>>(), It.IsAny<int>()))
                 .Returns(providerSubmissionModel);
 
             dateTimeProviderMock.Setup(x => x.GetNowUtc()).Returns(dateTime);

@@ -37,5 +37,6 @@
 	[R13Payments] [decimal](15, 5) NULL,
 	[R14Payments] [decimal](15, 5) NULL,
 	[TotalEarnings] [decimal](15, 5) NULL,
-	[TotalPaymentsYearToDate] [decimal](15, 5) NULL
+	[TotalPaymentsYearToDate] [decimal](15, 5) NULL, 
+    CONSTRAINT [PK_dbo_AppsAdditionalPayments] PRIMARY KEY CLUSTERED ([Ukprn], [ReturnPeriod])
 )

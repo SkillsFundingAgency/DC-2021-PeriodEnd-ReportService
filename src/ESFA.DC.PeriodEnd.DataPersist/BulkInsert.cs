@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.DataPersist
             {
                 try
                 {
-                    if (!source.Any())
+                    if (source != null && !source.Any())
                     {
                         return;
                     }

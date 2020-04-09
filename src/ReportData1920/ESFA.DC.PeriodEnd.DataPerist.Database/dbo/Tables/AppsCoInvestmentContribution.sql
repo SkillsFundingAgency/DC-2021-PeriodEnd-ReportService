@@ -36,5 +36,6 @@
     [CompletionEarningThisFundingYear] DECIMAL(15,5) NOT NULL, 
     [CompletionPaymentsThisFundingYear] DECIMAL(15,5) NOT NULL, 
     [EmployerCoInvestmentPercentage] DECIMAL(15,5) NULL, 
-    [ApplicableProgrammeStartDate] DATETIME NULL,
+    [ApplicableProgrammeStartDate] DATETIME NULL, 
+    CONSTRAINT [PK_dbo_AppsCoInvestmentContribution] PRIMARY KEY CLUSTERED ([Ukprn], [ReturnPeriod]),
 )

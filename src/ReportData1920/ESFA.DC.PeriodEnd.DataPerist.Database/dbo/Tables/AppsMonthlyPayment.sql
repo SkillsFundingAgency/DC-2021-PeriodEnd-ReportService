@@ -179,5 +179,6 @@
 	[TotalApprenticeAdditionalPayments] [decimal](15, 5) NULL,
 	[TotalEnglishAndMathsPayments] [decimal](15, 5) NULL,
 	[TotalLearningSupportDisadvantageAndFrameworkUpliftPayments] [decimal](15, 5) NULL,
-	[TotalPayments] [decimal](15, 5) NULL	
+	[TotalPayments] [decimal](15, 5) NULL, 
+    CONSTRAINT [PK_dbo_AppsMonthlyPayment] PRIMARY KEY CLUSTERED ([Ukprn], [ReturnPeriod])	
 )

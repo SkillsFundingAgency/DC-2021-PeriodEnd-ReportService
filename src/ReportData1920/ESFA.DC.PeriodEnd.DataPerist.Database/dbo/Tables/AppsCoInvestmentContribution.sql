@@ -36,5 +36,9 @@
     [CompletionEarningThisFundingYear] DECIMAL(15,5) NOT NULL, 
     [CompletionPaymentsThisFundingYear] DECIMAL(15,5) NOT NULL, 
     [EmployerCoInvestmentPercentage] DECIMAL(15,5) NULL, 
-    [ApplicableProgrammeStartDate] DATETIME NULL,
+    [ApplicableProgrammeStartDate] DATETIME NULL 
 )
+
+GO
+
+CREATE CLUSTERED INDEX [IX_AppsCoInvestmentContribution_Ukprn_ReturnPeriod] ON [dbo].[AppsCoInvestmentContribution] ([Ukprn],[ReturnPeriod])

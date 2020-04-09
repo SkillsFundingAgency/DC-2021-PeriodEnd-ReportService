@@ -37,5 +37,9 @@
 	[R13Payments] [decimal](15, 5) NULL,
 	[R14Payments] [decimal](15, 5) NULL,
 	[TotalEarnings] [decimal](15, 5) NULL,
-	[TotalPaymentsYearToDate] [decimal](15, 5) NULL
+	[TotalPaymentsYearToDate] [decimal](15, 5) NULL 
 )
+
+GO
+
+CREATE CLUSTERED INDEX [IX_AppsAdditionalPayments_Ukprn_ReturnPeriod] ON [dbo].[AppsAdditionalPayments] ([Ukprn],[ReturnPeriod])

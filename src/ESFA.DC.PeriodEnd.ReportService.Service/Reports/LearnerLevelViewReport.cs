@@ -123,7 +123,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             var apprenticeshipIds = appsMonthlyPaymentDasInfo.Payments.Select(p => p.ApprenticeshipId);
             var apprenticeshipIdLegalEntityNameDictionary = await _dasPaymentsProviderService.GetLegalEntityNameApprenticeshipIdDictionaryAsync(apprenticeshipIds, cancellationToken);
 
-            // Build the actual Apps Monthly Payment Report
+            // Build the Learner level view Report
             var learnerLevelViewModel = _modelBuilder.BuildLearnerLevelViewModelList(
                 reportServiceContext.Ukprn,
                 appsMonthlyPaymentIlrInfo,
@@ -135,7 +135,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 aECPriceEpisodeDictionary,
                 aECLearningDeliveryDictionary,
                 apprenticeshipIdLegalEntityNameDictionary,
-                reportServiceContext.ReturnPeriod);
+                reportServiceContext.ReturnPeriod).ToList();
 
             // Write the full file containing calculated data
             string learnerLevelViewCSV = await GetLearnerLevelViewCsv(learnerLevelViewModel, cancellationToken);
@@ -154,7 +154,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
                 Stopwatch stopWatchLog = new Stopwatch();
                 stopWatchLog.Start();
                 await _persistReportData.PersistReportDataAsync(
-                    learnerLevelViewModel.ToList(),
+                    learnerLevelViewModel,
                     reportServiceContext.Ukprn,
                     reportServiceContext.ReturnPeriod,
                     TableNameConstants.LearnerLevelViewReport,

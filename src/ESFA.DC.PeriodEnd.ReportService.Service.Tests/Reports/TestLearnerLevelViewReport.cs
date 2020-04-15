@@ -10,6 +10,7 @@ using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
@@ -123,6 +124,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
             LLVPaymentRecordKeyEqualityComparer lLVPaymentRecordKeyEqualityComparer = new LLVPaymentRecordKeyEqualityComparer();
             LLVPaymentRecordLRefOnlyKeyEqualityComparer lLVPaymentRecordLRefOnlyKeyEqualityComparer = new LLVPaymentRecordLRefOnlyKeyEqualityComparer();
             var learnerLevelViewModelBuilder = new LearnerLevelViewModelBuilder(logger.Object, lLVPaymentRecordKeyEqualityComparer, lLVPaymentRecordLRefOnlyKeyEqualityComparer);
+            Mock<IPersistReportData> persistReportDataMock = new Mock<IPersistReportData>();
 
             var report = new LearnerLevelViewReport(
                 logger.Object,
@@ -134,7 +136,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                 valueProvider,
                 jsonSerializationServiceMock.Object,
                 learnerLevelViewModelBuilder,
-                fileServiceMock.Object);
+                fileServiceMock.Object,
+                persistReportDataMock.Object);
 
             await report.GenerateReport(reportServiceContextMock.Object, null, CancellationToken.None);
 

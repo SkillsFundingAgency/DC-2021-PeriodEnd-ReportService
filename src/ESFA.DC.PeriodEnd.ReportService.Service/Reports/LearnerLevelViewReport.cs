@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using System.IO;
 using System.IO.Compression;
@@ -12,6 +13,7 @@ using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
@@ -44,6 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
         private readonly IJsonSerializationService _jsonSerializationService;
         private readonly ILearnerLevelViewModelBuilder _modelBuilder;
         private readonly IFileService _fileService;
+        private readonly IPersistReportData _persistReportData;
 
         public LearnerLevelViewReport(
             ILogger logger,
@@ -55,7 +58,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             IValueProvider valueProvider,
             IJsonSerializationService jsonSerializationService,
             ILearnerLevelViewModelBuilder modelBuilder,
-            IFileService fileService)
+            IFileService fileService,
+            IPersistReportData persistReportData)
         : base(dateTimeProvider, streamableKeyValuePersistenceService, logger)
         {
             _ilrPeriodEndProviderService = ilrPeriodEndProviderService;
@@ -63,6 +67,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             _dasPaymentsProviderService = dasPaymentsProviderService;
             _jsonSerializationService = jsonSerializationService;
             _fileService = fileService;
+            _persistReportData = persistReportData;
             _modelBuilder = modelBuilder;
         }
 
@@ -143,6 +148,25 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Reports
             // Create the summary file which will be used by the WebUI to display the summary view
             string summaryFile = CreateSummary(learnerLevelViewModel, cancellationToken);
             await WriteAsync($"{summaryFileName}.json", summaryFile, reportServiceContext.Container, cancellationToken);
+
+            if (reportServiceContext.DataPersistFeatureEnabled)
+            {
+                Stopwatch stopWatchLog = new Stopwatch();
+                stopWatchLog.Start();
+                await _persistReportData.PersistReportDataAsync(
+                    learnerLevelViewModel.ToList(),
+                    reportServiceContext.Ukprn,
+                    reportServiceContext.ReturnPeriod,
+                    TableNameConstants.LearnerLevelViewReport,
+                    reportServiceContext.ReportDataConnectionString,
+                    cancellationToken);
+                _logger.LogDebug($"Performance-Learner Level View Report logging took - {stopWatchLog.ElapsedMilliseconds} ms ");
+                stopWatchLog.Stop();
+            }
+            else
+            {
+                _logger.LogDebug(" Data Persist Feature is disabled.");
+            }
         }
 
         public async Task WriteAsync(string fileName, string csvData, string container, CancellationToken cancellationToken)

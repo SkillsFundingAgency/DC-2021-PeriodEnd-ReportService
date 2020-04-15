@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.ReportModels
 {
-    public class LearnerLevelViewModel
+    public class LearnerLevelViewModel : AbstractReportModel
     {
         public int? Ukprn { get; set; }
 

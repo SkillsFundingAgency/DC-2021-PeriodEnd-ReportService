@@ -6,5 +6,6 @@
         public const string AppsCoInvestmentContributions = "AppsCoInvestmentContribution";
         public const string FundingSummaryReport = "FundingSummaryReport";
         public const string AppsAdditionalPayments = "AppsAdditionalPayments";
+        public const string LearnerLevelViewReport = "LearnerLevelViewReport";
     }
 }

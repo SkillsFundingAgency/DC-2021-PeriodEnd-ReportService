@@ -72,7 +72,7 @@ stages:
     # Generate the report using ReportGenerator (https://github.com/danielpalme/ReportGenerator)
     # First install the tool on the machine, then run it
     - script: |
-            dotnet tool update dotnet-reportgenerator-globaltool --version 4.3.6  
+            dotnet tool update dotnet-reportgenerator-globaltool --global --version 4.3.6  
       displayName: Install dotnet-reportgenerator-globaltool
       continueOnError: true  
     

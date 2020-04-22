@@ -10,7 +10,7 @@
     <OutputType>Exe</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>ESFA.DC.PeriodEnd.ReportService.Stateless</RootNamespace>
-    <AssemblyName>ESFA.DC.PeriodEnd1920.ReportService.Stateless</AssemblyName>
+    <AssemblyName>ESFA.DC.PeriodEnd2021.ReportService.Stateless</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <AutoGenerateBindingRedirects>true</AutoGenerateBindingRedirects>

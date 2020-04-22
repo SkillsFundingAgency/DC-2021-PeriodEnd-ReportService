@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ESFA.DC.PeriodEnd1920.ReportService" xmlns="http://schemas.microsoft.com/2011/01/fabric">
+<Application xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" Name="fabric:/ESFA.DC.PeriodEnd2021.ReportService" xmlns="http://schemas.microsoft.com/2011/01/fabric">
   <Parameters>
-    <Parameter Name="ESFA.DC.PeriodEnd1920.ReportService.Stateless_InstanceCount" Value="-1" />
+    <Parameter Name="ESFA.DC.PeriodEnd2021.ReportService.Stateless_InstanceCount" Value="-1" />
     <Parameter Name="ProcessingServicePlacementConstraints" Value="__ProcessingServicePlacementConstraints__" />
-    <Parameter Name="ILRReferenceDataConnectionString" Value="__ILR1920ReferenceDataConnectionString__" />
-    <Parameter Name="ILRDataStoreConnectionString" Value="__ILR1920DataStoreConnectionString__" />
+    <Parameter Name="ILRReferenceDataConnectionString" Value="__ILR2021ReferenceDataConnectionString__" />
+    <Parameter Name="ILRDataStoreConnectionString" Value="__ILR2021DataStoreConnectionString__" />
     <Parameter Name="AzureBlobConnectionString" Value="__AzureBlobConnectionString__" />
     <Parameter Name="ServiceBusConnectionString" Value="__ServiceBusConnectionString__" />
     <Parameter Name="AuditQueueName" Value="__AuditQueueName__" />
-    <Parameter Name="TopicName" Value="__PE1920ReportingTopicName__" />
+    <Parameter Name="TopicName" Value="__PE2021ReportingTopicName__" />
     <Parameter Name="LoggerConnectionstring" Value="__LoggerConnectionstring__" />
     <Parameter Name="AzureBlobContainerName" Value="__AzureBlobContainerName__" />
     <Parameter Name="JobStatusQueueName" Value="__JobStatusQueueName__" />
@@ -16,7 +16,7 @@
     <Parameter Name="AsposeLicence" Value="__AsposeCellsLicence__" />
     <Parameter Name="TopicMaxCallbackTimeSpanMinutes" Value="__TopicMaxCallbackTimeSpanMinutes__" />
     <!-- Subscription Name -->
-    <Parameter Name="SubscriptionName" Value="__PE1920ReportingSubscriptionName__" />
+    <Parameter Name="SubscriptionName" Value="__PE2021ReportingSubscriptionName__" />
     <!-- DASPayments -->
     <Parameter Name="DASPaymentsConnectionString" Value="__DASPaymentsConnectionString__" />
     <!-- Lars -->
@@ -26,7 +26,7 @@
     <!-- OrgConnectionString -->
     <Parameter Name="OrgConnectionString" Value="__OrgConnectionString__" />
     <Parameter Name="FCSConnectionString" Value="__FCSConnectionString__" />
-    <Parameter Name="EasConnectionString" Value="__Eas1920ConnectionString__" />
+    <Parameter Name="EasConnectionString" Value="__Eas2021ConnectionString__" />
     <Parameter Name="PeriodEndReportServiceDBCommandTimeout" Value="__PeriodEndReportServiceDBCommandTimeout__" />
     <!-- JobQueueManager -->
     <Parameter Name="JobQueueManagerConnectionString" Value="__JobQueueManagerConnectionString__" />

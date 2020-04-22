@@ -34,11 +34,11 @@ Project("{00D1A9C2-B5F0-4AF3-8072-F6C62B433612}") = "ESFA.DC.PeriodEnd.DataPeris
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.DataPersist", "ESFA.DC.PeriodEnd.DataPersist\ESFA.DC.PeriodEnd.DataPersist.csproj", "{F54C9CD1-97DA-4CE2-91F1-2BE1CB05EBE5}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReportData1920", "ReportData1920", "{10BBC456-6FF8-4D62-82E3-48B008A37FAC}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ReportData", "ReportData", "{10BBC456-6FF8-4D62-82E3-48B008A37FAC}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.DataPersist.EF.Console", "ReportData1920\ESFA.DC.PeriodEnd.DataPersist.EF.Console\ESFA.DC.PeriodEnd.DataPersist.EF.Console.csproj", "{1551F01D-02A9-43E5-B9A4-9B48FD9ED03F}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "ESFA.DC.PeriodEnd.DataPersist.Model", "ReportData1920\ESFA.DC.PeriodEnd.DataPersist.Model\ESFA.DC.PeriodEnd.DataPersist.Model.csproj", "{73371C35-3A6B-4003-8E16-15ECDD700130}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.DataPersist.Model", "ReportData1920\ESFA.DC.PeriodEnd.DataPersist.Model\ESFA.DC.PeriodEnd.DataPersist.Model.csproj", "{73371C35-3A6B-4003-8E16-15ECDD700130}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

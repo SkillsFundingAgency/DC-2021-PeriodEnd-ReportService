@@ -41,7 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 builder.RegisterServiceFabricSupport();
 
                 // Register the stateless service.
-                builder.RegisterStatelessService<ServiceFabric.Common.Stateless>("ESFA.DC.PeriodEnd1920.ReportService.StatelessType");
+                builder.RegisterStatelessService<ServiceFabric.Common.Stateless>("ESFA.DC.PeriodEnd2021.ReportService.StatelessType");
 
                 using (var container = builder.Build())
                 {

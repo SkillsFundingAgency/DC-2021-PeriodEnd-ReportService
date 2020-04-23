@@ -7,7 +7,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportSer
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.Model", "ESFA.DC.PeriodEnd.ReportService.Model\ESFA.DC.PeriodEnd.ReportService.Model.csproj", "{C279BD86-7651-43CF-833E-8437D9158429}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.Service", "ESFA.DC.PeriodEnd.ReportService.Service\ESFA.DC.PeriodEnd.ReportService.Service.csproj", "{8DE95CF2-E438-47E9-8522-0AB52A63DB84}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.Legacy", "ESFA.DC.PeriodEnd.ReportService.Legacy\ESFA.DC.PeriodEnd.ReportService.Legacy.csproj", "{8DE95CF2-E438-47E9-8522-0AB52A63DB84}"
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.Service.Tests", "ESFA.DC.PeriodEnd.ReportService.Service.Tests\ESFA.DC.PeriodEnd.ReportService.Service.Tests.csproj", "{68F7EB12-4632-4985-8265-453E8140EC97}"
 EndProject

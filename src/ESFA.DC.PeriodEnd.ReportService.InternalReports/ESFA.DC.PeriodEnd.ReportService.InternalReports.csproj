@@ -43,7 +43,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.DataAccess\ESFA.DC.PeriodEnd.ReportService.DataAccess.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
-    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Service\ESFA.DC.PeriodEnd.ReportService.Service.csproj" />
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Legacy\ESFA.DC.PeriodEnd.ReportService.Legacy.csproj" />
   </ItemGroup>
 
 </Project>

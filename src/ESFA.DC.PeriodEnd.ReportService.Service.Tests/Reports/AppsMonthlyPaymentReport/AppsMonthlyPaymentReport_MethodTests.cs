@@ -2,10 +2,10 @@
 using System.Collections.Generic;
 using System.Linq;
 using Castle.Components.DictionaryAdapter;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Builders;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
-using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 using FluentAssertions;
 using Xunit;
 

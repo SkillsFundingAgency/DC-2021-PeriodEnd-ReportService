@@ -5,7 +5,7 @@ using ESFA.DC.DASPayments.EF;
 using ESFA.DC.EAS1920.EF;
 using ESFA.DC.ILR1920.DataStore.EF;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Provider;
 using Microsoft.EntityFrameworkCore;
 using Moq;
 using Xunit;

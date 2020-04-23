@@ -2,7 +2,7 @@
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Service;
 using FluentAssertions;
 using Moq;
 using Xunit;

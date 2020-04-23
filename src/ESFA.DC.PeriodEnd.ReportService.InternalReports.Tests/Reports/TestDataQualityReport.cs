@@ -8,7 +8,6 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.DataQualityReport;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using FluentAssertions;
 using Moq;
 using System;
@@ -17,6 +16,7 @@ using System.IO;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.Org;
 using Xunit;
 

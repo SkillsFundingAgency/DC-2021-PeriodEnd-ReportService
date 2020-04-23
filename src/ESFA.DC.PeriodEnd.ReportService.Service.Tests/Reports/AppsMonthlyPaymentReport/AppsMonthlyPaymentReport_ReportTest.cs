@@ -12,11 +12,10 @@ using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Builders;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Mapper;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsMonthlyPayment;
 using ESFA.DC.PeriodEnd.ReportService.Model.ReportModels;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
-using ESFA.DC.PeriodEnd.ReportService.Service.Mapper;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Helpers;
 using ESFA.DC.PeriodEnd.ReportService.Service.Tests.Models;
 using FluentAssertions;
@@ -98,7 +97,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 
             Mock<IPersistReportData> persistReportDataMock = new Mock<IPersistReportData>();
 
-            var report = new ReportService.Service.Reports.AppsMonthlyPaymentReport(
+            var report = new Legacy.Reports.AppsMonthlyPaymentReport(
                 logger.Object,
                 storage.Object,
                 IlrPeriodEndProviderServiceMock.Object,

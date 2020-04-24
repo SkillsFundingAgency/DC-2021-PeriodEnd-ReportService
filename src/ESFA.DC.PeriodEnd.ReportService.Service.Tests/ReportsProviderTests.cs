@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests
             var reportTwo = "ReportTwo";
             var reportThree = "ReportThree";
 
-            var reports = new List<IReport>();
+            var reports = new List<ILegacyReport>();
             var loggerMock = new Mock<ILogger>();
 
             var reportServiceContext = new Mock<IReportServiceContext>();
@@ -39,14 +39,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests
             var reportTwoTaskName = "ReportTwo";
             var reportThreeTaskName = "ReportThree";
 
-            var reportOneMock = new Mock<IReport>();
+            var reportOneMock = new Mock<ILegacyReport>();
             reportOneMock.SetupGet(r => r.ReportTaskName).Returns(reportOneTaskName);
-            var reportTwoMock = new Mock<IReport>();
+            var reportTwoMock = new Mock<ILegacyReport>();
             reportTwoMock.SetupGet(r => r.ReportTaskName).Returns(reportTwoTaskName);
-            var reportThreeMock = new Mock<IReport>();
+            var reportThreeMock = new Mock<ILegacyReport>();
             reportThreeMock.SetupGet(r => r.ReportTaskName).Returns(reportThreeTaskName);
 
-            var reports = new List<IReport>()
+            var reports = new List<ILegacyReport>()
             {
                 reportOneMock.Object,
                 reportTwoMock.Object,
@@ -69,14 +69,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests
             var reportTwoTaskName = "ReportTwo";
             var reportThreeTaskName = "ReportThree";
 
-            var reportOneMock = new Mock<IReport>();
+            var reportOneMock = new Mock<ILegacyReport>();
             reportOneMock.SetupGet(r => r.ReportTaskName).Returns(reportOneTaskName);
-            var reportTwoMock = new Mock<IReport>();
+            var reportTwoMock = new Mock<ILegacyReport>();
             reportTwoMock.SetupGet(r => r.ReportTaskName).Returns(reportTwoTaskName);
-            var reportThreeMock = new Mock<IReport>();
+            var reportThreeMock = new Mock<ILegacyReport>();
             reportThreeMock.SetupGet(r => r.ReportTaskName).Returns(reportThreeTaskName);
 
-            var reports = new List<IReport>()
+            var reports = new List<ILegacyReport>()
             {
                 reportOneMock.Object,
                 reportTwoMock.Object,
@@ -106,14 +106,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests
             var reportFiveTaskName = "ReportFive";
             var reportSixTaskName = "ReportSix";
 
-            var reportOneMock = new Mock<IReport>();
+            var reportOneMock = new Mock<ILegacyReport>();
             reportOneMock.SetupGet(r => r.ReportTaskName).Returns(reportOneTaskName);
-            var reportTwoMock = new Mock<IReport>();
+            var reportTwoMock = new Mock<ILegacyReport>();
             reportTwoMock.SetupGet(r => r.ReportTaskName).Returns(reportTwoTaskName);
-            var reportThreeMock = new Mock<IReport>();
+            var reportThreeMock = new Mock<ILegacyReport>();
             reportThreeMock.SetupGet(r => r.ReportTaskName).Returns(reportThreeTaskName);
 
-            var reports = new List<IReport>()
+            var reports = new List<ILegacyReport>()
             {
                 reportOneMock.Object,
                 reportTwoMock.Object,
@@ -143,14 +143,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests
             var reportFiveTaskName = "ReportFive";
             var reportSixTaskName = "ReportSix";
 
-            var reportOneMock = new Mock<IReport>();
+            var reportOneMock = new Mock<ILegacyReport>();
             reportOneMock.SetupGet(r => r.ReportTaskName).Returns(reportOneTaskName);
-            var reportTwoMock = new Mock<IReport>();
+            var reportTwoMock = new Mock<ILegacyReport>();
             reportTwoMock.SetupGet(r => r.ReportTaskName).Returns(reportTwoTaskName);
-            var reportThreeMock = new Mock<IReport>();
+            var reportThreeMock = new Mock<ILegacyReport>();
             reportThreeMock.SetupGet(r => r.ReportTaskName).Returns(reportThreeTaskName);
 
-            var reports = new List<IReport>()
+            var reports = new List<ILegacyReport>()
             {
                 reportOneMock.Object,
                 reportTwoMock.Object,
@@ -184,7 +184,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests
             loggerMock.Verify(l => l.LogWarning($"Missing Report Task - {reportSixTaskName}", null, -1, It.IsAny<string>(), It.IsAny<string>(), It.IsAny<int>()));
         }
 
-        private ReportsProvider NewProvider(IList<IReport> reports = null, ILogger logger = null)
+        private ReportsProvider NewProvider(IList<ILegacyReport> reports = null, ILogger logger = null)
         {
             return new ReportsProvider(reports, logger);
         }

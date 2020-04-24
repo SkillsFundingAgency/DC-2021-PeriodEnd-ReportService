@@ -22,7 +22,7 @@ using ReportTaskNameConstants = ESFA.DC.PeriodEnd.ReportService.Legacy.Constants
 
 namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Reports
 {
-    public sealed class AppsCoInvestmentContributionsReport : AbstractReport, IReport
+    public sealed class AppsCoInvestmentContributionsReport : AbstractReport, ILegacyReport
     {
         private readonly IIlrPeriodEndProviderService _ilrPeriodEndProviderService;
         private readonly IDASPaymentsProviderService _dasPaymentsProviderService;

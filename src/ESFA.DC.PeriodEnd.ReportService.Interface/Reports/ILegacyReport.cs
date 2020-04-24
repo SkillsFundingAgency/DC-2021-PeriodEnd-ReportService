@@ -4,7 +4,7 @@ using System.Threading.Tasks;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
 {
-    public interface IReport
+    public interface ILegacyReport
     {
         string ReportTaskName { get; }
 

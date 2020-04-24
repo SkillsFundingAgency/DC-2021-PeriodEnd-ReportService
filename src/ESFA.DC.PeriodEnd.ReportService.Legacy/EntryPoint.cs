@@ -21,13 +21,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy
         private readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
         private readonly IReportServiceContext _reportServiceContext;
 
-        private readonly IList<IReport> _reports;
+        private readonly IList<ILegacyReport> _reports;
 
         public EntryPoint(
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IReportServiceContext reportServiceContext,
-            IList<IReport> reports)
+            IList<ILegacyReport> reports)
         {
             _logger = logger;
             _streamableKeyValuePersistenceService = streamableKeyValuePersistenceService;

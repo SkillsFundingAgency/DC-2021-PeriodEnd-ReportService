@@ -5,6 +5,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Service
 {
     public interface IReportsProvider
     {
-        IEnumerable<IReport> ProvideReportsForContext(IReportServiceContext reportServiceContext);
+        IEnumerable<ILegacyReport> ProvideReportsForContext(IReportServiceContext reportServiceContext);
     }
 }

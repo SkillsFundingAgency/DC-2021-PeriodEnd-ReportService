@@ -15,7 +15,7 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.Abstract
 {
-    public abstract class AbstractReport : IReport
+    public abstract class AbstractReport : ILegacyReport
     {
         protected readonly IStreamableKeyValuePersistenceService _streamableKeyValuePersistenceService;
         protected readonly ILogger _logger;

@@ -10,16 +10,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Service
 {
     public class ReportsProvider : IReportsProvider
     {
-        private readonly IList<IReport> _reports;
+        private readonly IList<ILegacyReport> _reports;
         private readonly ILogger _logger;
 
-        public ReportsProvider(IList<IReport> reports, ILogger logger)
+        public ReportsProvider(IList<ILegacyReport> reports, ILogger logger)
         {
             _reports = reports;
             _logger = logger;
         }
 
-        public IEnumerable<IReport> ProvideReportsForContext(IReportServiceContext reportServiceContext)
+        public IEnumerable<ILegacyReport> ProvideReportsForContext(IReportServiceContext reportServiceContext)
         {
             var missingReportTasks =
                 reportServiceContext

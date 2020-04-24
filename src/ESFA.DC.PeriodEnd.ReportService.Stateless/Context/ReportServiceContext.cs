@@ -6,7 +6,7 @@ using ESFA.DC.ILR.Constants;
 using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.Serialization.Interfaces;
 

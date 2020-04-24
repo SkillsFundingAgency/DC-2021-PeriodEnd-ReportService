@@ -1,4 +1,4 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netcoreapp2.1</TargetFramework>
@@ -25,7 +25,7 @@
   <ItemGroup>
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.InternalReports\ESFA.DC.PeriodEnd.ReportService.InternalReports.csproj" />
-    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Service\ESFA.DC.PeriodEnd.ReportService.Service.csproj" />
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Legacy\ESFA.DC.PeriodEnd.ReportService.Legacy.csproj" />
   </ItemGroup>
 
   <ItemGroup>

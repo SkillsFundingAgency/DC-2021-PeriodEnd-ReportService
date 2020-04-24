@@ -41,17 +41,17 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Builders;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Provider;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.AppsAdditionalPaymentsReport;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.FundingSummaryReport;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Service;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView.Comparer;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
-using ESFA.DC.PeriodEnd.ReportService.Service.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Service.Provider;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports.AppsAdditionalPaymentsReport;
-using ESFA.DC.PeriodEnd.ReportService.Service.Reports.FundingSummaryReport;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Context;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
@@ -333,24 +333,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterReports(ContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterType<LearnerLevelViewReport>().As<IReport>()
+            containerBuilder.RegisterType<LearnerLevelViewReport>().As<ILegacyReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<AppsMonthlyPaymentReport>().As<IReport>()
+            containerBuilder.RegisterType<AppsMonthlyPaymentReport>().As<ILegacyReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<AppsAdditionalPaymentsReport>().As<IReport>()
+            containerBuilder.RegisterType<AppsAdditionalPaymentsReport>().As<ILegacyReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<AppsCoInvestmentContributionsReport>().As<IReport>()
+            containerBuilder.RegisterType<AppsCoInvestmentContributionsReport>().As<ILegacyReport>()
                 .WithAttributeFiltering()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.Register(c => new List<IReport>(c.Resolve<IEnumerable<IReport>>()))
-                .As<IList<IReport>>();
+            containerBuilder.Register(c => new List<ILegacyReport>(c.Resolve<IEnumerable<ILegacyReport>>()))
+                .As<IList<ILegacyReport>>();
 
             containerBuilder.RegisterType<PeriodEndMetricsReport>().As<IInternalReport>();
 
@@ -452,7 +452,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
 
         private static void RegisterFundingSummaryReport(ContainerBuilder containerBuilder)
         {
-            containerBuilder.RegisterType<FundingSummaryReport>().As<IReport>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<FundingSummaryReport>().As<ILegacyReport>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<FundingSummaryReportModelBuilder>().As<IFundingSummaryReportModelBuilder>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<FundingSummaryReportRenderService>().As<IRenderService<IFundingSummaryReport>>().InstancePerLifetimeScope();
             containerBuilder.RegisterType<PeriodisedValuesLookupProviderService>().As<IPeriodisedValuesLookupProviderService>().InstancePerLifetimeScope();

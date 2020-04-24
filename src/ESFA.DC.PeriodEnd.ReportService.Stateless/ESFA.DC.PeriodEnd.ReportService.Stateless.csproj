@@ -480,9 +480,9 @@
       <Project>{c279bd86-7651-43cf-833e-8437d9158429}</Project>
       <Name>ESFA.DC.PeriodEnd.ReportService.Model</Name>
     </ProjectReference>
-    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Service\ESFA.DC.PeriodEnd.ReportService.Service.csproj">
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Legacy\ESFA.DC.PeriodEnd.ReportService.Legacy.csproj">
       <Project>{8DE95CF2-E438-47E9-8522-0AB52A63DB84}</Project>
-      <Name>ESFA.DC.PeriodEnd.ReportService.Service</Name>
+      <Name>ESFA.DC.PeriodEnd.ReportService.Legacy</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

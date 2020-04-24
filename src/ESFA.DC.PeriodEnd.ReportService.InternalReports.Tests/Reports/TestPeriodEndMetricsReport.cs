@@ -8,7 +8,6 @@ using ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
-using ESFA.DC.PeriodEnd.ReportService.Service.Service;
 using ESFA.DC.DateTimeProvider.Interface;
 using System.Threading;
 using System.Collections.Generic;
@@ -17,6 +16,7 @@ using FluentAssertions;
 using System.Linq;
 using System.IO;
 using Aspose.Cells;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Service;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Tests.Reports
 {

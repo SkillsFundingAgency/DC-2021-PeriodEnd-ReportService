@@ -12,8 +12,8 @@ using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Service;
 using ESFA.DC.PeriodEnd.ReportService.InternalReports.Mappers;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ActCountReport;
-using ESFA.DC.PeriodEnd.ReportService.Service.Constants;
 
 namespace ESFA.DC.PeriodEnd.ReportService.InternalReports.Reports
 {

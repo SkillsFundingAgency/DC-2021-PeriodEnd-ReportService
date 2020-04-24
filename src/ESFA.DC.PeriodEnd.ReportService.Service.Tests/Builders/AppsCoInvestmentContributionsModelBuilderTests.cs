@@ -1,7 +1,7 @@
 ﻿using System.Collections.Generic;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.ReportService.Legacy.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
-using ESFA.DC.PeriodEnd.ReportService.Service.Builders;
 using FluentAssertions;
 using Moq;
 using Xunit;

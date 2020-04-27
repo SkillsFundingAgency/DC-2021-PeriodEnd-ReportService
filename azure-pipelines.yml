@@ -102,7 +102,14 @@ stages:
       - ServiceFabricSDK
 
     steps:    
-    - template: Build/MsBuild.ServiceFabric.yml@templates
+    - template: Build/ServiceFabric/MsBuild.ServiceFabric.yml@templates
       parameters:
         WorkingDirectory: "$(build.sourcesdirectory)/src"
         BuildConfiguration: "${{ parameters.buildConfiguration }}"    
+
+    - template: Build/ServiceFabric/RunUnitTest.ServiceFabric.yml@templates
+      parameters:
+        WorkingDirectory: "$(build.sourcesdirectory)/src"
+        BuildConfiguration: "${{ parameters.buildConfiguration }}"    
+
+    - template: Build/ServiceFabric/CopyAndPublish.ServiceFabric.yml@templates

@@ -1,0 +1,115 @@
+
+name: ${{ parameters.VersionNumberMajor }}.${{ parameters.VersionNumberMinor }}$(Rev:.rrrr)
+
+parameters:
+- name: buildConfiguration
+  displayName: Release or Debug
+  type: string
+  default: Release
+  values:
+  - Release
+  - Debug
+- name: VersionNumberMajor
+  displayName: VersionNumberMajor
+  type: string
+  default: '0'
+- name: VersionNumberMinor
+  displayName: VersionNumberMinor
+  type: string
+  default: '1'
+- name: DotnetCore_Version
+  displayName: .net Coer SDK Version 
+  type: string
+  default: '2.2.x'  
+  values:
+  - '2.1.x'
+  - '2.2.x'
+  - '3.0.x'
+  - '3.1.x'
+#- name: runPerfTests
+#  displayName: Run Tests?
+#  type: boolean
+#  default: false
+
+resources:
+  repositories:
+  - repository: templates
+    type: git
+    name: DC-Infrastructure-YML-Files
+
+variables:
+- name: "Build.Platform"
+  value: 'Any CPU'
+- name: "Build.PlatformX64"
+  value: 'x64'
+- name: "Build.PlatformX64"
+  value: 'x64'
+- name: "Nuget.Feed"
+  value: 'dct-pkg'  
+- name: "Nuget.Version"
+  value: '5.3.0'
+- name: "Solution"
+  value: 'src\**\*.sln'
+- name: "SF.ProjectName"
+  value: 'src\**\*.sfproj'
+
+stages:
+#********************************************************************************
+# Pre Build Step
+#********************************************************************************   
+- stage: PreBuild
+  displayName: PreBuild
+  jobs:
+  - job: PreBuild
+    workspace:
+        clean: all
+  pool:
+    name: DCT
+    demands:
+    - IsBuildServer
+    - ServiceFabricSDK
+    #- ServiceFabricSDKVersion -equals 65
+    #- ServiceFabricSDKVersion -equals 70
+
+    steps:    
+    - task: PowerShell@2
+      name: CheckBranch
+      displayName: Which Branh is Build Running from.
+      inputs:
+        targetType: 'inline'
+        script: |
+                  $BranchName = "$(Build.SourceBranchName)"
+                  Write-Host "SourceBranchName : $($BranchName)"
+                  $ShouldPushNugetPackages = if (($BranchName.ToUpper() -eq "MASTER") -or ($BranchName.ToUpper() -eq "DEVELOP")-or ($BranchName.ToUpper() -like "RELEASE*")){ $true } else {$false}
+                  Write-Host "Is Branch we should push package from : $($ShouldPushNugetPackages)"
+                  Write-Host "##vso[task.setvariable variable=ShouldPushNugetPackages;isOutput=true]$($ShouldPushNugetPackages)";
+                      
+#********************************************************************************
+# Copy Application Parameters Local Node xml files
+#********************************************************************************
+- stage: Build
+  displayName: Build
+  dependsOn: PreBuild
+  jobs:
+  - job: Build
+    workspace:
+        clean: all
+
+    pool:
+      name: DCT
+      demands:
+      - IsBuildServer
+      - ServiceFabricSDK
+
+    steps:    
+    - template: Build/ServiceFabric/MsBuild.ServiceFabric.yml@templates
+      parameters:
+        WorkingDirectory: "$(build.sourcesdirectory)/src"
+        BuildConfiguration: "${{ parameters.buildConfiguration }}"    
+
+    - template: Build/ServiceFabric/RunUnitTest.ServiceFabric.yml@templates
+      parameters:
+        WorkingDirectory: "$(build.sourcesdirectory)/src"
+        BuildConfiguration: "${{ parameters.buildConfiguration }}"    
+
+    - template: Build/ServiceFabric/CopyAndPublish.ServiceFabric.yml@templates

@@ -54,81 +54,55 @@ variables:
   value: 'src\**\*.sfproj'
 
 stages:
+#********************************************************************************
+# Pre Build Step
+#********************************************************************************   
+- stage: PreBuild
+  displayName: PreBuild
+  jobs:
+  - job: PreBuild
+    workspace:
+        clean: all
+  pool:
+    name: DCT
+    demands:
+    - IsBuildServer
+    - ServiceFabricSDK
+    #- ServiceFabricSDKVersion -equals 65
+    #- ServiceFabricSDKVersion -equals 70
+
+    steps:    
+    - task: PowerShell@2
+      name: CheckBranch
+      displayName: Which Branh is Build Running from.
+      inputs:
+        targetType: 'inline'
+        script: |
+                  $BranchName = "$(Build.SourceBranchName)"
+                  Write-Host "SourceBranchName : $($BranchName)"
+                  $ShouldPushNugetPackages = if (($BranchName.ToUpper() -eq "MASTER") -or ($BranchName.ToUpper() -eq "DEVELOP")-or ($BranchName.ToUpper() -like "RELEASE*")){ $true } else {$false}
+                  Write-Host "Is Branch we should push package from : $($ShouldPushNugetPackages)"
+                  Write-Host "##vso[task.setvariable variable=ShouldPushNugetPackages;isOutput=true]$($ShouldPushNugetPackages)";
+                      
+#********************************************************************************
+# Copy Application Parameters Local Node xml files
+#********************************************************************************
 - stage: Build
-  displayName: Build stage
-  jobs:  
+  displayName: Build
+  dependsOn: PreBuild
+  jobs:
   - job: Build
-    displayName: Build    
+    workspace:
+        clean: all
 
     pool:
       name: DCT
       demands:
       - IsBuildServer
       - ServiceFabricSDK
-      #- BuildServer
-      #- ServiceFabricSDK      
-      #- ServiceFabricSDKVersion -equals 65
-      #- ServiceFabricSDKVersion -equals 65
-      
-    steps:
-#********************************************************************************
-# Pre Build Step
-#********************************************************************************   
-    - stage: PreBuild
-      displayName: PreBuild
-      jobs:
-      - job: PreBuild
-        workspace:
-            clean: all
-        pool:
-          name: Default
-          #demands:
-          #- Agent.Name -equals 'OFFICEPC'
 
-        steps:    
-        - task: PowerShell@2
-          name: CheckBranch
-          displayName: Which Branh is Build Running from.
-          inputs:
-            targetType: 'inline'
-            script: |
-                      $BranchName = "$(Build.SourceBranchName)"
-                      Write-Host "SourceBranchName : $($BranchName)"
-                      $ShouldPushNugetPackages = if (($BranchName.ToUpper() -eq "MASTER") -or ($BranchName.ToUpper() -eq "DEVELOP")-or ($BranchName.ToUpper() -like "RELEASE*")){ $true } else {$false}
-                      Write-Host "Is Branch we should push package from : $($ShouldPushNugetPackages)"
-                      Write-Host "##vso[task.setvariable variable=ShouldPushNugetPackages;isOutput=true]$($ShouldPushNugetPackages)";
-                      
-#********************************************************************************
-# Copy Application Parameters Local Node xml files
-#********************************************************************************
-    - stage: Build
-      displayName: Build
-      dependsOn: PreBuild
-      jobs:
-      - job: Build
-        workspace:
-            clean: all
-
-        pool:
-          name: Default
-          #demands:
-          #- Agent.Name -equals 'OFFICEPC'
-
-        steps:    
-        - task: PowerShell@2
-          enabled: false
-          name: CheckBranch
-          displayName: Check What to Publish
-          inputs:
-            targetType: 'inline'
-            script: |
-                      $BranchName = "$(Build.SourceBranchName)"
-                      Write-Host "SourceBranchName : $($BranchName)"
-                      $ShouldPushNugetPackages = if (($BranchName.ToUpper() -eq "MASTER") -or ($BranchName.ToUpper() -eq "DEVELOP")-or ($BranchName.ToUpper() -like "RELEASE*")){ $true } else {$false}
-                      Write-Host "Is Branch we should push package from : $($ShouldPushNugetPackages)"
-                      Write-Host "##vso[task.setvariable variable=ShouldPushNugetPackages;isOutput=true]$($ShouldPushNugetPackages)";
-
-        - template: Build/MsBuild.ServiceFabric.yml@templates
-          parameters:
-            WorkingDirectory: "$(build.sourcesdirectory)/src"
-            BuildConfiguration: "${{ parameters.buildConfiguration }}"    
+    steps:    
+    - template: Build/MsBuild.ServiceFabric.yml@templates
+      parameters:
+        WorkingDirectory: "$(build.sourcesdirectory)/src"
+        BuildConfiguration: "${{ parameters.buildConfiguration }}"    

@@ -1,5 +1,5 @@
 
-name: $(VersionNumberMajor).$(VersionNumberMinor)$(Rev:.rrrr)
+name: ${{ parameters.VersionNumberMajor }}.${{ parameters.VersionNumberMinor }}$(Rev:.rrrr)
 
 parameters:
 - name: buildConfiguration
@@ -29,7 +29,7 @@ parameters:
 #- name: runPerfTests
 #  displayName: Run Tests?
 #  type: boolean
- # default: false
+#  default: false
 
 resources:
   repositories:
@@ -38,12 +38,6 @@ resources:
     name: DC-Infrastructure-YML-Files
 
 variables:
-- name: VersionNumberMajor 
-  value: '0'
-- name: VersionNumberMinor 
-  value: '1'
-
-  variables:
 - name: "Build.Platform"
   value: 'Any CPU'
 - name: "Build.PlatformX64"
@@ -65,15 +59,6 @@ stages:
   jobs:  
   - job: Build
     displayName: Build    
-#    variables:
-#      "Build.Configuration": 'Release'
-#      "Build.Platform": 'Any CPU'
-#      "Build.PlatformX64": 'x64'  
-#      "Nuget.Feed": 'dct-pkg'  
-#      "Nuget.Version": '5.3.0'
-#      "DotnetCore.Version": '2.2.x'
-#      "Solution": 'src\**\*.sln'
-#      "SF.ProjectName": 'src\**\*.sfproj'
 
     pool:
       name: DCT

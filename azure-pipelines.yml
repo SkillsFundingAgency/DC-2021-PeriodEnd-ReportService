@@ -35,7 +35,7 @@ resources:
   repositories:
   - repository: templates
     type: git
-    name: Website/Yml-Files
+    name: DC-Infrastructure-YML-Files
 
 variables:
 - name: VersionNumberMajor 

@@ -33,7 +33,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Service
 
         public void ApplyLicense()
         {
-            const string licenseResource = "ESFA.DC.PeriodEnd.ReportService.Service.Reports.Resources.Aspose.Cells.lic";
+            const string licenseResource = "ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.Resources.Aspose.Cells.lic";
             var workbook = new Workbook();
 
             if (!workbook.IsLicensed)

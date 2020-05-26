@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 {
-    public sealed class FCSProviderService : IFCSProviderService
+    public sealed class FcsProviderService : IFCSProviderService
     {
         private readonly ILogger _logger;
         private readonly Func<IFcsContext> _fcsContextFunc;
@@ -20,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
         private readonly DateTime _academicYearStartDate = new DateTime(2019, 08, 01);
         private readonly DateTime _academicYearEndDate = new DateTime(2020, 07, 31);
 
-        public FCSProviderService(ILogger logger, Func<IFcsContext> fcsContext)
+        public FcsProviderService(ILogger logger, Func<IFcsContext> fcsContext)
         {
             _logger = logger;
             _fcsContextFunc = fcsContext;

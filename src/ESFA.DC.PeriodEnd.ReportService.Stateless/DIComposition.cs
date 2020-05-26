@@ -393,7 +393,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<SummarisationProviderService>().As<ISummarisationProviderService>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<FCSProviderService>().As<IFCSProviderService>()
+            containerBuilder.RegisterType<FcsProviderService>().As<IFCSProviderService>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<ReportServiceContext>().As<IReportServiceContext>()

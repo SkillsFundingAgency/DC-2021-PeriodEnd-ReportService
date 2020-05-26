@@ -4,10 +4,10 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Valid;
-using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.Invalid.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.Valid;
+using ESFA.DC.ILR2021.DataStore.EF.Valid.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Legacy.Provider.Abstract;
@@ -24,16 +24,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
     public sealed class IlrPeriodEndProviderService : AbstractFundModelProviderService, IIlrPeriodEndProviderService
     {
         private const int ApprenticeshipsFundModel = 36;
-        private readonly Func<IIlr1920RulebaseContext> _ilrContextFactory;
-        private readonly Func<IIlr1920ValidContext> _ilrValidContextFactory;
-        private readonly Func<IIlr1920InvalidContext> _ilrInValidContextFactory;
+        private readonly Func<IIlr2021RulebaseContext> _ilrContextFactory;
+        private readonly Func<IIlr2021ValidContext> _ilrValidContextFactory;
+        private readonly Func<IIlr2021InvalidContext> _ilrInValidContextFactory;
         private readonly Func<IIlrReferenceDataContext> _ilrRefDataFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
-            Func<IIlr1920RulebaseContext> ilrContextFactory,
-            Func<IIlr1920ValidContext> ilrValidContextFactory,
-            Func<IIlr1920InvalidContext> ilrInValidContextFactory,
+            Func<IIlr2021RulebaseContext> ilrContextFactory,
+            Func<IIlr2021ValidContext> ilrValidContextFactory,
+            Func<IIlr2021InvalidContext> ilrInValidContextFactory,
             Func<IIlrReferenceDataContext> ilrRefDataFactory)
             : base(logger)
         {
@@ -220,7 +220,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                             DateEmpStatApp = x.DateEmpStatApp,
                             EmpStat = x.EmpStat,
                             EmpdId = x.EmpId,
-                            AgreeId = x.AgreeId
+                            AgreeId = string.Empty
                         }).ToList()
                             }).ToListAsync(cancellationToken);
                 }

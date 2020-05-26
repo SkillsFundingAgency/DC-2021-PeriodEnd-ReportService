@@ -6,7 +6,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using CsvHelper;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Valid;
+using ESFA.DC.ILR2021.DataStore.EF.Valid;
 using ESFA.DC.IO.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.DataPersist;
@@ -318,7 +318,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearningAimPathwayCode = 1,
                         FundingSource = 3,
                         TransactionType = 3,
-                        AcademicYear = 1920,
+                        AcademicYear = 2021,
                         Amount = 10,
                         ContractType = 2,
                         CollectionPeriod = 1,
@@ -340,7 +340,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                         LearningAimPathwayCode = 1,
                         FundingSource = 3,
                         TransactionType = 3,
-                        AcademicYear = 1920,
+                        AcademicYear = 2021,
                         Amount = 10,
                         ContractType = 2,
                         CollectionPeriod = 1,

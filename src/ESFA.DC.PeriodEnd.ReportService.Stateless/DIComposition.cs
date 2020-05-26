@@ -5,21 +5,21 @@ using Autofac.Features.AttributeFilters;
 using ESFA.DC.DASPayments.EF;
 using ESFA.DC.DASPayments.EF.Interfaces;
 using ESFA.DC.DateTimeProvider.Interface;
-using ESFA.DC.EAS1920.EF;
-using ESFA.DC.EAS1920.EF.Interface;
+using ESFA.DC.EAS2021.EF;
+using ESFA.DC.EAS2021.EF.Interface;
 using ESFA.DC.FileService;
 using ESFA.DC.FileService.Config;
 using ESFA.DC.FileService.Config.Interface;
 using ESFA.DC.FileService.Interface;
 using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model;
 using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.Interface;
-using ESFA.DC.ILR1920.DataStore.EF;
-using ESFA.DC.ILR1920.DataStore.EF.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Invalid;
-using ESFA.DC.ILR1920.DataStore.EF.Invalid.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.StoredProc;
-using ESFA.DC.ILR1920.DataStore.EF.Valid;
-using ESFA.DC.ILR1920.DataStore.EF.Valid.Interface;
+using ESFA.DC.ILR2021.DataStore.EF;
+using ESFA.DC.ILR2021.DataStore.EF.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.Invalid;
+using ESFA.DC.ILR2021.DataStore.EF.Invalid.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.StoredProc;
+using ESFA.DC.ILR2021.DataStore.EF.Valid;
+using ESFA.DC.ILR2021.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 using ESFA.DC.IO.Interfaces;
@@ -139,60 +139,60 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
         private static void RegisterContexts(ContainerBuilder containerBuilder, IReportServiceConfiguration reportServiceConfiguration)
         {
             // ILR 1920 DataStore
-            containerBuilder.RegisterType<ILR1920_DataStoreEntities>().As<IIlr1920RulebaseContext>();
+            containerBuilder.RegisterType<ILR2021_DataStoreEntities>().As<IIlr2021RulebaseContext>();
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntities>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntities>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
             })
-                .As<DbContextOptions<ILR1920_DataStoreEntities>>()
+                .As<DbContextOptions<ILR2021_DataStoreEntities>>()
                 .SingleInstance();
 
             // ILR 1920 DataStore Valid Learners
-            containerBuilder.RegisterType<ILR1920_DataStoreEntitiesValid>().As<IIlr1920ValidContext>();
+            containerBuilder.RegisterType<ILR2021_DataStoreEntitiesValid>().As<IIlr2021ValidContext>();
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntitiesValid>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
-            }).As<DbContextOptions<ILR1920_DataStoreEntitiesValid>>()
+            }).As<DbContextOptions<ILR2021_DataStoreEntitiesValid>>()
                 .SingleInstance();
 
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesValid>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntitiesValid>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return new ILR1920_DataStoreEntitiesValid(optionsBuilder.Options);
-            }).As<ILR1920_DataStoreEntitiesValid>()
+                return new ILR2021_DataStoreEntitiesValid(optionsBuilder.Options);
+            }).As<ILR2021_DataStoreEntitiesValid>()
                 .ExternallyOwned();
 
             // ILR 1920 DataStore InValid Learners
-            containerBuilder.RegisterType<ILR1920_DataStoreEntitiesInvalid>().As<IIlr1920InvalidContext>().ExternallyOwned();
+            containerBuilder.RegisterType<ILR2021_DataStoreEntitiesInvalid>().As<IIlr2021InvalidContext>().ExternallyOwned();
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesInvalid>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntitiesInvalid>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
             })
-                .As<DbContextOptions<ILR1920_DataStoreEntitiesInvalid>>()
+                .As<DbContextOptions<ILR2021_DataStoreEntitiesInvalid>>()
                 .SingleInstance();
 
             containerBuilder.Register(context =>
                 {
-                    var optionsBuilder = new DbContextOptionsBuilder<ILR1920_DataStoreEntitiesStoredProc>();
+                    var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntitiesStoredProc>();
                     optionsBuilder.UseSqlServer(
                         reportServiceConfiguration.ILRDataStoreConnectionString,
                         options =>
@@ -204,8 +204,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                             }
                         });
 
-                    return new ILR1920_DataStoreEntitiesStoredProc(optionsBuilder.Options);
-                }).As<ILR1920_DataStoreEntitiesStoredProc>()
+                    return new ILR2021_DataStoreEntitiesStoredProc(optionsBuilder.Options);
+                }).As<ILR2021_DataStoreEntitiesStoredProc>()
                 .ExternallyOwned();
 
             // Eas 1920
@@ -402,7 +402,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<PaymentsService>().As<IPaymentsService>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<PeriodEndQueryService1920>().As<IPeriodEndQueryService1920>()
+            containerBuilder.RegisterType<PeriodEndQueryService>().As<IPeriodEndQueryService1920>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<OrgProviderService>().As<IOrgProviderService>()

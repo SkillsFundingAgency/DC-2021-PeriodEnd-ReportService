@@ -3,8 +3,8 @@ using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
-using ESFA.DC.ILR1920.DataStore.EF.StoredProc;
-using ESFA.DC.ILR1920.DataStore.EF.Valid;
+using ESFA.DC.ILR2021.DataStore.EF.StoredProc;
+using ESFA.DC.ILR2021.DataStore.EF.Valid;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ActCountReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;
@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
 {
-    public class PeriodEndQueryService1920 : IPeriodEndQueryService1920
+    public class PeriodEndQueryService : IPeriodEndQueryService1920
     {
-        private readonly Func<ILR1920_DataStoreEntitiesStoredProc> _contextFactory;
+        private readonly Func<ILR2021_DataStoreEntitiesStoredProc> _contextFactory;
 
-        public PeriodEndQueryService1920(Func<ILR1920_DataStoreEntitiesStoredProc> contextFactory)
+        public PeriodEndQueryService(Func<ILR2021_DataStoreEntitiesStoredProc> contextFactory)
         {
             _contextFactory = contextFactory;
         }

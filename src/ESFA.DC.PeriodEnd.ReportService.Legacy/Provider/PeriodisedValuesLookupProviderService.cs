@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.DASPayments.EF.Interfaces;
-using ESFA.DC.EAS1920.EF.Interface;
-using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.EAS2021.EF.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Model.FundingSummaryReport;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
@@ -19,12 +19,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 {
     public class PeriodisedValuesLookupProviderService : IPeriodisedValuesLookupProviderService
     {
-        private readonly Func<IIlr1920RulebaseContext> _rulebaseContextFactory;
+        private readonly Func<IIlr2021RulebaseContext> _rulebaseContextFactory;
         private readonly Func<IEasdbContext> _easContextFactory;
         private readonly Func<IDASPaymentsContext> _dasContextFactory;
 
         public PeriodisedValuesLookupProviderService(
-            Func<IIlr1920RulebaseContext> rulebaseContextFactory,
+            Func<IIlr2021RulebaseContext> rulebaseContextFactory,
             Func<IEasdbContext> easContextFactory,
             Func<IDASPaymentsContext> dasContextFactory)
         {

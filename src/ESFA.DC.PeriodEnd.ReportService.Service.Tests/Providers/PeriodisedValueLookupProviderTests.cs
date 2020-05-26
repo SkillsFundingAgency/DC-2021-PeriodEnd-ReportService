@@ -2,8 +2,8 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.DASPayments.EF;
-using ESFA.DC.EAS1920.EF;
-using ESFA.DC.ILR1920.DataStore.EF;
+using ESFA.DC.EAS2021.EF;
+using ESFA.DC.ILR2021.DataStore.EF;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Legacy.Provider;
 using Microsoft.EntityFrameworkCore;
@@ -53,7 +53,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Providers
         public static PeriodisedValuesLookupProviderService NewService()
         {
             return new PeriodisedValuesLookupProviderService(
-                () => new ILR1920_DataStoreEntities(NewBuilder<ILR1920_DataStoreEntities>().Options),
+                () => new ILR2021_DataStoreEntities(NewBuilder<ILR2021_DataStoreEntities>().Options),
                 () => new EasContext(NewBuilder<EasContext>().Options),
                 () => new DASPaymentsContext(NewBuilder<DASPaymentsContext>().Options));
         }

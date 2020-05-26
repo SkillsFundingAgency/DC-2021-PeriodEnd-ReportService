@@ -2,9 +2,9 @@
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.EAS1920.EF.Interface;
-using ESFA.DC.ILR1920.DataStore.EF;
-using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.EAS2021.EF.Interface;
+using ESFA.DC.ILR2021.DataStore.EF;
+using ESFA.DC.ILR2021.DataStore.EF.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.ReferenceData.Organisations.Model.Interface;
 using Microsoft.EntityFrameworkCore;
@@ -15,9 +15,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
     {
         private readonly Func<IOrganisationsContext> _organisationsContextFunc;
         private readonly Func<IEasdbContext> _easContextFunc;
-        private readonly Func<IIlr1920RulebaseContext> _ilrContextFunc;
+        private readonly Func<IIlr2021RulebaseContext> _ilrContextFunc;
 
-        public ReferenceDataService(Func<IOrganisationsContext> organisationsContextFunc, Func<IEasdbContext> easContextFunc, Func<IIlr1920RulebaseContext> ilrContextFunc)
+        public ReferenceDataService(Func<IOrganisationsContext> organisationsContextFunc, Func<IEasdbContext> easContextFunc, Func<IIlr2021RulebaseContext> ilrContextFunc)
         {
             _organisationsContextFunc = organisationsContextFunc;
             _easContextFunc = easContextFunc;

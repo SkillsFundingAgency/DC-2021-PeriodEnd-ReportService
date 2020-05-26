@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using ESFA.DC.ILR1920.DataStore.EF.Interface;
+using ESFA.DC.ILR2021.DataStore.EF.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Legacy.Constants;
@@ -18,11 +18,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 {
     public class FM36PeriodEndProviderService : AbstractFundModelProviderService, IFM36PeriodEndProviderService
     {
-        private readonly Func<IIlr1920RulebaseContext> _ilrRulebaseContextFactory;
+        private readonly Func<IIlr2021RulebaseContext> _ilrRulebaseContextFactory;
 
         public FM36PeriodEndProviderService(
             ILogger logger,
-            Func<IIlr1920RulebaseContext> ilrRulebaseContextFactory)
+            Func<IIlr2021RulebaseContext> ilrRulebaseContextFactory)
             : base(logger)
         {
             _ilrRulebaseContextFactory = ilrRulebaseContextFactory;

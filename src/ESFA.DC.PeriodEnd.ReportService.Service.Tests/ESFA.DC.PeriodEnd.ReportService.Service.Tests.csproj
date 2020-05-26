@@ -14,7 +14,7 @@
 
   <ItemGroup>
     <PackageReference Include="ESFA.DC.FileService.Interface" Version="0.1.20-beta0001" />
-    <PackageReference Include="ESFA.DC.ILR.1920.FundingService.FM36.FundingOutput.Model" Version="0.0.276" />
+    <PackageReference Include="ESFA.DC.ILR.2021.FundingService.FM36.FundingOutput.Model" Version="0.1.52" />
     <PackageReference Include="FluentAssertions" Version="5.7.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.InMemory" Version="2.2.6" />
     <PackageReference Include="Moq" Version="4.11.0" />

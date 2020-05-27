@@ -40,6 +40,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.DataPersi
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.DataPersist.Model", "ReportData1920\ESFA.DC.PeriodEnd.DataPersist.Model\ESFA.DC.PeriodEnd.DataPersist.Model.csproj", "{73371C35-3A6B-4003-8E16-15ECDD700130}"
 EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "ESFA.DC.PeriodEnd.ReportService.Reports", "ESFA.DC.PeriodEnd.ReportService.Reports\ESFA.DC.PeriodEnd.ReportService.Reports.csproj", "{D59A1833-02E3-4B26-AF8D-D023D67B21CF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -157,6 +159,14 @@ Global
 		{73371C35-3A6B-4003-8E16-15ECDD700130}.Release|Any CPU.Build.0 = Release|Any CPU
 		{73371C35-3A6B-4003-8E16-15ECDD700130}.Release|x64.ActiveCfg = Release|Any CPU
 		{73371C35-3A6B-4003-8E16-15ECDD700130}.Release|x64.Build.0 = Release|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Debug|x64.Build.0 = Debug|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Release|x64.ActiveCfg = Release|Any CPU
+		{D59A1833-02E3-4B26-AF8D-D023D67B21CF}.Release|x64.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

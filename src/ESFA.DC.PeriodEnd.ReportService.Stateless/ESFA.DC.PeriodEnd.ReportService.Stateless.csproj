@@ -481,6 +481,10 @@
       <Project>{8DE95CF2-E438-47E9-8522-0AB52A63DB84}</Project>
       <Name>ESFA.DC.PeriodEnd.ReportService.Legacy</Name>
     </ProjectReference>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Reports\ESFA.DC.PeriodEnd.ReportService.Reports.csproj">
+      <Project>{D59A1833-02E3-4B26-AF8D-D023D67B21CF}</Project>
+      <Name>ESFA.DC.PeriodEnd.ReportService.Reports</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
     <Analyzer Include="..\packages\StyleCop.Analyzers.1.1.118\analyzers\dotnet\cs\StyleCop.Analyzers.CodeFixes.dll" />

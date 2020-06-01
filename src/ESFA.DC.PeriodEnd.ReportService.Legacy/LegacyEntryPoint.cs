@@ -14,7 +14,7 @@ using ESFA.DC.PeriodEnd.ReportService.Legacy.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Legacy
 {
-    public sealed class EntryPoint
+    public sealed class LegacyEntryPoint
     {
         private readonly ILogger _logger;
 
@@ -23,7 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy
 
         private readonly IList<ILegacyReport> _reports;
 
-        public EntryPoint(
+        public LegacyEntryPoint(
             ILogger logger,
             IStreamableKeyValuePersistenceService streamableKeyValuePersistenceService,
             IReportServiceContext reportServiceContext,

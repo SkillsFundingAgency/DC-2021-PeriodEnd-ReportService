@@ -9,8 +9,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.Reports
     {
         string ReportTaskName { get; }
 
-        IEnumerable<Type> DependsOn { get; }
-
         Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

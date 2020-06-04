@@ -26,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 paymentTwo,
             };
 
-            NewBuilder().Build(payments, Enumerable.Empty<Learner>()).Should().HaveCount(1);
+            NewBuilder().Build(payments, Enumerable.Empty<Learner>(), Enumerable.Empty<ContractAllocation>()).Should().HaveCount(1);
         }
 
         [Fact]
@@ -130,6 +130,49 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 "ReportingAimFundingLineType", "PriceEpisodeIdentifier");
 
             NewBuilder().GetLearnerLearningDeliveryForRecord(learner, recordKey).Should().BeNull();
+        }
+
+        [Theory]
+        [InlineData("16-18 Apprenticeship (From May 2017) Levy Contract", "LEVY1799")]
+        [InlineData("16-18 Apprenticeship (Employer on App Service) Levy funding", "LEVY1799")]
+        [InlineData("19+ Apprenticeship (From May 2017) Levy Contract",	"LEVY1799")]
+        [InlineData("19+ Apprenticeship (Employer on App Service) Levy funding", "LEVY1799")]
+        [InlineData("16-18 Apprenticeship (From May 2017) Non-Levy Contract", "APPS2021")]
+        [InlineData("16-18 Apprenticeship (From May 2017) Non-Levy Contract (non-procured)", "APPS2021")]
+        [InlineData("16-18 Apprenticeship Non-Levy Contract (procured)", "16-18NLAP2018")]
+        [InlineData("16-18 Apprenticeship (Employer on App Service) Non-Levy funding", "NONLEVY2019")]
+        [InlineData("19+ Apprenticeship (From May 2017) Non-Levy Contract", "APPS2021")]
+        [InlineData("19+ Apprenticeship (From May 2017) Non-Levy Contract (non-procured)", "APPS2021")]
+        [InlineData("19+ Apprenticeship Non-Levy Contract (procured)", "ANLAP2018")]
+        [InlineData("19+ Apprenticeship (Employer on App Service) Non-Levy funding", "NONLEVY2019")]
+        [InlineData("NotAMatch", null)]
+        public void FundingStreamPeriodForReportingAimFundingLineType(string reportingAimFundingLineType, string fundingStreamPeriod)
+        {
+            NewBuilder().FundingStreamPeriodForReportingAimFundingLineType(reportingAimFundingLineType).Should().Be(fundingStreamPeriod);
+        }
+
+        [Fact]
+        public void BuildContractNumberLookup()
+        {
+            var contractAllocations = new List<ContractAllocation>()
+            {
+                new ContractAllocationBuilder().With(ca => ca.FundingStreamPeriod, "One").With(ca => ca.ContractAllocationNumber, "ABC").Build(),
+                new ContractAllocationBuilder().With(ca => ca.FundingStreamPeriod, "One").With(ca => ca.ContractAllocationNumber, "DEF").Build(),
+                new ContractAllocationBuilder().With(ca => ca.FundingStreamPeriod, "Two").With(ca => ca.ContractAllocationNumber, "GHI").Build(),
+            };
+
+            var contractNumberLookup = NewBuilder().BuildContractNumbersLookup(contractAllocations);
+
+            contractNumberLookup.Should().HaveCount(2);
+            contractNumberLookup["One"].Should().Be("ABC; DEF");
+
+            contractNumberLookup["Two"].Should().Be("GHI");
+        }
+
+        [Fact]
+        public void BuildContractNumberLookup_EmptySet()
+        {
+            NewBuilder().BuildContractNumbersLookup(Enumerable.Empty<ContractAllocation>()).Should().HaveCount(0);
         }
 
         private AppsMonthlyModelBuilder NewBuilder()

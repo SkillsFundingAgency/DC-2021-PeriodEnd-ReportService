@@ -38,6 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             var contractNumberLookup = BuildContractNumbersLookup(contractAllocations);
             var learnerLookup = BuildLearnerDictionary(learners);
             var earningsLookup = BuildEarningsLookup(earnings);
+            var larsLearningDeliveryLookup = BuildLarsLearningDeliveryTitleLookup(larsLearningDeliveries);
 
             return payments
                 .GroupBy(
@@ -65,6 +66,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
                     var providerSpecDeliveryMonitorings = BuildProviderSpecLearnMonitoringsForLearner(learner);
 
+                    var learningDeliveryTitle = larsLearningDeliveryLookup.GetValueOrDefault(k.Key.LearningAimReference);
+
                     return new AppsMonthlyRecord()
                     {
                         RecordKey = k.Key,
@@ -73,6 +76,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         ContractNumber = contractNumber,
                         Earning = earning,
                         ProviderSpecLearnMonitorings = providerSpecDeliveryMonitorings,
+                        LearningDeliveryTitle = learningDeliveryTitle
                     };
                 });
         }

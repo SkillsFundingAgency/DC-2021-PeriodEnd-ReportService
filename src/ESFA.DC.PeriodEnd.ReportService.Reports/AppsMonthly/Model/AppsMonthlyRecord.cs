@@ -1,7 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
+﻿using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 {
@@ -14,5 +11,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
         public LearningDelivery LearningDelivery { get; set; }
 
         public string ContractNumber { get; set; }
+
+        public Earning Earning { get; set; }
     }
 }

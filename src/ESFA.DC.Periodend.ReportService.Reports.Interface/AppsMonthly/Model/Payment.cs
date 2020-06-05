@@ -25,5 +25,11 @@ namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
         public string ReportingAimFundingLineType { get; set; }
 
         public string PriceEpisodeIdentifier { get; set; }
+
+        public Guid? EarningEventId { get; set; }
+
+        public byte CollectionPeriod { get; set; }
+
+        public byte DeliveryPeriod { get; set; }
     }
 }

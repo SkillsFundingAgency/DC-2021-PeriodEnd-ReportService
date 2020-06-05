@@ -28,7 +28,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             [ReportingAimFundingLineTypeConstants.ApprenticeshipEmployerOnAppServiceNonLevyFunding19Plus] = FundingStreamPeriodCodeConstants.NONLEVY2019,
         };
 
-        public IEnumerable<AppsMonthlyRecord> Build(ICollection<Payment> payments, ICollection<Learner> learners, ICollection<ContractAllocation> contractAllocations, ICollection<Earning> earnings)
+        public IEnumerable<AppsMonthlyRecord> Build(
+            ICollection<Payment> payments,
+            ICollection<Learner> learners,
+            ICollection<ContractAllocation> contractAllocations,
+            ICollection<Earning> earnings,
+            ICollection<LarsLearningDelivery> larsLearningDeliveries)
         {
             var contractNumberLookup = BuildContractNumbersLookup(contractAllocations);
             var learnerLookup = BuildLearnerDictionary(learners);
@@ -58,6 +63,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
                     var earning = GetEarningForRecord(k.Key, k, payments, earningsLookup);
 
+                    var providerSpecDeliveryMonitorings = BuildProviderSpecLearnMonitoringsForLearner(learner);
+
                     return new AppsMonthlyRecord()
                     {
                         RecordKey = k.Key,
@@ -65,6 +72,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         LearningDelivery = learningDelivery,
                         ContractNumber = contractNumber,
                         Earning = earning,
+                        ProviderSpecLearnMonitorings = providerSpecDeliveryMonitorings,
                     };
                 });
         }
@@ -83,9 +91,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                     && ld.LearnAimRef.CaseInsensitiveEquals(recordKey.LearningAimReference));
         }
 
-        public string FundingStreamPeriodForReportingAimFundingLineType(string reportingAimFundingLineType) => _fundingStreamPeriodLookup.GetValueOrDefault(reportingAimFundingLineType);
+        public string FundingStreamPeriodForReportingAimFundingLineType(string reportingAimFundingLineType) 
+            => _fundingStreamPeriodLookup.GetValueOrDefault(reportingAimFundingLineType);
 
-        public IDictionary<string, Learner> BuildLearnerDictionary(IEnumerable<Learner> learners) => learners.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
+        public IDictionary<string, Learner> BuildLearnerDictionary(IEnumerable<Learner> learners) 
+            => learners.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
 
         public IDictionary<string, string> BuildContractNumbersLookup(IEnumerable<ContractAllocation> contractAllocations)
         {
@@ -96,7 +106,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                     v => string.Join("; ", v.Select(ca => ca.ContractAllocationNumber).OrderBy(ca => ca)));
         }
 
-        public IDictionary<Guid, Earning> BuildEarningsLookup(IEnumerable<Earning> earnings) => earnings.ToDictionary(e => e.EventId, e => e);
+        public IDictionary<Guid, Earning> BuildEarningsLookup(IEnumerable<Earning> earnings) 
+            => earnings.ToDictionary(e => e.EventId, e => e);
+
+        public IDictionary<string, string> BuildLarsLearningDeliveryTitleLookup(IEnumerable<LarsLearningDelivery> larsLearningDeliveries) 
+            => larsLearningDeliveries.ToDictionary(ld => ld.LearnAimRef, ld => ld.LearnAimRefTitle, StringComparer.OrdinalIgnoreCase);
 
         public Payment GetLatestPaymentWithEarningEvent(IEnumerable<Payment> payments)
         {
@@ -124,10 +138,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 .FirstOrDefault();
         }
 
-        public Earning GetEarningForPayment(IDictionary<Guid, Earning> earningsLookup, Payment payment)
-        {
-            return payment?.EarningEventId != null ? earningsLookup.GetValueOrDefault(payment.EarningEventId.Value) : null;
-        }
+        public Earning GetEarningForPayment(IDictionary<Guid, Earning> earningsLookup, Payment payment) 
+            => payment?.EarningEventId != null ? earningsLookup.GetValueOrDefault(payment.EarningEventId.Value) : null;
 
         public Earning GetEarningForRecord(RecordKey recordKey, IEnumerable<Payment> paymentsInRow, IEnumerable<Payment> allPayments, IDictionary<Guid, Earning> earningsLookup)
         {
@@ -137,5 +149,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
             return GetEarningForPayment(earningsLookup, latestPaymentWithEarningEvent);
         }
+
+        public ProviderSpecLearnMonitorings BuildProviderSpecLearnMonitoringsForLearner(Learner learner)
+        {
+            if (learner?.ProviderSpecLearnMons != null)
+            {
+                return new ProviderSpecLearnMonitorings()
+                {
+                    A = GetProviderSpecLearnMonForOccur(learner.ProviderSpecLearnMons, ProviderSpecLearnMonitorings.OccurA),
+                    B = GetProviderSpecLearnMonForOccur(learner.ProviderSpecLearnMons, ProviderSpecLearnMonitorings.OccurB),
+                };
+            }
+
+            return null;
+        }
+
+        private string GetProviderSpecLearnMonForOccur(IEnumerable<ProviderSpecLearnMon> providerSpecLearnMons, string occur)
+            => providerSpecLearnMons.FirstOrDefault(m => m.ProvSpecLearnMonOccur.CaseInsensitiveEquals(occur))?.ProvSpecLearnMon;
     }
 }

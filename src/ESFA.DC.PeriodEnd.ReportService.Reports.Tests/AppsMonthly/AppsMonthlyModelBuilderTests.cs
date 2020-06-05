@@ -27,7 +27,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 paymentTwo,
             };
 
-            NewBuilder().Build(payments, Array.Empty<Learner>(), Array.Empty<ContractAllocation>(), Array.Empty<Earning>()).Should().HaveCount(1);
+            NewBuilder().Build(payments, Array.Empty<Learner>(), Array.Empty<ContractAllocation>(), Array.Empty<Earning>(), Array.Empty<LarsLearningDelivery>()).Should().HaveCount(1);
         }
 
         [Fact]
@@ -310,6 +310,60 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         }
 
         [Fact]
+        public void BuildProviderSpecLearnMonitoringsForLearner()
+        {
+            var providerSpecDelMonA = new ProviderSpecLearnMonBuilder().With(m => m.ProvSpecLearnMonOccur, "A").With(m => m.ProvSpecLearnMon, "MonA").Build();
+            var providerSpecDelMonB = new ProviderSpecLearnMonBuilder().With(m => m.ProvSpecLearnMonOccur, "B").With(m => m.ProvSpecLearnMon, "MonB").Build();
+
+            var providerSpecDelMons = new List<ProviderSpecLearnMon>()
+            {
+                providerSpecDelMonA,
+                providerSpecDelMonB,
+            };
+
+            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMons, providerSpecDelMons).Build();
+
+            var providerSpecDelLearnMonitorings = NewBuilder().BuildProviderSpecLearnMonitoringsForLearner(learner);
+
+            providerSpecDelLearnMonitorings.A.Should().Be("MonA");
+            providerSpecDelLearnMonitorings.B.Should().Be("MonB");
+        }
+
+        [Fact]
+        public void BuildProviderSpecLearnMonitoringsForLearner_NonMatching()
+        {
+            var providerSpecDelMonC = new ProviderSpecLearnMonBuilder().With(m => m.ProvSpecLearnMonOccur, "C").Build();
+            var providerSpecDelMonD = new ProviderSpecLearnMonBuilder().With(m => m.ProvSpecLearnMonOccur, "D").Build();
+
+            var providerSpecDelMons = new List<ProviderSpecLearnMon>()
+            {
+                providerSpecDelMonC,
+                providerSpecDelMonD,
+            };
+
+            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMons, providerSpecDelMons).Build();
+
+            var providerSpecDelLearnMonitorings = NewBuilder().BuildProviderSpecLearnMonitoringsForLearner(learner);
+
+            providerSpecDelLearnMonitorings.A.Should().BeNull();
+            providerSpecDelLearnMonitorings.B.Should().BeNull();
+        }
+
+        [Fact]
+        public void BuildProviderSpecLearnMonitoringsForLearner_NullLearner()
+        {
+            NewBuilder().BuildProviderSpecLearnMonitoringsForLearner(null).Should().BeNull();
+        }
+        
+        [Fact]
+        public void BuildProviderSpecLearnMonitoringsForLearner_NullProviderSpecDelMons()
+        {
+            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMons, null).Build();
+
+            NewBuilder().BuildProviderSpecLearnMonitoringsForLearner(learner).Should().BeNull();
+        }
+        
+        [Fact]
         public void BuildLearnerLookup()
         {
             var learnerOne = new LearnerBuilder().With(l => l.LearnRefNumber, "One").Build();
@@ -333,6 +387,39 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         public void BuildLearnerLookup_Empty()
         {
             NewBuilder().BuildLearnerDictionary(Enumerable.Empty<Learner>()).Should().BeEmpty();
+        }
+
+        [Fact]
+        public void BuildLarsLearningDeliveryTitleLookup()
+        {
+            var larsLearningDeliveryOne = new LarsLearningDeliveryBuilder()
+                .With(ld => ld.LearnAimRef, "LearnAimRef1")
+                .With(ld => ld.LearnAimRefTitle, "LearnAimRefTitle1")
+                .Build();
+
+            var larsLearningDeliveryTwo = new LarsLearningDeliveryBuilder()
+                .With(ld => ld.LearnAimRef, "LearnAimRef2")
+                .With(ld => ld.LearnAimRefTitle, "LearnAimRefTitle2")
+                .Build();
+
+            var larsLearningDeliveries = new List<LarsLearningDelivery>()
+            {
+                larsLearningDeliveryOne,
+                larsLearningDeliveryTwo,
+            };
+
+            var larsLearningDeliveryTitleLookup =  NewBuilder().BuildLarsLearningDeliveryTitleLookup(larsLearningDeliveries);
+
+            larsLearningDeliveryTitleLookup.Should().HaveCount(2);
+
+            larsLearningDeliveryTitleLookup["LearnAimRef1"].Should().Be("LearnAimRefTitle1");
+            larsLearningDeliveryTitleLookup["LearnAimRef2"].Should().Be("LearnAimRefTitle2");
+        }
+        
+        [Fact]
+        public void BuildLarsLearningDeliveryTitleLookup_Empty()
+        {
+            NewBuilder().BuildLarsLearningDeliveryTitleLookup(Enumerable.Empty<LarsLearningDelivery>()).Should().BeEmpty();
         }
 
         [Fact]

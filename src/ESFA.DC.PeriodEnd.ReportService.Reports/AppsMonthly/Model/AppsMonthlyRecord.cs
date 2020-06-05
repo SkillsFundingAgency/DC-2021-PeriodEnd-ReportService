@@ -13,5 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
         public string ContractNumber { get; set; }
 
         public Earning Earning { get; set; }
+
+        public ProviderSpecLearnMonitorings ProviderSpecLearnMonitorings { get; set; }
     }
 }

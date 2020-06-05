@@ -9,5 +9,7 @@ namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
         public string LearnRefNumber { get; set; }
 
         public List<LearningDelivery> LearningDeliveries { get; set; }
+
+        public List<ProviderSpecLearnMon> ProviderSpecLearnMons { get; set; }
     }
 }

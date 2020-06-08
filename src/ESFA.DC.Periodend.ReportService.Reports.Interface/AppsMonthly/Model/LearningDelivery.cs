@@ -23,5 +23,7 @@ namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
         // Data Fields
 
         public int AimSequenceNumber { get; set; }
+
+        public List<LearningDeliveryFam> LearningDeliveryFams { get; set; }
     }
 }

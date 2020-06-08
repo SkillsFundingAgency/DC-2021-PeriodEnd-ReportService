@@ -17,5 +17,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
         public ProviderSpecLearnMonitorings ProviderSpecLearnMonitorings { get; set; }
 
         public string LearningDeliveryTitle { get; set; }
+
+        public LearningDeliveryFams LearningDeliveryFams { get; set; }
     }
 }

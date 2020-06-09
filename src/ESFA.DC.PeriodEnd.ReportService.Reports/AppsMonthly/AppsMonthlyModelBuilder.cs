@@ -84,6 +84,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         ProviderSpecLearnMonitorings = providerSpecLearnMonitorings,
                         LearningDeliveryTitle = learningDeliveryTitle,
                         LearningDeliveryFams = learningDeliveryFams,
+                        PriceEpisode = priceEpisode,
                     };
                 });
         }

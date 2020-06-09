@@ -686,6 +686,152 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(new LearningDeliveryBuilder().With(ld => ld.LearningDeliveryFams, null).Build()).Should().BeNull();
         }
 
+        [Fact]
+        public void GetPriceEpisodeStartDateForRecord()
+        {
+            var priceEpisodeIdentifier = "SomeStuff-31/12/2019";
+
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+
+            NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().Be(new DateTime(2019, 12,31));
+        }
+
+        [Fact]
+        public void GetPriceEpisodeStartDateForRecord_NullPriceEpisodeIdentifier()
+        {
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, null);
+
+            NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetPriceEpisodeStartDateForRecord_ZPROG001()
+        {
+            var priceEpisodeIdentifier = "ThisIsNotADate";
+
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+
+            NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetPriceEpisodeStartDateForRecord_Length()
+        {
+            var priceEpisodeIdentifier = "TooShort";
+
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+
+            NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetPriceEpisodeStartDateForRecord_InvalidDate()
+        {
+            var priceEpisodeIdentifier = "ThisIsNotADate";
+
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+
+            NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus()
+        {
+            var learnerEmploymentStatusEarliest = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 6, 1)).Build();
+            var learnerEmploymentStatusAfter = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 10, 1)).Build();
+            var learnerEmploymentStatusLatest = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 7, 1)).Build();
+
+            var learner = new LearnerBuilder()
+                .With(
+                    l => l.LearnerEmploymentStatuses,
+                    new List<LearnerEmploymentStatus>()
+                    {
+                        learnerEmploymentStatusEarliest,
+                        learnerEmploymentStatusAfter,
+                        learnerEmploymentStatusLatest,
+                    })
+                .Build();
+
+            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.LearnStartDate, new DateTime(2020, 8, 1)).Build();
+
+            NewBuilder().GetLearnerEmploymentStatus(learner, learningDelivery).Should().BeSameAs(learnerEmploymentStatusLatest);
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus_NullLearner()
+        {
+            NewBuilder().GetLearnerEmploymentStatus(null, new LearningDeliveryBuilder().Build()).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus_NullLearnEmploymentStatus()
+        {
+            var learner = new LearnerBuilder()
+                .With(l => l.LearnerEmploymentStatuses, null)
+                .Build();
+
+            NewBuilder().GetLearnerEmploymentStatus(learner, new LearningDeliveryBuilder().Build()).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus_NullLearnerDelivery()
+        {
+            NewBuilder().GetLearnerEmploymentStatus(new LearnerBuilder().Build(), null).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus_EmptySet()
+        {
+            var learner = new LearnerBuilder()
+                .With(l => l.LearnerEmploymentStatuses, new List<LearnerEmploymentStatus>())
+                .Build();
+
+            NewBuilder().GetLearnerEmploymentStatus(learner, null).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus_NoneBeforeLearnStartDate()
+        {
+            var learnerEmploymentStatusOne = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 9, 1)).Build();
+            var learnerEmploymentStatusTwo = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 10, 1)).Build();
+
+
+            var learner = new LearnerBuilder()
+                .With(
+                    l => l.LearnerEmploymentStatuses,
+                    new List<LearnerEmploymentStatus>()
+                    {
+                        learnerEmploymentStatusOne,
+                        learnerEmploymentStatusTwo,
+                    })
+                .Build();
+
+            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.LearnStartDate, new DateTime(2020, 8, 1)).Build();
+
+            NewBuilder().GetLearnerEmploymentStatus(learner, learningDelivery).Should().BeNull();
+        }
+
+        [Fact]
+        public void GetLearnerEmploymentStatus_MultipleBeforeLearnStartDate()
+        {
+            var learnerEmploymentStatusOne = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 6, 1)).Build();
+            var learnerEmploymentStatusTwo = new LearnerEmploymentStatusBuilder().With(s => s.DateEmpStatApp, new DateTime(2020, 7, 1)).Build();
+            
+            var learner = new LearnerBuilder()
+                .With(
+                    l => l.LearnerEmploymentStatuses,
+                    new List<LearnerEmploymentStatus>()
+                    {
+                        learnerEmploymentStatusOne,
+                        learnerEmploymentStatusTwo,
+                    })
+                .Build();
+
+            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.LearnStartDate, new DateTime(2020, 8, 1)).Build();
+
+            NewBuilder().GetLearnerEmploymentStatus(learner, learningDelivery).Should().BeSameAs(learnerEmploymentStatusTwo);
+        }
+
         private AppsMonthlyModelBuilder NewBuilder()
         {
             return new AppsMonthlyModelBuilder();

@@ -11,5 +11,7 @@ namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
         public List<LearningDelivery> LearningDeliveries { get; set; }
 
         public List<ProviderMonitoring> ProviderSpecLearnMonitorings { get; set; }
+
+        public List<LearnerEmploymentStatus> LearnerEmploymentStatuses { get; set; }
     }
 }

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Globalization;
 using System.Linq;
 using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
@@ -74,6 +75,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
                     var priceEpisode = priceEpisodesLookup.GetValueOrDefault(k.Key.PriceEpisodeIdentifier);
 
+                    var priceEpisodeStartDate = GetPriceEpisodeStartDateForRecord(k.Key);
+
+                    var learnerEmploymentStatus = GetLearnerEmploymentStatus(learner, learningDelivery);
+
                     return new AppsMonthlyRecord()
                     {
                         RecordKey = k.Key,
@@ -85,6 +90,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         LearningDeliveryTitle = learningDeliveryTitle,
                         LearningDeliveryFams = learningDeliveryFams,
                         PriceEpisode = priceEpisode,
+                        PriceEpisodeStartDate = priceEpisodeStartDate,
+                        LearnerEmploymentStatus = learnerEmploymentStatus,
                     };
                 });
         }
@@ -165,6 +172,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             return GetEarningForPayment(earningsLookup, latestPaymentWithEarningEvent);
         }
 
+        public DateTime? GetPriceEpisodeStartDateForRecord(RecordKey record)
+        {
+            if (record.PriceEpisodeIdentifier == null || record.PriceEpisodeIdentifier.Length < 10 || record.LearningAimReference != LearnAimRefConstants.ZPROG001)
+            {
+                return null;
+            }
+
+            var dateSegment = record.PriceEpisodeIdentifier.Substring(record.PriceEpisodeIdentifier.Length - 10, 10);
+
+            if (DateTime.TryParseExact(dateSegment, "dd/MM/yyyy", null, DateTimeStyles.None, out DateTime result))
+            {
+                return result;
+            }
+
+            return null;
+        }
+
         public ProviderMonitorings BuildProviderMonitorings(Learner learner, LearningDelivery learningDelivery)
         {
             if (learner?.ProviderSpecLearnMonitorings == null && learningDelivery?.ProviderSpecDeliveryMonitorings == null)
@@ -210,6 +234,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             }
 
             return null;
+        }
+
+        public LearnerEmploymentStatus GetLearnerEmploymentStatus(Learner learner, LearningDelivery learningDelivery)
+        {
+            if (learner?.LearnerEmploymentStatuses == null || learningDelivery == null)
+            {
+                return null;
+            }
+
+            return learner
+                .LearnerEmploymentStatuses
+                .Where(les => les.DateEmpStatApp <= learningDelivery.LearnStartDate)
+                .OrderByDescending(les => les.DateEmpStatApp)
+                .FirstOrDefault();
         }
 
         private string[] GetLearnDelFamCodesOfType(IEnumerable<LearningDeliveryFam> learningDeliveryFams, string type, int count)

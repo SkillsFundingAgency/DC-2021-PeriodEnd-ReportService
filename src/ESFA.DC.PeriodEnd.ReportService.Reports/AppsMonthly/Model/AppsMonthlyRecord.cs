@@ -1,4 +1,5 @@
-﻿using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
+﻿using System;
+using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 {
@@ -21,5 +22,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
         public LearningDeliveryFams LearningDeliveryFams { get; set; }
 
         public AecApprenticeshipPriceEpisode PriceEpisode { get; set; }
+
+        public DateTime? PriceEpisodeStartDate { get; set; }
+
+        public LearnerEmploymentStatus LearnerEmploymentStatus { get; set; }
     }
 }

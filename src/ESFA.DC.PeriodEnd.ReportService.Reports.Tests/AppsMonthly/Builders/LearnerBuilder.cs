@@ -20,6 +20,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders
                 {
                     new ProviderMonitoringBuilder().With(m => m.Occur, "A").Build(),
                     new ProviderMonitoringBuilder().With(m => m.Occur, "B").Build(),
+                },
+                LearnerEmploymentStatuses = new List<LearnerEmploymentStatus>()
+                {
+                    new LearnerEmploymentStatusBuilder().Build()
                 }
             };
         }

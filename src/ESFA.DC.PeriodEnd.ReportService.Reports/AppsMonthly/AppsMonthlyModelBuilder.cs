@@ -33,12 +33,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             ICollection<Learner> learners,
             ICollection<ContractAllocation> contractAllocations,
             ICollection<Earning> earnings,
-            ICollection<LarsLearningDelivery> larsLearningDeliveries)
+            ICollection<LarsLearningDelivery> larsLearningDeliveries,
+            ICollection<AecApprenticeshipPriceEpisode> priceEpisodes)
         {
             var contractNumberLookup = BuildContractNumbersLookup(contractAllocations);
-            var learnerLookup = BuildLearnerDictionary(learners);
+            var learnerLookup = BuildLearnerLookup(learners);
             var earningsLookup = BuildEarningsLookup(earnings);
             var larsLearningDeliveryLookup = BuildLarsLearningDeliveryTitleLookup(larsLearningDeliveries);
+            var priceEpisodesLookup = BuildPriceEpisodesLookup(priceEpisodes);
 
             return payments
                 .GroupBy(
@@ -64,11 +66,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
                     var earning = GetEarningForRecord(k.Key, k, payments, earningsLookup);
 
-                    var providerSpecLearnMonitorings = BuildProviderSpecLearnMonitoringsForLearner(learner);
+                    var providerSpecLearnMonitorings = BuildProviderMonitorings(learner, learningDelivery);
 
                     var learningDeliveryTitle = larsLearningDeliveryLookup.GetValueOrDefault(k.Key.LearningAimReference);
 
                     var learningDeliveryFams = BuildLearningDeliveryFamsForLearningDelivery(learningDelivery);
+
+                    var priceEpisode = priceEpisodesLookup.GetValueOrDefault(k.Key.PriceEpisodeIdentifier);
 
                     return new AppsMonthlyRecord()
                     {
@@ -101,7 +105,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         public string FundingStreamPeriodForReportingAimFundingLineType(string reportingAimFundingLineType) 
             => _fundingStreamPeriodLookup.GetValueOrDefault(reportingAimFundingLineType);
 
-        public IDictionary<string, Learner> BuildLearnerDictionary(IEnumerable<Learner> learners) 
+        public IDictionary<string, Learner> BuildLearnerLookup(IEnumerable<Learner> learners) 
             => learners.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
 
         public IDictionary<string, string> BuildContractNumbersLookup(IEnumerable<ContractAllocation> contractAllocations)
@@ -118,6 +122,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
         public IDictionary<string, string> BuildLarsLearningDeliveryTitleLookup(IEnumerable<LarsLearningDelivery> larsLearningDeliveries) 
             => larsLearningDeliveries.ToDictionary(ld => ld.LearnAimRef, ld => ld.LearnAimRefTitle, StringComparer.OrdinalIgnoreCase);
+
+        public IDictionary<string, AecApprenticeshipPriceEpisode> BuildPriceEpisodesLookup(IEnumerable<AecApprenticeshipPriceEpisode> priceEpisodes)
+            => priceEpisodes.ToDictionary(e => e.PriceEpisodeIdentifier, e => e, StringComparer.OrdinalIgnoreCase); 
 
         public Payment GetLatestPaymentWithEarningEvent(IEnumerable<Payment> payments)
         {
@@ -157,18 +164,31 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             return GetEarningForPayment(earningsLookup, latestPaymentWithEarningEvent);
         }
 
-        public ProviderSpecLearnMonitorings BuildProviderSpecLearnMonitoringsForLearner(Learner learner)
+        public ProviderMonitorings BuildProviderMonitorings(Learner learner, LearningDelivery learningDelivery)
         {
-            if (learner?.ProviderSpecLearnMons != null)
+            if (learner?.ProviderSpecLearnMonitorings == null && learningDelivery?.ProviderSpecDeliveryMonitorings == null)
             {
-                return new ProviderSpecLearnMonitorings()
-                {
-                    A = GetProviderSpecLearnMonForOccur(learner.ProviderSpecLearnMons, ProviderSpecLearnMonitorings.OccurA),
-                    B = GetProviderSpecLearnMonForOccur(learner.ProviderSpecLearnMons, ProviderSpecLearnMonitorings.OccurB),
-                };
+                return null;
             }
 
-            return null;
+            var providerMonitorings = new ProviderMonitorings();
+
+            if (learner?.ProviderSpecLearnMonitorings != null)
+            {
+                providerMonitorings.LearnerA = GetProviderMonForOccur(learner.ProviderSpecLearnMonitorings, ProviderMonitorings.OccurA);
+                providerMonitorings.LearnerB = GetProviderMonForOccur(learner.ProviderSpecLearnMonitorings, ProviderMonitorings.OccurB);
+            }
+
+            if (learningDelivery?.ProviderSpecDeliveryMonitorings != null)
+            {
+                providerMonitorings.LearningDeliveryA = GetProviderMonForOccur(learningDelivery.ProviderSpecDeliveryMonitorings, ProviderMonitorings.OccurA);
+                providerMonitorings.LearningDeliveryB = GetProviderMonForOccur(learningDelivery.ProviderSpecDeliveryMonitorings, ProviderMonitorings.OccurB);
+                providerMonitorings.LearningDeliveryC = GetProviderMonForOccur(learningDelivery.ProviderSpecDeliveryMonitorings, ProviderMonitorings.OccurC);
+                providerMonitorings.LearningDeliveryD = GetProviderMonForOccur(learningDelivery.ProviderSpecDeliveryMonitorings, ProviderMonitorings.OccurD);
+            }
+
+            return providerMonitorings;
+
         }
 
         public LearningDeliveryFams BuildLearningDeliveryFamsForLearningDelivery(LearningDelivery learningDelivery)
@@ -199,7 +219,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 .ToFixedLengthArray(count);
         }
 
-        private string GetProviderSpecLearnMonForOccur(IEnumerable<ProviderSpecLearnMon> providerSpecLearnMons, string occur)
-            => providerSpecLearnMons.FirstOrDefault(m => m.ProvSpecLearnMonOccur.CaseInsensitiveEquals(occur))?.ProvSpecLearnMon;
+        private string GetProviderMonForOccur(IEnumerable<ProviderMonitoring> providerSpecLearnMons, string occur)
+            => providerSpecLearnMons?.FirstOrDefault(m => m.Occur.CaseInsensitiveEquals(occur))?.Mon;
     }
 }

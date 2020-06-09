@@ -14,10 +14,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 
         public Earning Earning { get; set; }
 
-        public ProviderSpecLearnMonitorings ProviderSpecLearnMonitorings { get; set; }
+        public ProviderMonitorings ProviderSpecLearnMonitorings { get; set; }
 
         public string LearningDeliveryTitle { get; set; }
 
         public LearningDeliveryFams LearningDeliveryFams { get; set; }
+
+        public AecApprenticeshipPriceEpisode PriceEpisode { get; set; }
     }
 }

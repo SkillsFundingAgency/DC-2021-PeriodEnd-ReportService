@@ -10,6 +10,6 @@ namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
 
         public List<LearningDelivery> LearningDeliveries { get; set; }
 
-        public List<ProviderSpecLearnMon> ProviderSpecLearnMons { get; set; }
+        public List<ProviderMonitoring> ProviderSpecLearnMonitorings { get; set; }
     }
 }

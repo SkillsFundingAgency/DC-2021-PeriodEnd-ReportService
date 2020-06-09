@@ -16,10 +16,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders
                 {
                     new LearningDeliveryBuilder().Build()
                 },
-                ProviderSpecLearnMons = new List<ProviderSpecLearnMon>()
+                ProviderSpecLearnMonitorings = new List<ProviderMonitoring>()
                 {
-                    new ProviderSpecLearnMonBuilder().With(m => m.ProvSpecLearnMonOccur, "A").Build(),
-                    new ProviderSpecLearnMonBuilder().With(m => m.ProvSpecLearnMonOccur, "B").Build(),
+                    new ProviderMonitoringBuilder().With(m => m.Occur, "A").Build(),
+                    new ProviderMonitoringBuilder().With(m => m.Occur, "B").Build(),
                 }
             };
         }

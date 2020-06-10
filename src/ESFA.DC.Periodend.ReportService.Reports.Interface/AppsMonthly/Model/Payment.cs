@@ -31,5 +31,11 @@ namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
         public byte CollectionPeriod { get; set; }
 
         public byte DeliveryPeriod { get; set; }
+
+        public decimal Amount { get; set; }
+
+        public byte TransactionType { get; set; }
+
+        public byte FundingSource { get; set; }
     }
 }

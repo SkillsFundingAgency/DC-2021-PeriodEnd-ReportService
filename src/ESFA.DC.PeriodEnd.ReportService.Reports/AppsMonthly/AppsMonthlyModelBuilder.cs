@@ -249,7 +249,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 .OrderByDescending(les => les.DateEmpStatApp)
                 .FirstOrDefault();
         }
-
+        
         private string[] GetLearnDelFamCodesOfType(IEnumerable<LearningDeliveryFam> learningDeliveryFams, string type, int count)
         {
             return learningDeliveryFams

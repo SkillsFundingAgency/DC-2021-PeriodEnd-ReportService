@@ -9,6 +9,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 
         public Learner Learner { get; set; }
 
+        public string FamilyName { get; set; }
+
+        public string GivenNames { get; set; }
+
         public LearningDelivery LearningDelivery { get; set; }
 
         public string ContractNumber { get; set; }
@@ -26,5 +30,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
         public DateTime? PriceEpisodeStartDate { get; set; }
 
         public LearnerEmploymentStatus LearnerEmploymentStatus { get; set; }
+
+        public PaymentPeriods PaymentPeriods { get; set; }
     }
 }

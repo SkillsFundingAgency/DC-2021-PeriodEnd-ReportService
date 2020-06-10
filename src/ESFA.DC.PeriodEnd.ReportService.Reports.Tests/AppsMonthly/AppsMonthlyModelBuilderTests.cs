@@ -4,12 +4,15 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders;
 using FluentAssertions;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Xunit;
 using Payment = ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model.Payment;
 using ProviderMonitoring = ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model.ProviderMonitoring;
+using Moq;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
 {
@@ -320,150 +323,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         }
 
         [Fact]
-        public void BuildProviderMonitorings()
-        {
-            var providerLearnerMonA = new ProviderMonitoringBuilder().With(m => m.Occur, "A").With(m => m.Mon, "MonA").Build();
-            var providerLearnerMonB = new ProviderMonitoringBuilder().With(m => m.Occur, "B").With(m => m.Mon, "MonB").Build();
-
-            var providerLearnerMonitorings = new List<ProviderMonitoring>()
-            {
-                providerLearnerMonA,
-                providerLearnerMonB,
-            };
-
-            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMonitorings, providerLearnerMonitorings).Build();
-
-            var providerLearnDelMonA = new ProviderMonitoringBuilder().With(m => m.Occur, "A").With(m => m.Mon, "DelMonA").Build();
-            var providerLearnDelMonB = new ProviderMonitoringBuilder().With(m => m.Occur, "B").With(m => m.Mon, "DelMonB").Build();
-            var providerLearnDelMonC = new ProviderMonitoringBuilder().With(m => m.Occur, "C").With(m => m.Mon, "DelMonC").Build();
-            var providerLearnDelMonD = new ProviderMonitoringBuilder().With(m => m.Occur, "D").With(m => m.Mon, "DelMonD").Build();
-
-            var providerLearnDelMonitorings = new List<ProviderMonitoring>()
-            {
-                providerLearnDelMonA,
-                providerLearnDelMonB,
-                providerLearnDelMonC,
-                providerLearnDelMonD,
-            };
-
-            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.ProviderSpecDeliveryMonitorings, providerLearnDelMonitorings).Build();
-
-            var providerMonitorings = NewBuilder().BuildProviderMonitorings(learner, learningDelivery);
-
-            providerMonitorings.LearnerA.Should().Be("MonA");
-            providerMonitorings.LearnerB.Should().Be("MonB");
-
-            providerMonitorings.LearningDeliveryA.Should().Be("DelMonA");
-            providerMonitorings.LearningDeliveryB.Should().Be("DelMonB");
-            providerMonitorings.LearningDeliveryC.Should().Be("DelMonC");
-            providerMonitorings.LearningDeliveryD.Should().Be("DelMonD");
-        }
-
-        [Fact]
-        public void BuildProviderSpecLearnMonitoringsForLearner_NonMatching()
-        {
-            var providerLearnerMonC = new ProviderMonitoringBuilder().With(m => m.Occur, "C").Build();
-            var providerLearnerMonD = new ProviderMonitoringBuilder().With(m => m.Occur, "D").Build();
-
-            var providerLearnerMons = new List<ProviderMonitoring>()
-            {
-                providerLearnerMonC,
-                providerLearnerMonD,
-            };
-
-            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMonitorings, providerLearnerMons).Build();
-
-            var providerLearnDelMonE = new ProviderMonitoringBuilder().With(m => m.Occur, "E").With(m => m.Mon, "DelMonE").Build();
-            var providerLearnDelMonF = new ProviderMonitoringBuilder().With(m => m.Occur, "F").With(m => m.Mon, "DelMonF").Build();
-            var providerLearnDelMonG = new ProviderMonitoringBuilder().With(m => m.Occur, "G").With(m => m.Mon, "DelMonG").Build();
-            var providerLearnDelMonH = new ProviderMonitoringBuilder().With(m => m.Occur, "H").With(m => m.Mon, "DelMonH").Build();
-
-            var providerLearnDelMonitorings = new List<ProviderMonitoring>()
-            {
-                providerLearnDelMonE,
-                providerLearnDelMonF,
-                providerLearnDelMonG,
-                providerLearnDelMonH,
-            };
-
-            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.ProviderSpecDeliveryMonitorings, providerLearnDelMonitorings).Build();
-
-            var providerMonitorings = NewBuilder().BuildProviderMonitorings(learner, learningDelivery);
-
-            providerMonitorings.LearnerA.Should().BeNull();
-            providerMonitorings.LearnerB.Should().BeNull();
-
-            providerMonitorings.LearningDeliveryA.Should().BeNull();
-            providerMonitorings.LearningDeliveryB.Should().BeNull();
-            providerMonitorings.LearningDeliveryC.Should().BeNull();
-            providerMonitorings.LearningDeliveryD.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildProviderSpecLearnMonitoringsForLearner_NullLearner()
-        {
-            var providerLearnDelMonA = new ProviderMonitoringBuilder().With(m => m.Occur, "A").With(m => m.Mon, "DelMonA").Build();
-            var providerLearnDelMonB = new ProviderMonitoringBuilder().With(m => m.Occur, "B").With(m => m.Mon, "DelMonB").Build();
-            var providerLearnDelMonC = new ProviderMonitoringBuilder().With(m => m.Occur, "C").With(m => m.Mon, "DelMonC").Build();
-            var providerLearnDelMonD = new ProviderMonitoringBuilder().With(m => m.Occur, "D").With(m => m.Mon, "DelMonD").Build();
-
-            var providerLearnDelMonitorings = new List<ProviderMonitoring>()
-            {
-                providerLearnDelMonA,
-                providerLearnDelMonB,
-                providerLearnDelMonC,
-                providerLearnDelMonD,
-            };
-
-            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.ProviderSpecDeliveryMonitorings, providerLearnDelMonitorings).Build();
-
-            var providerMonitorings = NewBuilder().BuildProviderMonitorings(null, learningDelivery);
-
-            providerMonitorings.LearnerA.Should().BeNull();
-            providerMonitorings.LearnerB.Should().BeNull();
-
-            providerMonitorings.LearningDeliveryA.Should().Be("DelMonA");
-            providerMonitorings.LearningDeliveryB.Should().Be("DelMonB");
-            providerMonitorings.LearningDeliveryC.Should().Be("DelMonC");
-            providerMonitorings.LearningDeliveryD.Should().Be("DelMonD");
-        }
-
-        [Fact]
-        public void BuildProviderSpecLearnMonitoringsForLearner_NullLearningDelivery()
-        {
-            var providerLearnerMonA = new ProviderMonitoringBuilder().With(m => m.Occur, "A").With(m => m.Mon, "MonA").Build();
-            var providerLearnerMonB = new ProviderMonitoringBuilder().With(m => m.Occur, "B").With(m => m.Mon, "MonB").Build();
-
-            var providerLearnerMonitorings = new List<ProviderMonitoring>()
-            {
-                providerLearnerMonA,
-                providerLearnerMonB,
-            };
-
-            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMonitorings, providerLearnerMonitorings).Build();
-
-            var providerMonitorings = NewBuilder().BuildProviderMonitorings(learner, null);
-
-            providerMonitorings.LearnerA.Should().Be("MonA");
-            providerMonitorings.LearnerB.Should().Be("MonB");
-
-            providerMonitorings.LearningDeliveryA.Should().BeNull();
-            providerMonitorings.LearningDeliveryB.Should().BeNull();
-            providerMonitorings.LearningDeliveryC.Should().BeNull();
-            providerMonitorings.LearningDeliveryD.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildProviderSpecLearnMonitoringsForLearner_NullProviderMons()
-        {
-            var learner = new LearnerBuilder().With(l => l.ProviderSpecLearnMonitorings, null).Build();
-
-            var learningDelivery = new LearningDeliveryBuilder().With(ld => ld.ProviderSpecDeliveryMonitorings, null).Build();
-
-            NewBuilder().BuildProviderMonitorings(learner, learningDelivery).Should().BeNull();
-        }
-        
-        [Fact]
         public void BuildLearnerLookup()
         {
             var learnerOne = new LearnerBuilder().With(l => l.LearnRefNumber, "One").Build();
@@ -573,119 +432,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         {
             NewBuilder().BuildEarningsLookup(Enumerable.Empty<Earning>()).Should().BeEmpty();
         }
-
-        [Fact]
-        public void BuildLearningDeliveryFamsForLearningDelivery_Empty()
-        {
-            var learningDelivery = new LearningDeliveryBuilder()
-                .With(ld => ld.LearningDeliveryFams, new List<LearningDeliveryFam>())
-                .Build();
-
-            var learningDeliveryFams = NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(learningDelivery);
-
-            learningDeliveryFams.LDM1.Should().BeNull();
-            learningDeliveryFams.LDM2.Should().BeNull();
-            learningDeliveryFams.LDM3.Should().BeNull();
-            learningDeliveryFams.LDM4.Should().BeNull();
-            learningDeliveryFams.LDM5.Should().BeNull();
-            learningDeliveryFams.LDM6.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildLearningDeliveryFamsForLearningDelivery_One()
-        {
-            var ldm = "LDM";
-
-            var learningDelivery = new LearningDeliveryBuilder()
-                .With(
-                    ld => ld.LearningDeliveryFams,
-                    new List<LearningDeliveryFam>()
-                    {
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "1").Build(),
-                    })
-                .Build();
-
-            var learningDeliveryFams = NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(learningDelivery);
-
-            learningDeliveryFams.LDM1.Should().Be("1");
-            learningDeliveryFams.LDM2.Should().BeNull();
-            learningDeliveryFams.LDM3.Should().BeNull();
-            learningDeliveryFams.LDM4.Should().BeNull();
-            learningDeliveryFams.LDM5.Should().BeNull();
-            learningDeliveryFams.LDM6.Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildLearningDeliveryFamsForLearningDelivery_Six()
-        {
-            var ldm = "LDM";
-
-            var learningDelivery = new LearningDeliveryBuilder()
-                .With(
-                    ld => ld.LearningDeliveryFams,
-                    new List<LearningDeliveryFam>()
-                    {
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "1").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "2").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "3").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "4").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "5").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "6").Build(),
-                    })
-                .Build();
-
-            var learningDeliveryFams = NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(learningDelivery);
-
-            learningDeliveryFams.LDM1.Should().Be("1");
-            learningDeliveryFams.LDM2.Should().Be("2");
-            learningDeliveryFams.LDM3.Should().Be("3");
-            learningDeliveryFams.LDM4.Should().Be("4");
-            learningDeliveryFams.LDM5.Should().Be("5");
-            learningDeliveryFams.LDM6.Should().Be("6");
-        }
-
-        [Fact]
-        public void BuildLearningDeliveryFamsForLearningDelivery_Seven()
-        {
-            var ldm = "LDM";
-
-            var learningDelivery = new LearningDeliveryBuilder()
-                .With(
-                    ld => ld.LearningDeliveryFams,
-                    new List<LearningDeliveryFam>()
-                    {
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "1").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "2").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "3").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "4").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "5").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "6").Build(),
-                        new LearningDeliveryFamBuilder().With(f => f.Type, ldm).With(f => f.Code, "7").Build(),
-                    })
-                .Build();
-
-            var learningDeliveryFams = NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(learningDelivery);
-
-            learningDeliveryFams.LDM1.Should().Be("1");
-            learningDeliveryFams.LDM2.Should().Be("2");
-            learningDeliveryFams.LDM3.Should().Be("3");
-            learningDeliveryFams.LDM4.Should().Be("4");
-            learningDeliveryFams.LDM5.Should().Be("5");
-            learningDeliveryFams.LDM6.Should().Be("6");
-        }
-
-        [Fact]
-        public void BuildLearningDeliveryFamsForLearningDelivery_NullLearningDelivery()
-        {
-            NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(null).Should().BeNull();
-        }
-
-        [Fact]
-        public void BuildLearningDeliveryFamsForLearningDelivery_NullLearningDeliveryFams()
-        {
-            NewBuilder().BuildLearningDeliveryFamsForLearningDelivery(new LearningDeliveryBuilder().With(ld => ld.LearningDeliveryFams, null).Build()).Should().BeNull();
-        }
-
+        
         [Fact]
         public void GetPriceEpisodeStartDateForRecord()
         {
@@ -832,9 +579,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             NewBuilder().GetLearnerEmploymentStatus(learner, learningDelivery).Should().BeSameAs(learnerEmploymentStatusTwo);
         }
 
-        private AppsMonthlyModelBuilder NewBuilder()
+        private AppsMonthlyModelBuilder NewBuilder(
+            IPaymentPeriodsBuilder paymentPeriodsBuilder = null,
+            ILearningDeliveryFamsBuilder learningDeliveryFamsBuilder = null,
+            IProviderMonitoringsBuilder providerMonitoringsBuilder = null)
         {
-            return new AppsMonthlyModelBuilder();
+            return new AppsMonthlyModelBuilder(
+                paymentPeriodsBuilder ?? Mock.Of<IPaymentPeriodsBuilder>(),
+                learningDeliveryFamsBuilder ?? Mock.Of<ILearningDeliveryFamsBuilder>(),
+                providerMonitoringsBuilder ?? Mock.Of<IProviderMonitoringsBuilder>());
         }
     }
 }

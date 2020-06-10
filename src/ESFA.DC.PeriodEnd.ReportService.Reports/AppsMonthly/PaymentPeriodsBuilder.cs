@@ -12,17 +12,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
     {
         private const int PeriodsCount = 14;
 
-        private static HashSet<byte> FundingSourceLevyPayments { get; } = new HashSet<byte>() { 1, 5 };
-        private static HashSet<byte> FundingSourceCoInvestmentPayments { get; } = new HashSet<byte>() { 2 };
-        private static HashSet<byte> FundingSourceCoInvestmentDueFromEmployer { get; } = new HashSet<byte>() { 3 };
-        private static HashSet<byte> TransactionTypesLevyPayments { get; } = new HashSet<byte>() { 1, 2, 3 };
-        private static HashSet<byte> TransactionTypesCoInvestmentPayments { get; } = new HashSet<byte>() { 1, 2, 3 };
-        private static HashSet<byte> TransactionTypesCoInvestmentDueFromEmployer { get; } = new HashSet<byte>() { 1, 2, 3 };
-        private static HashSet<byte> TransactionTypesEmployerAdditionalPayments { get; } = new HashSet<byte>() { 4, 6 };
-        private static HashSet<byte> TransactionTypesProviderAdditionalPayments { get; } = new HashSet<byte>() { 5, 7 };
-        private static HashSet<byte> TransactionTypesApprenticeshipAdditionalPayments { get; } = new HashSet<byte>() { 16 };
-        private static HashSet<byte> TransactionTypesEnglishAndMathsPayments { get; } = new HashSet<byte>() { 13, 14 };
-        private static HashSet<byte> TransactionTypesLearningSupportPayments { get; } = new HashSet<byte>() { 8, 9, 10, 11, 12, 15 };
+        private static IEnumerable<byte> FundingSourceLevyPayments { get; } = new HashSet<byte>() { 1, 5 };
+        private static IEnumerable<byte> FundingSourceCoInvestmentPayments { get; } = new HashSet<byte>() { 2 };
+        private static IEnumerable<byte> FundingSourceCoInvestmentDueFromEmployer { get; } = new HashSet<byte>() { 3 };
+        private static IEnumerable<byte> TransactionTypesLevyPayments { get; } = new HashSet<byte>() { 1, 2, 3 };
+        private static IEnumerable<byte> TransactionTypesCoInvestmentPayments { get; } = new HashSet<byte>() { 1, 2, 3 };
+        private static IEnumerable<byte> TransactionTypesCoInvestmentDueFromEmployer { get; } = new HashSet<byte>() { 1, 2, 3 };
+        private static IEnumerable<byte> TransactionTypesEmployerAdditionalPayments { get; } = new HashSet<byte>() { 4, 6 };
+        private static IEnumerable<byte> TransactionTypesProviderAdditionalPayments { get; } = new HashSet<byte>() { 5, 7 };
+        private static IEnumerable<byte> TransactionTypesApprenticeshipAdditionalPayments { get; } = new HashSet<byte>() { 16 };
+        private static IEnumerable<byte> TransactionTypesEnglishAndMathsPayments { get; } = new HashSet<byte>() { 13, 14 };
+        private static IEnumerable<byte> TransactionTypesLearningSupportPayments { get; } = new HashSet<byte>() { 8, 9, 10, 11, 12, 15 };
 
         public PaymentPeriods BuildPaymentPeriods(IEnumerable<Payment> payments)
         {

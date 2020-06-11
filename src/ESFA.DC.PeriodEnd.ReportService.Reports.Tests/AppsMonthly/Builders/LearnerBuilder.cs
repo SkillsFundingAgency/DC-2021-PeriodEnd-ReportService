@@ -6,12 +6,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders
     public class LearnerBuilder : AbstractBuilder<Learner>
     {
         public const string LearnRefNumber = "LearnRefNumber";
+        public const string FamilyName = "FamilyName";
+        public const string GivenNames = "GivenNames";
 
         public LearnerBuilder()
         {
             modelObject = new Learner()
             {
                 LearnRefNumber = LearnRefNumber,
+                FamilyName = FamilyName,
+                GivenNames = GivenNames,
                 LearningDeliveries =  new List<LearningDelivery>()
                 {
                     new LearningDeliveryBuilder().Build()

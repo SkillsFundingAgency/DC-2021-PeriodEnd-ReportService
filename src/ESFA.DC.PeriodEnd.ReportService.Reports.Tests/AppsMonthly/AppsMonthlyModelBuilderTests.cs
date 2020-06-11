@@ -579,6 +579,28 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             NewBuilder().GetLearnerEmploymentStatus(learner, learningDelivery).Should().BeSameAs(learnerEmploymentStatusTwo);
         }
 
+        [Fact]
+        public void GetName()
+        {
+            var learner = new LearnerBuilder().With(l => l.FamilyName, "FamilyName").Build();
+
+            NewBuilder().GetName(learner, l => l.FamilyName).Should().Be("FamilyName");
+        }
+
+        [Fact]
+        public void GetName_NullLearner()
+        {
+            NewBuilder().GetName(null, l => l.FamilyName).Should().Be("Not applicable.  For more information refer to the funding reports guidance.");
+        }
+
+        [Fact]
+        public void GetName_NullName()
+        {
+            var learner = new LearnerBuilder().With(l => l.FamilyName, null).Build();
+
+            NewBuilder().GetName(learner, l => l.FamilyName).Should().BeNull();
+        }
+
         private AppsMonthlyModelBuilder NewBuilder(
             IPaymentPeriodsBuilder paymentPeriodsBuilder = null,
             ILearningDeliveryFamsBuilder learningDeliveryFamsBuilder = null,

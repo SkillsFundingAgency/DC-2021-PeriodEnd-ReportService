@@ -63,7 +63,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
             var fm81 = _fm81DataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
             var fm99 = _fm99DataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
             var eas = _easDataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
-            var das = _dasDataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
+            var das = _dasDataProvider.ProvideAsync(reportServiceContext.CollectionYear, reportServiceContext.Ukprn, cancellationToken);
             var easdas = _dasEasDataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
 
             await Task.WhenAll(fm35, fm25, fm81, fm99, eas, das, easdas);

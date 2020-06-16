@@ -1,4 +1,4 @@
-﻿using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
+﻿using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly;
 using System;
 using System.Collections.Generic;
@@ -10,8 +10,8 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders;
 using FluentAssertions;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Xunit;
-using Payment = ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model.Payment;
-using ProviderMonitoring = ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model.ProviderMonitoring;
+using Payment = ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model.Payment;
+using ProviderMonitoring = ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model.ProviderMonitoring;
 using Moq;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly

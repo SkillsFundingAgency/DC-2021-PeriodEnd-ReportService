@@ -3,8 +3,7 @@ using System.Collections.Immutable;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
-using ESFA.DC.PeriodEnd.ReportService.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Interface.Reports;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports
 {

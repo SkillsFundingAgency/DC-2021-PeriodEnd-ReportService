@@ -1,5 +1,5 @@
 ﻿using System;
-using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly

@@ -4,7 +4,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
-using ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 {

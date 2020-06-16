@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 {
     public class ContractAllocation
     {

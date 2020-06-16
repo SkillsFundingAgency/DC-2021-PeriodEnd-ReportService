@@ -1,8 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Collections.Generic;
 
-namespace ESFA.DC.Periodend.ReportService.Reports.Interface.AppsMonthly.Model
+namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 {
     public class Learner
     {

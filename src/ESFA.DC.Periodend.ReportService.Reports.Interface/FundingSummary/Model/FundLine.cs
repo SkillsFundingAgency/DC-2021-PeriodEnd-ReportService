@@ -1,6 +1,6 @@
 ﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model
 {
-    public class FundLine
+    public class FundLine : IFundingSummaryReportRow
     {
         private const int PeriodCount = 12;
         private readonly decimal[] _periods;

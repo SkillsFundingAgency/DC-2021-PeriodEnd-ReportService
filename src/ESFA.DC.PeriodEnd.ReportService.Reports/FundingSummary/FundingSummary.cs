@@ -6,6 +6,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 {
@@ -16,18 +17,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private readonly IFundingSummaryDataProvider _fundingSummaryDataProvider;
         private readonly IFundingSummaryModelBuilder _fundingSummaryModelBuilder;
         private readonly IRenderService<FundingSummaryReportModel> _fundingSummaryRenderService;
+        private readonly IFundingSummaryPersistanceService _fundingSummaryPersistanceService;
 
         public string ReportTaskName => "TaskGenerateFundingSummaryReport";
 
         private string ReportName => "Funding Summary Report";
 
-        public FundingSummary(IExcelFileService excelFileService, IFileNameService fileNameService, IFundingSummaryDataProvider fundingSummaryDataProvider, IFundingSummaryModelBuilder fundingSummaryModelBuilder, IRenderService<FundingSummaryReportModel> fundingSummaryRenderService)
+        public FundingSummary(IExcelFileService excelFileService, IFileNameService fileNameService, IFundingSummaryDataProvider fundingSummaryDataProvider, IFundingSummaryModelBuilder fundingSummaryModelBuilder, IRenderService<FundingSummaryReportModel> fundingSummaryRenderService, IFundingSummaryPersistanceService fundingSummaryPersistanceService)
         {
             _excelFileService = excelFileService;
             _fileNameService = fileNameService;
             _fundingSummaryDataProvider = fundingSummaryDataProvider;
             _fundingSummaryModelBuilder = fundingSummaryModelBuilder;
             _fundingSummaryRenderService = fundingSummaryRenderService;
+            _fundingSummaryPersistanceService = fundingSummaryPersistanceService;
         }
 
         public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
@@ -48,6 +51,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 
                 await _excelFileService.SaveWorkbookAsync(workbook, fileName, reportServiceContext.Container, cancellationToken);
             }
+
+            await _fundingSummaryPersistanceService.PersistAsync(reportServiceContext, model, cancellationToken);
         }
     }
 }

@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model
 {
-    public class FundingSubCategory
+    public class FundingSubCategory : IFundingSummaryReportRow
     {
         public FundingSubCategory()
         {
@@ -18,6 +18,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model
         public IList<FundLineGroup> FundLineGroups { get; set; } = new List<FundLineGroup>();
 
         public string FundingSubCategoryTitle { get; set; }
+
+        public string ContractAllocationNumber { get; }
 
         public string Title => $"Total {FundingSubCategoryTitle} (£)";
 

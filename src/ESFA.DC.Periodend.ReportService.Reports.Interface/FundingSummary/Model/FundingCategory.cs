@@ -3,7 +3,7 @@ using System.Linq;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model
 {
-    public class FundingCategory
+    public class FundingCategory : IFundingSummaryReportRow
     {
         public FundingCategory()
         {

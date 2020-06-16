@@ -4,7 +4,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model
 {
-    public class FundLineGroup
+    public class FundLineGroup : IFundingSummaryReportRow
     {
         private readonly FundingDataSource _fundModel;
         private readonly IEnumerable<string> _fundLines;

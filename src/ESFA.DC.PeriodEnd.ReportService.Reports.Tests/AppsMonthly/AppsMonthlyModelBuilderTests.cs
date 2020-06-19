@@ -73,7 +73,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 40, 
                 10, 
                 30,
-                "ReportingAimFundingLineType", "PriceEpisodeIdentifier");
+                "ReportingAimFundingLineType",
+                "PriceEpisodeIdentifier",
+                1);
 
             NewBuilder().GetLearnerLearningDeliveryForRecord(learner, recordKey).Should().BeSameAs(matchingLearningDelivery);
         }
@@ -103,7 +105,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 40,
                 10,
                 30,
-                "ReportingAimFundingLineType", "PriceEpisodeIdentifier");
+                "ReportingAimFundingLineType", 
+                "PriceEpisodeIdentifier",
+                1);
 
             NewBuilder().GetLearnerLearningDeliveryForRecord(learner, recordKey).Should().BeNull();
         }
@@ -120,7 +124,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 40,
                 10,
                 30,
-                "ReportingAimFundingLineType", "PriceEpisodeIdentifier");
+                "ReportingAimFundingLineType", 
+                "PriceEpisodeIdentifier",
+                1);
 
             NewBuilder().GetLearnerLearningDeliveryForRecord(null, recordKey).Should().BeNull();
         }
@@ -141,7 +147,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 40,
                 10,
                 30,
-                "ReportingAimFundingLineType", "PriceEpisodeIdentifier");
+                "ReportingAimFundingLineType",
+                "PriceEpisodeIdentifier",
+                1);
 
             NewBuilder().GetLearnerLearningDeliveryForRecord(learner, recordKey).Should().BeNull();
         }
@@ -243,7 +251,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 PaymentBuilder.FrameworkCode,
                 PaymentBuilder.PathwayCode,
                 PaymentBuilder.ReportingAimFundingLineType,
-                PaymentBuilder.PriceEpisodeIdentifier);
+                PaymentBuilder.PriceEpisodeIdentifier,
+                PaymentBuilder.ContractType);
 
             NewBuilder().GetLatestRefundPaymentWithEarningEventForRecord(recordKey, payments).Should().BeSameAs(paymentOne);
         }
@@ -438,7 +447,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         {
             var priceEpisodeIdentifier = "SomeStuff-31/12/2019";
 
-            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier, 1);
 
             NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().Be(new DateTime(2019, 12,31));
         }
@@ -446,7 +455,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         [Fact]
         public void GetPriceEpisodeStartDateForRecord_NullPriceEpisodeIdentifier()
         {
-            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, null);
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, null, 1);
 
             NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
         }
@@ -456,7 +465,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         {
             var priceEpisodeIdentifier = "ThisIsNotADate";
 
-            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier, 1);
 
             NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
         }
@@ -466,7 +475,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         {
             var priceEpisodeIdentifier = "TooShort";
 
-            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier, 1);
 
             NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
         }
@@ -476,7 +485,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         {
             var priceEpisodeIdentifier = "ThisIsNotADate";
 
-            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier);
+            var recordKey = new RecordKey(null, 1, "ZPROG001", null, 1, 1, 1, 1, null, priceEpisodeIdentifier, 1);
 
             NewBuilder().GetPriceEpisodeStartDateForRecord(recordKey).Should().BeNull();
         }

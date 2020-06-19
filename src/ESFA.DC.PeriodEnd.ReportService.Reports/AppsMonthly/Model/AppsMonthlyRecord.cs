@@ -19,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 
         public Earning Earning { get; set; }
 
-        public ProviderMonitorings ProviderSpecLearnMonitorings { get; set; }
+        public ProviderMonitorings ProviderMonitorings { get; set; }
 
         public string LearningDeliveryTitle { get; set; }
 

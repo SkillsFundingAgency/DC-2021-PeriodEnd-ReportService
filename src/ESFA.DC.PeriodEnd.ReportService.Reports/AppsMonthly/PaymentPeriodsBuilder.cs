@@ -67,14 +67,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         {
             return new PaymentPeriodLines()
             {
-                ApprenticeAdditionalPayments = paymentPeriodLines.Sum(p => p.ApprenticeAdditionalPayments),
+                ApprenticeAdditional = paymentPeriodLines.Sum(p => p.ApprenticeAdditional),
                 CoInvestment = paymentPeriodLines.Sum(p => p.CoInvestment),
                 CoInvestmentDueFromEmployer = paymentPeriodLines.Sum(p => p.CoInvestmentDueFromEmployer),
-                EmployerAdditionalPayments = paymentPeriodLines.Sum(p => p.EmployerAdditionalPayments),
-                EnglishAndMathsPayments = paymentPeriodLines.Sum(p => p.EnglishAndMathsPayments),
+                EmployerAdditional = paymentPeriodLines.Sum(p => p.EmployerAdditional),
+                EnglishAndMaths = paymentPeriodLines.Sum(p => p.EnglishAndMaths),
                 Levy = paymentPeriodLines.Sum(p => p.Levy),
-                PaymentsForLearningSupportDisadvantageAndFrameworkUplifts = paymentPeriodLines.Sum(p => p.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts),
-                ProviderAdditionalPayments = paymentPeriodLines.Sum(p => p.ProviderAdditionalPayments),
+                LearningSupportDisadvantageAndFrameworkUplifts = paymentPeriodLines.Sum(p => p.LearningSupportDisadvantageAndFrameworkUplifts),
+                ProviderAdditional = paymentPeriodLines.Sum(p => p.ProviderAdditional),
                 Total = paymentPeriodLines.Sum(p => p.Total),
             };
         }
@@ -109,11 +109,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             paymentPeriodLines.Levy = levy;
             paymentPeriodLines.CoInvestment = coInvestment;
             paymentPeriodLines.CoInvestmentDueFromEmployer = coInvestmentDueFromEmployer;
-            paymentPeriodLines.EmployerAdditionalPayments = employerAdditionalPayments;
-            paymentPeriodLines.ProviderAdditionalPayments = providerAdditionalPayments;
-            paymentPeriodLines.ApprenticeAdditionalPayments = apprenticeAdditionalPayments;
-            paymentPeriodLines.EnglishAndMathsPayments = englishAndMathsPayments;
-            paymentPeriodLines.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts = paymentsForLearningSupportDisadvantageAndFrameworkUplifts;
+            paymentPeriodLines.EmployerAdditional = employerAdditionalPayments;
+            paymentPeriodLines.ProviderAdditional = providerAdditionalPayments;
+            paymentPeriodLines.ApprenticeAdditional = apprenticeAdditionalPayments;
+            paymentPeriodLines.EnglishAndMaths = englishAndMathsPayments;
+            paymentPeriodLines.LearningSupportDisadvantageAndFrameworkUplifts = paymentsForLearningSupportDisadvantageAndFrameworkUplifts;
             paymentPeriodLines.Total = total;
             
             return paymentPeriodLines;

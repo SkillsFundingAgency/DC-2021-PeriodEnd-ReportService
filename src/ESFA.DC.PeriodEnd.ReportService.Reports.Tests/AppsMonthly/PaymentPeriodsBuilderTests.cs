@@ -100,14 +100,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
 
             var paymentPeriodLines = NewBuilder().BuildPaymentPeriodLinesForPayments(paymentCombinations);
 
-            paymentPeriodLines.ApprenticeAdditionalPayments.Should().Be(4);
+            paymentPeriodLines.ApprenticeAdditional.Should().Be(4);
             paymentPeriodLines.CoInvestment.Should().Be(3);
             paymentPeriodLines.CoInvestmentDueFromEmployer.Should().Be(3);
-            paymentPeriodLines.EmployerAdditionalPayments.Should().Be(8);
-            paymentPeriodLines.EnglishAndMathsPayments.Should().Be(8);
+            paymentPeriodLines.EmployerAdditional.Should().Be(8);
+            paymentPeriodLines.EnglishAndMaths.Should().Be(8);
             paymentPeriodLines.Levy.Should().Be(6);
-            paymentPeriodLines.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts.Should().Be(24);
-            paymentPeriodLines.ProviderAdditionalPayments.Should().Be(8);
+            paymentPeriodLines.LearningSupportDisadvantageAndFrameworkUplifts.Should().Be(24);
+            paymentPeriodLines.ProviderAdditional.Should().Be(8);
             paymentPeriodLines.Total.Should().Be(61);
         }
 
@@ -116,14 +116,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         {
             var paymentPeriodLines = NewBuilder().BuildPaymentPeriodLinesForPayments(Array.Empty<Payment>());
 
-            paymentPeriodLines.ApprenticeAdditionalPayments.Should().Be(0);
+            paymentPeriodLines.ApprenticeAdditional.Should().Be(0);
             paymentPeriodLines.CoInvestment.Should().Be(0);
             paymentPeriodLines.CoInvestmentDueFromEmployer.Should().Be(0);
-            paymentPeriodLines.EmployerAdditionalPayments.Should().Be(0);
-            paymentPeriodLines.EnglishAndMathsPayments.Should().Be(0);
+            paymentPeriodLines.EmployerAdditional.Should().Be(0);
+            paymentPeriodLines.EnglishAndMaths.Should().Be(0);
             paymentPeriodLines.Levy.Should().Be(0);
-            paymentPeriodLines.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts.Should().Be(0);
-            paymentPeriodLines.ProviderAdditionalPayments.Should().Be(0);
+            paymentPeriodLines.LearningSupportDisadvantageAndFrameworkUplifts.Should().Be(0);
+            paymentPeriodLines.ProviderAdditional.Should().Be(0);
             paymentPeriodLines.Total.Should().Be(0);
         }
 
@@ -175,26 +175,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
 
                 if (i % 2 == 0)
                 {
-                    paymentPeriodLines.ApprenticeAdditionalPayments.Should().Be(0);
+                    paymentPeriodLines.ApprenticeAdditional.Should().Be(0);
                     paymentPeriodLines.CoInvestment.Should().Be(0);
                     paymentPeriodLines.CoInvestmentDueFromEmployer.Should().Be(0);
-                    paymentPeriodLines.EmployerAdditionalPayments.Should().Be(0);
-                    paymentPeriodLines.EnglishAndMathsPayments.Should().Be(0);
+                    paymentPeriodLines.EmployerAdditional.Should().Be(0);
+                    paymentPeriodLines.EnglishAndMaths.Should().Be(0);
                     paymentPeriodLines.Levy.Should().Be(0);
-                    paymentPeriodLines.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts.Should().Be(0);
-                    paymentPeriodLines.ProviderAdditionalPayments.Should().Be(0);
+                    paymentPeriodLines.LearningSupportDisadvantageAndFrameworkUplifts.Should().Be(0);
+                    paymentPeriodLines.ProviderAdditional.Should().Be(0);
                     paymentPeriodLines.Total.Should().Be(0);
                 }
                 else
                 {
-                    paymentPeriodLines.ApprenticeAdditionalPayments.Should().Be(4);
+                    paymentPeriodLines.ApprenticeAdditional.Should().Be(4);
                     paymentPeriodLines.CoInvestment.Should().Be(3);
                     paymentPeriodLines.CoInvestmentDueFromEmployer.Should().Be(3);
-                    paymentPeriodLines.EmployerAdditionalPayments.Should().Be(8);
-                    paymentPeriodLines.EnglishAndMathsPayments.Should().Be(8);
+                    paymentPeriodLines.EmployerAdditional.Should().Be(8);
+                    paymentPeriodLines.EnglishAndMaths.Should().Be(8);
                     paymentPeriodLines.Levy.Should().Be(6);
-                    paymentPeriodLines.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts.Should().Be(24);
-                    paymentPeriodLines.ProviderAdditionalPayments.Should().Be(8);
+                    paymentPeriodLines.LearningSupportDisadvantageAndFrameworkUplifts.Should().Be(24);
+                    paymentPeriodLines.ProviderAdditional.Should().Be(8);
                     paymentPeriodLines.Total.Should().Be(61);
                 }
             }
@@ -207,27 +207,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 .Select(i =>
                     new PaymentPeriodLines()
                     {
-                        ApprenticeAdditionalPayments = 1,
+                        ApprenticeAdditional = 1,
                         CoInvestment = 2,
                         CoInvestmentDueFromEmployer = 3,
-                        EmployerAdditionalPayments = 4,
-                        EnglishAndMathsPayments = 5,
+                        EmployerAdditional = 4,
+                        EnglishAndMaths = 5,
                         Levy = 6,
-                        PaymentsForLearningSupportDisadvantageAndFrameworkUplifts = 7,
-                        ProviderAdditionalPayments = 8,
+                        LearningSupportDisadvantageAndFrameworkUplifts = 7,
+                        ProviderAdditional = 8,
                         Total = 9,
                     }).ToArray();
 
             var totalPaymentPeriodLines = NewBuilder().BuildTotalPaymentPeriodLines(periodisedPaymentPeriodLines);
 
-            totalPaymentPeriodLines.ApprenticeAdditionalPayments.Should().Be(14);
+            totalPaymentPeriodLines.ApprenticeAdditional.Should().Be(14);
             totalPaymentPeriodLines.CoInvestment.Should().Be(28);
             totalPaymentPeriodLines.CoInvestmentDueFromEmployer.Should().Be(42);
-            totalPaymentPeriodLines.EmployerAdditionalPayments.Should().Be(56);
-            totalPaymentPeriodLines.EnglishAndMathsPayments.Should().Be(70);
+            totalPaymentPeriodLines.EmployerAdditional.Should().Be(56);
+            totalPaymentPeriodLines.EnglishAndMaths.Should().Be(70);
             totalPaymentPeriodLines.Levy.Should().Be(84);
-            totalPaymentPeriodLines.PaymentsForLearningSupportDisadvantageAndFrameworkUplifts.Should().Be(98);
-            totalPaymentPeriodLines.ProviderAdditionalPayments.Should().Be(112);
+            totalPaymentPeriodLines.LearningSupportDisadvantageAndFrameworkUplifts.Should().Be(98);
+            totalPaymentPeriodLines.ProviderAdditional.Should().Be(112);
             totalPaymentPeriodLines.Total.Should().Be(126);
         }
 

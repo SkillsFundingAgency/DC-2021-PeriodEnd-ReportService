@@ -24,6 +24,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 
         public string PriceEpisodeIdentifier { get; set; }
 
+        public byte ContractType { get; set; }
+
         public Guid? EarningEventId { get; set; }
 
         public byte CollectionPeriod { get; set; }

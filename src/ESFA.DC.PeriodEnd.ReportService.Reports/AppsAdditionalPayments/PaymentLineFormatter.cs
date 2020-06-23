@@ -57,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             return null;
         }
 
-        public string GetEmployerId(LearningDelivery learningDelivery, Payment payment)
+        public string GetEmployerId(AecLearningDelivery learningDelivery, Payment payment)
         {
             if (payment.TransactionType == DASPayments.TransactionType.First_16To18_Employer_Incentive || 
                 payment.TransactionType == DASPayments.TransactionType.Second_16To18_Employer_Incentive)

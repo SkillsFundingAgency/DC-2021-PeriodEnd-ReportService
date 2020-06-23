@@ -94,7 +94,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
                 paymentAndLearningDeliveries.Add(new PaymentAndLearningDelivery
                 {
                     Payment = new Payment{ Amount = (decimal)Math.Pow(2, i), CollectionPeriod = (byte)i, TransactionType = 4 },
-                    LearningDelivery = new LearningDelivery{ AimSequenceNumber = i }
+                    LearningDelivery = new AecLearningDelivery{ AimSequenceNumber = i }
                 });
             }
 

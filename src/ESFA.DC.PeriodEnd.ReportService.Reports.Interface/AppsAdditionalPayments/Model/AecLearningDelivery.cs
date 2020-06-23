@@ -1,9 +1,8 @@
 ﻿using System;
-using System.Collections.Generic;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model
 {
-    public class LearningDelivery
+    public class AecLearningDelivery
     {
         // Key Fields
         public string LearnRefNumber { get; set; }

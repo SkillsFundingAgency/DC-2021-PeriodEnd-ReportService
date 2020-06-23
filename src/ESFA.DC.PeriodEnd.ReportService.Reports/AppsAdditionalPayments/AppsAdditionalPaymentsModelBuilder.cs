@@ -8,7 +8,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.M
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 {
-    public class AppsAdditionalPaymentsModelBuilder
+    public class AppsAdditionalPaymentsModelBuilder : IAppsAdditionalPaymentsModelBuilder
     {
         private readonly IPaymentLineFormatter _paymentFundingLineFormatter;
         private readonly IEarningsAndPaymentsBuilder _earningsAndPaymentsBuilder;
@@ -24,7 +24,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
         public IEnumerable<AppsAdditionalPaymentRecord> Build(
             ICollection<Payment> payments,
             ICollection<Learner> learners,
-            ICollection<LearningDelivery> learningDeliveries,
+            ICollection<AecLearningDelivery> learningDeliveries,
             ICollection<ApprenticeshipPriceEpisodePeriodisedValues> periodisedValues)
         {
             // Format the Funding Line Type before grouping by it
@@ -60,7 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                 });
         }
 
-        private List<PaymentAndLearningDelivery> MatchPaymentAndLearningDeliveries(ICollection<Payment> payments, ICollection<LearningDelivery> learningDeliveries)
+        private List<PaymentAndLearningDelivery> MatchPaymentAndLearningDeliveries(ICollection<Payment> payments, ICollection<AecLearningDelivery> learningDeliveries)
         {
             var learningDeliveriesLookup = learningDeliveries.GroupBy(ld => ld.LearnRefNumber).ToDictionary(ldg => ldg.Key);
 
@@ -72,8 +72,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             }).ToList();
         }
 
-        private static LearningDelivery GetLearningDelivery(
-            Dictionary<string, IGrouping<string, LearningDelivery>> learningDeliveriesLookup, Payment payment)
+        private static AecLearningDelivery GetLearningDelivery(
+            Dictionary<string, IGrouping<string, AecLearningDelivery>> learningDeliveriesLookup, Payment payment)
         {
             var learningDelivery = learningDeliveriesLookup.GetValueOrDefault(payment.LearnerReferenceNumber)?.FirstOrDefault(
                 ld =>

@@ -8,6 +8,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interfa
         void FormatFundingLines(IEnumerable<Payment> payments);
         string GetAdditionalPaymentType(byte transactionType);
         string GetApprenticeshipLegalEntityName(Payment payment);
-        string GetEmployerId(LearningDelivery learningDelivery, Payment payment);
+        string GetEmployerId(AecLearningDelivery learningDelivery, Payment payment);
     }
 }

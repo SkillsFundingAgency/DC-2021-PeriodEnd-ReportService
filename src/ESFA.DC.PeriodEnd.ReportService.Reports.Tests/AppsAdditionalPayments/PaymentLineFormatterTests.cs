@@ -104,7 +104,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
         public void GetEmployerId(byte transactionType, int? learnDelEmpIdFirst, int ? learnDelEmpIdSecond, string expected)
         {
             var formatter = new PaymentLineFormatter() as IPaymentLineFormatter;
-            var learningDeliver = new LearningDelivery
+            var learningDeliver = new AecLearningDelivery
             {
                 LearnDelEmpIdFirstAdditionalPaymentThreshold = learnDelEmpIdFirst,
                 LearnDelEmpIdSecondAdditionalPaymentThreshold = learnDelEmpIdSecond

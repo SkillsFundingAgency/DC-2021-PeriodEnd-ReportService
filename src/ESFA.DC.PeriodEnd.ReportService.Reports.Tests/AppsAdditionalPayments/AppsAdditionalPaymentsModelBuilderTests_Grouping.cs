@@ -29,13 +29,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             };
 
 
-            var LearningDeliveries = new List<LearningDelivery>
+            var LearningDeliveries = new List<AecLearningDelivery>
             {
-                new LearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 10, AimSequenceNumber = 1},
-                new LearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 11, AimSequenceNumber = 2},
-                new LearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 12, AimSequenceNumber = 3},
-                new LearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 13, AimSequenceNumber = 4},
-                new LearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 14, AimSequenceNumber = 5}
+                new AecLearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 10, AimSequenceNumber = 1},
+                new AecLearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 11, AimSequenceNumber = 2},
+                new AecLearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 12, AimSequenceNumber = 3},
+                new AecLearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 13, AimSequenceNumber = 4},
+                new AecLearningDelivery{ LearnRefNumber = "ABC", LearnStartDate = new DateTime(2020, 01, 01), ProgType = 1, StdCode = 2, FworkCode = 3, PwayCode = 14, AimSequenceNumber = 5}
 
             };
 

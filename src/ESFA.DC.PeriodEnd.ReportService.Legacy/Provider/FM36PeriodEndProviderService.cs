@@ -54,7 +54,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
             {
                 Generics.Fm36PriceEpisodeFirstEmp1618PayAttributeName,
                 Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName,
-                Generics.Fm36PriceEpisodeSecondEmp1618PayAttributeName,
                 Generics.Fm36PriceEpisodeFirstProv1618PayAttributeName,
                 Generics.Fm36PriceEpisodeSecondProv1618PayAttributeName,
                 Generics.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName

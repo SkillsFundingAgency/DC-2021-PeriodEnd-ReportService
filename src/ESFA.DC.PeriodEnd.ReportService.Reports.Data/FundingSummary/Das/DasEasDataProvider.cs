@@ -26,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Das
             _easSqlConnection = easSqlConnection;
         }
 
-        public async Task<Dictionary<string, Dictionary<string, decimal?[][]>>> Provide(long ukprn,
+        public async Task<Dictionary<string, Dictionary<string, decimal?[][]>>> ProvideAsync(long ukprn,
             CancellationToken cancellationToken)
         {
             var paymentTypesDictionary = await ProvideEasData();

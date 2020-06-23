@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataP
 {
     public interface IPeriodisedValuesDataProvider
     {
-        Task<Dictionary<string, Dictionary<string, decimal?[][]>>> Provide(long ukprn, CancellationToken cancellationToken);
+        Task<Dictionary<string, Dictionary<string, decimal?[][]>>> ProvideAsync(long ukprn, CancellationToken cancellationToken);
     }
 }

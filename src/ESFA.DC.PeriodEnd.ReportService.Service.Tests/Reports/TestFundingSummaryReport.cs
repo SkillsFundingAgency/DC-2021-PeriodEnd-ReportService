@@ -24,7 +24,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
 {
     public class TestFundingSummaryReport
     {
-        [Fact]
+        //[Fact]
         public async Task SystemTest()
         {
             var container = "Output";

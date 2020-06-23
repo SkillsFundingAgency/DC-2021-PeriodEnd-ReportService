@@ -3,10 +3,11 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataProvider;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Reference
 {
-    public class ReferenceDataProvider
+    public class ReferenceDataProvider : IReferenceDataProvider
     {
         private readonly string _orgSql = "SELECT Name FROM Org_Details WHERE UKPRN = @ukprn";
         private readonly string _easSql = "SELECT UpdatedOn FROM EAS_Submission WHERE UKPRN = @ukprn";
@@ -23,15 +24,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Reference
             _ilrSqlFunc = ilrSqlFunc;
         }
 
-        public async Task<(string, DateTime?, string)> Provide(long ukprn, CancellationToken cancellationToken)
+        public async Task<(string providerName, DateTime? easSubmissionDateTime, string ilrSubmissionFileName)> ProvideAsync(long ukprn, CancellationToken cancellationToken)
         {
-            var providerName = await GetProviderNameAsync(ukprn);
-            var easSubmissionDateTime = await GetLastestEasSubmissionDateTimeAsync(ukprn);
-            var ilrSubmissionFileName = await GetLatestIlrSubmissionFileNameAsync(ukprn);
+            var providerNameTask = GetProviderNameAsync(ukprn);
+            var easSubmissionDateTimeTask = GetLastestEasSubmissionDateTimeAsync(ukprn);
+            var ilrSubmissionFileNameTask = GetLatestIlrSubmissionFileNameAsync(ukprn);
+
+            await Task.WhenAll(providerNameTask, easSubmissionDateTimeTask, ilrSubmissionFileNameTask);
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            return (providerName, easSubmissionDateTime, ilrSubmissionFileName);
+            return (providerNameTask.Result, easSubmissionDateTimeTask.Result, ilrSubmissionFileNameTask.Result);
         }
 
         public async Task<string> GetProviderNameAsync(long ukprn)

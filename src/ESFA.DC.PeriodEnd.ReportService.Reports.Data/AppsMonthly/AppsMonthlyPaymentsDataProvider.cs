@@ -40,7 +40,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly
             throw new NotImplementedException();
         }
 
-        public Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<string> learnAimRefs, CancellationToken cancellationToken)
+        public Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
         {
             throw new NotImplementedException();
         }

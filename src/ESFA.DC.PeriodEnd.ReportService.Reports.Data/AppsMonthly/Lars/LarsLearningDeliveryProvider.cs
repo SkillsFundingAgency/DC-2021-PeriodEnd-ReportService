@@ -23,13 +23,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars
 
         public async Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
         {
-            var learnaimRefs = learners.Select(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)).ToArray();
+            var learnaimRefs = learners.SelectMany(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)).Distinct();
 
             using (var connection = _sqlConnectionFunc())
             {
-                var query_result = await connection.QueryMultipleAsync(sql, new { learnaimRefs });
-
-                var result = query_result.Read<LarsLearningDelivery>();
+                var result = await connection.QueryAsync<LarsLearningDelivery>(sql, new { learnaimRefs });
 
                 return result.ToList();
             }

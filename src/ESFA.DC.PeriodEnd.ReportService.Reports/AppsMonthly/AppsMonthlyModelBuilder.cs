@@ -71,7 +71,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                             p.LearningAimFrameworkCode,
                             p.LearningAimPathwayCode,
                             p.ReportingAimFundingLineType,
-                            p.PriceEpisodeIdentifier))
+                            p.PriceEpisodeIdentifier,
+                            p.ContractType))
                 .Select(k =>
                 {
                     var learner = learnerLookup.GetValueOrDefault(k.Key.LearnerReferenceNumber);
@@ -109,7 +110,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         GivenNames = givenNames,
                         ContractNumber = contractNumber,
                         Earning = earning,
-                        ProviderSpecLearnMonitorings = providerSpecLearnMonitorings,
+                        ProviderMonitorings = providerSpecLearnMonitorings,
                         LearningDeliveryTitle = learningDeliveryTitle,
                         LearningDeliveryFams = learningDeliveryFams,
                         PriceEpisode = priceEpisode,

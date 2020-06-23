@@ -19,6 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
         public static Guid EarningEventId = Guid.Parse("12345678-1234-1234-1234-123456789012");
         public const byte CollectionPeriod = 1;
         public const byte DeliveryPeriod = 1;
+        public const byte ContractType = 1;
 
         public PaymentBuilder()
         {
@@ -37,6 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
                 EarningEventId = EarningEventId,
                 CollectionPeriod = CollectionPeriod,
                 DeliveryPeriod = DeliveryPeriod,
+                ContractType = ContractType,
             };
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
+using ESFA.DC.ReferenceData.FCS.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 {
@@ -16,7 +17,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
             int frameworkCode,
             int pathwayCode,
             string reportingAimFundingLineType,
-            string priceEpisodeIdentifier)
+            string priceEpisodeIdentifier,
+            byte contractType)
         {
             LearnerReferenceNumber = learnerReferenceNumber;
             Uln = uln;
@@ -28,6 +30,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
             PathwayCode = pathwayCode;
             ReportingAimFundingLineType = reportingAimFundingLineType;
             PriceEpisodeIdentifier = priceEpisodeIdentifier;
+            ContractType = contractType;
         }
 
         public string LearnerReferenceNumber { get; }
@@ -50,6 +53,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 
         public string PriceEpisodeIdentifier { get; }
 
+        public byte ContractType { get; }
+
         public override int GetHashCode()
             =>
             (
@@ -59,6 +64,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
                 FrameworkCode,
                 PathwayCode,
                 LearnStartDate,
+                ContractType,
                 LearnerReferenceNumber?.ToUpper(),
                 LearningAimReference?.ToUpper(),
                 ReportingAimFundingLineType?.ToUpper(),

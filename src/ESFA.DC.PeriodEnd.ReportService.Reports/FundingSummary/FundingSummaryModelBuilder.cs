@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
-using System.Threading;
-using System.Threading.Tasks;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
@@ -22,33 +20,31 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private const string lastSubmittedIlrFileDateStringFormat = "dd/MM/yyyy HH:mm:ss";
         private const string ilrFileNameDateTimeParseFormat = "yyyyMMdd-HHmmss";
 
+        private const string AdultEducationBudgetNote =
+            "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
+
         private string _organisationName;
         private DateTime? _lastEasUpdate;
         private string _ilrFileName;
-
-        private string AdultEducationBudgetNote =
-            "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
         public FundingSummaryModelBuilder(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public async Task<FundingSummaryReportModel> Build(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel
-            , CancellationToken cancellationToken)
+        public FundingSummaryReportModel Build(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel)
         {
             _organisationName = fundingSummaryDataModel.OrganisationName;
             _ilrFileName = fundingSummaryDataModel.IlrFileName;
             _lastEasUpdate = fundingSummaryDataModel.LastEasUpdate;
 
-            var models = await BuildFundingSummaryReportModel(reportServiceContext,
-                fundingSummaryDataModel.PeriodisedValuesLookup, fundingSummaryDataModel.FcsDictionary,
-                cancellationToken);
+            var models = BuildFundingSummaryReportModel(reportServiceContext,
+                fundingSummaryDataModel.PeriodisedValuesLookup, fundingSummaryDataModel.FcsDictionary);
 
             return models;
         }
 
-        public async Task<FundingSummaryReportModel> BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup, CancellationToken cancellationToken)
+        public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup)
         {
             var noContract = "No Contract";
 
@@ -69,7 +65,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                 ?? noContract;
 
             byte reportCurrentPeriod = (byte)reportServiceContext.ReturnPeriod > 12 ? (byte)12 : (byte)reportServiceContext.ReturnPeriod;
-            var headerData = await BuildHeaderData(reportServiceContext, CancellationToken.None);
+            var headerData = BuildHeaderData(reportServiceContext);
             var footerData = BuildFooterData(reportServiceContext);
 
             var fundingSummaryReportModel = new FundingSummaryReportModel(
@@ -464,7 +460,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             return fundLineGroup;
         }
 
-        private async Task<IDictionary<string, string>> BuildHeaderData(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        private IDictionary<string, string> BuildHeaderData(IReportServiceContext reportServiceContext)
         {
             var organisationName = _organisationName;
             var easLastUpdate = _lastEasUpdate;

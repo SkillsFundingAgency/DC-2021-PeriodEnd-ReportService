@@ -210,7 +210,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             {
                 using (var streamWriter = new StreamWriter(stream, Encoding.UTF8, 8096, true))
                 {
-                    using (var csvWriter = new CsvWriter(streamWriter, CultureInfo.CurrentCulture))
+                    using (var csvWriter = new CsvWriter(streamWriter))
                     {
                         csvWriter.Configuration.RegisterClassMap<AppsMonthlyClassMap>();
 
@@ -222,7 +222,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
 
                 using (var streamReader = new StreamReader(stream))
                 {
-                    using (var csvReader = new CsvReader(streamReader, CultureInfo.CurrentCulture))
+                    using (var csvReader = new CsvReader(streamReader))
                     {
                         csvReader.Read();
                         csvReader.ReadHeader();

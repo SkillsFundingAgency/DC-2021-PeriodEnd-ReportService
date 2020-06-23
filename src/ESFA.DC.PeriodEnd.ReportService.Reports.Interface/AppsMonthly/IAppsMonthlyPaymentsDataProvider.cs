@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly
 
         Task<ICollection<Earning>> GetEarningsAsync(int ukprn, CancellationToken cancellationToken);
 
-        Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<string> learnAimRefs, CancellationToken cancellationToken);
+        Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken);
 
         Task<ICollection<AecApprenticeshipPriceEpisode>> GetPriceEpisodesAsync(int ukprn, CancellationToken cancellationToken);
     }

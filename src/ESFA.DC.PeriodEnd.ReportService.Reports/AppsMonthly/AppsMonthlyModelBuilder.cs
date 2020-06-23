@@ -45,7 +45,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             _providerMonitoringsBuilder = providerMonitoringsBuilder;
         }
 
-        public IEnumerable<AppsMonthlyRecord> Build(
+        public ICollection<AppsMonthlyRecord> Build(
             ICollection<Payment> payments,
             ICollection<Learner> learners,
             ICollection<ContractAllocation> contractAllocations,
@@ -118,7 +118,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         LearnerEmploymentStatus = learnerEmploymentStatus,
                         PaymentPeriods = paymentPeriods,
                     };
-                });
+                })
+                .ToList();
         }
 
         public string GetName(Learner learner, Func<Learner, string> selector)

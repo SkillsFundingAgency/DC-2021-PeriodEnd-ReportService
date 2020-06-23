@@ -52,6 +52,7 @@ using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView;
 using ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.LearnerLevelView.Comparer;
+using ESFA.DC.PeriodEnd.ReportService.Modules;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Context;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers;
@@ -132,6 +133,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             RegisterDataPersist(containerBuilder);
 
             RegisterFundingSummaryReport(containerBuilder);
+
+            containerBuilder.RegisterModule<ServicesModule>();
+            containerBuilder.RegisterModule(new ReportModule(reportServiceConfiguration));
 
             return containerBuilder;
         }
@@ -396,7 +400,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<FCSProviderService>().As<IFCSProviderService>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<ReportServiceContext>().As<IReportServiceContext>()
+            containerBuilder.RegisterType<ReportServiceContext>().As<IReportServiceContext>().As<Reports.Interface.IReportServiceContext>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<PaymentsService>().As<IPaymentsService>()
@@ -441,7 +445,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.RegisterType<DateTimeProvider.DateTimeProvider>().As<IDateTimeProvider>()
                 .InstancePerLifetimeScope();
 
-            containerBuilder.RegisterType<ExcelService>().As<IExcelService>().InstancePerLifetimeScope();
+            containerBuilder.RegisterType<Legacy.Service.ExcelService>().As<IExcelService>().InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<LLVPaymentRecordKeyEqualityComparer>().As<ILLVPaymentRecordKeyEqualityComparer>().InstancePerLifetimeScope();
 

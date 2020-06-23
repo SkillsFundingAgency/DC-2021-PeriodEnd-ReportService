@@ -8,7 +8,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders;
 using FluentAssertions;
-using Microsoft.EntityFrameworkCore.Infrastructure;
 using Xunit;
 using Payment = ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model.Payment;
 using ProviderMonitoring = ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model.ProviderMonitoring;

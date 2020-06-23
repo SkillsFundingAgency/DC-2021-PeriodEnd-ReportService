@@ -20,6 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
         private readonly IDasDataProvider _dasDataProvider;
         private readonly IDasEasDataProvider _dasEasDataProvider;
         private readonly IFcsDataProvider _fcsDataProvider;
+        private readonly IReferenceDataProvider _referenceDataProvider;
 
         public FundingSummaryDataProvider(
             IFm25DataProvider fm25DataProvider,
@@ -29,7 +30,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
             IEasDataProvider easDataProvider,
             IDasDataProvider dasDataProvider,
             IDasEasDataProvider dasEasDataProvider,
-            IFcsDataProvider fcsDataProvider)
+            IFcsDataProvider fcsDataProvider,
+            IReferenceDataProvider referenceDataProvider)
         {
             _fm25DataProvider = fm25DataProvider;
             _fm35DataProvider = fm35DataProvider;
@@ -39,14 +41,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
             _dasDataProvider = dasDataProvider;
             _dasEasDataProvider = dasEasDataProvider;
             _fcsDataProvider = fcsDataProvider;
+            _referenceDataProvider = referenceDataProvider;
         }
 
         public async Task<IFundingSummaryDataModel> ProvideAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
+            var referenceData = await _referenceDataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
+
             return new FundingSummaryDataModel
             {
                 PeriodisedValuesLookup = await ProvidePeriodisedValuesAsync(reportServiceContext, cancellationToken),
-                FcsDictionary = await ProvideFcsAsync(reportServiceContext, cancellationToken)
+                FcsDictionary = await ProvideFcsAsync(reportServiceContext, cancellationToken),
+                OrganisationName = referenceData.providerName,
+                IlrFileName = referenceData.ilrSubmissionFileName,
+                LastEasUpdate = referenceData.easSubmissionDateTime
             };
         }
 
@@ -58,13 +66,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
         private async Task<IPeriodisedValuesLookup> ProvidePeriodisedValuesAsync(
             IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
-            var fm35 = _fm35DataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
-            var fm25 = _fm25DataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
-            var fm81 = _fm81DataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
-            var fm99 = _fm99DataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
-            var eas = _easDataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
+            var fm35 = _fm35DataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
+            var fm25 = _fm25DataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
+            var fm81 = _fm81DataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
+            var fm99 = _fm99DataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
+            var eas = _easDataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
             var das = _dasDataProvider.ProvideAsync(reportServiceContext.CollectionYear, reportServiceContext.Ukprn, cancellationToken);
-            var easdas = _dasEasDataProvider.Provide(reportServiceContext.Ukprn, cancellationToken);
+            var easdas = _dasEasDataProvider.ProvideAsync(reportServiceContext.Ukprn, cancellationToken);
 
             await Task.WhenAll(fm35, fm25, fm81, fm99, eas, das, easdas);
 

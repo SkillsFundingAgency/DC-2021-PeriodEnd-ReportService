@@ -6,13 +6,12 @@ using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Model;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
 {
     public abstract class BasePeriodisedValuesProvider
     {
-        private Func<SqlConnection> _sqlConnectionFunc;
+        private readonly Func<SqlConnection> _sqlConnectionFunc;
 
         protected virtual string Sql { get; }
 
@@ -21,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
             _sqlConnectionFunc = sqlConnectionFunc;
         }
 
-        public virtual async Task<Dictionary<string, Dictionary<string, decimal?[][]>>> Provide(long ukprn,
+        public virtual async Task<Dictionary<string, Dictionary<string, decimal?[][]>>> ProvideAsync(long ukprn,
             CancellationToken cancellationToken)
         {
             using (var connection = _sqlConnectionFunc())

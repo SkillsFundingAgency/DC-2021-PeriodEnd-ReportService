@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Text;
-using ESFA.DC.ReferenceData.FCS.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
 {

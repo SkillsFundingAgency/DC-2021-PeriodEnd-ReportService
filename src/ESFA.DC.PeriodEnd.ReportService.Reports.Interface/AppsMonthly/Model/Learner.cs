@@ -10,6 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 
         public string GivenNames { get; set; }
 
+        public string CampusIdentifier { get; set; }
+
         public List<LearningDelivery> LearningDeliveries { get; set; }
 
         public List<ProviderMonitoring> ProviderSpecLearnMonitorings { get; set; }

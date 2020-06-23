@@ -55,19 +55,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Handlers
 
                     logger.LogDebug("Started Report Service");
 
-                    var reportContext = childLifeTimeScope.Resolve<IReportServiceContext>();
-                    var task = reportContext.Tasks.First();
+                    //var reportContext = childLifeTimeScope.Resolve<IReportServiceContext>();
+                    //var task = reportContext.Tasks.First();
 
-                    if (ReportTaskNameConstants.InternalReports.TasksList.Contains(task))
-                    {
-                        var internalEntryPoint = childLifeTimeScope.Resolve<InternalEntryPoint>();
-                        result = await internalEntryPoint.Callback(cancellationToken);
+                    //if (ReportTaskNameConstants.InternalReports.TasksList.Contains(task))
+                    //{
+                    //    var internalEntryPoint = childLifeTimeScope.Resolve<InternalEntryPoint>();
+                    //    result = await internalEntryPoint.Callback(cancellationToken);
 
-                        return result;
-                    }
+                    //    return result;
+                    //}
 
-                    var legacyEntryPoint = childLifeTimeScope.Resolve<LegacyEntryPoint>();
-                    result = await legacyEntryPoint.Callback(cancellationToken);
+                    //var legacyEntryPoint = childLifeTimeScope.Resolve<LegacyEntryPoint>();
+                    //result = await legacyEntryPoint.Callback(cancellationToken);
 
                     var entryPoint = childLifeTimeScope.Resolve<EntryPoint>();
                     result = await entryPoint.Callback(cancellationToken);

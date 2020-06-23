@@ -7,12 +7,13 @@ using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Legacy.Constants;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.Serialization.Interfaces;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 {
-    public sealed class ReportServiceContext : IReportServiceContext
+    public sealed class ReportServiceContext : Interface.IReportServiceContext, Reports.Interface.IReportServiceContext
     {
         private readonly IJobContextMessage _jobContextMessage;
         private readonly ISerializationService _serializationService;

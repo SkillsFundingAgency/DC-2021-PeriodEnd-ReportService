@@ -19,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private readonly IRenderService<FundingSummaryReportModel> _fundingSummaryRenderService;
         private readonly IFundingSummaryPersistanceService _fundingSummaryPersistanceService;
 
-        public string ReportTaskName => "TaskGenerateFundingSummaryReport";
+        public string ReportTaskName => "TaskGenerateFundingSummaryPeriodEndReport";
 
         private string ReportName => "Funding Summary Report";
 
@@ -39,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 
             var fundingSummaryReferenceData = await _fundingSummaryDataProvider.ProvideAsync(reportServiceContext, cancellationToken);
 
-            var model = await _fundingSummaryModelBuilder.Build(reportServiceContext, fundingSummaryReferenceData, cancellationToken);
+            var model = _fundingSummaryModelBuilder.Build(reportServiceContext, fundingSummaryReferenceData);
 
             using (var workbook = _excelFileService.NewWorkbook())
             {

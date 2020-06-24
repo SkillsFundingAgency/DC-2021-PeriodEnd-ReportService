@@ -30,34 +30,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly
             _larsLearningDeliveryProvider = larsLearningDeliveryProvider;
         }
 
-        public Task<ICollection<ContractAllocation>> GetContractAllocationsAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<ContractAllocation>> GetContractAllocationsAsync(int ukprn, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await  _fcsDataProvider.GetContractAllocationsAsync(ukprn, cancellationToken);
         }
 
-        public Task<ICollection<Earning>> GetEarningsAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<Earning>> GetEarningsAsync(int ukprn, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _paymentsDataProvider.GetEarningsAsync(ukprn, cancellationToken);
         }
 
-        public Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
+        public async Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _larsLearningDeliveryProvider.GetLarsLearningDeliveriesAsync(learners, cancellationToken);
         }
 
-        public Task<ICollection<Learner>> GetLearnersAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<Learner>> GetLearnersAsync(int ukprn, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _learnerDataProvider.GetLearnersAsync(ukprn, cancellationToken);
         }
 
-        public Task<ICollection<Payment>> GetPaymentsAsync(int ukprn, int academicYear, CancellationToken cancellationToken)
+        public async Task<ICollection<Payment>> GetPaymentsAsync(int ukprn, int academicYear, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _paymentsDataProvider.GetPaymentsAsync(ukprn, academicYear, cancellationToken);
         }
 
-        public Task<ICollection<AecApprenticeshipPriceEpisode>> GetPriceEpisodesAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<AecApprenticeshipPriceEpisode>> GetPriceEpisodesAsync(int ukprn, CancellationToken cancellationToken)
         {
-            throw new NotImplementedException();
+            return await _ilrDataProvider.GetPriceEpisodesAsync(ukprn, cancellationToken);
         }
     }
 }

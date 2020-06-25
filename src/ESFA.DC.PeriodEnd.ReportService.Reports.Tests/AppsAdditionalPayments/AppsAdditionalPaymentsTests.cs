@@ -47,10 +47,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
 
             var dataProviderMock = new Mock<IAppsAdditionalPaymentsDataProvider>();
 
-            dataProviderMock.Setup(p => p.GetLearnersAsync(ukprn, cancellationToken)).ReturnsAsync(learners);
-            dataProviderMock.Setup(p => p.GetPaymentsAsync(ukprn, academicYear, cancellationToken)).ReturnsAsync(payments);
-            dataProviderMock.Setup(p => p.GetAecLearningDeliveriesAsync(ukprn, cancellationToken)).ReturnsAsync(aecLearningDeliveries);
-            dataProviderMock.Setup(p => p.GetPriceEpisodesAsync(ukprn, cancellationToken)).ReturnsAsync(priceEpisodes);
+            dataProviderMock.Setup(p => p.GetLearnersAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(learners);
+            dataProviderMock.Setup(p => p.GetPaymentsAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(payments);
+            dataProviderMock.Setup(p => p.GetAecLearningDeliveriesAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(aecLearningDeliveries);
+            dataProviderMock.Setup(p => p.GetPriceEpisodesAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(priceEpisodes);
 
             var modelBuilderMock = new Mock<IAppsAdditionalPaymentsModelBuilder>();
 

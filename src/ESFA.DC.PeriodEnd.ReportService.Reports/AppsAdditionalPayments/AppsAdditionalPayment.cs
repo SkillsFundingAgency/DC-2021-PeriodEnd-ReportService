@@ -36,15 +36,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
         public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
             {
-                var ukprn = reportServiceContext.Ukprn;
-                var collectionYear = reportServiceContext.CollectionYear;
-
                 var fileName = _fileNameService.GetFilename(reportServiceContext, ReportFileName, OutputTypes.Csv);
 
-                var paymentsTask = _appsAdditionalPaymentsDataProvider.GetPaymentsAsync(ukprn, collectionYear, cancellationToken);
-                var learnersTask = _appsAdditionalPaymentsDataProvider.GetLearnersAsync(ukprn, cancellationToken);
-                var contractAllocationsTask = _appsAdditionalPaymentsDataProvider.GetAecLearningDeliveriesAsync(ukprn, cancellationToken);
-                var priceEpisodesTask = _appsAdditionalPaymentsDataProvider.GetPriceEpisodesAsync(ukprn, cancellationToken);
+                var paymentsTask = _appsAdditionalPaymentsDataProvider.GetPaymentsAsync(reportServiceContext, cancellationToken);
+                var learnersTask = _appsAdditionalPaymentsDataProvider.GetLearnersAsync(reportServiceContext, cancellationToken);
+                var contractAllocationsTask = _appsAdditionalPaymentsDataProvider.GetAecLearningDeliveriesAsync(reportServiceContext, cancellationToken);
+                var priceEpisodesTask = _appsAdditionalPaymentsDataProvider.GetPriceEpisodesAsync(reportServiceContext, cancellationToken);
 
                 await Task.WhenAll(paymentsTask, learnersTask, contractAllocationsTask, priceEpisodesTask);
 

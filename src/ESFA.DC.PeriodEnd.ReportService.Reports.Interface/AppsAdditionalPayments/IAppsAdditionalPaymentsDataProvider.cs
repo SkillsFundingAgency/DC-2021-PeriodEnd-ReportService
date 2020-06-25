@@ -7,12 +7,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
 {
     public interface IAppsAdditionalPaymentsDataProvider
     {
-        Task<ICollection<Payment>> GetPaymentsAsync(int ukprn, int academicYear, CancellationToken cancellationToken);
+        Task<ICollection<Payment>> GetPaymentsAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
 
-        Task<ICollection<Learner>> GetLearnersAsync(int ukprn, CancellationToken cancellationToken);
+        Task<ICollection<Learner>> GetLearnersAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
 
-        Task<ICollection<AecLearningDelivery>> GetAecLearningDeliveriesAsync(int ukprn, CancellationToken cancellationToken);
+        Task<ICollection<AecLearningDelivery>> GetAecLearningDeliveriesAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
 
-        Task<ICollection<ApprenticeshipPriceEpisodePeriodisedValues>> GetPriceEpisodesAsync(int ukprn, CancellationToken cancellationToken);
+        Task<ICollection<ApprenticeshipPriceEpisodePeriodisedValues>> GetPriceEpisodesAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

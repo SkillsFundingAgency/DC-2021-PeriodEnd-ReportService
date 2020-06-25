@@ -50,7 +50,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             foreach (var paymentAndLearningDelivery in paymentAndLearningDeliveries)
             {
                 var periodisedValuesForPayment =
-                    periodisedValuesForLearner?.Where(pv => pv.AimSeqNumber == paymentAndLearningDelivery.LearningDelivery.AimSequenceNumber).ToList() ??
+                    periodisedValuesForLearner?.Where(pv => pv.AimSeqNumber == paymentAndLearningDelivery.LearningDelivery?.AimSequenceNumber).ToList() ??
                     new List<ApprenticeshipPriceEpisodePeriodisedValues>();
 
                 var attributeTypesToMatch = GetAttributesForTransactionType(paymentAndLearningDelivery.Payment.TransactionType);

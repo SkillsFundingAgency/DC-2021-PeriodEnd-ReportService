@@ -20,7 +20,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
         private string ReportFileName => "Apps Additional Payments Report";
 
-
         public AppsAdditionalPayment(
             ICsvFileService csvFileService,
             IFileNameService fileNameService,
@@ -32,7 +31,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             _appsAdditionalPaymentsDataProvider = appsAdditionalPaymentsDataProvider;
             _appsAdditionalPaymentsModelBuilder = appsAdditionalPaymentsModelBuilder;
         }
-
 
         public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
             {

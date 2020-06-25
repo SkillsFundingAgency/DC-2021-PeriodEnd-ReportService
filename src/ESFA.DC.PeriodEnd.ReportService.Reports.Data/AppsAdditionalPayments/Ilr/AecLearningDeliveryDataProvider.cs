@@ -16,15 +16,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsAdditionalPayments.Il
 
         private readonly string sql = @"
 SELECT 
-       ld.[UKPRN]
-      ,ld.[LearnRefNumber]
+      ld.[LearnRefNumber]
       ,ld.[LearnAimRef]
       ,ld.[LearnStartDate]
       ,ld.[ProgType]
       ,ld.[StdCode]
       ,ld.[FworkCode]
       ,ld.[PwayCode]
-      ,ld.[AimSeqNumber]
+      ,ld.[AimSeqNumber] as AimSequenceNumber
       ,AECld.LearnDelEmpIdFirstAdditionalPaymentThreshold
       ,AECld.LearnDelEmpIdSecondAdditionalPaymentThreshold
   FROM [Valid].[LearningDelivery] ld 

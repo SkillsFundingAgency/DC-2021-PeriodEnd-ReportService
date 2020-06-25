@@ -51,8 +51,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                     return new AppsAdditionalPaymentRecord
                     {
                         RecordKey = paymentLine.Key,
-                        FamilyName =  learner?.FamilyName ?? NotApplicable,
-                        GivenNames =  learner?.GivenName ?? NotApplicable,
+                        FamilyName =  learner?.LearnRefNumber != null ? learner.FamilyName : NotApplicable,
+                        GivenNames = learner?.LearnRefNumber != null ? learner.GivenNames : NotApplicable,
                         ProviderSpecifiedLearnerMonitoringA =  learner?.ProvSpecLearnMonA,
                         ProviderSpecifiedLearnerMonitoringB =  learner?.ProvSpecLearnMonB,
                         EarningsAndPayments = _earningsAndPaymentsBuilder.Build(paymentLine.AsEnumerable(), periodisedValuesForLearner.AsEnumerable())

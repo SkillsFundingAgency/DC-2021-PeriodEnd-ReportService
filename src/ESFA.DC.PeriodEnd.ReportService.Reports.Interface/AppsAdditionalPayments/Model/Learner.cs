@@ -8,7 +8,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
 
         public string FamilyName { get; set; }
 
-        public string GivenName { get; set; }
+        public string GivenNames { get; set; }
 
         public string ProvSpecLearnMonA { get; set; }
 

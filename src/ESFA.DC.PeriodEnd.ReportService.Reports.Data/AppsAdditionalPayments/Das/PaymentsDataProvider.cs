@@ -29,7 +29,7 @@ SELECT
 	,ContractType
 	,TransactionType
 	,a.LegalEntityName
-	,SUM(Amount)
+	,SUM(Amount) as Amount
 FROM [Payments2].[Payment] p
 LEFT JOIN [Payments2].[Apprenticeship] a ON p.ApprenticeshipId = a.id
 WHERE AcademicYear = @academicYear

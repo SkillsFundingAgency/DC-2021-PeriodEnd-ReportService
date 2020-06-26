@@ -16,14 +16,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments.D
 {
     public class AppsAdditionalPaymentsDataProviderTests
     {
-        //[Fact(Skip = "Test against real Db, not to run in CI/CD")]
-        [Fact]
+        [Fact(Skip = "Test against real Db, not to run in CI/CD")]
         public async void TestAgainstRealDb()
         {
             var ilrConnectionString = 
-                "data source=DCOL-TST-SqlServer-WEU.database.windows.net;initial catalog=ILR1920DataStore;User Id=ILR1920DataStore_RO_User;Password=B42k7A@Hjp1lZodbahuDVtiKnRxrGLy-FEIX6OsSqTUz59w8PWYgQN03ecCMmfJverE-xdtNwIB;MultipleActiveResultSets=true;Encrypt=True;";
+                "<ReplaceWithConnectionString>";
             var dasConnectionString =
-                "Data Source=DCOL-TST-SqlServer-WEU.database.windows.net;Initial Catalog=DASPayments;User Id=DASPaymentROUser;Password=X2Bk1WjYqCuHsley83Z@JfUcxRPItModLagz6mKE9DvVApSO04F-G5Q7rnihTwNb2Ejc56hOigx;Encrypt=True;";
+                "<ReplaceWithConnectionString>";
 
             var collectionYear = 1920;
             var ukprn = 10000055;

@@ -50,6 +50,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                     priceEpisodesTask.Result);
 
                 await _csvFileService.WriteAsync<AppsAdditionalPaymentRecord, AppsAdditionalPaymentsClassMap>(models, fileName, reportServiceContext.Container, cancellationToken, null, null);
+
+                // Persistance needs to go here.
         }
     }
 }

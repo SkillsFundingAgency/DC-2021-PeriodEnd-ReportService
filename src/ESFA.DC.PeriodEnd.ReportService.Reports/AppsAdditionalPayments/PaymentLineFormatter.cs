@@ -8,15 +8,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 {
     public class PaymentLineFormatter : IPaymentLineFormatter
     {
-        private static readonly string NotAvailable = "Not Available";
-
         public static readonly Dictionary<byte, string> AdditionalPaymentTypes = new Dictionary<byte, string>(5)
         {
-            [4] = "Employer",
-            [5] = "Provider",
-            [6] = "Employer",
-            [7] = "Provider",
-            [16] = "Apprentice"
+            [4] = PaymentTypeConstants.EmployerPaymentType,
+            [5] = PaymentTypeConstants.ProviderPaymentType,
+            [6] = PaymentTypeConstants.EmployerPaymentType,
+            [7] = PaymentTypeConstants.ProviderPaymentType,
+            [16] = PaymentTypeConstants.ApprenticePaymentType
         };
 
         public void FormatFundingLines(IEnumerable<Payment> payments)
@@ -61,7 +59,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
         {
             if (learningDelivery == null)
             {
-                return NotAvailable;
+                return GenericConstants.NotAvailable;
             }
 
             if (payment.TransactionType == DASPayments.TransactionType.First_16To18_Employer_Incentive || 
@@ -71,7 +69,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                     ? learningDelivery?.LearnDelEmpIdFirstAdditionalPaymentThreshold
                     : learningDelivery?.LearnDelEmpIdSecondAdditionalPaymentThreshold;
 
-                return learnerEmployerId?.ToString() ?? NotAvailable;
+                return learnerEmployerId?.ToString() ?? GenericConstants.NotAvailable;
             }
 
             return null;

@@ -11,9 +11,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 {
     public class EarningsAndPaymentsBuilder : IEarningsAndPaymentsBuilder
     {
-        private static readonly string[] Type4_6 = new string[] { "PriceEpisodeFirstEmp1618Pay", "PriceEpisodeSecondEmp1618Pay" };
-        private static readonly string[] Type5_7 = new string[] { "PriceEpisodeFirstProv1618Pay", "PriceEpisodeSecondProv1618Pay" };
-        private static readonly string[] Type16 = new string[] { "PriceEpisodeLearnerAdditionalPayment" };
+        private static readonly string[] Type4_6 = new string[] { AttributeConstants.Fm36PriceEpisodeFirstEmp1618PayAttributeName, AttributeConstants.Fm36PriceEpisodeSecondEmp1618PayAttributeName };
+        private static readonly string[] Type5_7 = new string[] { AttributeConstants.Fm36PriceEpisodeFirstProv1618PayAttributeName, AttributeConstants.Fm36PriceEpisodeSecondProv1618PayAttributeName };
+        private static readonly string[] Type16 = new string[] { AttributeConstants.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName };
 
         public EarningsAndPayments Build(
             IEnumerable<PaymentAndLearningDelivery> paymentAndLearningDeliveries, 

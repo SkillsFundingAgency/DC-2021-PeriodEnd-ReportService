@@ -1,5 +1,7 @@
 ﻿using System.Data.SqlClient;
 using System.Threading;
+using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments;
+using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsAdditionalPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsAdditionalPayments.Das;
@@ -14,7 +16,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments.D
 {
     public class AppsAdditionalPaymentsDataProviderTests
     {
-        [Fact(Skip = "Test against real Db, not to run in CI/CD")]
+        //[Fact(Skip = "Test against real Db, not to run in CI/CD")]
+        [Fact]
         public async void TestAgainstRealDb()
         {
             var ilrConnectionString = 
@@ -60,6 +63,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments.D
             var appPriceEpisodePeriodisedValues = await dataProvider.GetPriceEpisodesAsync(reportServiceContext.Object, cancellationToken);
             appPriceEpisodePeriodisedValues.Should().NotBeNull();
             appPriceEpisodePeriodisedValues.Should().NotBeEmpty();
+
+            var paymentFundingLineFormatter = new PaymentLineFormatter() as IPaymentLineFormatter;
+            var earningsAndPaymentsBuilder = new EarningsAndPaymentsBuilder() as IEarningsAndPaymentsBuilder;
+
+            var appsAdditionalPaymentsModelBuilder =
+                new AppsAdditionalPaymentsModelBuilder(paymentFundingLineFormatter, earningsAndPaymentsBuilder) as IAppsAdditionalPaymentsModelBuilder;
+
+            var results = appsAdditionalPaymentsModelBuilder.Build(payments, learners, aecLearningDeliveries, appPriceEpisodePeriodisedValues);
+
+            results.Should().NotBeNull();
         }
     }
 }

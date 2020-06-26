@@ -34,7 +34,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
         public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
             {
-                var fileName = _fileNameService.GetFilename(reportServiceContext, ReportFileName, OutputTypes.Csv);
+                var fileName = _fileNameService.GetFilename(reportServiceContext, $"{reportServiceContext.Ukprn} {ReportFileName}", OutputTypes.Csv);
 
                 var paymentsTask = _appsAdditionalPaymentsDataProvider.GetPaymentsAsync(reportServiceContext, cancellationToken);
                 var learnersTask = _appsAdditionalPaymentsDataProvider.GetLearnersAsync(reportServiceContext, cancellationToken);
@@ -49,7 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                     contractAllocationsTask.Result,
                     priceEpisodesTask.Result);
 
-                await _csvFileService.WriteAsync<AppsAdditionalPaymentRecord, AppsAdditionalPaymentsClassMap>(models, fileName, reportServiceContext.Container, cancellationToken);
+                await _csvFileService.WriteAsync<AppsAdditionalPaymentRecord, AppsAdditionalPaymentsClassMap>(models, fileName, reportServiceContext.Container, cancellationToken, null, null);
         }
     }
 }

@@ -113,5 +113,32 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             result.TotalPaymentsYearToDate.Should().Be((decimal)Math.Pow(2, 15) - 2);
             result.TotalEarnings.Should().Be((decimal)Math.Pow(2, 13) - 2 + 12000);
         }
+
+        [Fact]
+        public void MultiplePaymentPeriodsOnlyGenerateSingleEarningsLink()
+        {
+            var earningsAndPaymentsBuilder = new EarningsAndPaymentsBuilder() as IEarningsAndPaymentsBuilder;
+            var paymentAndLearningDeliveries = new List<PaymentAndLearningDelivery>();
+            var periodisedValuesForPayment = new List<ApprenticeshipPriceEpisodePeriodisedValues>();
+
+            var periodisedValuesType = typeof(ApprenticeshipPriceEpisodePeriodisedValues);
+
+            for (int i = 1; i <= 14; i++)
+            {
+                paymentAndLearningDeliveries.Add(new PaymentAndLearningDelivery
+                {
+                    Payment = new Payment { Amount = (decimal)Math.Pow(2, i), CollectionPeriod = (byte)i, TransactionType = 4 },
+                    LearningDelivery = new AecLearningDelivery { AimSequenceNumber = 123 }
+                });
+            }
+
+            var periodisedValues = new ApprenticeshipPriceEpisodePeriodisedValues { AimSeqNumber = 123, AttributeName = "PriceEpisodeFirstEmp1618Pay", Period_1 = 100};
+            periodisedValuesForPayment.Add(periodisedValues);
+
+            var result = earningsAndPaymentsBuilder.Build(paymentAndLearningDeliveries, periodisedValuesForPayment);
+
+            result.TotalPaymentsYearToDate.Should().Be((decimal)Math.Pow(2, 15) - 2);
+            result.TotalEarnings.Should().Be(100);
+        }
     }
 }

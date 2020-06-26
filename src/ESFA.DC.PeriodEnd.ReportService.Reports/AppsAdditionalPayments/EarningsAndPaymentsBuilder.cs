@@ -46,14 +46,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                 result.MayR10Payments + result.JuneR11Payments + result.JulyR12Payments +
                 result.R13Payments + result.R14Payments;
 
-            // For Earnings we need to get the relevant periodised values for the aim sequence from each payment, then get the relevant Attribute matches
-            foreach (var paymentAndLearningDelivery in paymentAndLearningDeliveries)
+            //Need to compress the payment records to remove the duplicates when not looking at the collection period the payment belongs to.
+            List<(int aimSeq, byte transType)> TransactionTypeAndAimSeqs = paymentAndLearningDeliveries.Select(pld =>
+                    (pld.LearningDelivery?.AimSequenceNumber ?? 0, pld.Payment.TransactionType))
+                .Distinct().ToList();
+
+            // For Earnings we need to get the relevant periodised values for the aim sequence from each transaction type, then get the relevant Attribute matches
+            foreach (var TransactionTypeAndAimSeq in TransactionTypeAndAimSeqs)
             {
                 var periodisedValuesForPayment =
-                    periodisedValuesForLearner?.Where(pv => pv.AimSeqNumber == paymentAndLearningDelivery.LearningDelivery?.AimSequenceNumber).ToList() ??
+                    periodisedValuesForLearner?.Where(pv => pv.AimSeqNumber == TransactionTypeAndAimSeq.aimSeq).ToList() ??
                     new List<ApprenticeshipPriceEpisodePeriodisedValues>();
 
-                var attributeTypesToMatch = GetAttributesForTransactionType(paymentAndLearningDelivery.Payment.TransactionType);
+                var attributeTypesToMatch = GetAttributesForTransactionType(TransactionTypeAndAimSeq.transType);
 
                 result.AugustEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 1);
                 result.SeptemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 2);

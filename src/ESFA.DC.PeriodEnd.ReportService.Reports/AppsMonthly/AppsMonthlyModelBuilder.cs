@@ -10,7 +10,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 {
-    public class AppsMonthlyModelBuilder
+    public class AppsMonthlyModelBuilder : IAppsMonthlyModelBuilder
     {
         private const string NoContract = "No contract";
         private const string NotApplicable = "Not applicable.  For more information refer to the funding reports guidance.";

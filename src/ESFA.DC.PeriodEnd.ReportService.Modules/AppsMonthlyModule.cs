@@ -11,6 +11,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Das;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Fcs;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Ilr;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.DataProvider;
@@ -79,7 +80,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             {
                 SqlConnection larsSqlFunc() => new SqlConnection(_reportServiceConfiguration.LarsConnectionString);
 
-                return new FcsDataProvider(larsSqlFunc);
+                return new LarsLearningDeliveryProvider(larsSqlFunc);
             }).As<ILarsLearningDeliveryProvider>();
         }
     }

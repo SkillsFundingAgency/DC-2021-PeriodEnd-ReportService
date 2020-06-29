@@ -107,8 +107,8 @@
     <Reference Include="ESFA.DC.FileService.Interface, Version=0.1.39.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.FileService.Interface.0.1.39-beta0001\lib\netstandard2.0\ESFA.DC.FileService.Interface.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR.2021.Database.EF, Version=0.1.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.70\lib\netstandard2.0\ESFA.DC.ILR.2021.Database.EF.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR.2021.Database.EF, Version=0.1.144.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.144\lib\netstandard2.0\ESFA.DC.ILR.2021.Database.EF.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.ILR.Constants, Version=0.1.4.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.2021.Constants.0.1.4-beta0001\lib\netstandard2.0\ESFA.DC.ILR.Constants.dll</HintPath>
@@ -125,17 +125,14 @@
     <Reference Include="ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model, Version=0.1.206.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ILR.2021.ReferenceDataService.ILRReferenceData.EF.0.1.206\lib\netstandard2.0\ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR2021.DataStore.EF, Version=0.1.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.70\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR2021.DataStore.EF, Version=0.1.144.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.144\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR2021.DataStore.EF.Invalid, Version=0.1.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.70\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.Invalid.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR2021.DataStore.EF.Invalid, Version=0.1.144.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.144\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.Invalid.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ILR2021.DataStore.EF.StoredProc, Version=0.1.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.70\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.StoredProc.dll</HintPath>
-    </Reference>
-    <Reference Include="ESFA.DC.ILR2021.DataStore.EF.Valid, Version=0.1.70.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.70\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.Valid.dll</HintPath>
+    <Reference Include="ESFA.DC.ILR2021.DataStore.EF.StoredProc, Version=0.1.144.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ILR.2021.Database.EF.0.1.144\lib\netstandard2.0\ESFA.DC.ILR2021.DataStore.EF.StoredProc.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.IO.AzureStorage, Version=0.1.22.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.IO.AzureStorage.0.1.22-beta0001\lib\netstandard2.0\ESFA.DC.IO.AzureStorage.dll</HintPath>

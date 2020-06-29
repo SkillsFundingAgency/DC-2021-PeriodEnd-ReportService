@@ -19,12 +19,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 {
     public class PeriodisedValuesLookupProviderService : IPeriodisedValuesLookupProviderService
     {
-        private readonly Func<IIlr2021RulebaseContext> _rulebaseContextFactory;
+        private readonly Func<IIlr2021Context> _rulebaseContextFactory;
         private readonly Func<IEasdbContext> _easContextFactory;
         private readonly Func<IDASPaymentsContext> _dasContextFactory;
 
         public PeriodisedValuesLookupProviderService(
-            Func<IIlr2021RulebaseContext> rulebaseContextFactory,
+            Func<IIlr2021Context> rulebaseContextFactory,
             Func<IEasdbContext> easContextFactory,
             Func<IDASPaymentsContext> dasContextFactory)
         {

@@ -16,7 +16,7 @@
     <PackageReference Include="CsvHelper" Version="12.1.3" />
     <PackageReference Include="ESFA.DC.CollectionsManagement.Models" Version="0.2.21-beta0001" />
     <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />
-    <PackageReference Include="ESFA.DC.ILR.2021.Database.EF" Version="0.1.70" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Database.EF" Version="0.1.144" />
     <PackageReference Include="ESFA.DC.ILR.2021.FundingService.FM36.FundingOutput.Model" Version="0.1.52" />
     <PackageReference Include="ESFA.DC.ILR.2021.Model.Interface" Version="0.1.3-beta0001" />
     <PackageReference Include="ESFA.DC.ReferenceData.FCS.Model" Version="0.2.210" />

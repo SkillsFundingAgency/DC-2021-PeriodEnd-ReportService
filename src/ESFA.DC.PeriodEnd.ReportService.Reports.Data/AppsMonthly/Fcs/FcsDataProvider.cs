@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Fcs
         private readonly DateTime _academicYearStartDate = new DateTime(2020, 08, 01);
         private readonly DateTime _academicYearEndDate = new DateTime(2021, 07, 31);
 
-        private readonly string _sql = "SELECT ContractAllocationNumber, FundingStreamPeriodCode, FROM ContractAllocation WHERE DeliveryUkprn = @ukprn AND StartDate <= @academicYearEndDate AND(EndDate IS NULL OR EndDate >= @academicYearStartDate)";
+        private readonly string _sql = "SELECT ContractAllocationNumber, FundingStreamPeriodCode AS FundingStreamPeriod  FROM ContractAllocation WHERE DeliveryUkprn = @ukprn AND StartDate <= @academicYearEndDate AND(EndDate IS NULL OR EndDate >= @academicYearStartDate)";
 
         public FcsDataProvider(Func<SqlConnection> funcSqlConnection)
         {

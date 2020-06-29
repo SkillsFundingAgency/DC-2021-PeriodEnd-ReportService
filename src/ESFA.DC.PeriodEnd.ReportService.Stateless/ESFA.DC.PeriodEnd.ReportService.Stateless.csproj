@@ -80,6 +80,9 @@
     <Reference Include="ESFA.DC.CollectionsManagement.Models, Version=0.2.21.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.CollectionsManagement.Models.0.2.21-beta0001\lib\netstandard2.0\ESFA.DC.CollectionsManagement.Models.dll</HintPath>
     </Reference>
+    <Reference Include="ESFA.DC.CsvService, Version=0.1.40.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.CsvService.0.1.40-beta0001\lib\netstandard2.0\ESFA.DC.CsvService.dll</HintPath>
+    </Reference>
     <Reference Include="ESFA.DC.DASPayments.EF, Version=0.1.114.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.DASPayments.EF.0.1.114\lib\netstandard2.0\ESFA.DC.DASPayments.EF.dll</HintPath>
     </Reference>

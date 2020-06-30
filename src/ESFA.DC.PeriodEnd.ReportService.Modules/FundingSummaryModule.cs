@@ -1,6 +1,8 @@
-﻿using System.Data.SqlClient;
+﻿using System;
+using System.Data.SqlClient;
 using Autofac;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Das;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Eas;
@@ -13,16 +15,21 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
 {
     public class FundingSummaryModule : Module
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
+        private readonly IDataPersistConfiguration _dataPersistConfiguration;
+        private const string tableNameParameter = "tableName";
 
-        public FundingSummaryModule(IReportServiceConfiguration reportServiceConfiguration)
+        public FundingSummaryModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
         {
             _reportServiceConfiguration = reportServiceConfiguration;
+            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -31,11 +38,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
 
             builder.RegisterType<FundingSummaryModelBuilder>().As<IFundingSummaryModelBuilder>();
             builder.RegisterType<FundingSummaryPersistanceMapper>().As<IFundingSummaryPersistanceMapper>();
-            builder.RegisterType<FundingSummaryPersistanceService>().As<IFundingSummaryPersistanceService>();
             builder.RegisterType<FundingSummaryRenderService>().As<IRenderService<FundingSummaryReportModel>>();
 
             builder.RegisterType<PeriodisedValuesLookup>().As<IPeriodisedValuesLookup>();
             builder.RegisterType<FundingSummaryDataProvider>().As<IFundingSummaryDataProvider>();
+
+            var sqlFunc = new Func<SqlConnection>(() =>
+                new SqlConnection(_dataPersistConfiguration.ReportDataConnectionString));
+
+            builder.RegisterType<ReportDataPersistanceService<FundingSummaryPersistModel>>()
+                .WithParameter("sqlConnectionFunc", sqlFunc)
+                .WithParameter(tableNameParameter, TableNameConstants.FundingSummaryReport)
+                .As<IReportDataPersistanceService<FundingSummaryPersistModel>>();
 
             RegisterDataProviders(builder);
         }

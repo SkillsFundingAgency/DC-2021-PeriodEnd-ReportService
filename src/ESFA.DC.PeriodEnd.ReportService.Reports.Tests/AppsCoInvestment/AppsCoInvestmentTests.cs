@@ -9,7 +9,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 using Moq;
 using Xunit;
@@ -65,15 +64,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
             ICsvFileService csvFileService = null,
             IFileNameService fileNameService = null,
             IAppsCoInvestmentDataProvider appsCoInvestmentDataProvider = null,
-            IAppsCoInvestmentModelBuilder appsCoInvestmentModelBuilder = null,
-            IAppsCoInvestmentPersistenceService appsCoInvestmentPersistenceService = null)
+            IAppsCoInvestmentModelBuilder appsCoInvestmentModelBuilder = null)
         {
             return new Reports.AppsCoInvestment.AppsCoInvestment(
                 csvFileService ?? Mock.Of<ICsvFileService>(),
                 fileNameService ?? Mock.Of<IFileNameService>(),
                 appsCoInvestmentDataProvider ?? Mock.Of<IAppsCoInvestmentDataProvider>(),
-                appsCoInvestmentModelBuilder ?? Mock.Of<IAppsCoInvestmentModelBuilder>(),
-                appsCoInvestmentPersistenceService ?? Mock.Of<IAppsCoInvestmentPersistenceService>());
+                appsCoInvestmentModelBuilder ?? Mock.Of<IAppsCoInvestmentModelBuilder>());
         }
     }
 }

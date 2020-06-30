@@ -16,7 +16,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
@@ -37,9 +36,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             builder.RegisterType<AppsCoInvestmentDataProvider>().As<IAppsCoInvestmentDataProvider>();
             builder.RegisterType<AppsCoInvestmentModelBuilder>().As<IAppsCoInvestmentModelBuilder>();
             builder.RegisterType<AppsCoInvestmentRecordKeyEqualityComparer>().As<IEqualityComparer<AppsCoInvestmentRecordKey>>().InstancePerLifetimeScope();
-
-            builder.RegisterType<AppsCoInvestmentPersistenceMapper>().As<IAppsCoInvestmentPersistenceMapper>();
-            builder.RegisterType<AppsCoInvestmentPersistenceService>().As<IAppsCoInvestmentPersistenceService>();
 
             //builders
             builder.RegisterType<PaymentsBuilder>().As<IPaymentsBuilder>();

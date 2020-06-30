@@ -9,7 +9,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
@@ -20,7 +19,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
         private readonly IFileNameService _fileNameService;
         private readonly IAppsCoInvestmentDataProvider _appsCoInvestmentDataProvider;
         private readonly IAppsCoInvestmentModelBuilder _appsCoInvestmentModelBuilder;
-        private readonly IAppsCoInvestmentPersistenceService _appsCoInvestmentPersistenceService;
         public string ReportTaskName => "TaskGenerateAppsCoInvestmentContributionsReport";
 
         private string ReportFileName => "Apps Co-Investment Contributions Report";
@@ -29,14 +27,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             ICsvFileService csvFileService,
             IFileNameService fileNameService,
             IAppsCoInvestmentDataProvider appsCoInvestmentDataProvider,
-            IAppsCoInvestmentModelBuilder appsCoInvestmentModelBuilder,
-            IAppsCoInvestmentPersistenceService appsCoInvestmentPersistenceService)
+            IAppsCoInvestmentModelBuilder appsCoInvestmentModelBuilder)
         {
             _csvFileService = csvFileService;
             _fileNameService = fileNameService;
             _appsCoInvestmentDataProvider = appsCoInvestmentDataProvider;
             _appsCoInvestmentModelBuilder = appsCoInvestmentModelBuilder;
-            _appsCoInvestmentPersistenceService = appsCoInvestmentPersistenceService;
         }
 
         public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
@@ -52,8 +48,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             var appsCoInvestmentRecords = _appsCoInvestmentModelBuilder.Build(learnersTask.Result, paymentsTask.Result, priceEpisodePeriodisedValuesTask.Result).ToList();
 
             await _csvFileService.WriteAsync<AppsCoInvestmentRecord, AppsCoInvestmentClassMap>(appsCoInvestmentRecords, fileName, reportServiceContext.Container, cancellationToken);
-
-            await _appsCoInvestmentPersistenceService.PersistAsync(reportServiceContext, appsCoInvestmentRecords, cancellationToken);
         }
     }
 }

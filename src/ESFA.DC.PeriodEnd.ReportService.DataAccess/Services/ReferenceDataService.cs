@@ -15,9 +15,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.DataAccess.Services
     {
         private readonly Func<IOrganisationsContext> _organisationsContextFunc;
         private readonly Func<IEasdbContext> _easContextFunc;
-        private readonly Func<IIlr2021RulebaseContext> _ilrContextFunc;
+        private readonly Func<IIlr2021Context> _ilrContextFunc;
 
-        public ReferenceDataService(Func<IOrganisationsContext> organisationsContextFunc, Func<IEasdbContext> easContextFunc, Func<IIlr2021RulebaseContext> ilrContextFunc)
+        public ReferenceDataService(Func<IOrganisationsContext> organisationsContextFunc, Func<IEasdbContext> easContextFunc, Func<IIlr2021Context> ilrContextFunc)
         {
             _organisationsContextFunc = organisationsContextFunc;
             _easContextFunc = easContextFunc;

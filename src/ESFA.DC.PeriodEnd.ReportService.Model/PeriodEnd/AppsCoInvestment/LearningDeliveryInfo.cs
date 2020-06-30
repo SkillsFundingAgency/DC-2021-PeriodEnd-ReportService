@@ -1,6 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using ESFA.DC.ILR2021.DataStore.EF.Valid;
+using ESFA.DC.ILR2021.DataStore.EF;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsCoInvestment
 {

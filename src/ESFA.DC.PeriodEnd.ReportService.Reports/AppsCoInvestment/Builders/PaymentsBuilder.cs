@@ -36,15 +36,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
                         p.LearningAimStandardCode,
                         p.LearningAimFrameworkCode,
                         p.LearningAimPathwayCode))
-                .Select(
-                    g =>
-                        new AppsCoInvestmentRecordKey(
-                            g.Key.LearnerReferenceNumber,
-                            g.Key.LearningStartDate,
-                            g.Key.ProgrammeType,
-                            g.Key.StandardCode,
-                            g.Key.FrameworkCode,
-                            g.Key.PathwayCode))
+                .Select(g => g.Key)
                 .ToList();
         }
 

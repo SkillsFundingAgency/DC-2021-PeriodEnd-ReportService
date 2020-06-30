@@ -38,7 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             _logger = logger;
         }
 
-        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             var ukprn = reportServiceContext.Ukprn;
             var collectionYear = reportServiceContext.CollectionYear;
@@ -71,6 +71,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             _logger.LogInfo("Apps Monthly Payment Report Model Build End");
 
             await _csvFileService.WriteAsync<AppsMonthlyRecord, AppsMonthlyClassMap>(models, fileName, reportServiceContext.Container, cancellationToken);
+
+            return fileName;
         }
     }
 }

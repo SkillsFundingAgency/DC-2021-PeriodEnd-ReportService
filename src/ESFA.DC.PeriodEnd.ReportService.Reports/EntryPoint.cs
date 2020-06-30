@@ -51,7 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
                         throw new Exception($"Report with key {taskItem} not found");
                     }
 
-                    await report.GenerateReport(_reportServiceContext, cancellationToken);
+                    var fileName = await report.GenerateReport(_reportServiceContext, cancellationToken);
                 }
             }
             catch (Exception e)

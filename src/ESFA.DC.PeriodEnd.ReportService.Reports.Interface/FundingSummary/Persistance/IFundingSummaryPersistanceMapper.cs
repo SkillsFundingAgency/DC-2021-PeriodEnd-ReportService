@@ -7,6 +7,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persi
 {
     public interface IFundingSummaryPersistanceMapper
     {
-        IEnumerable<FundingSummaryPersistModel> MapAsync(IReportServiceContext reportServiceContext, FundingSummaryReportModel fundingSummaryReportModel,CancellationToken cancellationToken);
+        IEnumerable<FundingSummaryPersistModel> Map(IReportServiceContext reportServiceContext, FundingSummaryReportModel fundingSummaryReportModel,CancellationToken cancellationToken);
     }
 }

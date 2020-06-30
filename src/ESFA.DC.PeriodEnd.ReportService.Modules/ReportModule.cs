@@ -9,15 +9,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
     public class ReportModule : Module
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
+        private readonly IDataPersistConfiguration _dataPersistConfiguration;
 
-        public ReportModule(IReportServiceConfiguration reportServiceConfiguration)
+        public ReportModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
         {
             _reportServiceConfiguration = reportServiceConfiguration;
+            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
         protected override void Load(ContainerBuilder builder)
         {
-            builder.RegisterModule(new FundingSummaryModule(_reportServiceConfiguration));
+            builder.RegisterModule(new FundingSummaryModule(_reportServiceConfiguration, _dataPersistConfiguration));
+            builder.RegisterModule(new AppsCoInvestmentModule(_reportServiceConfiguration));
 
             builder.RegisterModule(new AppsMonthlyModule(_reportServiceConfiguration));
 

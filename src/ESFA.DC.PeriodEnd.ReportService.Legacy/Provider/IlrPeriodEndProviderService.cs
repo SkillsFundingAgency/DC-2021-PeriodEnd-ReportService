@@ -24,17 +24,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
     {
         private const int ApprenticeshipsFundModel = 36;
         private readonly Func<IIlr2021Context> _ilrContextFactory;
+        private readonly Func<IIlr2021Context> _ilrValidContextFactory;
         private readonly Func<IIlr2021InvalidContext> _ilrInValidContextFactory;
         private readonly Func<IIlrReferenceDataContext> _ilrRefDataFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
             Func<IIlr2021Context> ilrContextFactory,
+            Func<IIlr2021Context> ilrValidContextFactory,
             Func<IIlr2021InvalidContext> ilrInValidContextFactory,
             Func<IIlrReferenceDataContext> ilrRefDataFactory)
             : base(logger)
         {
             _ilrContextFactory = ilrContextFactory;
+            _ilrValidContextFactory = ilrValidContextFactory;
             _ilrInValidContextFactory = ilrInValidContextFactory;
             _ilrRefDataFactory = ilrRefDataFactory;
         }
@@ -137,7 +140,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 
                 cancellationToken.ThrowIfCancellationRequested();
 
-                using (var ilrContext = _ilrContextFactory())
+                using (var ilrContext = _ilrValidContextFactory())
                 {
                     appsMonthlyPaymentIlrInfo.Learners = await ilrContext.Learners
                         .Where(x => x.UKPRN == ukPrn && x.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
@@ -232,7 +235,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 
         public async Task<List<AppsAdditionalPaymentLearnerInfo>> GetILRInfoForAppsAdditionalPaymentsReportAsync(int ukPrn, CancellationToken cancellationToken)
         {
-            using (var ilrContext = _ilrContextFactory())
+            using (var ilrContext = _ilrValidContextFactory())
             {
                 return await ilrContext
                     .Learners
@@ -373,7 +376,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
             cancellationToken.ThrowIfCancellationRequested();
 
             List<long> validLearnerUkprns;
-            using (var ilrValidContext = _ilrContextFactory())
+            using (var ilrValidContext = _ilrValidContextFactory())
             {
                 validLearnerUkprns = await ilrValidContext
                     .Learners
@@ -423,7 +426,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 
             List<Top10ProvidersWithInvalidLearnersValidLearners> validLearnersForUkprns;
             List<long> ukPrns = top10ProvidersWithInvalidLearnersInvalid.Select(x => x.Ukprn).ToList();
-            using (var ilrContext = _ilrContextFactory())
+            using (var ilrContext = _ilrValidContextFactory())
             {
                 validLearnersForUkprns = (await ilrContext.Learners
                         .Where(x => ukPrns.Contains(x.UKPRN))
@@ -476,7 +479,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 
             cancellationToken.ThrowIfCancellationRequested();
 
-            using (var ilrContext = _ilrContextFactory())
+            using (var ilrContext = _ilrValidContextFactory())
             {
                 var learners = await ilrContext
                     .Learners
@@ -516,7 +519,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                                         }).ToList(),
                                     LearningDeliveryFAMs = x.LearningDeliveryFAMs
                                         .Where(fam => fam.LearnDelFAMType == "LDM")
-                                        .Select(y => new LearningDeliveryFAM()
+                                        .Select(y => new ESFA.DC.ILR2021.DataStore.EF.LearningDeliveryFAM()
                                         {
                                             UKPRN = y.UKPRN,
                                             LearnRefNumber = y.LearnRefNumber,
@@ -541,7 +544,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 
         public async Task<List<AppsCoInvestmentRecordKey>> GetUniqueAppsCoInvestmentRecordKeysAsync(int ukprn, CancellationToken cancellationToken)
         {
-            using (var context = _ilrContextFactory())
+            using (var context = _ilrValidContextFactory())
             {
                 return await context
                     .LearningDeliveries

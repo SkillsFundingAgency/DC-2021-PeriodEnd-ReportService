@@ -77,6 +77,9 @@
     <Reference Include="ESFA.DC.Auditing.Interface, Version=0.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Auditing.Interface.0.2.0-beta0001\lib\netstandard2.0\ESFA.DC.Auditing.Interface.dll</HintPath>
     </Reference>
+    <Reference Include="ESFA.DC.BulkCopy, Version=0.1.40.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.BulkCopy.0.1.40-beta0001\lib\netstandard2.0\ESFA.DC.BulkCopy.dll</HintPath>
+    </Reference>
     <Reference Include="ESFA.DC.CollectionsManagement.Models, Version=0.2.21.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.CollectionsManagement.Models.0.2.21-beta0001\lib\netstandard2.0\ESFA.DC.CollectionsManagement.Models.dll</HintPath>
     </Reference>

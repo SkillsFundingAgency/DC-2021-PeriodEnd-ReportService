@@ -28,9 +28,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Mod
 
         public string SWSupAimId { get; set; }
 
-        public IReadOnlyCollection<AppFinRecord> AppFinRecords { get; set; }
+        public List<AppFinRecord> AppFinRecords { get; set; }
 
-        public IReadOnlyCollection<LearningDeliveryFam> LearningDeliveryFams { get; set; }
+        public List<LearningDeliveryFam> LearningDeliveryFams { get; set; }
 
         public List<AECApprenticeshipPriceEpisodePeriodisedValues> AECApprenticeshipPriceEpisodePeriodisedValues { get; set; }
 

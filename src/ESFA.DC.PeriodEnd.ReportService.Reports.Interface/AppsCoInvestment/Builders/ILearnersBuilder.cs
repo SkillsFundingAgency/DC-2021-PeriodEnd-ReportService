@@ -9,7 +9,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Bui
     {
         IDictionary<string, Learner> BuildLearnerLookUpDictionary(ICollection<Learner> learners);
 
-        List<AppsCoInvestmentRecordKey> GetUniqueAppsCoInvestmentRecordKeysAsync(ICollection<Learner> learners);
+        ICollection<AppsCoInvestmentRecordKey> GetUniqueAppsCoInvestmentRecordKeysAsync(ICollection<Learner> learners);
 
         Learner GetLearnerForRecord(IDictionary<string, Learner> learnerDictionary, AppsCoInvestmentRecordKey record);
 

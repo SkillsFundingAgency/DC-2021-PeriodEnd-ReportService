@@ -9,7 +9,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Bui
     {
         IDictionary<AppsCoInvestmentRecordKey, List<Payment>> BuildPaymentsLookupDictionary(ICollection<Payment> payments);
 
-        List<AppsCoInvestmentRecordKey> GetUniqueCombinationsOfKeyFromPaymentsAsync(ICollection<Payment> payments);
+        ICollection<AppsCoInvestmentRecordKey> GetUniqueCombinationsOfKeyFromPaymentsAsync(ICollection<Payment> payments);
 
         IEnumerable<Payment> GetPaymentsForRecord(IDictionary<AppsCoInvestmentRecordKey, List<Payment>> paymentsDictionary, AppsCoInvestmentRecordKey record);
 
@@ -21,7 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Bui
 
         decimal TotalCoInvestmentDueFromEmployerInPreviousFundingYears(IEnumerable<Payment> payments, int currentAcademicYear);
 
-        Dictionary<byte, decimal> BuildCoInvestmentPaymentsPerPeriodDictionary(IEnumerable<Payment> payments, int currentAcademicYear);
+        IDictionary<byte, decimal> BuildCoInvestmentPaymentsPerPeriodDictionary(IEnumerable<Payment> payments, int currentAcademicYear);
 
         Payment GetEarliestPayment(IEnumerable<Payment> payments);
 

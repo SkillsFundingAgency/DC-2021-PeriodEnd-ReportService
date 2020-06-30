@@ -26,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
                 .ToDictionary(k => k.Key, v => v.ToList(), _appsCoInvestmentEqualityComparer);
         }
 
-        public List<AppsCoInvestmentRecordKey> GetUniqueCombinationsOfKeyFromPaymentsAsync(ICollection<Payment> payments)
+        public ICollection<AppsCoInvestmentRecordKey> GetUniqueCombinationsOfKeyFromPaymentsAsync(ICollection<Payment> payments)
         {
             return payments
                 .GroupBy(p =>
@@ -137,7 +137,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
             return payments.Where(p => p.AcademicYear < currentAcademicYear).Sum(p => p.Amount);
         }
 
-        public Dictionary<byte, decimal> BuildCoInvestmentPaymentsPerPeriodDictionary(IEnumerable<Payment> payments, int currentAcademicYear)
+        public IDictionary<byte, decimal> BuildCoInvestmentPaymentsPerPeriodDictionary(IEnumerable<Payment> payments, int currentAcademicYear)
         {
             return payments?
                 .Where(p => p.AcademicYear == currentAcademicYear)

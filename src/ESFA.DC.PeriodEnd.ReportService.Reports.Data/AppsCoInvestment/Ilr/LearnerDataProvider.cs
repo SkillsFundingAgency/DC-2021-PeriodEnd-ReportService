@@ -19,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
     public class LearnerDataProvider : ILearnerDataProvider
     {
         private readonly Func<IIlr2021Context> _ilrContext;
-        private const int APPS_FUNDMODEL = 36;
+        private const int FundModel = 36;
 
         public LearnerDataProvider(Func<IIlr2021Context> ilrContext)
         {
@@ -34,7 +34,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
                 
                 learners = await ilrContext
                     .Learners
-                    .Where(x => x.UKPRN == ukprn && x.LearningDeliveries.Any(ld => ld.FundModel == APPS_FUNDMODEL && ld.LearnAimRef == LearnAimRefConstants.ZPROG001))
+                    .Where(x => x.UKPRN == ukprn && x.LearningDeliveries.Any(ld => ld.FundModel == FundModel && ld.LearnAimRef == LearnAimRefConstants.ZPROG001))
                     .Select(learner =>
                         new Learner()
                         {
@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
                             GivenNames = learner.GivenNames,
                             LearningDeliveries = learner
                                 .LearningDeliveries
-                                .Where(ld => ld.FundModel == APPS_FUNDMODEL && ld.LearnAimRef == LearnAimRefConstants.ZPROG001)
+                                .Where(ld => ld.FundModel == FundModel && ld.LearnAimRef == LearnAimRefConstants.ZPROG001)
                                 .Select(ld => new LearningDelivery()
                                 {
                                     LearnRefNumber = ld.LearnRefNumber,

@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
                 .ToDictionary(k => k.LearnRefNumber, v => v, StringComparer.OrdinalIgnoreCase);
         }
 
-        public List<AppsCoInvestmentRecordKey> GetUniqueAppsCoInvestmentRecordKeysAsync(ICollection<Learner> learners)
+        public ICollection<AppsCoInvestmentRecordKey> GetUniqueAppsCoInvestmentRecordKeysAsync(ICollection<Learner> learners)
         {
             return learners.SelectMany(x => x.LearningDeliveries)
                 .GroupBy(ld =>

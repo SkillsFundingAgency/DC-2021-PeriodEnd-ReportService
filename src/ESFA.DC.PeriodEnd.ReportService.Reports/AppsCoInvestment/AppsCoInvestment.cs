@@ -35,7 +35,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             _appsCoInvestmentModelBuilder = appsCoInvestmentModelBuilder;
         }
 
-        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             var ukprn = reportServiceContext.Ukprn;
             var collectionYear = reportServiceContext.CollectionYear;
@@ -50,6 +50,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             var appsCoInvestmentRecords = _appsCoInvestmentModelBuilder.Build(learnersTask.Result, paymentsTask.Result, priceEpisodePeriodisedValuesTask.Result, collectionYear).ToList();
 
             await _csvFileService.WriteAsync<AppsCoInvestmentRecord, AppsCoInvestmentClassMap>(appsCoInvestmentRecords, fileName, reportServiceContext.Container, cancellationToken);
+
+            return fileName;
         }
     }
 }

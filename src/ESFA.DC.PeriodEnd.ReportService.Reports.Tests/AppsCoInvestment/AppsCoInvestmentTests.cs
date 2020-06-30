@@ -51,7 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
            
             var modelBuilderMock = new Mock<IAppsCoInvestmentModelBuilder>();
 
-            modelBuilderMock.Setup(b => b.Build(learners, payments, aecPriceEpisodePeriodisedValues)).Returns(rows);
+            modelBuilderMock.Setup(b => b.Build(learners, payments, aecPriceEpisodePeriodisedValues, It.IsAny<int>())).Returns(rows);
 
             var report = NewReport(csvFileServiceMock.Object, fileNameServiceMock.Object, dataProviderMock.Object, modelBuilderMock.Object);
 

@@ -25,10 +25,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             DASPayments.TransactionType.Completion,
             DASPayments.TransactionType.Balancing,
         };
-        private const int _currentAcademicYear = 2021;
-        private readonly DateTime _academicYearStart = new DateTime(2020, 8, 1);
-        private readonly DateTime _nextAcademicYearStart = new DateTime(2021, 8, 1);
-       
+        
         public AppsCoInvestmentModelBuilder(
             IEqualityComparer<AppsCoInvestmentRecordKey> appsCoInvestmentEqualityComparer,
             IPaymentsBuilder paymentsBuilder,
@@ -44,7 +41,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
         public IEnumerable<AppsCoInvestmentRecord> Build(
             ICollection<Learner> learners,
             ICollection<Payment> payments,
-            ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues)
+            ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues,
+            int currentAcademicYear)
         {
 
             var paymentsDictionary = _paymentsBuilder.BuildPaymentsLookupDictionary(payments);
@@ -78,7 +76,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
                         EmployerIdentifierAtStartOfLearning = _learnersBuilder.GetEmploymentStatus(learner, record.LearningStartDate),
                         EmployerNameFromApprenticeshipService = earliestPaymentInfo?.LegalEntityName,
                         LDM356Or361 = _learningDeliveriesBuilder.HasLdm356Or361(learningDelivery) ? "Yes" : "No",
-                        EarningsAndPayments = _paymentsBuilder.BuildEarningsAndPayments(filteredPayments, allPayments, learningDelivery, aecPriceEpisodePeriodisedValues, _currentAcademicYear, _academicYearStart, _nextAcademicYearStart)
+                        EarningsAndPayments = _paymentsBuilder.BuildEarningsAndPayments(filteredPayments, allPayments, learningDelivery, aecPriceEpisodePeriodisedValues, currentAcademicYear, DateConstants.BeginningOfYear, DateConstants.EndOfYear)
                      };
 
                     return model;
@@ -170,12 +168,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
 
         public bool EmployerCoInvestmentPaymentFilter(ICollection<Payment> payments, string learnRefNumber)
         {
-            return payments?.Any(p => p.FundingSource == 3 && p.LearnerReferenceNumber.CaseInsensitiveEquals(learnRefNumber)) ?? false;
+            return payments?.Any(p => p.FundingSource == FundingSource && p.LearnerReferenceNumber.CaseInsensitiveEquals(learnRefNumber)) ?? false;
         }
 
         public bool CompletionPaymentFilter(ICollection<Payment> payments, string learnRefNumber)
         {
-            return payments?.Any(p => p.TransactionType == 3 && p.LearnerReferenceNumber.CaseInsensitiveEquals(learnRefNumber)) ?? false;
+            return payments?.Any(p => p.TransactionType == DASPayments.TransactionType.Balancing && p.LearnerReferenceNumber.CaseInsensitiveEquals(learnRefNumber)) ?? false;
         }
 
         public bool PMRAppFinRecordFilter(ICollection<Learner> learners, string learnRefNumber)

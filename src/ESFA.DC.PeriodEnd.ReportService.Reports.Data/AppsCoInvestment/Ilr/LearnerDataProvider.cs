@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR2021.DataStore.EF.Interface;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
 using Learner = ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model.Learner;
@@ -18,7 +19,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
     public class LearnerDataProvider : ILearnerDataProvider
     {
         private readonly Func<IIlr2021Context> _ilrContext;
-        private const string PROGRAMMEAIM = "ZPROG001";
         private const int APPS_FUNDMODEL = 36;
 
         public LearnerDataProvider(Func<IIlr2021Context> ilrContext)
@@ -34,7 +34,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
                 
                 learners = await ilrContext
                     .Learners
-                    .Where(x => x.UKPRN == ukprn && x.LearningDeliveries.Any(ld => ld.FundModel == APPS_FUNDMODEL && ld.LearnAimRef == PROGRAMMEAIM))
+                    .Where(x => x.UKPRN == ukprn && x.LearningDeliveries.Any(ld => ld.FundModel == APPS_FUNDMODEL && ld.LearnAimRef == LearnAimRefConstants.ZPROG001))
                     .Select(learner =>
                         new Learner()
                         {
@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
                             GivenNames = learner.GivenNames,
                             LearningDeliveries = learner
                                 .LearningDeliveries
-                                .Where(ld => ld.FundModel == APPS_FUNDMODEL && ld.LearnAimRef == PROGRAMMEAIM)
+                                .Where(ld => ld.FundModel == APPS_FUNDMODEL && ld.LearnAimRef == LearnAimRefConstants.ZPROG001)
                                 .Select(ld => new LearningDelivery()
                                 {
                                     LearnRefNumber = ld.LearnRefNumber,
@@ -59,7 +59,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
                                     PwayCode = ld.PwayCode ?? 0,
                                     SWSupAimId = ld.SWSupAimId,
                                     AppFinRecords = ld.AppFinRecords
-                                        .Where(afr => afr.AFinType == "PMR")
+                                        .Where(afr => afr.AFinType == FinTypes.PMR)
                                         .Select(afr => new AppFinRecord()
                                         {
                                             LearnRefNumber = afr.LearnRefNumber,
@@ -70,7 +70,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr
                                             AFinAmount = afr.AFinAmount
                                         }).ToList(),
                                     LearningDeliveryFams = ld.LearningDeliveryFAMs
-                                        .Where(fam => fam.LearnDelFAMType == "LDM")
+                                        .Where(fam => fam.LearnDelFAMType == LearnDelFamTypeConstants.LDM)
                                         .Select(ldfam => new LearningDeliveryFam()
                                         {
                                             Type = ldfam.LearnDelFAMType,

@@ -10,7 +10,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Bui
         IEnumerable<AppsCoInvestmentRecord> Build(
             ICollection<Learner> learners,
             ICollection<Payment> payments,
-            ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues);
+            ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues,
+            int currentAcademicYear);
 
     }
 }

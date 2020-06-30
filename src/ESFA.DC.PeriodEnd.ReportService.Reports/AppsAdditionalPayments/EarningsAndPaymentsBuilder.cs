@@ -14,6 +14,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
         private static readonly string[] Type4_6 = new string[] { AttributeConstants.Fm36PriceEpisodeFirstEmp1618PayAttributeName, AttributeConstants.Fm36PriceEpisodeSecondEmp1618PayAttributeName };
         private static readonly string[] Type5_7 = new string[] { AttributeConstants.Fm36PriceEpisodeFirstProv1618PayAttributeName, AttributeConstants.Fm36PriceEpisodeSecondProv1618PayAttributeName };
         private static readonly string[] Type16 = new string[] { AttributeConstants.Fm36PriceEpisodeLearnerAdditionalPaymentAttributeName };
+        private static readonly Dictionary<byte, string[]> AttributesForType = new Dictionary<byte, string[]>
+        {
+            [4] = Type4_6,
+            [5] = Type5_7,
+            [6] = Type4_6,
+            [7] = Type5_7,
+            [16] = Type16
+        };
 
         public EarningsAndPayments Build(
             IEnumerable<PaymentAndLearningDelivery> paymentAndLearningDeliveries, 
@@ -121,26 +129,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
         public string[] GetAttributesForTransactionType(byte transactionType)
         {
-            string[] matches;
-            switch (transactionType)
+            if (AttributesForType.TryGetValue(transactionType, out string[] matches))
             {
-                case DASPayments.TransactionType.First_16To18_Employer_Incentive:
-                case DASPayments.TransactionType.Second_16To18_Employer_Incentive:
-                    matches = Type4_6;
-                    break;
-                case DASPayments.TransactionType.First_16To18_Provider_Incentive:
-                case DASPayments.TransactionType.Second_16To18_Provider_Incentive:
-                    matches = Type5_7;
-                    break;
-                case DASPayments.TransactionType.Apprenticeship:
-                    matches = Type16;
-                    break;
-                default:
-                    throw new ApplicationException(
-                        $"Unexpected TransactionType [{transactionType}]");
+                return matches;
             }
-
-            return matches;
+            else
+            {
+                throw new ApplicationException($"Unexpected TransactionType [{transactionType}]");
+            }
         }
     }
 }

@@ -21,11 +21,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
         {
             foreach (var payment in payments)
             {
-                if (FundLineConstants.NonLevyApprenticeship1618.Equals(payment.LearningAimFundingLineType))
+                if (FundLineConstants.NonLevyApprenticeship1618.Equals(payment.LearningAimFundingLineType, StringComparison.OrdinalIgnoreCase))
                 {
                     payment.LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship1618NonProcured;
                 }
-                else if (FundLineConstants.NonLevyApprenticeship19Plus.Equals(payment.LearningAimFundingLineType))
+                else if (FundLineConstants.NonLevyApprenticeship19Plus.Equals(payment.LearningAimFundingLineType, StringComparison.OrdinalIgnoreCase))
                 {
                     payment.LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship19PlusNonProcured;
 

@@ -76,16 +76,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             Dictionary<string, IGrouping<string, AecLearningDelivery>> learningDeliveriesLookup, Payment payment)
         {
             var learningDelivery = learningDeliveriesLookup.GetValueOrDefault(payment.LearnerReferenceNumber)?.FirstOrDefault(
-                ld =>
-                {
-                    var p = payment;
-                    return ld.LearnAimRef.CaseInsensitiveEquals(p.LearningAimReference)
-                           && ld.LearnStartDate == p.LearningStartDate
-                           && p.LearningAimProgrammeType == (ld.ProgType ?? 0)
-                           && p.LearningAimStandardCode == (ld.StdCode ?? 0)
-                           && p.LearningAimFrameworkCode == (ld.FworkCode ?? 0)
-                           && p.LearningAimPathwayCode == (ld.PwayCode ?? 0);
-                });
+                ld => ld.LearnAimRef.CaseInsensitiveEquals(payment.LearningAimReference)
+                      && ld.LearnStartDate == payment.LearningStartDate
+                      && payment.LearningAimProgrammeType == (ld.ProgType ?? 0)
+                      && payment.LearningAimStandardCode == (ld.StdCode ?? 0)
+                      && payment.LearningAimFrameworkCode == (ld.FworkCode ?? 0)
+                      && payment.LearningAimPathwayCode == (ld.PwayCode ?? 0));
 
             return learningDelivery;
         }

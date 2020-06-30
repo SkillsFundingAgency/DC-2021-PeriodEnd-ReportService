@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsAdditionalPayments.Il
         private readonly Func<SqlConnection> _sqlConnectionFunc;
 
         private readonly string sql = @"
-SELECT TOP(1000)
+SELECT
 	apepv.LearnRefNumber
 	,ape.PriceEpisodeAimSeqNumber as AimSeqNumber
 	,apepv.AttributeName

@@ -37,7 +37,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             _fundingSummaryPersistanceMapper = fundingSummaryPersistanceMapper;
         }
 
-        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             var fileName = _fileNameService.GetFilename(reportServiceContext, ReportName, OutputTypes.Excel, true);
 
@@ -58,6 +58,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 
             var persistModels = _fundingSummaryPersistanceMapper.Map(reportServiceContext, model, cancellationToken);
             await _persistanceService.PersistAsync(reportServiceContext, persistModels, cancellationToken);
+
+            return fileName;
         }
     }
 }

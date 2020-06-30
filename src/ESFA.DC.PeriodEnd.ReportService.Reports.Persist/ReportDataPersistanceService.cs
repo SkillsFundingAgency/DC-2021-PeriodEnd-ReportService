@@ -29,6 +29,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Persist
 
         public async Task PersistAsync(IReportServiceContext reportServiceContext, IEnumerable<T> reportModels, CancellationToken cancellationToken)
         {
+            if (!reportServiceContext.DataPersistFeatureEnabled)
+            {
+                return;
+            }
+
             using (var connection = _sqlConnectionFunc())
             {
                 await connection.OpenAsync(cancellationToken);

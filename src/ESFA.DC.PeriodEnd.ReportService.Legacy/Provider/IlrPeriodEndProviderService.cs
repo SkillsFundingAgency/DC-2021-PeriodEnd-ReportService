@@ -4,10 +4,9 @@ using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.ILR.ReferenceDataService.ILRReferenceData.Model.Interface;
+using ESFA.DC.ILR2021.DataStore.EF;
 using ESFA.DC.ILR2021.DataStore.EF.Interface;
 using ESFA.DC.ILR2021.DataStore.EF.Invalid.Interface;
-using ESFA.DC.ILR2021.DataStore.EF.Valid;
-using ESFA.DC.ILR2021.DataStore.EF.Valid.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Provider;
 using ESFA.DC.PeriodEnd.ReportService.Legacy.Provider.Abstract;
@@ -24,15 +23,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
     public sealed class IlrPeriodEndProviderService : AbstractFundModelProviderService, IIlrPeriodEndProviderService
     {
         private const int ApprenticeshipsFundModel = 36;
-        private readonly Func<IIlr2021RulebaseContext> _ilrContextFactory;
-        private readonly Func<IIlr2021ValidContext> _ilrValidContextFactory;
+        private readonly Func<IIlr2021Context> _ilrContextFactory;
+        private readonly Func<IIlr2021Context> _ilrValidContextFactory;
         private readonly Func<IIlr2021InvalidContext> _ilrInValidContextFactory;
         private readonly Func<IIlrReferenceDataContext> _ilrRefDataFactory;
 
         public IlrPeriodEndProviderService(
             ILogger logger,
-            Func<IIlr2021RulebaseContext> ilrContextFactory,
-            Func<IIlr2021ValidContext> ilrValidContextFactory,
+            Func<IIlr2021Context> ilrContextFactory,
+            Func<IIlr2021Context> ilrValidContextFactory,
             Func<IIlr2021InvalidContext> ilrInValidContextFactory,
             Func<IIlrReferenceDataContext> ilrRefDataFactory)
             : base(logger)
@@ -520,7 +519,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                                         }).ToList(),
                                     LearningDeliveryFAMs = x.LearningDeliveryFAMs
                                         .Where(fam => fam.LearnDelFAMType == "LDM")
-                                        .Select(y => new LearningDeliveryFAM()
+                                        .Select(y => new ESFA.DC.ILR2021.DataStore.EF.LearningDeliveryFAM()
                                         {
                                             UKPRN = y.UKPRN,
                                             LearnRefNumber = y.LearnRefNumber,

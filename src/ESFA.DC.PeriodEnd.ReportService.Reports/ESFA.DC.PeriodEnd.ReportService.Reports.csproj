@@ -1,11 +1,11 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="ESFA.DC.CsvService" Version="0.1.39-beta0001" />
+    <PackageReference Include="ESFA.DC.CsvService" Version="0.1.40-beta0001" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
     <PackageReference Include="ESFA.DC.ExcelService" Version="0.1.40-beta0001" />
     <PackageReference Include="ESFA.DC.Logging.Interfaces" Version="0.1.4-beta0001" />
@@ -13,6 +13,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.DataPersist\ESFA.DC.PeriodEnd.DataPersist.csproj" />
     <ProjectReference Include="..\ESFA.DC.Periodend.ReportService.Reports.Interface\ESFA.DC.PeriodEnd.ReportService.Reports.Interface.csproj" />
   </ItemGroup>
 

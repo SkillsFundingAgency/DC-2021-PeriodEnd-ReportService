@@ -18,11 +18,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
 {
     public class FM36PeriodEndProviderService : AbstractFundModelProviderService, IFM36PeriodEndProviderService
     {
-        private readonly Func<IIlr2021RulebaseContext> _ilrRulebaseContextFactory;
+        private readonly Func<IIlr2021Context> _ilrRulebaseContextFactory;
 
         public FM36PeriodEndProviderService(
             ILogger logger,
-            Func<IIlr2021RulebaseContext> ilrRulebaseContextFactory)
+            Func<IIlr2021Context> ilrRulebaseContextFactory)
             : base(logger)
         {
             _ilrRulebaseContextFactory = ilrRulebaseContextFactory;
@@ -160,7 +160,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                     {
                         UKPRN = ukPrn,
                         LearnRefNumber = p.LearnRefNumber,
-                        AimSeqNumber = p.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber ?? 0,
+                        AimSeqNumber = p.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber,
                         AttributeName = p.AttributeName,
                         Periods = new[]
                         {
@@ -218,7 +218,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                         {
                             UKPRN = ukPrn,
                             LearnRefNumber = p.LearnRefNumber,
-                            AimSeqNumber = p.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber ?? 0,
+                            AimSeqNumber = p.AEC_ApprenticeshipPriceEpisode.PriceEpisodeAimSeqNumber,
                             AttributeName = p.AttributeName,
                             Periods = new[]
                             {

@@ -18,8 +18,6 @@ using ESFA.DC.ILR2021.DataStore.EF.Interface;
 using ESFA.DC.ILR2021.DataStore.EF.Invalid;
 using ESFA.DC.ILR2021.DataStore.EF.Invalid.Interface;
 using ESFA.DC.ILR2021.DataStore.EF.StoredProc;
-using ESFA.DC.ILR2021.DataStore.EF.Valid;
-using ESFA.DC.ILR2021.DataStore.EF.Valid.Interface;
 using ESFA.DC.IO.AzureStorage;
 using ESFA.DC.IO.AzureStorage.Config.Interfaces;
 using ESFA.DC.IO.Interfaces;
@@ -143,7 +141,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
         private static void RegisterContexts(ContainerBuilder containerBuilder, IReportServiceConfiguration reportServiceConfiguration)
         {
             // ILR 1920 DataStore
-            containerBuilder.RegisterType<ILR2021_DataStoreEntities>().As<IIlr2021RulebaseContext>();
+            containerBuilder.RegisterType<ILR2021_DataStoreEntities>().As<IIlr2021Context>();
             containerBuilder.Register(context =>
             {
                 var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntities>();
@@ -157,27 +155,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .SingleInstance();
 
             // ILR 1920 DataStore Valid Learners
-            containerBuilder.RegisterType<ILR2021_DataStoreEntitiesValid>().As<IIlr2021ValidContext>();
+            containerBuilder.RegisterType<ILR2021_DataStoreEntities>().As<IIlr2021Context>();
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntitiesValid>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntities>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
                 return optionsBuilder.Options;
-            }).As<DbContextOptions<ILR2021_DataStoreEntitiesValid>>()
+            }).As<DbContextOptions<ILR2021_DataStoreEntities>>()
                 .SingleInstance();
 
             containerBuilder.Register(context =>
             {
-                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntitiesValid>();
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntities>();
                 optionsBuilder.UseSqlServer(
                     reportServiceConfiguration.ILRDataStoreConnectionString,
                     options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                return new ILR2021_DataStoreEntitiesValid(optionsBuilder.Options);
-            }).As<ILR2021_DataStoreEntitiesValid>()
+                return new ILR2021_DataStoreEntities(optionsBuilder.Options);
+            }).As<ILR2021_DataStoreEntities>()
                 .ExternallyOwned();
 
             // ILR 1920 DataStore InValid Learners

@@ -17,22 +17,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             [16] = PaymentTypeConstants.ApprenticePaymentType
         };
 
-        public void FormatFundingLines(IEnumerable<Payment> payments)
-        {
-            foreach (var payment in payments)
-            {
-                if (FundLineConstants.NonLevyApprenticeship1618.Equals(payment.LearningAimFundingLineType, StringComparison.OrdinalIgnoreCase))
-                {
-                    payment.LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship1618NonProcured;
-                }
-                else if (FundLineConstants.NonLevyApprenticeship19Plus.Equals(payment.LearningAimFundingLineType, StringComparison.OrdinalIgnoreCase))
-                {
-                    payment.LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship19PlusNonProcured;
-
-                }
-            }
-        }
-
         public string GetAdditionalPaymentType(byte transactionType)
         {
             if (AdditionalPaymentTypes.TryGetValue(transactionType, out string paymentType))
@@ -74,5 +58,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
             return null;
         }
+
+        public string GetUpdatedFindingLineType(string paymentLearningAimFundingLineType)
+        {
+            if (FundLineConstants.NonLevyApprenticeship1618.Equals(paymentLearningAimFundingLineType, StringComparison.OrdinalIgnoreCase))
+            {
+                return FundLineConstants.NonLevyApprenticeship1618NonProcured;
+            }
+            else if (FundLineConstants.NonLevyApprenticeship19Plus.Equals(paymentLearningAimFundingLineType, StringComparison.OrdinalIgnoreCase))
+            {
+                return FundLineConstants.NonLevyApprenticeship19PlusNonProcured;
+            }
+
+            return paymentLearningAimFundingLineType;
+        }
+
     }
 }

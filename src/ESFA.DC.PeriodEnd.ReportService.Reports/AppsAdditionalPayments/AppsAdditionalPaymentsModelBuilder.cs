@@ -27,8 +27,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             ICollection<AecLearningDelivery> learningDeliveries,
             ICollection<ApprenticeshipPriceEpisodePeriodisedValues> periodisedValues)
         {
-            // Format the Funding Line Type before grouping by it
-            _paymentFundingLineFormatter.FormatFundingLines(payments);
+            // Format the Funding Line Type before grouping by it (Update old entries to new line type
+            foreach (var payment in payments)
+            {
+                payment.LearningAimFundingLineType =
+                    _paymentFundingLineFormatter.GetUpdatedFindingLineType(payment.LearningAimFundingLineType);
+            }
 
             var learnerLookup = learners.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
             var periodisedValuesLookup = periodisedValues.GroupBy(pv => pv.LearnRefNumber).ToDictionary(pvg => pvg.Key);

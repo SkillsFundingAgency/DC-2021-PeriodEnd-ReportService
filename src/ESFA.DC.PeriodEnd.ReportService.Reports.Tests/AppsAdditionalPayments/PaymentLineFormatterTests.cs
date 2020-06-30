@@ -36,8 +36,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
 
             var formatter = new PaymentLineFormatter() as IPaymentLineFormatter;
 
-            formatter.FormatFundingLines(payments);
-
+            // Format the Funding Line Type before grouping by it (Update old entries to new line type
+            foreach (var payment in payments)
+            {
+                payment.LearningAimFundingLineType =
+                    formatter.GetUpdatedFindingLineType(payment.LearningAimFundingLineType);
+            }
             var groupedPayments = payments.GroupBy(p => p.LearningAimFundingLineType).ToList();
 
             payments.Count().Should().Be(15);

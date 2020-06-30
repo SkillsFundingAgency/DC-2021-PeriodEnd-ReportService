@@ -23,7 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
            
             var learnersBuilder = NewBuilder();
 
-            var result = learnersBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey(learnRefNumber: learnRefNumber, null,0,0,0,0));
+            var result = learnersBuilder.GetLearnerForRecord(learnerDictionary, new AppsCoInvestmentRecordKey(learnRefNumber, null,0,0,0,0));
 
             result.LearnRefNumber.Should().Be(learnRefNumber);
         }

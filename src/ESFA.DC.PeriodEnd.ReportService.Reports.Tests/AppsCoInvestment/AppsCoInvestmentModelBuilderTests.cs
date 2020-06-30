@@ -324,14 +324,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
 
             List<AppsCoInvestmentRecordKey> appsKeys = new List<AppsCoInvestmentRecordKey>()
             {
-                new AppsCoInvestmentRecordKey(learnRefNumber:"055300807083",null,3, 0, 462, 1 ),
-                new AppsCoInvestmentRecordKey(learnRefNumber:"055300807083",null,3, 0, 466, 1 ),
-                new AppsCoInvestmentRecordKey(learnRefNumber:"055300807083",new DateTime(2019, 2, 21),3, 0, 462, 1 )
+                new AppsCoInvestmentRecordKey("055300807083",null,3, 0, 462, 1 ),
+                new AppsCoInvestmentRecordKey("055300807083",null,3, 0, 466, 1 ),
+                new AppsCoInvestmentRecordKey("055300807083",new DateTime(2019, 2, 21),3, 0, 462, 1 )
             };
 
             List<AppsCoInvestmentRecordKey> ilrKeys = new List<AppsCoInvestmentRecordKey>()
             {
-                new AppsCoInvestmentRecordKey(learnRefNumber:"055300807083",new DateTime(2019, 2, 21),3, 0, 462, 1 )
+                new AppsCoInvestmentRecordKey("055300807083",new DateTime(2019, 2, 21),3, 0, 462, 1 )
             };
 
             var result = NewBuilder(new AppsCoInvestmentRecordKeyEqualityComparer()).UnionKeys(learnRefNumbers, ilrKeys, appsKeys);

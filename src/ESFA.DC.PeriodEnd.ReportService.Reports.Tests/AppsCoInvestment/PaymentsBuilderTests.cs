@@ -52,7 +52,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
                 paymentThree
             };
 
-            var filteredPayments = NewBuilder().FilterByFundingSourceAndTransactionType(payments, fundingSource: fundingSource, transactionTypes);
+            var filteredPayments = NewBuilder().FilterByFundingSourceAndTransactionType(payments, fundingSource, transactionTypes);
             filteredPayments.Count().Should().Be(2);
         }
 

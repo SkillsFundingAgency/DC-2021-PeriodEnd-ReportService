@@ -19,11 +19,15 @@
 
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="20.6.0" />
-    <PackageReference Include="ESFA.DC.ILR.2021.Database.EF" Version="0.1.70" />
+    <PackageReference Include="ESFA.DC.ILR.2021.Database.EF" Version="0.1.134" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.2.0-beta.66">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
     </PackageReference>
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.Periodend.ReportService.Reports.Interface\ESFA.DC.PeriodEnd.ReportService.Reports.Interface.csproj" />
   </ItemGroup>
 
 </Project>

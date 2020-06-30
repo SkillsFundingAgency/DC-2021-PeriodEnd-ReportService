@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
 
@@ -20,24 +18,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
         {
             return learners.SelectMany(x => x.LearningDeliveries)
                 .GroupBy(ld =>
-                    new
-                    {
+                    new AppsCoInvestmentRecordKey(
                         ld.LearnRefNumber,
                         ld.LearnStartDate,
-                        ProgType = ld.ProgType ?? 0,
-                        StdCode = ld.StdCode ?? 0,
-                        FworkCode = ld.FworkCode ?? 0,
-                        PwayCode = ld.PwayCode ?? 0,
-                    })
+                        ld.ProgType ?? 0,
+                        ld.StdCode ?? 0,
+                        ld.FworkCode ?? 0,
+                        ld.PwayCode ?? 0)
+                )
                 .Select(
                     g =>
                         new AppsCoInvestmentRecordKey(
-                            g.Key.LearnRefNumber,
-                            g.Key.LearnStartDate,
-                            g.Key.ProgType,
-                            g.Key.StdCode,
-                            g.Key.FworkCode,
-                            g.Key.PwayCode))
+                            g.Key.LearnerReferenceNumber,
+                            g.Key.LearningStartDate,
+                            g.Key.ProgrammeType,
+                            g.Key.StandardCode,
+                            g.Key.FrameworkCode,
+                            g.Key.PathwayCode))
                 .ToList();
         }
 

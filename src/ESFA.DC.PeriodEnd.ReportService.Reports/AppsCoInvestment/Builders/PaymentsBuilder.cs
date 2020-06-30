@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
@@ -12,7 +11,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
     public class PaymentsBuilder : IPaymentsBuilder
     {
         private readonly IEqualityComparer<AppsCoInvestmentRecordKey> _appsCoInvestmentEqualityComparer;
-        
+
         public PaymentsBuilder(IEqualityComparer<AppsCoInvestmentRecordKey> appsCoInvestmentEqualityComparer)
         {
             _appsCoInvestmentEqualityComparer = appsCoInvestmentEqualityComparer;
@@ -30,24 +29,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
         {
             return payments
                 .GroupBy(p =>
-                    new
-                    {
+                    new AppsCoInvestmentRecordKey(
                         p.LearnerReferenceNumber,
                         p.LearningStartDate,
                         p.LearningAimProgrammeType,
                         p.LearningAimStandardCode,
                         p.LearningAimFrameworkCode,
-                        p.LearningAimPathwayCode,
-                    })
+                        p.LearningAimPathwayCode))
                 .Select(
                     g =>
                         new AppsCoInvestmentRecordKey(
                             g.Key.LearnerReferenceNumber,
                             g.Key.LearningStartDate,
-                            g.Key.LearningAimProgrammeType,
-                            g.Key.LearningAimStandardCode,
-                            g.Key.LearningAimFrameworkCode,
-                            g.Key.LearningAimPathwayCode))
+                            g.Key.ProgrammeType,
+                            g.Key.StandardCode,
+                            g.Key.FrameworkCode,
+                            g.Key.PathwayCode))
                 .ToList();
         }
 
@@ -108,7 +105,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
         {
             return payments.Where(p => p.FundingSource == fundingSource && transactionTypes.Contains(p.TransactionType));
         }
-        
+
         public decimal CalculateCompletionEarningsThisFundingYear(LearningDelivery learningDelivery, ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecApprenticeshipPriceEpisodePeriodisedValues)
         {
             if (learningDelivery != null)
@@ -125,7 +122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
 
             return 0;
         }
-        
+
         public decimal CalculateCompletionPaymentsInAcademicYear(IEnumerable<Payment> payments, int currentAcademicYear)
         {
             var paymentsList = payments.Where(p => p.AcademicYear == currentAcademicYear && p.TransactionType == DASPayments.TransactionType.Completion).ToList();

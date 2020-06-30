@@ -5,6 +5,7 @@ using System.Data.SqlClient;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DC.BulkCopy.Interfaces;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 

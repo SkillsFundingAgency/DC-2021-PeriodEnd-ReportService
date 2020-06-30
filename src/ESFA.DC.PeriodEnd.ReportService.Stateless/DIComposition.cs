@@ -135,7 +135,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             RegisterFundingSummaryReport(containerBuilder);
 
             containerBuilder.RegisterModule<ServicesModule>();
-            containerBuilder.RegisterModule(new ReportModule(reportServiceConfiguration));
+            containerBuilder.RegisterModule(new ReportModule(reportServiceConfiguration, dataPersistConfiguration));
 
             return containerBuilder;
         }

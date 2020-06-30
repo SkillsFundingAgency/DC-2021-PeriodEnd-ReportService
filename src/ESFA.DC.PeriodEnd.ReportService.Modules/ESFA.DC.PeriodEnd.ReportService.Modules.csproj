@@ -13,6 +13,7 @@
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Reports.Data\ESFA.DC.PeriodEnd.ReportService.Reports.Data.csproj" />
     <ProjectReference Include="..\ESFA.DC.Periodend.ReportService.Reports.Interface\ESFA.DC.PeriodEnd.ReportService.Reports.Interface.csproj" />
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Reports.Persist\ESFA.DC.PeriodEnd.ReportService.Reports.Persist.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Reports\ESFA.DC.PeriodEnd.ReportService.Reports.csproj" />
   </ItemGroup>
 

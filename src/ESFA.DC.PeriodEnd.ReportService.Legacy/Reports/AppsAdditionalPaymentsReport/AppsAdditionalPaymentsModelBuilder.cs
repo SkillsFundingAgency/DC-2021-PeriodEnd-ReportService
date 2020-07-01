@@ -303,7 +303,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.AppsAdditionalPaymentsR
                         PaymentTransactionType = dasPaymentInfo.TransactionType,
                         PaymentAcademicYear = dasPaymentInfo.AcademicYear,
                         PaymentCollectionPeriod = dasPaymentInfo.CollectionPeriod,
-                        PaymentDeliveryPeriod = dasPaymentInfo.DeliveryPeriod,
+                        //PaymentDeliveryPeriod = dasPaymentInfo.DeliveryPeriod,
                         PaymentAmount = dasPaymentInfo.Amount,
 
                         // copy the ilr fields

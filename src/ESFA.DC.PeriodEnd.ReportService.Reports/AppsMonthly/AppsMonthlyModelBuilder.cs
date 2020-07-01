@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         private const string NoContract = "No contract";
         private const string NotApplicable = "Not applicable.  For more information refer to the funding reports guidance.";
 
-        private IDictionary<string, string> _fundingStreamPeriodLookup = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
+        private readonly IDictionary<string, string> _fundingStreamPeriodLookup = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)
         {
             [ReportingAimFundingLineTypeConstants.ApprenticeshipFromMay2017LevyContract1618] = FundingStreamPeriodCodeConstants.LEVY1799,
             [ReportingAimFundingLineTypeConstants.ApprenticeshipEmployerOnAppServiceLevyFunding1618] = FundingStreamPeriodCodeConstants.LEVY1799,

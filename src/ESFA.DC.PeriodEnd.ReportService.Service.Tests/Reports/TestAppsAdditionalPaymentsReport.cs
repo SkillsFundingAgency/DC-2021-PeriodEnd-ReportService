@@ -224,7 +224,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     Amount = 10,
                     ContractType = 1,
                     CollectionPeriod = 1,
-                    DeliveryPeriod = 1,
+                    //DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
                     ApprenticeshipId = 1,
                 },
@@ -245,7 +245,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Service.Tests.Reports
                     Amount = 10,
                     ContractType = 1,
                     CollectionPeriod = 1,
-                    DeliveryPeriod = 1,
+                    //DeliveryPeriod = 1,
                     LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy",
                     ApprenticeshipId = 1,
                 }

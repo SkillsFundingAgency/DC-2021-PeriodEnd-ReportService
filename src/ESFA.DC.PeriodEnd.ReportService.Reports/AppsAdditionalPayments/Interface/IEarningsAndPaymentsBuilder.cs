@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
 
@@ -12,6 +13,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interfa
 
         string[] GetAttributesForTransactionType(byte transactionType);
 
-        decimal GetEarningsForPeriod(List<ApprenticeshipPriceEpisodePeriodisedValues> periodisedValuesForPayment, string[] attributeTypes, int period);
+        decimal GetEarningsForPeriod(
+            List<ApprenticeshipPriceEpisodePeriodisedValues> periodisedValuesForPayment,
+            string[] attributeTypes,
+            Func<ApprenticeshipPriceEpisodePeriodisedValues, decimal?> periodSelector);
     }
 }

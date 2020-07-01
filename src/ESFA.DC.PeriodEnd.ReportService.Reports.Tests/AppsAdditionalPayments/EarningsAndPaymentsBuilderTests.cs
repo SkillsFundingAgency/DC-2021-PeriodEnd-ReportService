@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Reflection;
-using Castle.Components.DictionaryAdapter;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
@@ -45,7 +44,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             var attributeTypes = new string[] { };
 
             var result =
-                earningsAndPaymentsBuilder.GetEarningsForPeriod(periodisedValuesForPayment, attributeTypes, 1);
+                earningsAndPaymentsBuilder.GetEarningsForPeriod(periodisedValuesForPayment, attributeTypes, pvp => pvp.Period_1);
 
             result.Should().Be(0);
         }
@@ -64,20 +63,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             var attributeTypes = new string[] {"attrib1", "attrib2"};
 
             var result =
-                earningsAndPaymentsBuilder.GetEarningsForPeriod(periodisedValuesForPayment, attributeTypes, 1);
+                earningsAndPaymentsBuilder.GetEarningsForPeriod(periodisedValuesForPayment, attributeTypes, pvp => pvp.Period_1);
 
             result.Should().Be(3);
-        }
-
-        [Fact]
-        public void GetEarningsForPeriodInvalidPeriodThrowsException()
-        {
-            var earningsAndPaymentsBuilder = new EarningsAndPaymentsBuilder() as IEarningsAndPaymentsBuilder;
-            var periodisedValuesForPayment = new List<ApprenticeshipPriceEpisodePeriodisedValues> { };
-            var attributeTypes = new string[] { };
-            Action act = () =>
-                earningsAndPaymentsBuilder.GetEarningsForPeriod(periodisedValuesForPayment, attributeTypes, 16);
-            act.Should().Throw<ApplicationException>().Where(e => e.Message.Equals("Unexpected Period [16]"));
         }
 
         [Fact]

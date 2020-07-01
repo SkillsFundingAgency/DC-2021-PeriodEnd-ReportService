@@ -1,10 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Globalization;
+﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
 using CsvHelper;
-using CsvHelper.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using FluentAssertions;

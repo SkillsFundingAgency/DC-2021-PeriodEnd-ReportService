@@ -68,18 +68,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
                 var attributeTypesToMatch = GetAttributesForTransactionType(TransactionTypeAndAimSeq.transType);
 
-                result.AugustEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 1);
-                result.SeptemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 2);
-                result.OctoberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 3);
-                result.NovemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 4);
-                result.DecemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 5);
-                result.JanuaryEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 6);
-                result.FebruaryEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 7);
-                result.MarchEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 8);
-                result.AprilEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 9);
-                result.MayEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 10);
-                result.JuneEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 11);
-                result.JulyEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, 12);
+                result.AugustEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_1);
+                result.SeptemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_2);
+                result.OctoberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_3);
+                result.NovemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_4);
+                result.DecemberEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_5);
+                result.JanuaryEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_6);
+                result.FebruaryEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_7);
+                result.MarchEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_8);
+                result.AprilEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_9);
+                result.MayEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_10);
+                result.JuneEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_11);
+                result.JulyEarnings += GetEarningsForPeriod(periodisedValuesForPayment, attributeTypesToMatch, pvp => pvp.Period_12);
             }
 
             result.TotalEarnings =
@@ -91,40 +91,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             return result;
         }
 
-        public decimal GetEarningsForPeriod(List<ApprenticeshipPriceEpisodePeriodisedValues> periodisedValuesForPayment, string[] attributeTypes, int period)
+        public decimal GetEarningsForPeriod(
+            List<ApprenticeshipPriceEpisodePeriodisedValues> periodisedValuesForPayment, 
+            string[] attributeTypes, 
+            Func<ApprenticeshipPriceEpisodePeriodisedValues, decimal?> periodSelector)
         {
             var matchingAttribute = periodisedValuesForPayment
                 .Where(pvp => attributeTypes.Contains(pvp.AttributeName, StringComparer.CurrentCultureIgnoreCase));
 
-            switch (period)
-            {
-                case 1:
-                    return matchingAttribute.Sum(pvp => pvp.Period_1) ?? 0;
-                case 2:
-                    return matchingAttribute.Sum(pvp => pvp.Period_2) ?? 0;
-                case 3:
-                    return matchingAttribute.Sum(pvp => pvp.Period_3) ?? 0;
-                case 4:
-                    return matchingAttribute.Sum(pvp => pvp.Period_4) ?? 0;
-                case 5:
-                    return matchingAttribute.Sum(pvp => pvp.Period_5) ?? 0;
-                case 6:
-                    return matchingAttribute.Sum(pvp => pvp.Period_6) ?? 0;
-                case 7:
-                    return matchingAttribute.Sum(pvp => pvp.Period_7) ?? 0;
-                case 8:
-                    return matchingAttribute.Sum(pvp => pvp.Period_8) ?? 0;
-                case 9:
-                    return matchingAttribute.Sum(pvp => pvp.Period_9) ?? 0;
-                case 10:
-                    return matchingAttribute.Sum(pvp => pvp.Period_10) ?? 0;
-                case 11:
-                    return matchingAttribute.Sum(pvp => pvp.Period_11) ?? 0;
-                case 12:
-                    return matchingAttribute.Sum(pvp => pvp.Period_12) ?? 0;
-                default:
-                    throw new ApplicationException($"Unexpected Period [{period}]");
-            }
+            return matchingAttribute.Select(periodSelector).Where(v => v.HasValue).Sum(p => p.Value);
         }
 
         public string[] GetAttributesForTransactionType(byte transactionType)

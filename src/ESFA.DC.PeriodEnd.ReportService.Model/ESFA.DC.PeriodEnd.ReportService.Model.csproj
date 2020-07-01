@@ -26,4 +26,8 @@
     </PackageReference>
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.Periodend.ReportService.Reports.Interface\ESFA.DC.PeriodEnd.ReportService.Reports.Interface.csproj" />
+  </ItemGroup>
+
 </Project>

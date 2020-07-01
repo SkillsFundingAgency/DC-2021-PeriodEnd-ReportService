@@ -5,8 +5,9 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Cells" Version="20.6.0" />
+    <PackageReference Include="Aspose.Cells" Version="19.8.0" />
     <PackageReference Include="ESFA.DC.CollectionsManagement.Models" Version="0.2.21-beta0001" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
   </ItemGroup>
 
 </Project>

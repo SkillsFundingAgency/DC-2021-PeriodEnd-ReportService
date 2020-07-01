@@ -32,7 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             _appsAdditionalPaymentsModelBuilder = appsAdditionalPaymentsModelBuilder;
         }
 
-        public async Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
             {
                 var fileName = _fileNameService.GetFilename(reportServiceContext, $"{reportServiceContext.Ukprn} {ReportFileName}", OutputTypes.Csv);
 
@@ -52,6 +52,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                 await _csvFileService.WriteAsync<AppsAdditionalPaymentRecord, AppsAdditionalPaymentsClassMap>(models, fileName, reportServiceContext.Container, cancellationToken, null, null);
 
                 // Persistance needs to go here.
-        }
+
+                return fileName;
+            }
     }
 }

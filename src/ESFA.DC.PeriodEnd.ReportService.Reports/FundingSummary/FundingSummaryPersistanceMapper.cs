@@ -10,7 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 {
     public class FundingSummaryPersistanceMapper : IFundingSummaryPersistanceMapper
     {
-        public IEnumerable<FundingSummaryPersistModel> MapAsync(IReportServiceContext reportServiceContext, FundingSummaryReportModel fundingSummaryReportModel, CancellationToken cancellationToken)
+        public IEnumerable<FundingSummaryPersistModel> Map(IReportServiceContext reportServiceContext, FundingSummaryReportModel fundingSummaryReportModel, CancellationToken cancellationToken)
         {
             var persistModels = fundingSummaryReportModel.FundingCategories.SelectMany(fc => fc.FundingSubCategories.SelectMany(fsc =>
                 fsc.FundLineGroups.SelectMany(flg => flg.FundLines.Select(fl => new FundingSummaryPersistModel

@@ -7,6 +7,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface
     {
         string ReportTaskName { get; }
 
-        Task GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
+        Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

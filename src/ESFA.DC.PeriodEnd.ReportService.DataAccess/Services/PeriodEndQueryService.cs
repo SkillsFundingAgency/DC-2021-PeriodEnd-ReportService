@@ -4,7 +4,6 @@ using System.Data.SqlClient;
 using System.Linq;
 using System.Threading.Tasks;
 using ESFA.DC.ILR2021.DataStore.EF.StoredProc;
-using ESFA.DC.ILR2021.DataStore.EF.Valid;
 using ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.ActCountReport;
 using ESFA.DC.PeriodEnd.ReportService.Model.InternalReports.PeriodEndMetrics;

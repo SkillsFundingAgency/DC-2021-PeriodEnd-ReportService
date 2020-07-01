@@ -63,7 +63,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                             AcademicYear = payment.AcademicYear,
                             CollectionPeriod = payment.CollectionPeriod,
                             ContractType = payment.ContractType,
-                            DeliveryPeriod = payment.DeliveryPeriod,
+                            //DeliveryPeriod = payment.DeliveryPeriod,
                             LearnerReferenceNumber = payment.LearnerReferenceNumber,
                             LearnerUln = payment.LearnerUln,
                             LearningAimFrameworkCode = payment.LearningAimFrameworkCode,

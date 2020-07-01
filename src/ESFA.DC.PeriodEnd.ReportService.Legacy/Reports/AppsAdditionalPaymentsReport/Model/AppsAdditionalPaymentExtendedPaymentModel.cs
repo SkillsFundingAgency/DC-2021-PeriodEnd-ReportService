@@ -40,7 +40,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.AppsAdditionalPaymentsR
 
         public byte PaymentContractType { get; set; }
 
-        public byte PaymentDeliveryPeriod { get; set; }
+        //public byte PaymentDeliveryPeriod { get; set; }
 
         public byte PaymentCollectionPeriod { get; set; }
 

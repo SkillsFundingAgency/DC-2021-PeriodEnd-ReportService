@@ -21,6 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
         {
             builder.RegisterModule(new FundingSummaryModule(_reportServiceConfiguration, _dataPersistConfiguration));
             builder.RegisterModule(new AppsCoInvestmentModule(_reportServiceConfiguration));
+            builder.RegisterModule(new AppsAdditionalPaymentsModule(_reportServiceConfiguration));
 
             builder.RegisterModule(new AppsMonthlyModule(_reportServiceConfiguration));
 

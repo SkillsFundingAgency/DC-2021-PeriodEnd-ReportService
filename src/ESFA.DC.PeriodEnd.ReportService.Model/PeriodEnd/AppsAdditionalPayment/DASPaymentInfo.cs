@@ -26,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Model.PeriodEnd.AppsAdditionalPayment
 
         public byte ContractType { get; set; }
 
-        public byte DeliveryPeriod { get; set; }
+        //public byte DeliveryPeriod { get; set; }
 
         public byte CollectionPeriod { get; set; }
 

@@ -12,35 +12,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars
 {
     public class LarsLearningDeliveryProvider : ILarsLearningDeliveryProvider
     {
-        private const int PageSize = 2000;
-
         private readonly Func<SqlConnection> _sqlConnectionFunc;
 
-        private readonly string sql = "SELECT LearnAimRef, LearnAimRefTitle FROM Core.LARS_LearningDelivery where LearnAimRef IN @learnAimRefsInPage";
+        private readonly string sql = @"SELECT  
+                                         L.[LearnAimRef]
+                                        ,[LearnAimRefTitle]
+                                    FROM OPENJSON(@learnAimRefs) 
+                                    WITH (LearnAimRef nvarchar(8) '$') J 
+                                    INNER JOIN [Core].[LARS_LearningDelivery] L
+                                    ON L.[LearnAimRef] = J.[LearnAimRef]";
 
         public LarsLearningDeliveryProvider(Func<SqlConnection> sqlConnectionFunc)
         {
             _sqlConnectionFunc = sqlConnectionFunc;
         }
 
-        public async Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
+        public async Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(string learnAimRefs, CancellationToken cancellationToken)
         {
-            var learnAimRefs = learners.SelectMany(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)).Distinct().ToList();
-            
-            var larsLearningDeliveries = new List<LarsLearningDelivery>();
-
             using (var connection = _sqlConnectionFunc())
             {
-                for (int i = 0; i < learnAimRefs.Count; i += PageSize)
-                {
-                    var learnAimRefsInPage = learnAimRefs.Skip(i).Take(PageSize);
+                var commandDefinition = new CommandDefinition(sql, new { learnAimRefs }, cancellationToken: cancellationToken);
 
-                    var result = await connection.QueryAsync<LarsLearningDelivery>(sql, new { learnAimRefsInPage });
+                var result = await connection.QueryAsync<LarsLearningDelivery>(commandDefinition);
 
-                    larsLearningDeliveries.AddRange(result);
-                }
-
-                return larsLearningDeliveries;
+                return result.ToList();
             }
         }
     }

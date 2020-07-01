@@ -12,9 +12,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars
 {
     public class LarsLearningDeliveryProvider : ILarsLearningDeliveryProvider
     {
+        private const int PageSize = 2000;
+
         private readonly Func<SqlConnection> _sqlConnectionFunc;
 
-        private readonly string sql = "SELECT LearnAimRef, LearnAimRefTitle FROM Core.LARS_LearningDelivery where LearnAimRef IN @learnaimRefs";
+        private readonly string sql = "SELECT LearnAimRef, LearnAimRefTitle FROM Core.LARS_LearningDelivery where LearnAimRef IN @learnAimRefsInPage";
 
         public LarsLearningDeliveryProvider(Func<SqlConnection> sqlConnectionFunc)
         {
@@ -23,26 +25,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars
 
         public async Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
         {
-            var learnaimRefsAll = learners.SelectMany(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)).Distinct();
-
-            int learnaimRefCount = learnaimRefsAll.Count();
-
-            int restrictedSize = 2000;
-
-            int NumberOfTimesTobeExecuted = (int)Math.Ceiling((double)learnaimRefCount / restrictedSize);
-
+            var learnAimRefs = learners.SelectMany(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)).Distinct().ToList();
+            
             var larsLearningDeliveries = new List<LarsLearningDelivery>();
 
             using (var connection = _sqlConnectionFunc())
             {
-                for (int i = 1; i <= NumberOfTimesTobeExecuted; i++)
+                for (int i = 0; i < learnAimRefs.Count; i += PageSize)
                 {
-                    var learnaimRefs = learnaimRefsAll.Skip((i - 1) * restrictedSize).Take(restrictedSize);
+                    var learnAimRefsInPage = learnAimRefs.Skip(i).Take(PageSize);
 
-                    var result = await connection.QueryAsync<LarsLearningDelivery>(sql, new { learnaimRefs });
+                    var result = await connection.QueryAsync<LarsLearningDelivery>(sql, new { learnAimRefsInPage });
 
                     larsLearningDeliveries.AddRange(result);
-
                 }
 
                 return larsLearningDeliveries;

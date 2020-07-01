@@ -16,6 +16,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Ilr
 {
     public class LearnerDataProvider : ILearnerDataProvider
     {
+        private const int ApprenticeshipsFundModel = 36;
+
         private readonly Func<IIlr2021Context> _ilr;
 
         public LearnerDataProvider(Func<IIlr2021Context> ilr)
@@ -27,14 +29,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Ilr
         {
             using (var ilrContext = _ilr())
             {
-                return await ilrContext.Learners.Where(wl => wl.UKPRN == ukprn)
+                return await ilrContext.Learners.Where(wl => wl.UKPRN == ukprn && wl.LearningDeliveries.Any(y => y.FundModel == ApprenticeshipsFundModel))
                     .Select(l => new Learner
                     {
                         LearnRefNumber = l.LearnRefNumber,
                         FamilyName = l.FamilyName,
                         GivenNames = l.GivenNames,
                         CampusIdentifier = l.CampId,
-                        LearningDeliveries = l.LearningDeliveries
+                        LearningDeliveries = l.LearningDeliveries.Where(wld => wld.FundModel == ApprenticeshipsFundModel)
                             .Select(ld => new LearningDelivery
                             {
                                 LearnAimRef = ld.LearnRefNumber,

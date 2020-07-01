@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Ilr
     {
         private readonly Func<SqlConnection> _sqlConnectionFunc;
 
-        private readonly string priceEpisodeSql = "SELECT LearnRefNumber, PriceEpisodeIdentifier, PriceEpisodeActualEndDateIncEPA FROM [Rulebase].[AEC_ApprenticeshipPriceEpisode] where Ukprn = @ukprn Order by LearnRefNumber";
+        private readonly string priceEpisodeSql = "SELECT LearnRefNumber, PriceEpisodeIdentifier, PriceEpisodeActualEndDateIncEPA FROM [Rulebase].[AEC_ApprenticeshipPriceEpisode] where Ukprn = @ukprn";
 
         public IlrDataProvider(Func<SqlConnection> sqlConnectionFunc)
         {

@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Das
     {
         private readonly Func<SqlConnection> _sqlConnectionFunc;
 
-        private readonly string paymentsSql = "SELECT LearnerReferenceNumber, LearnerUln, LearningAimReference, LearningStartDate, LearningAimProgrammeType ,LearningAimStandardCode ,LearningAimFrameworkCode ,LearningAimPathwayCode ,ReportingAimFundingLineType ,PriceEpisodeIdentifier ,ContractType ,EarningEventId ,CollectionPeriod,DeliveryPeriod ,Amount ,TransactionType,FundingSource from Payments2.Payment WHERE Ukprn = @ukprn and AcademicYear = @academicYear ";
+        private readonly string paymentsSql = "SELECT LearnerReferenceNumber, LearnerUln, LearningAimReference, LearningStartDate, LearningAimProgrammeType, LearningAimStandardCode, LearningAimFrameworkCode, LearningAimPathwayCode, ReportingAimFundingLineType, PriceEpisodeIdentifier, ContractType, EarningEventId, CollectionPeriod,DeliveryPeriod, Amount, TransactionType, FundingSource from Payments2.Payment WHERE Ukprn = @ukprn and AcademicYear = @academicYear ";
 
         private readonly string earningsSql = "SELECT EventId, LearningAimSequenceNumber AS AimSequenceNumber FROM Payments2.EarningEvent where Ukprn = @ukprn";
 

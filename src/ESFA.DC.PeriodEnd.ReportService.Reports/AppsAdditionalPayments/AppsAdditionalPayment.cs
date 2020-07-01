@@ -2,9 +2,10 @@
 using System.Threading.Tasks;
 using ESFA.DC.CsvService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Persistance;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
@@ -15,6 +16,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
         private readonly IFileNameService _fileNameService;
         private readonly IAppsAdditionalPaymentsDataProvider _appsAdditionalPaymentsDataProvider;
         private readonly IAppsAdditionalPaymentsModelBuilder _appsAdditionalPaymentsModelBuilder;
+        private readonly IReportDataPersistanceService<ReportData.Model.AppsAdditionalPayment> _persistanceService;
+        private readonly IAppsAdditionalPaymentPersistanceMapper _appsAdditionalPaymentPersistanceMapper;
 
         public string ReportTaskName => "TaskGenerateAppsAdditionalPaymentsReport";
 
@@ -24,12 +27,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             ICsvFileService csvFileService,
             IFileNameService fileNameService,
             IAppsAdditionalPaymentsDataProvider appsAdditionalPaymentsDataProvider,
-            IAppsAdditionalPaymentsModelBuilder appsAdditionalPaymentsModelBuilder)
+            IAppsAdditionalPaymentsModelBuilder appsAdditionalPaymentsModelBuilder,
+            IReportDataPersistanceService<ReportData.Model.AppsAdditionalPayment> persistanceService,
+            IAppsAdditionalPaymentPersistanceMapper appsAdditionalPaymentPersistanceMapper)
         {
             _csvFileService = csvFileService;
             _fileNameService = fileNameService;
             _appsAdditionalPaymentsDataProvider = appsAdditionalPaymentsDataProvider;
             _appsAdditionalPaymentsModelBuilder = appsAdditionalPaymentsModelBuilder;
+            _persistanceService = persistanceService;
+            _appsAdditionalPaymentPersistanceMapper = appsAdditionalPaymentPersistanceMapper;
+
         }
 
         public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
@@ -43,17 +51,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
                 await Task.WhenAll(paymentsTask, learnersTask, contractAllocationsTask, priceEpisodesTask);
 
-                var models = _appsAdditionalPaymentsModelBuilder.Build(
+                var model = _appsAdditionalPaymentsModelBuilder.Build(
                     paymentsTask.Result,
                     learnersTask.Result,
                     contractAllocationsTask.Result,
                     priceEpisodesTask.Result);
 
-                await _csvFileService.WriteAsync<AppsAdditionalPaymentRecord, AppsAdditionalPaymentsClassMap>(models, fileName, reportServiceContext.Container, cancellationToken, null, null);
+                await _csvFileService.WriteAsync<AppsAdditionalPaymentReportModel, AppsAdditionalPaymentsClassMap>(model, fileName, reportServiceContext.Container, cancellationToken, null, null);
 
-                // Persistance needs to go here.
+            var persistModels = _appsAdditionalPaymentPersistanceMapper.Map(reportServiceContext, model, cancellationToken);
+            await _persistanceService.PersistAsync(reportServiceContext, persistModels, cancellationToken);
 
-                return fileName;
+
+            return fileName;
             }
     }
 }

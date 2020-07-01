@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
 
@@ -21,7 +20,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             _earningsAndPaymentsBuilder = earningsAndPaymentsBuilder;
         }
 
-        public IEnumerable<AppsAdditionalPaymentRecord> Build(
+        public IEnumerable<AppsAdditionalPaymentReportModel> Build(
             ICollection<Payment> payments,
             ICollection<Learner> learners,
             ICollection<AecLearningDelivery> learningDeliveries,
@@ -52,7 +51,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                     var learner = learnerLookup.GetValueOrDefault(paymentLine.Key.LearnerReferenceNumber);
                     var periodisedValuesForLearner = periodisedValuesLookup.GetValueOrDefault(paymentLine.Key.LearnerReferenceNumber);
 
-                    return new AppsAdditionalPaymentRecord
+                    return new AppsAdditionalPaymentReportModel
                     {
                         RecordKey = paymentLine.Key,
                         FamilyName =  learner?.LearnRefNumber != null ? learner.FamilyName : NotApplicable,

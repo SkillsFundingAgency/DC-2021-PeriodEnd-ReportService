@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Reflection;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
 using FluentAssertions;
 using Xunit;

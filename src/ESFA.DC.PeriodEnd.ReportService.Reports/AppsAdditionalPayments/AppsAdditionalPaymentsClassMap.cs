@@ -1,9 +1,9 @@
 ﻿using ESFA.DC.PeriodEnd.ReportService.Reports.Abstract;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 {
-    public class AppsAdditionalPaymentsClassMap : AbstractClassMap<AppsAdditionalPaymentRecord>
+    public class AppsAdditionalPaymentsClassMap : AbstractClassMap<AppsAdditionalPaymentReportModel>
     {
         public AppsAdditionalPaymentsClassMap()
         {

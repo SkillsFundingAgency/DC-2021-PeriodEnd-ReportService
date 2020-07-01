@@ -3,7 +3,7 @@ using System.IO;
 using System.Text;
 using CsvHelper;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
 using FluentAssertions;
 using Xunit;
 
@@ -59,9 +59,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
                 "OFFICIAL - SENSITIVE",
             };
 
-            var input = new List<AppsAdditionalPaymentRecord>()
+            var input = new List<AppsAdditionalPaymentReportModel>()
             {
-                new AppsAdditionalPaymentRecord()
+                new AppsAdditionalPaymentReportModel()
             };
 
             using (var stream = new MemoryStream())

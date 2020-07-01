@@ -4,10 +4,10 @@ using System.Threading.Tasks;
 using ESFA.DC.CsvService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Persistance;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 using Moq;
 using Xunit;
@@ -31,7 +31,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             var aecLearningDeliveries = Array.Empty<AecLearningDelivery>();
             var priceEpisodes = Array.Empty<ApprenticeshipPriceEpisodePeriodisedValues>();
 
-            var rows = Array.Empty<AppsAdditionalPaymentRecord>();
+            var rows = Array.Empty<AppsAdditionalPaymentReportModel>();
 
             var reportServiceContext = new Mock<IReportServiceContext>();
 
@@ -60,21 +60,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
 
             await report.GenerateReport(reportServiceContext.Object, cancellationToken);
 
-            csvFileServiceMock.Verify(s => s.WriteAsync<AppsAdditionalPaymentRecord, AppsAdditionalPaymentsClassMap>(rows, fileName, container, cancellationToken, null, null));
+            csvFileServiceMock.Verify(s => s.WriteAsync<AppsAdditionalPaymentReportModel, AppsAdditionalPaymentsClassMap>(rows, fileName, container, cancellationToken, null, null));
         }
-
 
         private Reports.AppsAdditionalPayments.AppsAdditionalPayment NewReport(
             ICsvFileService csvFileService = null,
             IFileNameService fileNameService = null,
             IAppsAdditionalPaymentsDataProvider appsAdditionalPaymentsDataProvider = null,
-            IAppsAdditionalPaymentsModelBuilder appsAdditionalPaymentModelBuilder = null)
+            IAppsAdditionalPaymentsModelBuilder appsAdditionalPaymentModelBuilder = null,
+            IReportDataPersistanceService<ReportData.Model.AppsAdditionalPayment> persistanceService = null,
+            IAppsAdditionalPaymentPersistanceMapper appsAdditionalPaymentPersistanceMapper = null)
         {
             return new Reports.AppsAdditionalPayments.AppsAdditionalPayment(
                 csvFileService ?? Mock.Of<ICsvFileService>(),
                 fileNameService ?? Mock.Of<IFileNameService>(),
                 appsAdditionalPaymentsDataProvider ?? Mock.Of<IAppsAdditionalPaymentsDataProvider>(),
-                appsAdditionalPaymentModelBuilder ?? Mock.Of<IAppsAdditionalPaymentsModelBuilder>());
+                appsAdditionalPaymentModelBuilder ?? Mock.Of<IAppsAdditionalPaymentsModelBuilder>(),
+                persistanceService ?? Mock.Of<IReportDataPersistanceService<ReportData.Model.AppsAdditionalPayment>>(),
+                appsAdditionalPaymentPersistanceMapper ?? Mock.Of<IAppsAdditionalPaymentPersistanceMapper>());
         }
     }
 }

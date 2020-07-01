@@ -1,6 +1,4 @@
-﻿using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model
 {
     public class PaymentAndLearningDelivery
     {

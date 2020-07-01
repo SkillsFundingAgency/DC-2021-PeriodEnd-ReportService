@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model;

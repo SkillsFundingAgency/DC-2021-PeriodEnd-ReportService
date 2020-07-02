@@ -10,7 +10,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 {
-    public class AppsMonthlyModelBuilder
+    public class AppsMonthlyModelBuilder : IAppsMonthlyModelBuilder
     {
         private const string NoContract = "No contract";
         private const string NotApplicable = "Not applicable.  For more information refer to the funding reports guidance.";
@@ -93,7 +93,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
                     var learningDeliveryFams = _learningDeliveryFamsBuilder.BuildLearningDeliveryFamsForLearningDelivery(learningDelivery);
 
-                    var priceEpisode = priceEpisodesLookup.GetValueOrDefault(k.Key.PriceEpisodeIdentifier);
+                    var priceEpisode = priceEpisodesLookup.GetValueOrDefault(k.Key.LearnerReferenceNumber).GetValueOrDefault(k.Key.PriceEpisodeIdentifier);
 
                     var priceEpisodeStartDate = GetPriceEpisodeStartDateForRecord(k.Key);
 
@@ -159,8 +159,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         public IDictionary<string, string> BuildLarsLearningDeliveryTitleLookup(IEnumerable<LarsLearningDelivery> larsLearningDeliveries) 
             => larsLearningDeliveries.ToDictionary(ld => ld.LearnAimRef, ld => ld.LearnAimRefTitle, StringComparer.OrdinalIgnoreCase);
 
-        public IDictionary<string, AecApprenticeshipPriceEpisode> BuildPriceEpisodesLookup(IEnumerable<AecApprenticeshipPriceEpisode> priceEpisodes)
-            => priceEpisodes.ToDictionary(e => e.PriceEpisodeIdentifier, e => e, StringComparer.OrdinalIgnoreCase); 
+        public Dictionary<string, Dictionary<string, AecApprenticeshipPriceEpisode>> BuildPriceEpisodesLookup(IEnumerable<AecApprenticeshipPriceEpisode> priceEpisodes)
+            => priceEpisodes.GroupBy(g => g.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(k => k.Key,
+                    v => v
+                        .ToDictionary(pe => pe.PriceEpisodeIdentifier, value => value, StringComparer.OrdinalIgnoreCase),
+                    StringComparer.OrdinalIgnoreCase);
 
         public Payment GetLatestPaymentWithEarningEvent(IEnumerable<Payment> payments)
             => payments

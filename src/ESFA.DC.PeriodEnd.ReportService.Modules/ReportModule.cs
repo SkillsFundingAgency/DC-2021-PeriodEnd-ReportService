@@ -23,6 +23,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             builder.RegisterModule(new AppsCoInvestmentModule(_reportServiceConfiguration, _dataPersistConfiguration));
             builder.RegisterModule(new AppsAdditionalPaymentsModule(_reportServiceConfiguration, _dataPersistConfiguration));
 
+            builder.RegisterModule(new AppsMonthlyModule(_reportServiceConfiguration));
+
             builder.RegisterAdapter<IEnumerable<IReport>, IImmutableDictionary<string, IReport>>(c =>
                 c.ToImmutableDictionary(x => x.ReportTaskName, x => x));
         }

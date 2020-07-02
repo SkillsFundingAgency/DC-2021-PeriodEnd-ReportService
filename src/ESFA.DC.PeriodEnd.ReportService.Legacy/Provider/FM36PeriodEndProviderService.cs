@@ -121,7 +121,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                             EpisodeStartDate = ape.EpisodeStartDate,
                             PriceEpisodeActualEndDate = ape.PriceEpisodeActualEndDate,
                             PriceEpisodeActualEndDateIncEPA = ape.PriceEpisodeActualEndDateIncEPA,
-                            PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
+                            //PriceEpisodeAgreeId = ape.PriceEpisodeAgreeId
                         }).ToListAsync(cancellationToken);
 
                 appsMonthlyPaymentRulebaseInfo.AecLearningDeliveryInfoList = await ilrContext.AEC_LearningDeliveries

@@ -2,6 +2,7 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CsvService.Interface;
+using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
@@ -70,13 +71,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             ICsvFileService csvFileService = null,
             IFileNameService fileNameService = null,
             IAppsMonthlyPaymentsDataProvider appsMonthlyPaymentsDataProvider = null,
-            IAppsMonthlyModelBuilder appsMonthlyPaymentModelBuilder = null)
+            IAppsMonthlyModelBuilder appsMonthlyPaymentModelBuilder = null,
+            ILogger logger = null)
         {
             return new Reports.AppsMonthly.AppsMonthly(
                 csvFileService ?? Mock.Of<ICsvFileService>(),
                 fileNameService ?? Mock.Of<IFileNameService>(),
                 appsMonthlyPaymentsDataProvider ?? Mock.Of<IAppsMonthlyPaymentsDataProvider>(),
-                appsMonthlyPaymentModelBuilder ?? Mock.Of<IAppsMonthlyModelBuilder>());
+                appsMonthlyPaymentModelBuilder ?? Mock.Of<IAppsMonthlyModelBuilder>(),
+                logger ?? Mock.Of<ILogger>());
         }
     }
 }

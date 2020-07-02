@@ -3,12 +3,8 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
 {
-    public abstract class AbstractReportModule<T> : Module
+    public abstract class AbstractReportModule<T> : Module where T : IReport
     {
-        protected AbstractReportModule()
-        {
-        }
-
         protected override void Load(ContainerBuilder builder)
         {
             builder.RegisterType<T>().As<IReport>();

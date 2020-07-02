@@ -26,7 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Fcs
 
         public async Task<IDictionary<string, string>> Provide(long ukprn, CancellationToken cancellationToken)
         {
-            using (var connection = _funcSqlConnection())
+            using (var connection = _sqlConnectionFunc())
             {
                 var results = await connection.QueryAsync<(string FundingStreamPeriodCode, string ContractAllocationNumbers)>(_sql, new { ukprn, academicYearStartDate = _academicYearStartDate, academicYearEndDate = _academicYearEndDate });
 

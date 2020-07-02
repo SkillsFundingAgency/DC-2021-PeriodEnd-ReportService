@@ -15,6 +15,8 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.DataProvider;
+using ESFA.DC.Serialization.Interfaces;
+using ESFA.DC.Serialization.Json;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
@@ -80,7 +82,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             {
                 SqlConnection larsSqlFunc() => new SqlConnection(_reportServiceConfiguration.LarsConnectionString);
 
-                return new LarsLearningDeliveryProvider(larsSqlFunc);
+                var jsonSerializationService = c.Resolve<IJsonSerializationService>();
+
+                return new LarsLearningDeliveryProvider(larsSqlFunc, jsonSerializationService);
             }).As<ILarsLearningDeliveryProvider>();
         }
     }

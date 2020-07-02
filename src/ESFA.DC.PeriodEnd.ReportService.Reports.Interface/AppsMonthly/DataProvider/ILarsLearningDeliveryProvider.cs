@@ -9,6 +9,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.DataProv
 {
     public interface ILarsLearningDeliveryProvider
     {
-        Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(string learnerAimRefs, CancellationToken cancellationToken);
+        Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken);
     }
 }

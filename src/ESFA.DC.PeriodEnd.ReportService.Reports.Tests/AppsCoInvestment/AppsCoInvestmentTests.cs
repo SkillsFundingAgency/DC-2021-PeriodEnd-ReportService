@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CsvService.Interface;
@@ -9,7 +7,9 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
+using ESFA.DC.ReportData.Model;
 using Moq;
 using Xunit;
 
@@ -48,7 +48,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
             dataProviderMock.Setup(p => p.GetLearnersAsync(ukprn, cancellationToken)).ReturnsAsync(learners);
             dataProviderMock.Setup(p => p.GetPaymentsAsync(ukprn, cancellationToken)).ReturnsAsync(payments);
             dataProviderMock.Setup(p => p.GetAecPriceEpisodePeriodisedValuesAsync(ukprn, cancellationToken)).ReturnsAsync(aecPriceEpisodePeriodisedValues);
-           
+
             var modelBuilderMock = new Mock<IAppsCoInvestmentModelBuilder>();
 
             modelBuilderMock.Setup(b => b.Build(learners, payments, aecPriceEpisodePeriodisedValues, It.IsAny<int>())).Returns(rows);
@@ -64,13 +64,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
             ICsvFileService csvFileService = null,
             IFileNameService fileNameService = null,
             IAppsCoInvestmentDataProvider appsCoInvestmentDataProvider = null,
-            IAppsCoInvestmentModelBuilder appsCoInvestmentModelBuilder = null)
+            IAppsCoInvestmentModelBuilder appsCoInvestmentModelBuilder = null,
+            IReportDataPersistanceService<AppsCoInvestmentContribution> reportDataPersistanceService = null,
+            IAppsCoInvestmentPersistenceMapper appsCoInvestmentPersistenceMapper = null)
         {
             return new Reports.AppsCoInvestment.AppsCoInvestment(
                 csvFileService ?? Mock.Of<ICsvFileService>(),
                 fileNameService ?? Mock.Of<IFileNameService>(),
                 appsCoInvestmentDataProvider ?? Mock.Of<IAppsCoInvestmentDataProvider>(),
-                appsCoInvestmentModelBuilder ?? Mock.Of<IAppsCoInvestmentModelBuilder>());
+                appsCoInvestmentModelBuilder ?? Mock.Of<IAppsCoInvestmentModelBuilder>(),
+                reportDataPersistanceService ?? Mock.Of<IReportDataPersistanceService<AppsCoInvestmentContribution>>(),
+                appsCoInvestmentPersistenceMapper ?? Mock.Of<IAppsCoInvestmentPersistenceMapper>());
         }
     }
 }

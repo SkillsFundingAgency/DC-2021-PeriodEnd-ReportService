@@ -13,13 +13,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Reference
         private readonly string _easSql = "SELECT UpdatedOn FROM EAS_Submission WHERE UKPRN = @ukprn";
         private readonly string _ilrSql = "SELECT Filename FROM FileDetails WHERE UKPRN = @ukprn ORDER BY SubmittedTime DESC";
 
-        private readonly Func<SqlConnection> _organisationSqlFunc;
+        private readonly Func<SqlConnection> _orgSqlFunc;
         private readonly Func<SqlConnection> _easSqlFunc;
         private readonly Func<SqlConnection> _ilrSqlFunc;
 
-        public ReferenceDataProvider(Func<SqlConnection> organisationSqlFunc, Func<SqlConnection> easSqlFunc, Func<SqlConnection> ilrSqlFunc)
+        public ReferenceDataProvider(Func<SqlConnection> orgSqlFunc, Func<SqlConnection> easSqlFunc, Func<SqlConnection> ilrSqlFunc)
         {
-            _organisationSqlFunc = organisationSqlFunc;
+            _orgSqlFunc = orgSqlFunc;
             _easSqlFunc = easSqlFunc;
             _ilrSqlFunc = ilrSqlFunc;
         }
@@ -39,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Reference
 
         public async Task<string> GetProviderNameAsync(long ukprn)
         {
-            using (var connection = _organisationSqlFunc())
+            using (var connection = _orgSqlFunc())
             {
                 return  await connection.QueryFirstOrDefaultAsync<string>(_orgSql, new {ukprn}) ?? string.Empty;
             }

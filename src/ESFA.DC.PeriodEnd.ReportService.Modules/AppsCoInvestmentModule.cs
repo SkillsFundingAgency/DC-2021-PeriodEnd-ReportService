@@ -4,6 +4,7 @@ using System.Data.SqlClient;
 using Autofac;
 using ESFA.DC.ILR2021.DataStore.EF;
 using ESFA.DC.ILR2021.DataStore.EF.Interface;
+using ESFA.DC.PeriodEnd.DataPersist;
 using ESFA.DC.PeriodEnd.ReportService.Interface.Configuration;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders;
@@ -16,6 +17,10 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
+using ESFA.DC.ReportData.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
@@ -23,10 +28,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
     public class AppsCoInvestmentModule : Module
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
+        private readonly IDataPersistConfiguration _dataPersistConfiguration;
+        private const string tableNameParameter = "tableName";
 
-        public AppsCoInvestmentModule(IReportServiceConfiguration reportServiceConfiguration)
+        public AppsCoInvestmentModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
         {
             _reportServiceConfiguration = reportServiceConfiguration;
+            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
         protected override void Load(ContainerBuilder builder)
@@ -36,11 +44,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             builder.RegisterType<AppsCoInvestmentDataProvider>().As<IAppsCoInvestmentDataProvider>();
             builder.RegisterType<AppsCoInvestmentModelBuilder>().As<IAppsCoInvestmentModelBuilder>();
             builder.RegisterType<AppsCoInvestmentRecordKeyEqualityComparer>().As<IEqualityComparer<AppsCoInvestmentRecordKey>>().InstancePerLifetimeScope();
-
+            builder.RegisterType<AppsCoInvestmentPersistenceMapper>().As<IAppsCoInvestmentPersistenceMapper>();
             //builders
             builder.RegisterType<PaymentsBuilder>().As<IPaymentsBuilder>();
             builder.RegisterType<LearnersBuilder>().As<ILearnersBuilder>();
             builder.RegisterType<LearningDeliveriesBuilder>().As<ILearningDeliveriesBuilder>();
+
+            var sqlFunc = new Func<SqlConnection>(() =>
+                new SqlConnection(_dataPersistConfiguration.ReportDataConnectionString));
+
+            builder.RegisterType<ReportDataPersistanceService<AppsCoInvestmentContribution>>()
+                .WithParameter("sqlConnectionFunc", sqlFunc)
+                .WithParameter(tableNameParameter, TableNameConstants.AppsCoInvestmentContributions)
+                .As<IReportDataPersistanceService<AppsCoInvestmentContribution>>();
 
             RegisterDataProviders(builder);
         }
@@ -65,12 +81,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
 
             builder.RegisterType<ILR2021_DataStoreEntities>().As<IIlr2021Context>();
             builder.Register(context =>
-                {
-                    var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntities>();
-                    optionsBuilder.UseSqlServer(_reportServiceConfiguration.ILRDataStoreConnectionString, options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
+            {
+                var optionsBuilder = new DbContextOptionsBuilder<ILR2021_DataStoreEntities>();
+                optionsBuilder.UseSqlServer(_reportServiceConfiguration.ILRDataStoreConnectionString, options => options.EnableRetryOnFailure(3, TimeSpan.FromSeconds(3), new List<int>()));
 
-                    return optionsBuilder.Options;
-                }).As<DbContextOptions<ILR2021_DataStoreEntities>>()
+                return optionsBuilder.Options;
+            }).As<DbContextOptions<ILR2021_DataStoreEntities>>()
                 .SingleInstance();
         }
     }

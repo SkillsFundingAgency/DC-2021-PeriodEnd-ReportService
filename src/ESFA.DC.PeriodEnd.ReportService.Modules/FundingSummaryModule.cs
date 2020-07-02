@@ -20,11 +20,17 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
 {
-    public class FundingSummaryModule : Module
+    public class FundingSummaryModule : AbstractReportModule<FundingSummary>
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
         private readonly IDataPersistConfiguration _dataPersistConfiguration;
+
         private const string tableNameParameter = "tableName";
+        private const string sqlConnectionFuncParameter = "sqlConnectionFunc";
+        private const string dasSqlFuncParameter = "dasSqlFunc";
+        private const string easSqlFuncParameter = "easSqlFunc";
+        private const string orgSqlFuncParameter = "orgSqlFunc";
+        private const string ilrSqlFuncParameter = "ilrSqlFunc";
 
         public FundingSummaryModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
         {
@@ -32,105 +38,88 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             _dataPersistConfiguration = dataPersistConfiguration;
         }
 
-        protected override void Load(ContainerBuilder builder)
+        protected override void RegisterModelBuilder(ContainerBuilder builder)
         {
-            builder.RegisterType<FundingSummary>().As<IReport>();
-
             builder.RegisterType<FundingSummaryModelBuilder>().As<IFundingSummaryModelBuilder>();
-            builder.RegisterType<FundingSummaryPersistanceMapper>().As<IFundingSummaryPersistanceMapper>();
+        }
+
+        protected override void RegisterRenderService(ContainerBuilder builder)
+        {
             builder.RegisterType<FundingSummaryRenderService>().As<IRenderService<FundingSummaryReportModel>>();
+        }
 
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
             builder.RegisterType<PeriodisedValuesLookup>().As<IPeriodisedValuesLookup>();
-            builder.RegisterType<FundingSummaryDataProvider>().As<IFundingSummaryDataProvider>();
+        }
 
+        protected override void RegisterPersistenceService(ContainerBuilder builder)
+        {
             var sqlFunc = new Func<SqlConnection>(() =>
                 new SqlConnection(_dataPersistConfiguration.ReportDataConnectionString));
 
+            builder.RegisterType<FundingSummaryPersistanceMapper>().As<IFundingSummaryPersistanceMapper>();
+
             builder.RegisterType<ReportDataPersistanceService<FundingSummaryPersistModel>>()
-                .WithParameter("sqlConnectionFunc", sqlFunc)
+                .WithParameter(sqlConnectionFuncParameter, sqlFunc)
                 .WithParameter(tableNameParameter, TableNameConstants.FundingSummaryReport)
                 .As<IReportDataPersistanceService<FundingSummaryPersistModel>>();
-
-            RegisterDataProviders(builder);
         }
 
-        private void RegisterDataProviders(ContainerBuilder builder)
+        protected override void RegisterDataProviders(ContainerBuilder builder)
         {
-            builder.Register(c =>
-            {
-                SqlConnection dasSqlFunc() => new SqlConnection(_reportServiceConfiguration.DASPaymentsConnectionString);
+            var dasSqlFunc = new Func<SqlConnection>(() =>
+                new SqlConnection(_reportServiceConfiguration.DASPaymentsConnectionString));
 
-                return new DasDataProvider(dasSqlFunc);
-            }).As<IDasDataProvider>();
+            var easSqlFunc = new Func<SqlConnection>(() => new SqlConnection(_reportServiceConfiguration.EasConnectionString));
 
-            builder.Register(c =>
-            {
-                SqlConnection dasSqlFunc() => new SqlConnection(_reportServiceConfiguration.DASPaymentsConnectionString);
+            var fcsSqlFunc = new Func<SqlConnection>(() => new SqlConnection(_reportServiceConfiguration.FCSConnectionString));
 
-                SqlConnection easSqlFunc() => new SqlConnection(_reportServiceConfiguration.EasConnectionString);
+            var ilrSqlFunc = new Func<SqlConnection>(() =>
+                new SqlConnection(_reportServiceConfiguration.ILRDataStoreConnectionString));
 
-                return new DasEasDataProvider(dasSqlFunc, easSqlFunc);
-            }).As<IDasEasDataProvider>();
+            var orgSqlFunc = new Func<SqlConnection>(() => new SqlConnection(_reportServiceConfiguration.OrgConnectionString));
 
-            builder.Register(c =>
-            {
-                SqlConnection easSqlFunc() => new SqlConnection(_reportServiceConfiguration.EasConnectionString);
+            builder.RegisterType<DasDataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, dasSqlFunc)
+                .As<IDasDataProvider>();
 
-                return new EasDataProvider(easSqlFunc);
-            }).As<IEasDataProvider>();
+            builder.RegisterType<EasDataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, easSqlFunc)
+                .As<IEasDataProvider>();
 
-            builder.Register(c =>
-            {
-                SqlConnection fcsSqlFunc() => new SqlConnection(_reportServiceConfiguration.FCSConnectionString);
+            builder.RegisterType<FcsDataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, fcsSqlFunc)
+                .As<IFcsDataProvider>();
 
-                return new FcsDataProvider(fcsSqlFunc);
-            }).As<IFcsDataProvider>();
+            builder.RegisterType<Fm25DataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, ilrSqlFunc)
+                .As<IFm25DataProvider>();
 
-            builder.Register(c =>
-            {
-                SqlConnection ilrSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.ILRDataStoreConnectionString);
+            builder.RegisterType<Fm35DataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, ilrSqlFunc)
+                .As<IFm35DataProvider>();
 
-                return new Fm25DataProvider(ilrSqlFunc);
-            }).As<IFm25DataProvider>();
+            builder.RegisterType<Fm81DataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, ilrSqlFunc)
+                .As<IFm81DataProvider>();
 
-            builder.Register(c =>
-            {
-                SqlConnection ilrSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.ILRDataStoreConnectionString);
+            builder.RegisterType<Fm99DataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, ilrSqlFunc)
+                .As<IFm99DataProvider>();
 
-                return new Fm35DataProvider(ilrSqlFunc);
-            }).As<IFm35DataProvider>();
+            builder.RegisterType<DasEasDataProvider>()
+                .WithParameter(dasSqlFuncParameter, dasSqlFunc)
+                .WithParameter(easSqlFuncParameter, easSqlFunc)
+                .As<IDasEasDataProvider>();
 
-            builder.Register(c =>
-            {
-                SqlConnection ilrSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.ILRDataStoreConnectionString);
+            builder.RegisterType<ReferenceDataProvider>()
+                .WithParameter(orgSqlFuncParameter, orgSqlFunc)
+                .WithParameter(easSqlFuncParameter, easSqlFunc)
+                .WithParameter(ilrSqlFuncParameter, ilrSqlFunc)
+                .As<IReferenceDataProvider>();
 
-                return new Fm81DataProvider(ilrSqlFunc);
-            }).As<IFm81DataProvider>();
-
-            builder.Register(c =>
-            {
-                SqlConnection ilrSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.ILRDataStoreConnectionString);
-
-                return new Fm99DataProvider(ilrSqlFunc);
-            }).As<IFm99DataProvider>();
-
-            builder.Register(c =>
-            {
-                SqlConnection ilrSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.ILRDataStoreConnectionString);
-
-                SqlConnection orgSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.OrgConnectionString);
-
-                SqlConnection easSqlFunc() =>
-                    new SqlConnection(_reportServiceConfiguration.EasConnectionString);
-
-                return new ReferenceDataProvider(orgSqlFunc, easSqlFunc, ilrSqlFunc);
-            }).As<IReferenceDataProvider>();
+            builder.RegisterType<FundingSummaryDataProvider>().As<IFundingSummaryDataProvider>();
         }
     }
 }

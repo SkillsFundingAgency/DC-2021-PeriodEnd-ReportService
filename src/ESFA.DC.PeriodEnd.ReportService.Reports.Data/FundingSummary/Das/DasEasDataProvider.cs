@@ -12,18 +12,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Das
 {
     public class DasEasDataProvider : IDasEasDataProvider
     {
-        private readonly Func<SqlConnection> _dasSqlConnection;
-        private readonly Func<SqlConnection> _easSqlConnection;
+        private readonly Func<SqlConnection> _dasSqlFunc;
+        private readonly Func<SqlConnection> _easSqlFunc;
         private readonly int _academicYear = 2021;
 
         private readonly string _easPaymentsSql = "SELECT Payment_Id AS PaymentId, FL.Name AS FundingLine, AT.Name AS AdjustmentType FROM[dbo].[Payment_Types] PT INNER JOIN FundingLine FL ON PT.FundingLineId = FL.Id INNER JOIN AdjustmentType AT ON PT.AdjustmentTypeId = AT.Id";
 
         private readonly string _dasSql = "SELECT PaymentType, (CASE WHEN SubmissionCollectionPeriod = 1 THEN Amount ELSE 0 END) AS Period1, (CASE WHEN SubmissionCollectionPeriod = 2 THEN Amount ELSE 0 END) AS Period2, (CASE WHEN SubmissionCollectionPeriod = 3 THEN Amount ELSE 0 END) AS Period3, (CASE WHEN SubmissionCollectionPeriod = 4 THEN Amount ELSE 0 END) AS Period4, (CASE WHEN SubmissionCollectionPeriod = 5 THEN Amount ELSE 0 END) AS Period5, (CASE WHEN SubmissionCollectionPeriod = 6 THEN Amount ELSE 0 END) AS Period6, (CASE WHEN SubmissionCollectionPeriod = 7 THEN Amount ELSE 0 END) AS Period7, (CASE WHEN SubmissionCollectionPeriod = 8 THEN Amount ELSE 0 END) AS Period8, (CASE WHEN SubmissionCollectionPeriod = 9 THEN Amount ELSE 0 END) AS Period9, (CASE WHEN SubmissionCollectionPeriod = 10 THEN Amount ELSE 0 END) AS Period10, (CASE WHEN SubmissionCollectionPeriod = 11 THEN Amount ELSE 0 END) AS Period11, (CASE WHEN SubmissionCollectionPeriod = 12 THEN Amount ELSE 0 END) AS Period12 FROM Payments2.ProviderAdjustmentPayments WHERE Ukprn = @ukprn AND SubmissionAcademicYear = @academicYear";
 
-        public DasEasDataProvider(Func<SqlConnection> dasSqlConnection, Func<SqlConnection> easSqlConnection)
+        public DasEasDataProvider(Func<SqlConnection> dasSqlFunc, Func<SqlConnection> easSqlFunc)
         {
-            _dasSqlConnection = dasSqlConnection;
-            _easSqlConnection = easSqlConnection;
+            _dasSqlFunc = dasSqlFunc;
+            _easSqlFunc = easSqlFunc;
         }
 
         public async Task<Dictionary<string, Dictionary<string, decimal?[][]>>> ProvideAsync(long ukprn,
@@ -37,7 +37,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Das
 
         private async Task<IEnumerable<PeriodisedValues>> ProvideDasData(long ukprn, Dictionary<int, EasPaymentType> paymentTypeDictionary)
         {
-            using (var connection = _dasSqlConnection())
+            using (var connection = _dasSqlFunc())
             {
                 var results = await connection.QueryAsync<DasEasPeriodisedValues>(_dasSql, new { ukprn, academicYear = _academicYear });
 
@@ -70,7 +70,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Das
 
         private async Task<Dictionary<int, EasPaymentType>> ProvideEasData()
         {
-            using (var connection = _easSqlConnection())
+            using (var connection = _easSqlFunc())
             {
                 var results = await connection.QueryAsync<EasPaymentType>(_easPaymentsSql);
 

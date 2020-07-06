@@ -1,15 +1,15 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
+﻿using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CsvService.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Persistence;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
+using ESFA.DC.ReportData.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 {
@@ -20,6 +20,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         private readonly IAppsMonthlyPaymentsDataProvider _appsMonthlyPaymentsDataProvider;
         private readonly IAppsMonthlyModelBuilder _appsMonthlyPaymentModelBuilder;
         private readonly ILogger _logger;
+        private readonly IReportDataPersistanceService<AppsMonthlyPayment> _reportDataPersistanceService;
+        private readonly IAppsMonthlyPersistenceMapper _appsMonthlyPersistenceMapper;
         public string ReportTaskName => "TaskGenerateAppsMonthlyPaymentReport";
         
         private string ReportFileName => "Apps Monthly Payment Report";
@@ -29,13 +31,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             IFileNameService fileNameService,
             IAppsMonthlyPaymentsDataProvider appsMonthlyPaymentsDataProvider,
             IAppsMonthlyModelBuilder appsMonthlyPaymentModelBuilder,
-            ILogger logger)
+            ILogger logger,
+            IReportDataPersistanceService<AppsMonthlyPayment> reportDataPersistanceService,
+            IAppsMonthlyPersistenceMapper appsMonthlyPersistenceMapper)
         {
             _csvFileService = csvFileService;
             _fileNameService = fileNameService;
             _appsMonthlyPaymentsDataProvider = appsMonthlyPaymentsDataProvider;
             _appsMonthlyPaymentModelBuilder = appsMonthlyPaymentModelBuilder;
             _logger = logger;
+            _reportDataPersistanceService = reportDataPersistanceService;
+            _appsMonthlyPersistenceMapper = appsMonthlyPersistenceMapper;
         }
 
         public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
@@ -61,16 +67,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
             _logger.LogInfo("Apps Monthly Payment Report Model Build Start");
 
-            var models = _appsMonthlyPaymentModelBuilder.Build(
+            var appsMonthlyRecords = _appsMonthlyPaymentModelBuilder.Build(
                 paymentsTask.Result,
                 learnersTask.Result,
                 contractAllocationsTask.Result,
                 earningsTask.Result,
                 larsLearningDeliveries,
-                priceEpisodesTask.Result);
+                priceEpisodesTask.Result).ToList();
             _logger.LogInfo("Apps Monthly Payment Report Model Build End");
 
-            await _csvFileService.WriteAsync<AppsMonthlyRecord, AppsMonthlyClassMap>(models, fileName, reportServiceContext.Container, cancellationToken);
+            await _csvFileService.WriteAsync<AppsMonthlyRecord, AppsMonthlyClassMap>(appsMonthlyRecords, fileName, reportServiceContext.Container, cancellationToken);
+
+            var persistModels = _appsMonthlyPersistenceMapper.Map(reportServiceContext, appsMonthlyRecords, cancellationToken);
+            await _reportDataPersistanceService.PersistAsync(reportServiceContext, persistModels, cancellationToken);
 
             return fileName;
         }

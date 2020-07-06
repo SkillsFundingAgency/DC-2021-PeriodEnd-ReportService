@@ -6,8 +6,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
     {
         public int? EmpId { get; set; }
 
-        public int EmpStat { get; set; }
+        public int? EmpStat { get; set; }
 
-        public DateTime DateEmpStatApp { get; set; }
+        public DateTime? DateEmpStatApp { get; set; }
     }
 }

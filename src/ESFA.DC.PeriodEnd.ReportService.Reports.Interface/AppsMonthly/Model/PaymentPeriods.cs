@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 {
     public class PaymentPeriods
     {

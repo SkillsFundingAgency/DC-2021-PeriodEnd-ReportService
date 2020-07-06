@@ -1,0 +1,61 @@
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPayments.Model
+{
+    public class EarningsAndPayments
+    {
+        public decimal AugustEarnings { get; set; }
+
+        public decimal AugustR01Payments { get; set; }
+
+        public decimal SeptemberEarnings { get; set; }
+
+        public decimal SeptemberR02Payments { get; set; }
+
+        public decimal OctoberEarnings { get; set; }
+
+        public decimal OctoberR03Payments { get; set; }
+
+        public decimal NovemberEarnings { get; set; }
+
+        public decimal NovemberR04Payments { get; set; }
+
+        public decimal DecemberEarnings { get; set; }
+
+        public decimal DecemberR05Payments { get; set; }
+
+        public decimal JanuaryEarnings { get; set; }
+
+        public decimal JanuaryR06Payments { get; set; }
+
+        public decimal FebruaryEarnings { get; set; }
+
+        public decimal FebruaryR07Payments { get; set; }
+
+        public decimal MarchEarnings { get; set; }
+
+        public decimal MarchR08Payments { get; set; }
+
+        public decimal AprilEarnings { get; set; }
+
+        public decimal AprilR09Payments { get; set; }
+
+        public decimal MayEarnings { get; set; }
+
+        public decimal MayR10Payments { get; set; }
+
+        public decimal JuneEarnings { get; set; }
+
+        public decimal JuneR11Payments { get; set; }
+
+        public decimal JulyEarnings { get; set; }
+
+        public decimal JulyR12Payments { get; set; }
+
+        public decimal R13Payments { get; set; }
+
+        public decimal R14Payments { get; set; }
+
+        public decimal TotalEarnings { get; set; }
+
+        public decimal TotalPaymentsYearToDate { get; set; }
+    }
+}

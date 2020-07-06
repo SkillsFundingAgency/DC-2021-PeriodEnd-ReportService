@@ -4,6 +4,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.CsvService.Interface;
+using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
@@ -18,6 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         private readonly IFileNameService _fileNameService;
         private readonly IAppsMonthlyPaymentsDataProvider _appsMonthlyPaymentsDataProvider;
         private readonly IAppsMonthlyModelBuilder _appsMonthlyPaymentModelBuilder;
+        private readonly ILogger _logger;
         public string ReportTaskName => "TaskGenerateAppsMonthlyPaymentReport";
         
         private string ReportFileName => "Apps Monthly Payment Report";
@@ -26,12 +28,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             ICsvFileService csvFileService,
             IFileNameService fileNameService,
             IAppsMonthlyPaymentsDataProvider appsMonthlyPaymentsDataProvider,
-            IAppsMonthlyModelBuilder appsMonthlyPaymentModelBuilder)
+            IAppsMonthlyModelBuilder appsMonthlyPaymentModelBuilder,
+            ILogger logger)
         {
             _csvFileService = csvFileService;
             _fileNameService = fileNameService;
             _appsMonthlyPaymentsDataProvider = appsMonthlyPaymentsDataProvider;
             _appsMonthlyPaymentModelBuilder = appsMonthlyPaymentModelBuilder;
+            _logger = logger;
         }
 
         public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
@@ -40,6 +44,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
             var collectionYear = reportServiceContext.CollectionYear;
 
             var fileName = _fileNameService.GetFilename(reportServiceContext, ReportFileName, OutputTypes.Csv);
+
+            _logger.LogInfo("Apps Monthly Payment Report Data Provider Start");
 
             var paymentsTask = _appsMonthlyPaymentsDataProvider.GetPaymentsAsync(ukprn, collectionYear, cancellationToken);
             var learnersTask = _appsMonthlyPaymentsDataProvider.GetLearnersAsync(ukprn, cancellationToken);
@@ -51,6 +57,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
 
             var larsLearningDeliveries = await _appsMonthlyPaymentsDataProvider.GetLarsLearningDeliveriesAsync(learnersTask.Result, cancellationToken);
 
+            _logger.LogInfo("Apps Monthly Payment Report Data Provider End");
+
+            _logger.LogInfo("Apps Monthly Payment Report Model Build Start");
+
             var models = _appsMonthlyPaymentModelBuilder.Build(
                 paymentsTask.Result,
                 learnersTask.Result,
@@ -58,6 +68,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 earningsTask.Result,
                 larsLearningDeliveries,
                 priceEpisodesTask.Result);
+            _logger.LogInfo("Apps Monthly Payment Report Model Build End");
 
             await _csvFileService.WriteAsync<AppsMonthlyRecord, AppsMonthlyClassMap>(models, fileName, reportServiceContext.Container, cancellationToken);
 

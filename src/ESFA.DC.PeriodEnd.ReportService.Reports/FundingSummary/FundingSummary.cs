@@ -8,7 +8,9 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
+using ESFA.DC.ReportData.Model;
+
+//using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 {
@@ -19,14 +21,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private readonly IFundingSummaryDataProvider _fundingSummaryDataProvider;
         private readonly IFundingSummaryModelBuilder _fundingSummaryModelBuilder;
         private readonly IRenderService<FundingSummaryReportModel> _fundingSummaryRenderService;
-        private readonly IReportDataPersistanceService<FundingSummaryPersistModel> _persistanceService;
+        private readonly IReportDataPersistanceService<FundingSummaryReport> _persistanceService;
         private readonly IFundingSummaryPersistanceMapper _fundingSummaryPersistanceMapper;
 
         public string ReportTaskName => "TaskGenerateFundingSummaryPeriodEndReport";
 
         private string ReportName => "Funding Summary Report";
 
-        public FundingSummary(IExcelFileService excelFileService, IFileNameService fileNameService, IFundingSummaryDataProvider fundingSummaryDataProvider, IFundingSummaryModelBuilder fundingSummaryModelBuilder, IRenderService<FundingSummaryReportModel> fundingSummaryRenderService, IReportDataPersistanceService<FundingSummaryPersistModel> persistanceService, IFundingSummaryPersistanceMapper fundingSummaryPersistanceMapper)
+        public FundingSummary(IExcelFileService excelFileService, IFileNameService fileNameService, IFundingSummaryDataProvider fundingSummaryDataProvider, IFundingSummaryModelBuilder fundingSummaryModelBuilder, IRenderService<FundingSummaryReportModel> fundingSummaryRenderService, IReportDataPersistanceService<FundingSummaryReport> persistanceService, IFundingSummaryPersistanceMapper fundingSummaryPersistanceMapper)
         {
             _excelFileService = excelFileService;
             _fileNameService = fileNameService;

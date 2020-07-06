@@ -18,7 +18,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builder
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
 using ESFA.DC.ReportData.Model;
 using Microsoft.EntityFrameworkCore;

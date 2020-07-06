@@ -4,16 +4,16 @@ using System.Threading;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
+using ESFA.DC.ReportData.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 {
     public class FundingSummaryPersistanceMapper : IFundingSummaryPersistanceMapper
     {
-        public IEnumerable<FundingSummaryPersistModel> Map(IReportServiceContext reportServiceContext, FundingSummaryReportModel fundingSummaryReportModel, CancellationToken cancellationToken)
+        public IEnumerable<FundingSummaryReport> Map(IReportServiceContext reportServiceContext, FundingSummaryReportModel fundingSummaryReportModel, CancellationToken cancellationToken)
         {
             var persistModels = fundingSummaryReportModel.FundingCategories.SelectMany(fc => fc.FundingSubCategories.SelectMany(fsc =>
-                fsc.FundLineGroups.SelectMany(flg => flg.FundLines.Select(fl => new FundingSummaryPersistModel
+                fsc.FundLineGroups.SelectMany(flg => flg.FundLines.Select(fl => new FundingSummaryReport
                 {
                     Ukprn = reportServiceContext.Ukprn,
                     ReturnPeriod = reportServiceContext.ReturnPeriod,

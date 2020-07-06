@@ -15,8 +15,8 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
+using ESFA.DC.ReportData.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
 {
@@ -60,10 +60,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
 
             builder.RegisterType<FundingSummaryPersistanceMapper>().As<IFundingSummaryPersistanceMapper>();
 
-            builder.RegisterType<ReportDataPersistanceService<FundingSummaryPersistModel>>()
+            builder.RegisterType<ReportDataPersistanceService<FundingSummaryReport>>()
                 .WithParameter(sqlConnectionFuncParameter, sqlFunc)
                 .WithParameter(tableNameParameter, TableNameConstants.FundingSummaryReport)
-                .As<IReportDataPersistanceService<FundingSummaryPersistModel>>();
+                .As<IReportDataPersistanceService<FundingSummaryReport>>();
         }
 
         protected override void RegisterDataProviders(ContainerBuilder builder)

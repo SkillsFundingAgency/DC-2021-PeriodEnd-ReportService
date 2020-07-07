@@ -5,11 +5,12 @@ using ESFA.DC.CsvService.Interface;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Persistence;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
+using ESFA.DC.ReportData.Model;
 using Moq;
 using Xunit;
 
@@ -72,14 +73,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             IFileNameService fileNameService = null,
             IAppsMonthlyPaymentsDataProvider appsMonthlyPaymentsDataProvider = null,
             IAppsMonthlyModelBuilder appsMonthlyPaymentModelBuilder = null,
-            ILogger logger = null)
+            ILogger logger = null,
+            IReportDataPersistanceService<AppsMonthlyPayment> reportDataPersistanceService = null,
+            IAppsMonthlyPersistenceMapper appsMonthlyPersistenceMapper = null)
         {
             return new Reports.AppsMonthly.AppsMonthly(
                 csvFileService ?? Mock.Of<ICsvFileService>(),
                 fileNameService ?? Mock.Of<IFileNameService>(),
                 appsMonthlyPaymentsDataProvider ?? Mock.Of<IAppsMonthlyPaymentsDataProvider>(),
                 appsMonthlyPaymentModelBuilder ?? Mock.Of<IAppsMonthlyModelBuilder>(),
-                logger ?? Mock.Of<ILogger>());
+                logger ?? Mock.Of<ILogger>(),
+                reportDataPersistanceService ?? Mock.Of<IReportDataPersistanceService<AppsMonthlyPayment>>(),
+                appsMonthlyPersistenceMapper ?? Mock.Of<IAppsMonthlyPersistenceMapper>());
         }
     }
 }

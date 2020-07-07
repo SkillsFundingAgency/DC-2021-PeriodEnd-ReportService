@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
     {
         public Guid EventId { get; set; }
 
-        public int AimSequenceNumber { get; set; }
+        public int? AimSequenceNumber { get; set; }
     }
 }

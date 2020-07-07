@@ -4,7 +4,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly.Builders;
 using FluentAssertions;
 using Xunit;

@@ -7,7 +7,7 @@
   <ItemGroup>
     <PackageReference Include="Aspose.Cells" Version="19.8.0" />
     <PackageReference Include="ESFA.DC.CollectionsManagement.Models" Version="0.2.21-beta0001" />
-    <PackageReference Include="ESFA.DC.ReportData.2021.Model" Version="0.1.5-beta.1" />
+    <PackageReference Include="ESFA.DC.ReportData.2021.Model" Version="0.1.8-beta.1" />
     <PackageReference Include="System.Data.SqlClient" Version="4.8.1" />
   </ItemGroup>
 

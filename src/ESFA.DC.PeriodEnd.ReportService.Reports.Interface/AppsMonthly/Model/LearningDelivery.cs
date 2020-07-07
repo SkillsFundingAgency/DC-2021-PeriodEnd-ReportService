@@ -25,9 +25,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 
         public DateTime? OrigLearnStartDate { get; set; }
 
-        public DateTime LearnPlanEndDate { get; set; }
+        public DateTime? LearnPlanEndDate { get; set; }
 
-        public int CompStatus { get; set; }
+        public int? CompStatus { get; set; }
 
         public DateTime? LearnActEndDate { get; set; }
 
@@ -35,7 +35,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Model
 
         public int? Outcome { get; set; }
 
-        public int AimType { get; set; }
+        public int? AimType { get; set; }
 
         public string SWSupAimId { get; set; }
 

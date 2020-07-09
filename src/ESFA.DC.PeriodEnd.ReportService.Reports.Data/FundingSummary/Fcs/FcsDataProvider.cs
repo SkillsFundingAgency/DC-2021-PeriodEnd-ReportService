@@ -17,7 +17,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Fcs
         private readonly DateTime _academicYearEndDate = new DateTime(2021, 07, 31);
 
         private readonly string _sql =
-            "SELECT FundingStreamPeriodCode, STRING_AGG(ContractAllocationNumber, ';') AS ContractAllocationNumbers FROM ContractAllocation WHERE DeliveryUkprn = @ukprn AND StartDate <= @academicYearEndDate AND(EndDate IS NULL OR EndDate >= @academicYearStartDate) GROUP BY FundingStreamPeriodCode";
+            "SELECT FundingStreamPeriodCode, STRING_AGG(ContractAllocationNumber, ';') WITHIN GROUP (ORDER BY ContractAllocationNumber DESC) AS ContractAllocationNumbers FROM ContractAllocation WHERE DeliveryUkprn = @ukprn AND StartDate <= @academicYearEndDate AND(EndDate IS NULL OR EndDate >= @academicYearStartDate) GROUP BY FundingStreamPeriodCode";
 
         public FcsDataProvider(Func<SqlConnection> sqlConnectionFunc)
         {

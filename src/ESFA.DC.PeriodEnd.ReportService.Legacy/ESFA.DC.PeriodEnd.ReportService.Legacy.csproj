@@ -23,7 +23,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Cells" Version="20.6.0" />
+    <PackageReference Include="Aspose.Cells" Version="19.9.0" />
     <PackageReference Include="Autofac" Version="4.9.2" />
     <PackageReference Include="ESFA.DC.DASPayments.EF" Version="0.1.114" />
     <PackageReference Include="ESFA.DC.Data.Organisations.Model" Version="0.2.0-alpha0014" />

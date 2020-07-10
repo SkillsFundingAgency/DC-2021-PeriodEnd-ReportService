@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <PackageReference Include="Aspose.Cells" Version="20.6.0" />
+    <PackageReference Include="Aspose.Cells" Version="19.9.0" />
     <PackageReference Include="ESFA.DC.ILR.2021.Database.EF" Version="0.1.144" />
     <PackageReference Include="StyleCop.Analyzers" Version="1.1.118">
       <PrivateAssets>all</PrivateAssets>

@@ -27,17 +27,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
         
         public async Task CreateZipAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
-            var fileName = reportFileNameKey.Split('/').Last();
+            var reportZipFileKey = _fileNameService.GetFilename(reportServiceContext, ReportsZipName, OutputTypes.Zip, false, false);
 
-            var reportZipFileKey = _fileNameService.GetFilename(reportServiceContext, ReportsZipName, OutputTypes.Zip, false);
-
-            using (var memoryStream = await GetStreamAsync(reportZipFileKey, reportServiceContext, cancellationToken))
+            using (var memoryStream = new MemoryStream())
+            using (var zipSteam = await GetStreamAsync(reportZipFileKey, reportServiceContext, cancellationToken))
             {
+                await zipSteam.CopyToAsync(memoryStream, BufferSize, cancellationToken);
+
                 using (var zipArchive = new ZipArchive(memoryStream, ZipArchiveMode.Update, true))
                 {
                     using (var readStream = await _fileService.OpenReadStreamAsync(reportFileNameKey, reportServiceContext.Container, cancellationToken))
                     {
-                        await _zipArchiveService.AddEntryToZip(zipArchive, readStream, fileName, cancellationToken);
+                        await _zipArchiveService.AddEntryToZip(zipArchive, readStream, PrepareFileName(reportFileNameKey), cancellationToken);
                     }
                 }
 
@@ -49,19 +50,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
             }
         }
 
+        private string PrepareFileName(string fileName)
+        {
+            return fileName.Split('/').Last().Substring(9);
+        }
+
         private async Task<Stream> GetStreamAsync(string reportZipFileKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
-            using (var memoryStream = new MemoryStream())
+            if (await _fileService.ExistsAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken))
             {
-                if (await _fileService.ExistsAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken))
-                {
-                    var fileStream = await _fileService.OpenReadStreamAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken);
-
-                    await fileStream.CopyToAsync(memoryStream, BufferSize, cancellationToken);
-                }
-
-                return memoryStream;
+                return await _fileService.OpenReadStreamAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken);
             }
+
+            return new MemoryStream();
         }
     }
 }

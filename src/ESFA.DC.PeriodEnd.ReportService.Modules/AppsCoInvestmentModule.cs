@@ -12,56 +12,29 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Comparer;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Das;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsCoInvestment.Ilr;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Builders;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Persistence;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
 using ESFA.DC.ReportData.Model;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
 {
-    public class AppsCoInvestmentModule : Module
+    public class AppsCoInvestmentModule : AbstractReportModule<AppsCoInvestment>
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
-        private readonly IDataPersistConfiguration _dataPersistConfiguration;
-        private const string tableNameParameter = "tableName";
 
-        public AppsCoInvestmentModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
+        public AppsCoInvestmentModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration) 
+            : base(dataPersistConfiguration)
         {
             _reportServiceConfiguration = reportServiceConfiguration;
-            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
-        protected override void Load(ContainerBuilder builder)
+        protected override void RegisterDataProviders(ContainerBuilder builder)
         {
-            builder.RegisterType<AppsCoInvestment>().As<IReport>();
-
             builder.RegisterType<AppsCoInvestmentDataProvider>().As<IAppsCoInvestmentDataProvider>();
-            builder.RegisterType<AppsCoInvestmentModelBuilder>().As<IAppsCoInvestmentModelBuilder>();
-            builder.RegisterType<AppsCoInvestmentRecordKeyEqualityComparer>().As<IEqualityComparer<AppsCoInvestmentRecordKey>>().InstancePerLifetimeScope();
-            builder.RegisterType<AppsCoInvestmentPersistenceMapper>().As<IAppsCoInvestmentPersistenceMapper>();
-            //builders
-            builder.RegisterType<PaymentsBuilder>().As<IPaymentsBuilder>();
-            builder.RegisterType<LearnersBuilder>().As<ILearnersBuilder>();
-            builder.RegisterType<LearningDeliveriesBuilder>().As<ILearningDeliveriesBuilder>();
-
-            var sqlFunc = new Func<SqlConnection>(() =>
-                new SqlConnection(_dataPersistConfiguration.ReportDataConnectionString));
-
-            builder.RegisterType<ReportDataPersistanceService<AppsCoInvestmentContribution>>()
-                .WithParameter("sqlConnectionFunc", sqlFunc)
-                .WithParameter(tableNameParameter, TableNameConstants.AppsCoInvestmentContributions)
-                .As<IReportDataPersistanceService<AppsCoInvestmentContribution>>();
-
-            RegisterDataProviders(builder);
-        }
-
-        private void RegisterDataProviders(ContainerBuilder builder)
-        {
             builder.RegisterType<LearnerDataProvider>().As<ILearnerDataProvider>();
 
             builder.Register(c =>
@@ -88,5 +61,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             }).As<DbContextOptions<ILR2021_DataStoreEntities>>()
                 .SingleInstance();
         }
+
+        protected override void RegisterModelBuilder(ContainerBuilder builder)
+        {
+            builder.RegisterType<AppsCoInvestmentModelBuilder>().As<IAppsCoInvestmentModelBuilder>();
+        }
+
+        protected override void RegisterRenderService(ContainerBuilder builder)
+        {
+        }
+
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<AppsCoInvestmentRecordKeyEqualityComparer>().As<IEqualityComparer<AppsCoInvestmentRecordKey>>().InstancePerLifetimeScope();
+
+            builder.RegisterType<PaymentsBuilder>().As<IPaymentsBuilder>();
+            builder.RegisterType<LearnersBuilder>().As<ILearnersBuilder>();
+            builder.RegisterType<LearningDeliveriesBuilder>().As<ILearningDeliveriesBuilder>();
+        }
+
+        protected override void RegisterPersistenceService(ContainerBuilder builder)
+            => RegisterPersistenceService<AppsCoInvestmentPersistenceMapper, IAppsCoInvestmentPersistenceMapper, AppsCoInvestmentContribution>(builder, TableNameConstants.AppsCoInvestmentContributions);
     }
 }

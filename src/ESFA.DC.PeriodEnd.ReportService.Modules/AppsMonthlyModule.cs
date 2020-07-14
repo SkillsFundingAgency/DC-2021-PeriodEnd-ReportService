@@ -13,53 +13,28 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Das;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Fcs;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Ilr;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsMonthly.Persistence;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
 using ESFA.DC.ReportData.Model;
 using ESFA.DC.Serialization.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
 {
-    public class AppsMonthlyModule : Module
+    public class AppsMonthlyModule : AbstractReportModule<AppsMonthly>
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
-        private readonly IDataPersistConfiguration _dataPersistConfiguration;
-        private const string tableNameParameter = "tableName";
 
-        public AppsMonthlyModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
+        public AppsMonthlyModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration) 
+            : base(dataPersistConfiguration)
         {
             _reportServiceConfiguration = reportServiceConfiguration;
-            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
-        protected override void Load(ContainerBuilder builder)
+        protected override void RegisterDataProviders(ContainerBuilder builder)
         {
-            builder.RegisterType<AppsMonthly>().As<IReport>();
-
             builder.RegisterType<AppsMonthlyPaymentsDataProvider>().As<IAppsMonthlyPaymentsDataProvider>();
-            builder.RegisterType<AppsMonthlyModelBuilder>().As<IAppsMonthlyModelBuilder>();
-            builder.RegisterType<LearningDeliveryFamsBuilder>().As<ILearningDeliveryFamsBuilder>();
-            builder.RegisterType<PaymentPeriodsBuilder>().As<IPaymentPeriodsBuilder>();
-            builder.RegisterType<ProviderMonitoringsBuilder>().As<IProviderMonitoringsBuilder>();
-            builder.RegisterType<AppsMonthlyPersistenceMapper>().As<IAppsMonthlyPersistenceMapper>();
-
-            var sqlFunc = new Func<SqlConnection>(() =>
-                new SqlConnection(_dataPersistConfiguration.ReportDataConnectionString));
-
-            builder.RegisterType<ReportDataPersistanceService<AppsMonthlyPayment>>()
-                .WithParameter("sqlConnectionFunc", sqlFunc)
-                .WithParameter(tableNameParameter, TableNameConstants.AppsMonthlyPayment)
-                .As<IReportDataPersistanceService<AppsMonthlyPayment>>();
-
-            RegisterDataProviders(builder);
-        }
-
-        private void RegisterDataProviders(ContainerBuilder builder)
-        {
             builder.RegisterType<LearnerDataProvider>().As<ILearnerDataProvider>();
 
             builder.RegisterType<ILR2021_DataStoreEntities>().As<IIlr2021Context>();
@@ -102,5 +77,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
                 return new LarsLearningDeliveryProvider(larsSqlFunc, jsonSerializationService);
             }).As<ILarsLearningDeliveryProvider>();
         }
+
+        protected override void RegisterModelBuilder(ContainerBuilder builder)
+        {
+            builder.RegisterType<AppsMonthlyModelBuilder>().As<IAppsMonthlyModelBuilder>();
+        }
+
+        protected override void RegisterRenderService(ContainerBuilder builder)
+        {
+        }
+
+        protected override void RegisterServices(ContainerBuilder builder)
+        {
+            builder.RegisterType<LearningDeliveryFamsBuilder>().As<ILearningDeliveryFamsBuilder>();
+            builder.RegisterType<PaymentPeriodsBuilder>().As<IPaymentPeriodsBuilder>();
+            builder.RegisterType<ProviderMonitoringsBuilder>().As<IProviderMonitoringsBuilder>();
+        }
+
+        protected override void RegisterPersistenceService(ContainerBuilder builder)
+            => RegisterPersistenceService<AppsMonthlyPersistenceMapper, IAppsMonthlyPersistenceMapper, AppsMonthlyPayment>(builder, TableNameConstants.AppsMonthlyPayment);
     }
 }

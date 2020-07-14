@@ -16,6 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
         private readonly IFileService _fileService;
 
         private const string ReportsZipName = "Reports";
+        private const int BufferSize = 8096;
 
         public ReportZipService(IFileNameService fileNameService, IZipArchiveService zipArchiveService, IFileService fileService)
         {
@@ -43,7 +44,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
                 using (var writeStream = await _fileService.OpenWriteStreamAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken))
                 {
                     memoryStream.Position = 0;
-                    await memoryStream.CopyToAsync(writeStream, 8096, cancellationToken);
+                    await memoryStream.CopyToAsync(writeStream, BufferSize, cancellationToken);
                 }
             }
         }
@@ -56,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
                 {
                     var fileStream = await _fileService.OpenReadStreamAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken);
 
-                    await fileStream.CopyToAsync(memoryStream, 8096, cancellationToken);
+                    await fileStream.CopyToAsync(memoryStream, BufferSize, cancellationToken);
                 }
 
                 return memoryStream;

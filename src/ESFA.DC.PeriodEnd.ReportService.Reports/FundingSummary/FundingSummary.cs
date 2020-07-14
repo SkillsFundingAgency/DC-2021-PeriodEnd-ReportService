@@ -41,7 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 
         public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
-            var fileName = _fileNameService.GetFilename(reportServiceContext, ReportName, OutputTypes.Excel, true);
+            var fileName = _fileNameService.GetFilename(reportServiceContext, ReportName, OutputTypes.Excel, true, true);
 
             var fundingSummaryReferenceData = await _fundingSummaryDataProvider.ProvideAsync(reportServiceContext, cancellationToken);
 

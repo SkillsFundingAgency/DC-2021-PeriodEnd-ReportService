@@ -15,7 +15,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Persist;
 using ESFA.DC.ReportData.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Modules
@@ -23,19 +22,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
     public class FundingSummaryModule : AbstractReportModule<FundingSummary>
     {
         private readonly IReportServiceConfiguration _reportServiceConfiguration;
-        private readonly IDataPersistConfiguration _dataPersistConfiguration;
 
-        private const string tableNameParameter = "tableName";
         private const string sqlConnectionFuncParameter = "sqlConnectionFunc";
         private const string dasSqlFuncParameter = "dasSqlFunc";
         private const string easSqlFuncParameter = "easSqlFunc";
         private const string orgSqlFuncParameter = "orgSqlFunc";
         private const string ilrSqlFuncParameter = "ilrSqlFunc";
 
-        public FundingSummaryModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration)
+        public FundingSummaryModule(IReportServiceConfiguration reportServiceConfiguration, IDataPersistConfiguration dataPersistConfiguration) 
+            : base(dataPersistConfiguration)
         {
             _reportServiceConfiguration = reportServiceConfiguration;
-            _dataPersistConfiguration = dataPersistConfiguration;
         }
 
         protected override void RegisterModelBuilder(ContainerBuilder builder)
@@ -51,19 +48,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
         protected override void RegisterServices(ContainerBuilder builder)
         {
             builder.RegisterType<PeriodisedValuesLookup>().As<IPeriodisedValuesLookup>();
-        }
-
-        protected override void RegisterPersistenceService(ContainerBuilder builder)
-        {
-            var sqlFunc = new Func<SqlConnection>(() =>
-                new SqlConnection(_dataPersistConfiguration.ReportDataConnectionString));
-
-            builder.RegisterType<FundingSummaryPersistanceMapper>().As<IFundingSummaryPersistanceMapper>();
-
-            builder.RegisterType<ReportDataPersistanceService<FundingSummaryReport>>()
-                .WithParameter(sqlConnectionFuncParameter, sqlFunc)
-                .WithParameter(tableNameParameter, TableNameConstants.FundingSummaryReport)
-                .As<IReportDataPersistanceService<FundingSummaryReport>>();
         }
 
         protected override void RegisterDataProviders(ContainerBuilder builder)
@@ -121,5 +105,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
 
             builder.RegisterType<FundingSummaryDataProvider>().As<IFundingSummaryDataProvider>();
         }
+
+        protected override void RegisterPersistenceService(ContainerBuilder builder)
+            => RegisterPersistenceService<FundingSummaryPersistanceMapper, IFundingSummaryPersistanceMapper, FundingSummaryReport>(builder, TableNameConstants.FundingSummaryReport);
     }
 }

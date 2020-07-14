@@ -4,7 +4,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
-using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports
 {
@@ -12,28 +11,24 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
     {
         private readonly IImmutableDictionary<string, IReport> _reports;
         private readonly IReportServiceContext _reportServiceContext;
-        private readonly IFileNameService _fileNameService;
+        private readonly IReportZipService _reportZipService;
         private readonly ILogger _logger;
-
-        private const string ReportsZipName = "Reports";
 
         public EntryPoint(
             IImmutableDictionary<string, IReport> reports,
             IReportServiceContext reportServiceContext,
-            IFileNameService fileNameService,
+            IReportZipService reportZipService,
             ILogger logger)
         {
             _reports = reports;
             _reportServiceContext = reportServiceContext;
-            _fileNameService = fileNameService;
+            _reportZipService = reportZipService;
             _logger = logger;
         }
 
         public async Task<bool> Callback(CancellationToken cancellationToken)
         {
             _logger.LogInfo("Reporting callback invoked");
-
-            var reportZipFileKey = _fileNameService.GetFilename(_reportServiceContext, ReportsZipName, OutputTypes.Zip, false);
 
             try
             {
@@ -52,6 +47,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
                     }
 
                     var fileName = await report.GenerateReport(_reportServiceContext, cancellationToken);
+
+                    await _reportZipService.CreateZipAsync(fileName, _reportServiceContext, cancellationToken);
                 }
             }
             catch (Exception e)

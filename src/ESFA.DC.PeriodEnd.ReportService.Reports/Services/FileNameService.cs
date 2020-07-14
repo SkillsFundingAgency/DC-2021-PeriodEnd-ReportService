@@ -23,11 +23,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public string GetFilename(IReportServiceContext reportServiceContext, string fileName, OutputTypes outputType, bool includeDateTime = true)
+        public string GetFilename(IReportServiceContext reportServiceContext, string fileName, OutputTypes outputType, bool includeDateTime = true, bool includeUkprn = false)
         {
             var stringBuilder = new StringBuilder();
 
             stringBuilder.Append(GetPath(reportServiceContext));
+
+            if (includeUkprn)
+            {
+                stringBuilder.Append($"{reportServiceContext.Ukprn} ");
+            }
 
             stringBuilder.Append(fileName);
 

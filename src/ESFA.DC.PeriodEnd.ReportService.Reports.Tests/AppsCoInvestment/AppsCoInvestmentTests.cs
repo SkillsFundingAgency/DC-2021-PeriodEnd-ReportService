@@ -41,7 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
             var csvFileServiceMock = new Mock<ICsvFileService>();
             var fileNameServiceMock = new Mock<IFileNameService>();
 
-            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Apps Co-Investment Contributions Report", OutputTypes.Csv, true)).Returns(fileName);
+            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Apps Co-Investment Contributions Report", OutputTypes.Csv, true, false)).Returns(fileName);
 
             var dataProviderMock = new Mock<IAppsCoInvestmentDataProvider>();
 

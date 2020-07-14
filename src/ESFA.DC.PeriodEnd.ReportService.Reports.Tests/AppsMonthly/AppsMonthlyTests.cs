@@ -46,7 +46,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
 
             var fileNameServiceMock = new Mock<IFileNameService>();
 
-            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Apps Monthly Payment Report", OutputTypes.Csv, true)).Returns(fileName);
+            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Apps Monthly Payment Report", OutputTypes.Csv, true, false)).Returns(fileName);
 
             var dataProviderMock = new Mock<IAppsMonthlyPaymentsDataProvider>();
 

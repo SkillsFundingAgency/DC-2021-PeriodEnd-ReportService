@@ -399,7 +399,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsMonthly
             var contractNumberLookup = NewBuilder().BuildContractNumbersLookup(contractAllocations);
 
             contractNumberLookup.Should().HaveCount(2);
-            contractNumberLookup["One"].Should().Be("ABC; DEF");
+            contractNumberLookup["One"].Should().Be("DEF; ABC");
 
             contractNumberLookup["Two"].Should().Be("GHI");
         }

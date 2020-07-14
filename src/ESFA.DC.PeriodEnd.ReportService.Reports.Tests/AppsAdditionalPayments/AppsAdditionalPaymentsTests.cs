@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
 
             var fileNameServiceMock = new Mock<IFileNameService>();
 
-            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, $"{ukprn} Apps Additional Payments Report", OutputTypes.Csv, true, false)).Returns(fileName);
+            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, $"{ukprn} Apps Additional Payments Report", OutputTypes.Csv, true, true)).Returns(fileName);
 
             var dataProviderMock = new Mock<IAppsAdditionalPaymentsDataProvider>();
 

@@ -148,7 +148,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 .GroupBy(ca => ca.FundingStreamPeriod, StringComparer.OrdinalIgnoreCase)
                 .ToDictionary(
                     k => k.Key,
-                    v => string.Join("; ", v.Select(ca => ca.ContractAllocationNumber).OrderBy(ca => ca)),
+                    v => string.Join("; ", v.Select(ca => ca.ContractAllocationNumber).OrderByDescending(ca => ca)),
                     StringComparer.OrdinalIgnoreCase);
         }
 

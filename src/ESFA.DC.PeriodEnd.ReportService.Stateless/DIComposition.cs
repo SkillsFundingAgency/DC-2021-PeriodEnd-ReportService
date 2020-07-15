@@ -354,8 +354,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
             containerBuilder.Register(c => new List<ILegacyReport>(c.Resolve<IEnumerable<ILegacyReport>>()))
                 .As<IList<ILegacyReport>>();
 
-            containerBuilder.RegisterType<PeriodEndMetricsReport>().As<IInternalReport>();
-
             containerBuilder.RegisterType<DataExtractReport>().As<IInternalReport>();
 
             containerBuilder.RegisterType<DataQualityReport>().As<IInternalReport>();
@@ -399,9 +397,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<ReportServiceContext>().As<IReportServiceContext>().As<Reports.Interface.IReportServiceContext>()
-                .InstancePerLifetimeScope();
-
-            containerBuilder.RegisterType<PaymentsService>().As<IPaymentsService>()
                 .InstancePerLifetimeScope();
 
             containerBuilder.RegisterType<PeriodEndQueryService>().As<IPeriodEndQueryService1920>()

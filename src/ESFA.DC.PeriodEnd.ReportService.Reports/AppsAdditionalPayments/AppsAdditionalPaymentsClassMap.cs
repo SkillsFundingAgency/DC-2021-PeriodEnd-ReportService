@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             MapIndex(m => m.ProviderSpecifiedLearnerMonitoringB).Name("Provider specified learner monitoring (B)");
 
             MapIndex(m => m.RecordKey.LearnStartDate).Name("Learning start date");
-            MapIndex(m => m.RecordKey.LearningAimFundingLineType).Name("Funding line type");
+            MapIndex(m => m.RecordKey.ReportingAimFundingLineType).Name("Funding line type");
             MapIndex(m => m.RecordKey.PaymentType).Name("Type of additional payment");
             MapIndex(m => m.RecordKey.EmployerName).Name("Employer name from apprenticeship service");
             MapIndex(m => m.RecordKey.EmployerId).Name("Employer identifier from ILR");

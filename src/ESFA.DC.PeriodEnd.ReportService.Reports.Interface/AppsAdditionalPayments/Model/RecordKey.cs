@@ -8,7 +8,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
             string learnerReferenceNumber,
             long uln,
             DateTime? learnStartDate,
-            string learningAimFundingLineType,
+            string reportingAimFundingLineType,
             string paymentType,
             string employerName,
             string employerId)
@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
             LearnerReferenceNumber = learnerReferenceNumber;
             Uln = uln;
             LearnStartDate = learnStartDate;
-            LearningAimFundingLineType = learningAimFundingLineType;
+            ReportingAimFundingLineType = reportingAimFundingLineType;
             PaymentType = paymentType;
             EmployerName = employerName;
             EmployerId = employerId;
@@ -28,7 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
 
         public DateTime? LearnStartDate { get; }
 
-        public string LearningAimFundingLineType { get; }
+        public string ReportingAimFundingLineType { get; }
 
         public string PaymentType { get; }
 
@@ -42,7 +42,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
                 LearnerReferenceNumber?.ToUpper(),
                 Uln,
                 LearnStartDate,
-                LearningAimFundingLineType,
+                ReportingAimFundingLineType,
                 PaymentType,
                 EmployerName,
                 EmployerId

@@ -17,21 +17,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
         {
             var payments = new List<Payment>
             {
-                new Payment { LearningAimFundingLineType = "16-18 Apprenticeship (Employer on App Service)" },
-                new Payment { LearningAimFundingLineType = "16-18 Apprenticeship (Employer on App Service) Levy funding" },
-                new Payment { LearningAimFundingLineType = "16-18 Apprenticeship (Employer on App Service) Non-Levy funding" },
-                new Payment { LearningAimFundingLineType = "16-18 Apprenticeship (From May 2017) Levy Contract" },
-                new Payment { LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship1618 },
-                new Payment { LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship1618NonProcured },
-                new Payment { LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy" },
-                new Payment { LearningAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)" },
-                new Payment { LearningAimFundingLineType = "19+ Apprenticeship (Employer on App Service)" },
-                new Payment { LearningAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding" },
-                new Payment { LearningAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Non-Levy funding" },
-                new Payment { LearningAimFundingLineType = "19+ Apprenticeship (From May 2017) Levy Contract" },
-                new Payment { LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship19Plus },
-                new Payment { LearningAimFundingLineType = FundLineConstants.NonLevyApprenticeship19PlusNonProcured },
-                new Payment { LearningAimFundingLineType = "19+ Apprenticeship Non-Levy Contract (procured)" },
+                new Payment { ReportingAimFundingLineType = "16-18 Apprenticeship (Employer on App Service)" },
+                new Payment { ReportingAimFundingLineType = "16-18 Apprenticeship (Employer on App Service) Levy funding" },
+                new Payment { ReportingAimFundingLineType = "16-18 Apprenticeship (Employer on App Service) Non-Levy funding" },
+                new Payment { ReportingAimFundingLineType = "16-18 Apprenticeship (From May 2017) Levy Contract" },
+                new Payment { ReportingAimFundingLineType = FundLineConstants.NonLevyApprenticeship1618 },
+                new Payment { ReportingAimFundingLineType = FundLineConstants.NonLevyApprenticeship1618NonProcured },
+                new Payment { ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy" },
+                new Payment { ReportingAimFundingLineType = "16-18 Apprenticeship Non-Levy Contract (procured)" },
+                new Payment { ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service)" },
+                new Payment { ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Levy funding" },
+                new Payment { ReportingAimFundingLineType = "19+ Apprenticeship (Employer on App Service) Non-Levy funding" },
+                new Payment { ReportingAimFundingLineType = "19+ Apprenticeship (From May 2017) Levy Contract" },
+                new Payment { ReportingAimFundingLineType = FundLineConstants.NonLevyApprenticeship19Plus },
+                new Payment { ReportingAimFundingLineType = FundLineConstants.NonLevyApprenticeship19PlusNonProcured },
+                new Payment { ReportingAimFundingLineType = "19+ Apprenticeship Non-Levy Contract (procured)" },
             };
 
             var formatter = new PaymentLineFormatter() as IPaymentLineFormatter;
@@ -39,10 +39,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             // Format the Funding Line Type before grouping by it (Update old entries to new line type
             foreach (var payment in payments)
             {
-                payment.LearningAimFundingLineType =
-                    formatter.GetUpdatedFindingLineType(payment.LearningAimFundingLineType);
+                payment.ReportingAimFundingLineType =
+                    formatter.GetUpdatedFindingLineType(payment.ReportingAimFundingLineType);
             }
-            var groupedPayments = payments.GroupBy(p => p.LearningAimFundingLineType).ToList();
+            var groupedPayments = payments.GroupBy(p => p.ReportingAimFundingLineType).ToList();
 
             payments.Count().Should().Be(15);
             groupedPayments.Count().Should().Be(13);

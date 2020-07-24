@@ -24,7 +24,7 @@ SELECT
 	,LearningAimStandardCode
 	,LearningAimFrameworkCode
 	,LearningAimPathwayCode
-	,LearningAimFundingLineType
+	,ReportingAimFundingLineType
 	,CollectionPeriod 
 	,ContractType
 	,TransactionType
@@ -44,7 +44,7 @@ GROUP BY
 	,LearningAimStandardCode
 	,LearningAimFrameworkCode
 	,LearningAimPathwayCode
-	,LearningAimFundingLineType
+	,ReportingAimFundingLineType
 	,CollectionPeriod 
 	,ContractType
 	,TransactionType

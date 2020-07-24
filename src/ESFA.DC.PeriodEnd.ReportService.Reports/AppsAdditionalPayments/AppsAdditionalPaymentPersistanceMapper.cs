@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                 LearnerReferenceNumber = aaprm.RecordKey.LearnerReferenceNumber,
                 UniqueLearnerNumber = aaprm.RecordKey.Uln,
                 LearningStartDate = aaprm.RecordKey.LearnStartDate,
-                FundingLineType = aaprm.RecordKey.LearningAimFundingLineType,
+                FundingLineType = aaprm.RecordKey.ReportingAimFundingLineType,
                 TypeOfAdditionalPayment = aaprm.RecordKey.PaymentType,
                 EmployerNameFromApprenticeshipService = aaprm.RecordKey.EmployerName,
                 EmployerIdentifierFromILR = aaprm.RecordKey.EmployerId,

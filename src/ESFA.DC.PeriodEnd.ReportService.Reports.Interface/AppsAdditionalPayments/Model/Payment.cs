@@ -21,7 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
 
         public int LearningAimPathwayCode { get; set; }
 
-        public string LearningAimFundingLineType { get; set; } 
+        public string ReportingAimFundingLineType { get; set; } 
 
         //Data fields
         public byte CollectionPeriod { get; set; }

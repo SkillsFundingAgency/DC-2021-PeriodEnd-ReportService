@@ -7,8 +7,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Interface.DataAccess
 {
     public interface IPeriodEndQueryService1920
     {
-        Task<IEnumerable<IlrMetrics>> GetPeriodEndMetrics(int periodId);
-
         Task<IEnumerable<ActCountModel>> GetActCounts();
     }
 }

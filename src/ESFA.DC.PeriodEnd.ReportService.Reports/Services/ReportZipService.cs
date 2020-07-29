@@ -1,4 +1,5 @@
-﻿using System.IO;
+﻿using System;
+using System.IO;
 using System.IO.Compression;
 using System.Linq;
 using System.Threading;
@@ -27,6 +28,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
         
         public async Task CreateZipAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
+            if (reportFileNameKey == string.Empty)
+            {
+                return;
+            }
+
             var reportZipFileKey = _fileNameService.GetFilename(reportServiceContext, ReportsZipName, OutputTypes.Zip, false, false);
 
             using (var memoryStream = new MemoryStream())

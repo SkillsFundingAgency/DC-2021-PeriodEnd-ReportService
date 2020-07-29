@@ -28,7 +28,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
         
         public async Task CreateZipAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
-            if (reportFileNameKey == string.Empty)
+            if (string.IsNullOrEmpty(reportFileNameKey))
             {
                 return;
             }

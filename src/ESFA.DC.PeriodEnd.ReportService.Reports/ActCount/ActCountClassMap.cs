@@ -8,8 +8,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.ActCount
         public ActCountClassMap()
         {
             MapIndex(m => m.Ukprn).Name("UKPRN");
-            MapIndex(m => m.LearnersAct1).Name("ActCountOne");
-            MapIndex(m => m.LearnersAct2).Name("ActCountTwo");
+            MapIndex(m => m.LearnersAct1).Name("Number of Learners with ACT1");
+            MapIndex(m => m.LearnersAct2).Name("Number of Learners with ACT2");
         }
     }
 }

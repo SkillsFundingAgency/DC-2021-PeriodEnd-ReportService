@@ -34,7 +34,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.ActCount
 
             await _csvFileService.WriteAsync<ActCountModel, ActCountClassMap>(models, fileName, reportServiceContext.Container, cancellationToken);
 
-            return string.Empty;
+            return fileName;
         }
     }
 }

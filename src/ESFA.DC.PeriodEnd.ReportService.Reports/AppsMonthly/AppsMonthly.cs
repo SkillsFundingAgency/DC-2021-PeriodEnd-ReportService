@@ -22,9 +22,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
         private readonly ILogger _logger;
         private readonly IReportDataPersistanceService<AppsMonthlyPayment> _reportDataPersistanceService;
         private readonly IAppsMonthlyPersistenceMapper _appsMonthlyPersistenceMapper;
-        public string ReportTaskName => "TaskGenerateAppsMonthlyPaymentReport";
         
         private string ReportFileName => "Apps Monthly Payment Report";
+
+        public string ReportTaskName => "TaskGenerateAppsMonthlyPaymentReport";
+        public bool IncludeInZip => true;
 
         public AppsMonthly(
             ICsvFileService csvFileService,

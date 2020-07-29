@@ -11,7 +11,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.ActCount
 {
     public class ActCountDataProvider : IActCountDataProvider
     {
-        private Func<SqlConnection> _sqlConnectionFunc;
+        private readonly Func<SqlConnection> _sqlConnectionFunc;
+
         private readonly string sql = @"WITH cte(UKPRN, LearnDelFamCode, ActCount)
                                         AS
                                         (

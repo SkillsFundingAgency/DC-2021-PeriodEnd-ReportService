@@ -14,8 +14,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.ActCount
         private readonly ICsvFileService _csvFileService;
         private readonly IActCountModelBuilder _actCountModelBuilder;
 
+        private string ReportFileName = "ACT Count Report";
+
         public string ReportTaskName => "TaskGenerateActCountReport";
-        public string ReportFileName => "ACT Count Report";
+        public bool IncludeInReport => false;
 
         public ActCount(IFileNameService fileNameService, ICsvFileService csvFileService, IActCountModelBuilder actCountModelBuilder)
         {

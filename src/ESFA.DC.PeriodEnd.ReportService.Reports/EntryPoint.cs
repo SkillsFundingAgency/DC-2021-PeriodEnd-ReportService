@@ -48,7 +48,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
 
                     var fileName = await report.GenerateReport(_reportServiceContext, cancellationToken);
 
-                    await _reportZipService.CreateZipAsync(fileName, _reportServiceContext, cancellationToken);
+                    if (report.IncludeInZip)
+                    {
+                        await _reportZipService.CreateZipAsync(fileName, _reportServiceContext, cancellationToken);
+                    }
                 }
             }
             catch (Exception e)

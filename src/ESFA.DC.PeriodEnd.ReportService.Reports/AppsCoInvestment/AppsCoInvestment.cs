@@ -23,9 +23,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
         private readonly IAppsCoInvestmentModelBuilder _appsCoInvestmentModelBuilder;
         private readonly IReportDataPersistanceService<AppsCoInvestmentContribution> _reportDataPersistanceService;
         private readonly IAppsCoInvestmentPersistenceMapper _appsCoInvestmentPersistenceMapper;
-        public string ReportTaskName => "TaskGenerateAppsCoInvestmentContributionsReport";
 
         private string ReportFileName => "Apps Co-Investment Contributions Report";
+
+        public string ReportTaskName => "TaskGenerateAppsCoInvestmentContributionsReport";
+        public bool IncludeInZip => true;
 
         public AppsCoInvestment(
             ICsvFileService csvFileService,

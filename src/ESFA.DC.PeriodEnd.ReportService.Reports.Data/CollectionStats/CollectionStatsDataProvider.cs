@@ -5,6 +5,7 @@ using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Data.CollectionStats.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CollectionStats.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CollectionStats.Model;
 
@@ -16,8 +17,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CollectionStats
 
         private string sql = @"SELECT
                                 COALESCE([c].[Name], 'Total') AS CollectionName,
-                                COUNT(CASE WHEN [Status] = 4 THEN 1 ELSE NULL END) AS CountOfComplete,
-                                COUNT(CASE WHEN [Status] IN (5, 6) THEN 1 ELSE NULL END) AS CountOfFail
+                                COUNT(CASE WHEN [Status] = @completedStatus THEN 1 ELSE NULL END) AS CountOfComplete,
+                                COUNT(CASE WHEN [Status] IN @failedStatus THEN 1 ELSE NULL END) AS CountOfFail
                             FROM [Job] j
                             INNER JOIN [Collection] c
                                 ON j.CollectionId = c.CollectionId
@@ -27,8 +28,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CollectionStats
                                 ON [j].[JobId] = [md].[JobId]
                             WHERE [CollectionYear] = @collectionYear
                             AND [PeriodNumber] = @periodNumber
-                            AND [Status] IN (4,5,6)
-                            AND [ct].[Type] IN ('ILR', 'EAS', 'ESF')
+                            AND [Status] IN @filterStatus
+                            AND [ct].[Type] IN @collectionTypes
                             GROUP BY ROLLUP([c].Name)";
 
         public CollectionStatsDataProvider(Func<SqlConnection> sqlConnectionFunc)
@@ -40,7 +41,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CollectionStats
         {
             using (var connection = _sqlConnectionFunc())
             {
-                return await connection.QueryAsync<CollectionStatsModel>(sql, new { collectionYear, periodNumber });
+                return await connection.QueryAsync<CollectionStatsModel>(sql, 
+                    new
+                    {
+                        collectionYear,
+                        periodNumber,
+                        collectionTypes = new[] { CollectionTypes.ILR, CollectionTypes.EAS, CollectionTypes.ESF },
+                        filterStatus = new [] { JobStatus.Completed, JobStatus.Failed, JobStatus.FailedRetry },
+                        completedStatus = JobStatus.Completed,
+                        failedStatus = new [] { JobStatus.Failed, JobStatus.FailedRetry }
+                    });
             }
         }
     }

@@ -1,11 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
-using System.Text;
-using System.Threading;
 using System.Threading.Tasks;
 using Dapper;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Data.CollectionStats.Constants;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Data.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CollectionStats.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CollectionStats.Model;
 

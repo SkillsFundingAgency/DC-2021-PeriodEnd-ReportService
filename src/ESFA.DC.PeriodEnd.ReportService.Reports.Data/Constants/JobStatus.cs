@@ -1,4 +1,4 @@
-﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CollectionStats.Constants
+﻿namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.Constants
 {
     public static class JobStatus
     {

@@ -48,12 +48,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.ProviderSubmission
             var modelBuilderMock = new Mock<IProviderSubmissionsModelBuilder>();
 
             modelBuilderMock.Setup(b => b.Build(It.IsAny<ProviderSubmissionsReferenceData>())).Returns(rows);
+            excelFileServiceMock.Setup(s => s.GetWorkbookFromTemplate(It.IsAny<Stream>())).Returns(workbook);
 
             var report = NewReport(fileNameServiceMock.Object, excelFileServiceMock.Object, dataProviderMock.Object, modelBuilderMock.Object, renderServiceMock.Object);
 
             await report.GenerateReport(reportServiceContext.Object, cancellationToken);
-
-            excelFileServiceMock.Setup(s => s.GetWorkbookFromTemplate(It.IsAny<UnmanagedMemoryStream>())).Returns(workbook);
 
             excelFileServiceMock.Verify(s => s.SaveWorkbookAsync(workbook, fileName, container, cancellationToken));
         }

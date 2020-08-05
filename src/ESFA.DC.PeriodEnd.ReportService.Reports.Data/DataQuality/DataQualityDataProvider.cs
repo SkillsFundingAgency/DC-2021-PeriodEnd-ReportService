@@ -8,17 +8,19 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.DataQuality
 {
-    public class DataQualityDataProvider
+    public class DataQualityDataProvider : IDataQualityDataProvider
     {
         private readonly IJobManagementDataProvider _jobManagementDataProvider;
         private readonly IIlrDataProvider _ilrDataProvider;
         private readonly IOrganisationDataProvider _organisationDataProvider;
+        private readonly IIlrRefDataProvider _ilrRefDataProvider;
 
-        public DataQualityDataProvider(IJobManagementDataProvider jobManagementDataProvider, IIlrDataProvider ilrDataProvider, IOrganisationDataProvider organisationDataProvider)
+        public DataQualityDataProvider(IJobManagementDataProvider jobManagementDataProvider, IIlrDataProvider ilrDataProvider, IOrganisationDataProvider organisationDataProvider, IIlrRefDataProvider ilrRefDataProvider)
         {
             _jobManagementDataProvider = jobManagementDataProvider;
             _ilrDataProvider = ilrDataProvider;
             _organisationDataProvider = organisationDataProvider;
+            _ilrRefDataProvider = ilrRefDataProvider;
         }
 
         public async Task<DataQualityProviderModel> ProvideAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
@@ -30,6 +32,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.DataQuality
             var fileDetails = await _jobManagementDataProvider.ProvideFilePeriodInfoForCollectionAsync(collectionId);
 
             var ruleViolations = await _ilrDataProvider.ProvideTop20RuleViolationsAsync();
+
+            var validationRules = await _ilrRefDataProvider.ProvideAsync(cancellationToken);
 
             var providersWithoutValidLearners = await _ilrDataProvider.ProvideProvidersWithoutValidLearners(cancellationToken);
             var providersWithMostInvalidLearners = await _ilrDataProvider.ProvideProvidersWithMostInvalidLearners(cancellationToken);
@@ -44,7 +48,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.DataQuality
                 CollectionId = collectionId, FileDetails = fileDetails, RuleViolations = ruleViolations,
                 ProvidersWithoutValidLearners = providersWithoutValidLearners,
                 ProvidersWithMostInvalidLearners = providersWithMostInvalidLearners,
-                Organistions = organisations
+                Organistions = organisations,
+                ValidationRules = validationRules
             };
         }
     }

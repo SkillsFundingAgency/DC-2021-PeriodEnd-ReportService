@@ -8,6 +8,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality.Model
 
         public DateTime LatestFileSubmitted { get; set; }
 
-        public string OrgName { get; set; }
+        public string Name { get; set; }
     }
 }

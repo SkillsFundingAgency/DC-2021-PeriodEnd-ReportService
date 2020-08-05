@@ -6,17 +6,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality.Model
     {
         public long Ukprn { get; set; }
 
-        public int InvalidCount { get; set; }
+        public int NoOfInvalidLearners { get; set; }
 
-        public int ValidCount { get; set; }
+        public int NoOfValidLearners { get; set; }
 
-        public string Filename { get; set; }
+        public string LatestFileName { get; set; }
 
-        public DateTime SubmittedTime { get; set; }
+        public DateTime SubmittedDateTime { get; set; }
 
         public string LatestReturn { get; set; }
 
-        public string OrgName { get; set; }
+        public string Name { get; set; }
 
         public string Status { get; set; }
     }

@@ -17,5 +17,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality.Model
         public ICollection<Organisation> Organistions { get; set; }
 
         public ICollection<DataQualityModel> ReturningProviders { get; set; }
+
+        public ICollection<ValidationRule> ValidationRules { get; set; }
     }
 }

@@ -24,13 +24,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.DataQuality
             var sql = @"SELECT
                         TOP 20
                         [RuleName],
-                        COUNT(DISTINCT [UKPRN]) AS ProviderCount,
-                        COUNT(DISTINCT [LearnRefNumber]) AS LearnerCount,
-                        COUNT(DISTINCT [ErrorMessage]) AS TotalErrorCount
+                        COUNT(DISTINCT [UKPRN]) AS Providers,
+                        COUNT(DISTINCT [LearnRefNumber]) AS Learners,
+                        COUNT(DISTINCT [Id]) AS NoOfErrors
                     FROM [ValidationError]
                     WHERE [Severity] = @errorSeverity
                     GROUP BY [RuleName]
-                    ORDER BY COUNT(DISTINCT [ErrorMessage]) DESC, COUNT(DISTINCT [UKPRN]) DESC";
+                    ORDER BY COUNT(DISTINCT [Id]) DESC, COUNT(DISTINCT [UKPRN]) DESC";
 
             using (var connection = _sqlConnectionFunc())
             {
@@ -76,10 +76,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.DataQuality
                         )
                         SELECT
                             [cte].[UKPRN],
-                            [InvalidCount],
-                            COUNT([LearnRefNumber]) AS ValidCount,
-                            [Filename],
-                            [fd].[SubmittedTime]
+                            [InvalidCount] AS NoOfInvalidLearners,
+                            COUNT([LearnRefNumber]) AS NoOfValidLearners,
+                            [Filename] AS LatestFileName,
+                            [fd].[SubmittedTime] AS SubmittedDateTime
                         FROM TopInvalidProviders_CTE cte
                         LEFT JOIN [Valid].[Learner] l
                             ON [cte].[UKPRN] = [l].[UKPRN]

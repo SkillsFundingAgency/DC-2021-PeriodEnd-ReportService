@@ -35,7 +35,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.DataQuality
                             [Ukprn],
                             [FileName],
                             [PeriodNumber],
-                            [DateTimeCreatedUtc]
+                            [DateTimeCreatedUtc] AS SubmittedTime
                         FROM [FileUploadJobMetaData] md
                         INNER JOIN [Job] j
                             ON [md].[JobId] = [j].[JobId]

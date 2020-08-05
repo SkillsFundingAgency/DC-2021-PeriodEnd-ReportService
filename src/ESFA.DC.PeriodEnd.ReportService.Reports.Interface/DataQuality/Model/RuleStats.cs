@@ -4,10 +4,12 @@
     {
         public string RuleName { get; set; }
 
-        public int ProviderCount { get; set; }
+        public string ErrorMessage { get; set; }
 
-        public int LearnerCount { get; set; }
+        public int Providers { get; set; }
 
-        public int TotalErrorCount { get; set; }
+        public int Learners { get; set; }
+
+        public int NoOfErrors { get; set; }
     }
 }

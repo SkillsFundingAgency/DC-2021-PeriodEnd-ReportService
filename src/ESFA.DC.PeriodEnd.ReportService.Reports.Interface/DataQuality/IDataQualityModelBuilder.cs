@@ -4,6 +4,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality
 {
     public interface IDataQualityModelBuilder
     {
-        DataQualityProviderModel Build(DataQualityProviderModel providerModel);
+        DataQualityProviderModel Build(DataQualityProviderModel providerModel, IReportServiceContext reportServiceContext);
     }
 }

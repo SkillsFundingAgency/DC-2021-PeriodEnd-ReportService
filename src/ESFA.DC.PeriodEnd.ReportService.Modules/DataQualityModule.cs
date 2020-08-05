@@ -32,6 +32,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             var organisationSqlFunc = new Func<SqlConnection>(() =>
                 new SqlConnection(_reportServiceConfiguration.OrgConnectionString));
 
+            var ilrRefSqlFunc = new Func<SqlConnection>(() =>
+                new SqlConnection(_reportServiceConfiguration.ILRReferenceDataConnectionString));
+
             builder.RegisterType<IlrDataProvider>()
                 .WithParameter(sqlConnectionFuncParameter, ilrSqlFunc)
                 .As<IIlrDataProvider>();
@@ -43,6 +46,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             builder.RegisterType<OrganisationDataProvider>()
                 .WithParameter(sqlConnectionFuncParameter, organisationSqlFunc)
                 .As<IOrganisationDataProvider>();
+
+            builder.RegisterType<IlrRefDataProvider>()
+                .WithParameter(sqlConnectionFuncParameter, ilrRefSqlFunc)
+                .As<IIlrRefDataProvider>();
 
             builder.RegisterType<DataQualityDataProvider>()
                 .As<IDataQualityDataProvider>();

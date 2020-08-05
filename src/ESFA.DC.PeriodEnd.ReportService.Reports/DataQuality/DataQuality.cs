@@ -19,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.DataQuality
         private readonly IDataQualityModelBuilder _dataQualityModelBuilder;
         private readonly IDataQualityRenderService _dataQualityRenderService;
 
-        private string ReportName = "Data Quality Report";
+        private string ReportName = "Data Quality Report - Test";
         private string WorksheetName = "Data Quality";
         private string TemplateName = "ILRDataQualityReportTemplate.xlsx";
 
@@ -42,7 +42,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.DataQuality
 
             var data = await _dataQualityDataProvider.ProvideAsync(reportServiceContext, cancellationToken);
 
-            var model = _dataQualityModelBuilder.Build(data);
+            var model = _dataQualityModelBuilder.Build(data, reportServiceContext);
 
             var assembly = Assembly.GetExecutingAssembly();
             string resourceName = assembly.GetManifestResourceNames().Single(str => str.EndsWith(TemplateName));

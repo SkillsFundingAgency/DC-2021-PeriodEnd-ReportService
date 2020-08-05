@@ -17,9 +17,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.DataQuality
             _dateTimeProvider = dateTimeProvider;
         }
 
-        public Worksheet Render(int periodNumber, DataQualityProviderModel dataQualityProvideModel, Worksheet worksheet, Workbook workbook)
+        public Worksheet Render(string periodNumberName, DataQualityProviderModel dataQualityProvideModel, Worksheet worksheet, Workbook workbook)
         {
-            worksheet.Cells[1, 1].PutValue($"ILR Data Quality Reports - R{periodNumber:D2}");
+            worksheet.Cells[1, 1].PutValue($"ILR Data Quality Reports - {periodNumberName}");
             worksheet.Cells[2, 1].PutValue($"Report Run: {_dateTimeProvider.ConvertUtcToUk(_dateTimeProvider.GetNowUtc()):u}");
 
             var designer = new WorkbookDesigner

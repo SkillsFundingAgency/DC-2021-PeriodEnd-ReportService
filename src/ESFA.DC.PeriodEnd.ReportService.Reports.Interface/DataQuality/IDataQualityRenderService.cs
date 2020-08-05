@@ -5,6 +5,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality
 {
     public interface IDataQualityRenderService
     {
-        Worksheet Render(int periodNumber, DataQualityProviderModel dataQualityProvideModel, Worksheet worksheet, Workbook workbook);
+        Worksheet Render(string periodNumberName, DataQualityProviderModel dataQualityProvideModel, Worksheet worksheet, Workbook workbook);
     }
 }

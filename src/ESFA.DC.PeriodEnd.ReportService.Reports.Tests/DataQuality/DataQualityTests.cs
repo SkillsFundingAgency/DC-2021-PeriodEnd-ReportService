@@ -8,6 +8,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.DataQuality.Model;
+using Microsoft.EntityFrameworkCore.Infrastructure;
 using Moq;
 using Xunit;
 
@@ -42,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.DataQuality
 
             var modelBuilderMock = new Mock<IDataQualityModelBuilder>();
 
-            modelBuilderMock.Setup(b => b.Build(It.IsAny<DataQualityProviderModel>())).Returns(rows);
+            modelBuilderMock.Setup(b => b.Build(It.IsAny<DataQualityProviderModel>(), reportServiceContext.Object)).Returns(rows);
             excelFileServiceMock.Setup(s => s.GetWorkbookFromTemplate(It.IsAny<Stream>())).Returns(workbook);
 
             var report = NewReport(fileNameServiceMock.Object, excelFileServiceMock.Object, dataProviderMock.Object, modelBuilderMock.Object, renderServiceMock.Object);

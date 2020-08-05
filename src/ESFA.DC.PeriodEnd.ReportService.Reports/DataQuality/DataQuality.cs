@@ -52,7 +52,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.DataQuality
             {
                 var worksheet = _excelFileService.GetWorksheetFromWorkbook(workbook, WorksheetName);
 
-                _dataQualityRenderService.Render(reportServiceContext.ReturnPeriod, model, worksheet, workbook);
+                _dataQualityRenderService.Render(reportServiceContext.ReturnPeriodName, model, worksheet, workbook);
 
                 await _excelFileService.SaveWorkbookAsync(workbook, fileName, reportServiceContext.Container, cancellationToken);
             }

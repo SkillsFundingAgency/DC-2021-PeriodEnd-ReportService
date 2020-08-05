@@ -19,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.DataQuality
         private readonly IDataQualityModelBuilder _dataQualityModelBuilder;
         private readonly IDataQualityRenderService _dataQualityRenderService;
 
-        private string ReportName = "Data Quality Report - Test";
+        private string ReportName = "Data Quality Report";
         private string WorksheetName = "Data Quality";
         private string TemplateName = "ILRDataQualityReportTemplate.xlsx";
 

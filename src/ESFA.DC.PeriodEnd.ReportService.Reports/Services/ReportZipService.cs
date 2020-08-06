@@ -25,8 +25,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
             _zipArchiveService = zipArchiveService;
             _fileService = fileService;
         }
-        
-        public async Task CreateZipAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+
+        public async Task RemoveZipAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        {
+            var reportZipFileKey = _fileNameService.GetFilename(reportServiceContext, ReportsZipName, OutputTypes.Zip, false, false);
+
+            if (await _fileService.ExistsAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken))
+            {
+                await _fileService.DeleteFileAsync(reportZipFileKey, reportServiceContext.Container, cancellationToken);
+            }
+        }
+
+        public async Task CreateOrUpdateZipWithReportAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(reportFileNameKey))
             {

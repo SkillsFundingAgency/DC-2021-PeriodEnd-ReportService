@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Immutable;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using ESFA.DC.Logging.Interfaces;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports
@@ -43,14 +45,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
 
                     if (report == null)
                     {
-                        throw new Exception($"Report with key {taskItem} not found");
+                        if (_reportServiceContext.Tasks.Any(x => x.CaseInsensitiveEquals("TaskClearPeriodEndDASZip")))
+                        {
+                            await _reportZipService.RemoveZipAsync(_reportServiceContext, cancellationToken);
+                        }
+                        else
+                        {
+                            _logger.LogError($"Report with key {taskItem} not found");
+                        }
                     }
 
                     var fileName = await report.GenerateReport(_reportServiceContext, cancellationToken);
 
                     if (report.IncludeInZip)
                     {
-                        await _reportZipService.CreateZipAsync(fileName, _reportServiceContext, cancellationToken);
+                        await _reportZipService.CreateOrUpdateZipWithReportAsync(fileName, _reportServiceContext, cancellationToken);
                     }
                 }
             }

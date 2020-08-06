@@ -5,10 +5,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\ILRDataQualityReportTemplate.xlsx" />
     <None Remove="Assets\ProviderSubmissionsReportTemplate.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
+    <EmbeddedResource Include="Assets\ILRDataQualityReportTemplate.xlsx" />
     <EmbeddedResource Include="Assets\ProviderSubmissionsReportTemplate.xlsx" />
   </ItemGroup>
 

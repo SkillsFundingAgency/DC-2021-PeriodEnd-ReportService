@@ -470,7 +470,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         }
 
         // -------------------------------------------------------------------------------------------------------------------------------------
-        // Build EAS ESFA Adult Education Budget - Non-Procured Delivery From 1 Nov 2017 FundLineGroup
+        // Build EAS ESFA Adult Education Budget Covid Skills - Non-Procured Delivery From 1 Nov 2017 FundLineGroup
         // -------------------------------------------------------------------------------------------------------------------------------------
         public FundLineGroup BuildEasAebCovidFundLineGroup(string ageRange, string description, byte currentPeriod, IEnumerable<string> fundModels, IPeriodisedValuesLookup periodisedValues)
         {

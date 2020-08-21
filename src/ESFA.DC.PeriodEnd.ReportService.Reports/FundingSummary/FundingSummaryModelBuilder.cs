@@ -240,7 +240,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                         {
                             new FundingSubCategory("ESFA AEB – COVID-19 Skills Offer (non-procured)", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("ESFA", "AEB – COVID-19 Skills Offer (non-procured)", reportCurrentPeriod, new [] { FundLineConstants.AebCovidSkillsOfferNonProcured }, periodisedValues))
-                                .WithFundLineGroup(BuildEasAebFundLineGroup("ESFA", "AEB – COVID-19 Skills Offer (non-procured)", reportCurrentPeriod, new [] { FundLineConstants.EasAebCovidSkillsOfferNonProcured }, periodisedValues))
+                                .WithFundLineGroup(BuildEasAebCovidFundLineGroup("ESFA", "AEB – COVID-19 Skills Offer (non-procured)", reportCurrentPeriod, new [] { FundLineConstants.EasAebCovidSkillsOfferNonProcured }, periodisedValues))
                         },aebCovid19SkillsOfferNonProcured),
 
                     //---------------------------------------------------------------------
@@ -251,7 +251,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                         {
                             new FundingSubCategory("ESFA AEB – COVID-19 Skills Offer (procured)", reportCurrentPeriod)
                                 .WithFundLineGroup(BuildIlrFm35FundLineGroup("ESFA", "AEB – COVID-19 Skills Offer (procured)", reportCurrentPeriod, new [] { FundLineConstants.AebCovidSkillsOfferProcured }, periodisedValues))
-                                .WithFundLineGroup(BuildEasAebFundLineGroup("ESFA", "AEB – COVID-19 Skills Offer (procured)", reportCurrentPeriod, new [] { FundLineConstants.EasAebCovidSkillsOfferProcured }, periodisedValues))
+                                .WithFundLineGroup(BuildEasAebCovidFundLineGroup("ESFA", "AEB – COVID-19 Skills Offer (procured)", reportCurrentPeriod, new [] { FundLineConstants.EasAebCovidSkillsOfferProcured }, periodisedValues))
                         },aebCovid19SkillsOfferProcured),
 
                     //---------------------------------------------------------------------
@@ -464,6 +464,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             var fundLineGroup = new FundLineGroup($"EAS Total {ageRange} {description} Earnings Adjustment (£)", currentPeriod, FundingDataSource.EAS, fundModels, periodisedValues)
                 .WithFundLine($"EAS {ageRange} {description} Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaims })
                 .WithFundLine($"EAS {ageRange} {description} Prince's Trust (£)", new[] { AttributeConstants.EasPrincesTrust })
+                .WithFundLine($"EAS {ageRange} {description} Excess Learning Support (£)", new[] { AttributeConstants.EasExcessLearningSupport });
+
+            return fundLineGroup;
+        }
+
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        // Build EAS ESFA Adult Education Budget Covid Skills - Non-Procured Delivery From 1 Nov 2017 FundLineGroup
+        // -------------------------------------------------------------------------------------------------------------------------------------
+        public FundLineGroup BuildEasAebCovidFundLineGroup(string ageRange, string description, byte currentPeriod, IEnumerable<string> fundModels, IPeriodisedValuesLookup periodisedValues)
+        {
+            var fundLineGroup = new FundLineGroup($"EAS Total {ageRange} {description} Earnings Adjustment (£)", currentPeriod, FundingDataSource.EAS, fundModels, periodisedValues)
+                .WithFundLine($"EAS {ageRange} {description} Authorised Claims (£)", new[] { AttributeConstants.EasAuthorisedClaims })
                 .WithFundLine($"EAS {ageRange} {description} Excess Learning Support (£)", new[] { AttributeConstants.EasExcessLearningSupport });
 
             return fundLineGroup;

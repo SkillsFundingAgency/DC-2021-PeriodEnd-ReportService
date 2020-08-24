@@ -5,6 +5,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface
 {
     public interface IReportZipService
     {
-        Task CreateZipAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
+        Task CreateOrUpdateZipWithReportAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
+
+        Task RemoveZipAsync(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

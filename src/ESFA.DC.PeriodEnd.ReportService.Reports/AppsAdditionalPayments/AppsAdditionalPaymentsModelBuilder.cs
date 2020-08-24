@@ -29,8 +29,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
             // Format the Funding Line Type before grouping by it (Update old entries to new line type
             foreach (var payment in payments)
             {
-                payment.LearningAimFundingLineType =
-                    _paymentFundingLineFormatter.GetUpdatedFindingLineType(payment.LearningAimFundingLineType);
+                payment.ReportingAimFundingLineType =
+                    _paymentFundingLineFormatter.GetUpdatedFindingLineType(payment.ReportingAimFundingLineType);
             }
 
             var learnerLookup = learners.ToDictionary(l => l.LearnRefNumber, l => l, StringComparer.OrdinalIgnoreCase);
@@ -42,7 +42,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
                 .GroupBy(pld => new RecordKey(pld.Payment.LearnerReferenceNumber,
                     pld.Payment.LearnerUln,
                     pld.Payment.LearningStartDate,
-                    pld.Payment.LearningAimFundingLineType,
+                    pld.Payment.ReportingAimFundingLineType,
                     _paymentFundingLineFormatter.GetAdditionalPaymentType(pld.Payment.TransactionType),
                     _paymentFundingLineFormatter.GetApprenticeshipLegalEntityName(pld.Payment),
                     _paymentFundingLineFormatter.GetEmployerId(pld.LearningDelivery, pld.Payment)))

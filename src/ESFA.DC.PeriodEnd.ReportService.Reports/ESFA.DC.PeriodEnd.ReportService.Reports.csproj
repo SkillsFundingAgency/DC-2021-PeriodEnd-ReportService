@@ -5,6 +5,16 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Remove="Assets\ILRDataQualityReportTemplate.xlsx" />
+    <None Remove="Assets\ProviderSubmissionsReportTemplate.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <EmbeddedResource Include="Assets\ILRDataQualityReportTemplate.xlsx" />
+    <EmbeddedResource Include="Assets\ProviderSubmissionsReportTemplate.xlsx" />
+  </ItemGroup>
+
+  <ItemGroup>
     <PackageReference Include="ESFA.DC.CsvService" Version="0.1.40-beta0001" />
     <PackageReference Include="ESFA.DC.DateTimeProvider.Interface" Version="0.1.6-beta0001" />
     <PackageReference Include="ESFA.DC.ExcelService" Version="0.1.40-beta0001" />

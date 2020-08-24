@@ -19,9 +19,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
         private readonly IReportDataPersistanceService<ReportData.Model.AppsAdditionalPayment> _persistanceService;
         private readonly IAppsAdditionalPaymentPersistanceMapper _appsAdditionalPaymentPersistanceMapper;
 
-        public string ReportTaskName => "TaskGenerateAppsAdditionalPaymentsReport";
-
         private string ReportFileName => "Apps Additional Payments Report";
+
+        public string ReportTaskName => "TaskGenerateAppsAdditionalPaymentsReport";
+        public bool IncludeInZip => true;
 
         public AppsAdditionalPayment(
             ICsvFileService csvFileService,

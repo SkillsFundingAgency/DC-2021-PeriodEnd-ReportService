@@ -7,6 +7,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface
     {
         string ReportTaskName { get; }
 
+        bool IncludeInZip { get; }
+
         Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken);
     }
 }

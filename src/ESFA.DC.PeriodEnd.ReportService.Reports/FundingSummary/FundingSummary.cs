@@ -10,8 +10,6 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance;
 using ESFA.DC.ReportData.Model;
 
-//using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Persistance.Model;
-
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 {
     public class FundingSummary : IReport
@@ -24,9 +22,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private readonly IReportDataPersistanceService<FundingSummaryReport> _persistanceService;
         private readonly IFundingSummaryPersistanceMapper _fundingSummaryPersistanceMapper;
 
+        private string ReportName => "Funding Summary Report";
+
         public string ReportTaskName => "TaskGenerateFundingSummaryPeriodEndReport";
 
-        private string ReportName => "Funding Summary Report";
+        public bool IncludeInZip => true;
 
         public FundingSummary(IExcelFileService excelFileService, IFileNameService fileNameService, IFundingSummaryDataProvider fundingSummaryDataProvider, IFundingSummaryModelBuilder fundingSummaryModelBuilder, IRenderService<FundingSummaryReportModel> fundingSummaryRenderService, IReportDataPersistanceService<FundingSummaryReport> persistanceService, IFundingSummaryPersistanceMapper fundingSummaryPersistanceMapper)
         {

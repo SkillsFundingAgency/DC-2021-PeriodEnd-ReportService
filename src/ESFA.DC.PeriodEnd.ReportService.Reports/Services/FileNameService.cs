@@ -46,7 +46,33 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
             return stringBuilder.ToString();
         }
 
-        protected virtual string GetPath(IReportServiceContext reportServiceContext) => $"{reportServiceContext.ReturnPeriodName}/{reportServiceContext.Ukprn}/";
+        public string GetInternalFilename(IReportServiceContext reportServiceContext, string fileName, OutputTypes outputType, bool includeDateTime = true, bool includeReturnPeriod = true)
+        {
+            var stringBuilder = new StringBuilder();
+
+            stringBuilder.Append(GetInternalPath(reportServiceContext));
+
+            stringBuilder.Append(fileName);
+
+            if (includeReturnPeriod)
+            {
+                stringBuilder.Append($" {reportServiceContext.ReturnPeriodName}");
+            }
+
+            if (includeDateTime)
+            {
+                stringBuilder.Append($" {_dateTimeProvider.ConvertUtcToUk(reportServiceContext.SubmissionDateTimeUtc):yyyyMMdd-HHmmss}");
+            }
+
+            stringBuilder.Append($".{GetExtension(outputType)}");
+
+            return stringBuilder.ToString();
+        }
+
+        protected virtual string GetPath(IReportServiceContext reportServiceContext) => $"{GetInternalPath(reportServiceContext)}{reportServiceContext.Ukprn}/";
+
+        protected virtual string GetInternalPath(IReportServiceContext reportServiceContext) =>
+            $"{reportServiceContext.ReturnPeriodName}/"; 
 
         public string GetExtension(OutputTypes outputType) => _extensionsDictionary[outputType];
     }

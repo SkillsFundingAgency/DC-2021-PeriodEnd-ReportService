@@ -14,15 +14,11 @@
 
   <ItemGroup>
     <None Remove="Assets\ILRDataQualityReportTemplate.xlsx" />
-    <None Remove="Assets\PeriodEndChecks-Template-v2.xlsx" />
     <None Remove="Assets\ProviderSubmissionsReportTemplate.xlsx" />
   </ItemGroup>
 
   <ItemGroup>
     <EmbeddedResource Include="Assets\ILRDataQualityReportTemplate.xlsx">
-      <CopyToOutputDirectory>Never</CopyToOutputDirectory>
-    </EmbeddedResource>
-    <EmbeddedResource Include="Assets\PeriodEndChecks-Template-v2.xlsx">
       <CopyToOutputDirectory>Never</CopyToOutputDirectory>
     </EmbeddedResource>
     <EmbeddedResource Include="Assets\ProviderSubmissionsReportTemplate.xlsx" />

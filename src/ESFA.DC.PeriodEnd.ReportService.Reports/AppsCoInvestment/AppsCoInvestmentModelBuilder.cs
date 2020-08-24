@@ -141,7 +141,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             var pmrLearnRefNumbers = fm36Learners
                                          .Where(l =>
                                              l.LearningDeliveries?
-                                                 .Any(ld => ld.AppFinRecords?.Any(afr => afr.AFinType == FinTypes.PMR) ?? false)
+                                                 .Any(ld => ld.AppFinRecords?.Any(afr => afr.AFinType.CaseInsensitiveEquals(FinTypes.PMR)) ?? false)
                                              ?? false)
                                          .Select(l => l.LearnRefNumber).ToList()
                                      ?? Enumerable.Empty<string>();

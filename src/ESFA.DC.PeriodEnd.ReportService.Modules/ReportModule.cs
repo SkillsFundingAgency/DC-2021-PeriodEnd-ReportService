@@ -23,6 +23,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
             builder.RegisterModule(new AppsCoInvestmentModule(_reportServiceConfiguration, _dataPersistConfiguration));
             builder.RegisterModule(new AppsAdditionalPaymentsModule(_reportServiceConfiguration, _dataPersistConfiguration));
             builder.RegisterModule(new AppsMonthlyModule(_reportServiceConfiguration, _dataPersistConfiguration));
+            builder.RegisterModule(new ActCountReportModule(_reportServiceConfiguration, _dataPersistConfiguration));
+            builder.RegisterModule(new CollectionStatsModule(_reportServiceConfiguration, _dataPersistConfiguration));
+            builder.RegisterModule(new ProviderSubmissionModule(_reportServiceConfiguration, _dataPersistConfiguration));
+            builder.RegisterModule(new DataQualityModule(_reportServiceConfiguration, _dataPersistConfiguration));
             builder.RegisterModule(new UYPSummaryViewModule(_reportServiceConfiguration, _dataPersistConfiguration));
 
             builder.RegisterAdapter<IEnumerable<IReport>, IImmutableDictionary<string, IReport>>(c =>

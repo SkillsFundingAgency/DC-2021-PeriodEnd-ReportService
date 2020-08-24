@@ -15,5 +15,9 @@
         public const string AEBAS2021 = "AEB-AS2021";
         public const string ALLB2021 = "ALLB2021";
         public const string ALLBC2021 = "ALLBC2021";
+
+        public const string AEBCCSO2021 = "AEBC-CSO2021";
+        public const string AEBCSO2021 = "AEB-CSO2021";
+
     }
 }

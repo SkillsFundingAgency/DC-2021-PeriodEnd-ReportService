@@ -22,6 +22,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 {
     public class UYPSummaryView : IReport
     {
+        public bool IncludeInZip => false;
+
         private readonly ICsvFileService _csvFileService;
         private readonly IFileNameService _fileNameService;
         private readonly IUYPSummaryViewDataProvider _uypSummaryViewDataProvider;

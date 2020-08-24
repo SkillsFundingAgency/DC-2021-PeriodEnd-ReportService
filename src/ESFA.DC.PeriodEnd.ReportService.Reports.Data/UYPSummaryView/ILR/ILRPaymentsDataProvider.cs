@@ -36,7 +36,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.ILR
                                                                     AND LD.LearnAimRef = 'ZPROG001'
                                                                     AND AFP.AFinDate >= '{DateConstants.BeginningOfYear}'
                                                                     AND AFP.AFinDate <= '{DateConstants.EndOfYear}'
-                                                                    AND AFP.AFinType = '{Constants.FinTypes.PMR}'";
+                                                                    AND AFP.AFinType = '{FinTypes.PMR}'";
 
         public ILRPaymentsDataProvider(Func<SqlConnection> sqlConnectionFunc)
         {

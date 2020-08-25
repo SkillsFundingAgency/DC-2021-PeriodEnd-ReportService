@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Fcs
     {
         private readonly Func<SqlConnection> _funcSqlConnection;
 
-        private readonly string _sql = "SELECT ContractAllocationNumber, FundingStreamPeriodCode AS FundingStreamPeriod  FROM ContractAllocation WHERE DeliveryUkprn = @ukprn AND StartDate <= @academicYearEndDate AND(EndDate IS NULL OR EndDate >= @academicYearStartDate)";
+        private readonly string _sql = "SELECT ContractAllocationNumber, FundingStreamPeriodCode AS FundingStreamPeriod  FROM ContractAllocation WHERE DeliveryUkprn = @ukprn AND (EndDate IS NULL OR EndDate >= @academicYearStartDate)";
 
         public FcsDataProvider(Func<SqlConnection> funcSqlConnection)
         {

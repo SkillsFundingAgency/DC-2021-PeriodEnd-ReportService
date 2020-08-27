@@ -49,7 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Reference
         {
             using (var connection = _easSqlFunc())
             {
-                return await connection.QueryFirstOrDefaultAsync<DateTime>(_easSql, new { ukprn = ukprn.ToString() });
+                return await connection.QueryFirstOrDefaultAsync<DateTime?>(_easSql, new { ukprn = ukprn.ToString() });
             }
         }
 

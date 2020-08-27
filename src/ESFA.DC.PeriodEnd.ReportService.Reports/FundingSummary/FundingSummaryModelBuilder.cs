@@ -518,7 +518,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             var easLastUpdate = _lastEasUpdate;
             var fileName = ExtractFileName(_ilrFileName);
 
-            string easLastUpdateUk = null;
+            string easLastUpdateUk = "N/A";
 
             if (easLastUpdate != null)
             {

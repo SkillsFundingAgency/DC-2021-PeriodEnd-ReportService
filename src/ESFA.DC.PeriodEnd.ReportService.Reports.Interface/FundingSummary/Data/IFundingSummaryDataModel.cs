@@ -11,6 +11,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.Data
 
         string OrganisationName { get; set; }
 
+        string EasFileName { get; set; }
+
         DateTime? LastEasUpdate { get; set; }
 
         string IlrFileName { get; set; }

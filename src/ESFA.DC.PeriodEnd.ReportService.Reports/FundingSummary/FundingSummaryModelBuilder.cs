@@ -24,6 +24,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
         private string _organisationName;
+        private string _easFileName;
         private DateTime? _lastEasUpdate;
         private string _ilrFileName;
         private DateTime _ilrSubmittedDateTime;
@@ -36,10 +37,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         public FundingSummaryReportModel Build(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel)
         {
             _organisationName = fundingSummaryDataModel.OrganisationName;
+            _easFileName = fundingSummaryDataModel.EasFileName;
             _ilrFileName = fundingSummaryDataModel.IlrFileName;
             _lastEasUpdate = fundingSummaryDataModel.LastEasUpdate;
             _ilrSubmittedDateTime = fundingSummaryDataModel.IlrSubmittedDateTime;
-
+            
             var models = BuildFundingSummaryReportModel(reportServiceContext,
                 fundingSummaryDataModel.PeriodisedValuesLookup, fundingSummaryDataModel.FcsDictionary);
 
@@ -531,6 +533,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                 {SummaryPageConstants.UKPRN, reportServiceContext.Ukprn.ToString()},
                 {SummaryPageConstants.ILRFile, fileName},
                 {SummaryPageConstants.LastILRFileUpdate, _ilrSubmittedDateTime.ToString(lastSubmittedIlrFileDateStringFormat)},
+                {SummaryPageConstants.EASFile, _easFileName },
                 {SummaryPageConstants.LastEASUpdate, easLastUpdateUk},
                 {SummaryPageConstants.SecurityClassification, SummaryPageConstants.OfficialSensitive}
             };

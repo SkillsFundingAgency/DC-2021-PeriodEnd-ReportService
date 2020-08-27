@@ -55,6 +55,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
                 OrganisationName = referenceData.providerName,
                 IlrFileName = referenceData.ilrSubmissionFileName,
                 LastEasUpdate = referenceData.easSubmissionDateTime,
+                EasFileName = referenceData.easFileName,
                 IlrSubmittedDateTime = referenceData.ilrSubmissionDateTime
             };
         }

@@ -6,6 +6,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.FundingSummary.DataP
 {
     public interface IReferenceDataProvider
     {
-        Task<(string providerName, DateTime? easSubmissionDateTime, string ilrSubmissionFileName, DateTime ilrSubmissionDateTime)> ProvideAsync(long ukprn, CancellationToken cancellationToken);
+        Task<(string providerName, string easFileName, DateTime? easSubmissionDateTime, string ilrSubmissionFileName, DateTime ilrSubmissionDateTime)> ProvideAsync(long ukprn, CancellationToken cancellationToken);
     }
 }

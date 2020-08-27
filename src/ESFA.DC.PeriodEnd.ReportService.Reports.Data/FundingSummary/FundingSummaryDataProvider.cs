@@ -54,7 +54,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary
                 FcsDictionary = await ProvideFcsAsync(reportServiceContext, cancellationToken),
                 OrganisationName = referenceData.providerName,
                 IlrFileName = referenceData.ilrSubmissionFileName,
-                LastEasUpdate = referenceData.easSubmissionDateTime
+                LastEasUpdate = referenceData.easSubmissionDateTime,
+                IlrSubmittedDateTime = referenceData.ilrSubmissionDateTime
             };
         }
 

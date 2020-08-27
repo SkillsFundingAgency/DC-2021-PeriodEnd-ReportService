@@ -16,5 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Model
         public DateTime? LastEasUpdate { get; set; }
 
         public string IlrFileName { get; set; }
+
+        public DateTime IlrSubmittedDateTime { get; set; }
     }
 }

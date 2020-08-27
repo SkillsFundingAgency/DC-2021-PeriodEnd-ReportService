@@ -26,6 +26,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private string _organisationName;
         private DateTime? _lastEasUpdate;
         private string _ilrFileName;
+        private DateTime _ilrSubmittedDateTime;
 
         public FundingSummaryModelBuilder(IDateTimeProvider dateTimeProvider)
         {
@@ -37,6 +38,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             _organisationName = fundingSummaryDataModel.OrganisationName;
             _ilrFileName = fundingSummaryDataModel.IlrFileName;
             _lastEasUpdate = fundingSummaryDataModel.LastEasUpdate;
+            _ilrSubmittedDateTime = fundingSummaryDataModel.IlrSubmittedDateTime;
 
             var models = BuildFundingSummaryReportModel(reportServiceContext,
                 fundingSummaryDataModel.PeriodisedValuesLookup, fundingSummaryDataModel.FcsDictionary);
@@ -528,7 +530,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                 {SummaryPageConstants.ProviderName, organisationName},
                 {SummaryPageConstants.UKPRN, reportServiceContext.Ukprn.ToString()},
                 {SummaryPageConstants.ILRFile, fileName},
-                {SummaryPageConstants.LastILRFileUpdate, ExtractDisplayDateTimeFromFileName(fileName)},
+                {SummaryPageConstants.LastILRFileUpdate, _ilrSubmittedDateTime.ToString(lastSubmittedIlrFileDateStringFormat)},
                 {SummaryPageConstants.LastEASUpdate, easLastUpdateUk},
                 {SummaryPageConstants.SecurityClassification, SummaryPageConstants.OfficialSensitive}
             };
@@ -545,20 +547,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             {
                 { SummaryPageConstants.ReportGeneratedAt, reportGeneratedAt }
             };
-        }
-
-        private string ExtractDisplayDateTimeFromFileName(string ilrFileName)
-        {
-            if (string.IsNullOrWhiteSpace(ilrFileName) || ilrFileName.Length < 33)
-            {
-                return string.Empty;
-            }
-
-            var ilrFilenameDateTime = ExtractFileName(ilrFileName).Substring(18, 15);
-
-            return DateTime.TryParseExact(ilrFilenameDateTime, ilrFileNameDateTimeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseDateTime)
-                ? parseDateTime.ToString(lastSubmittedIlrFileDateStringFormat)
-                : string.Empty;
         }
 
         private string ExtractFileName(string ilrFileName)

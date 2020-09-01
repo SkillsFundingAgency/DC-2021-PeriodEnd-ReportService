@@ -23,10 +23,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private const string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
-        private string _organisationName;
-        private DateTime? _lastEasUpdate;
-        private string _ilrFileName;
-
         public FundingSummaryModelBuilder(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
@@ -34,19 +30,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 
         public FundingSummaryReportModel Build(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel)
         {
-            _organisationName = fundingSummaryDataModel.OrganisationName;
-            _ilrFileName = fundingSummaryDataModel.IlrFileName;
-            _lastEasUpdate = fundingSummaryDataModel.LastEasUpdate;
-
-            var models = BuildFundingSummaryReportModel(reportServiceContext,
-                fundingSummaryDataModel.PeriodisedValuesLookup, fundingSummaryDataModel.FcsDictionary);
+            var models = BuildFundingSummaryReportModel(reportServiceContext, fundingSummaryDataModel);
 
             return models;
         }
 
-        public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IPeriodisedValuesLookup periodisedValues, IDictionary<string, string> fcsContractAllocationFspCodeLookup)
+        public FundingSummaryReportModel BuildFundingSummaryReportModel(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel)
         {
             var noContract = "No Contract";
+
+            var fcsContractAllocationFspCodeLookup = fundingSummaryDataModel.FcsDictionary;
+            var periodisedValues = fundingSummaryDataModel.PeriodisedValuesLookup;
 
             var carryInApprenticeshipBudget = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.APPS2021, noContract);
             var apprenticeshipEmployerOnApprenticeshipServiceLevy = fcsContractAllocationFspCodeLookup.GetValueOrDefault(FundingStreamPeriodCodeConstants.LEVY1799, noContract);
@@ -68,8 +62,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                 ?? noContract;
 
             byte reportCurrentPeriod = (byte)reportServiceContext.ReturnPeriod > 12 ? (byte)12 : (byte)reportServiceContext.ReturnPeriod;
-            var headerData = BuildHeaderData(reportServiceContext);
-            var footerData = BuildFooterData(reportServiceContext);
+            var headerData = BuildHeaderData(reportServiceContext, fundingSummaryDataModel);
+            var footerData = BuildFooterData();
 
             var fundingSummaryReportModel = new FundingSummaryReportModel(
                 headerData,
@@ -510,13 +504,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             return fundLineGroup;
         }
 
-        private IDictionary<string, string> BuildHeaderData(IReportServiceContext reportServiceContext)
+        private IDictionary<string, string> BuildHeaderData(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel)
         {
-            var organisationName = _organisationName;
-            var easLastUpdate = _lastEasUpdate;
-            var fileName = ExtractFileName(_ilrFileName);
+            var organisationName = fundingSummaryDataModel.OrganisationName;
+            var easFileName = fundingSummaryDataModel.EasFileName;
+            var ilrFileName = fundingSummaryDataModel.IlrFileName;
+            var easLastUpdate = fundingSummaryDataModel.LastEasUpdate;
+            var ilrSubmittedDateTime = fundingSummaryDataModel.IlrSubmittedDateTime;
 
-            string easLastUpdateUk = null;
+            var fileName = ExtractFileName(ilrFileName);
+
+            string easLastUpdateUk = "N/A";
 
             if (easLastUpdate != null)
             {
@@ -528,13 +526,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                 {SummaryPageConstants.ProviderName, organisationName},
                 {SummaryPageConstants.UKPRN, reportServiceContext.Ukprn.ToString()},
                 {SummaryPageConstants.ILRFile, fileName},
-                {SummaryPageConstants.LastILRFileUpdate, ExtractDisplayDateTimeFromFileName(fileName)},
+                {SummaryPageConstants.LastILRFileUpdate, ilrSubmittedDateTime.ToString(lastSubmittedIlrFileDateStringFormat)},
+                {SummaryPageConstants.EASFile, easFileName },
                 {SummaryPageConstants.LastEASUpdate, easLastUpdateUk},
                 {SummaryPageConstants.SecurityClassification, SummaryPageConstants.OfficialSensitive}
             };
         }
 
-        private IDictionary<string, string> BuildFooterData(IReportServiceContext reportServiceContext)
+        private IDictionary<string, string> BuildFooterData()
         {
             DateTime dateTimeNowUtc = _dateTimeProvider.GetNowUtc();
             DateTime dateTimeNowUk = _dateTimeProvider.ConvertUtcToUk(dateTimeNowUtc);
@@ -545,20 +544,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             {
                 { SummaryPageConstants.ReportGeneratedAt, reportGeneratedAt }
             };
-        }
-
-        private string ExtractDisplayDateTimeFromFileName(string ilrFileName)
-        {
-            if (string.IsNullOrWhiteSpace(ilrFileName) || ilrFileName.Length < 33)
-            {
-                return string.Empty;
-            }
-
-            var ilrFilenameDateTime = ExtractFileName(ilrFileName).Substring(18, 15);
-
-            return DateTime.TryParseExact(ilrFilenameDateTime, ilrFileNameDateTimeParseFormat, CultureInfo.InvariantCulture, DateTimeStyles.None, out var parseDateTime)
-                ? parseDateTime.ToString(lastSubmittedIlrFileDateStringFormat)
-                : string.Empty;
         }
 
         private string ExtractFileName(string ilrFileName)

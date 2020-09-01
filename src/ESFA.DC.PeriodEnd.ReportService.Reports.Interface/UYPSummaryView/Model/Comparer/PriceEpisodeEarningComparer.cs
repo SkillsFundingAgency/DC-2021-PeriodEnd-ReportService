@@ -8,7 +8,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model
     {
         public bool Equals(PriceEpisodeEarning x, PriceEpisodeEarning y)
         {
-            return (x.LearnRefNumber == y.LearnRefNumber) && (x.AimSequenceNumber == y.AimSequenceNumber);
+            return (x.LearnRefNumber == y.LearnRefNumber);
         }
 
         public int GetHashCode(PriceEpisodeEarning obj)

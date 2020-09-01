@@ -97,7 +97,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     var paymentValues = payments.Where(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.ReportingAimFundingLineType == reportRecord.PaymentFundingLineType);
-                    if (paymentValues != null || paymentValues.Count() != 0)
+                    if (paymentValues != null && paymentValues.Count() != 0)
                     {
                         // Assign the amounts
                         reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, _appsReturnPeriod) ||
@@ -135,8 +135,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     if (coInvestmentInfo != null)
                     {
                         var learningDeliveries = coInvestmentInfo.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber &&
-                                                                        p.AFinDate >= DateConstants.BeginningOfYear && 
-                                                                        p.AFinDate <= DateConstants.EndOfYear && 
+                                                                        p.AFinDate >= DateConstants.BeginningOfYear &&
+                                                                        p.AFinDate <= DateConstants.EndOfYear &&
                                                                         p.AFinType.CaseInsensitiveEquals(FinTypes.PMR));
                         if ((learningDeliveries != null) && (learningDeliveries.Count() > 0))
                         {
@@ -270,7 +270,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         ICollection<PriceEpisodeEarning> peEarnings)
         {
             var filteredPaymentRecordsHashSet = new HashSet<LearnerLevelViewPaymentsKey>(payments.Select(r => new LearnerLevelViewPaymentsKey(r.LearnerReferenceNumber, r.ReportingAimFundingLineType)), _lLVPaymentRecordKeyEqualityComparer);
-            var filteredPriceEpisodeRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(peEarnings.Select(r => new LearnerLevelViewPaymentsKey(r.LearnRefNumber, r.PriceEpisodeFundLineType)), _lLVPaymentRecordKeyEqualityComparer);
+            var filteredPriceEpisodeRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(peEarnings.Select(r => new LearnerLevelViewPaymentsKey(r.LearnRefNumber, string.Empty)), _lLVPaymentRecordLRefOnlyKeyEqualityComparer);
             var filteredLearningDeliveryRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(ldEarnings.Select(r => new LearnerLevelViewPaymentsKey(r.LearnRefNumber, string.Empty)), _lLVPaymentRecordLRefOnlyKeyEqualityComparer);
 
             filteredPaymentRecordsHashSet.UnionWith(filteredPriceEpisodeRecordHashset);
@@ -494,8 +494,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             // Build a list of records we don't need to calculate for
             var mathEngRecords = ldLearnerRecords.Where(p => p.LearnDelMathEng == true).Select(record => new PriceEpisodeEarning()
             {
-                LearnRefNumber = record.LearnRefNumber,
-                AimSequenceNumber = record.AimSequenceNumber
+                LearnRefNumber = record.LearnRefNumber
             });
 
             var peRecords = pelearnerRecords?.Where(pe => peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords, new PriceEpisodeEarningComparer());

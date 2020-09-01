@@ -150,7 +150,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             return new List<PriceEpisodeEarning>() {
                 new PriceEpisodeEarning() {
                     LearnRefNumber = "A12345",
-                    AimSequenceNumber = 1,
                     AttributeName = "PriceEpisodeBalancePayment",
                     Period_1 = 1m,
                     Period_2 = 1m,
@@ -167,7 +166,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                 },
                 new PriceEpisodeEarning() {
                     LearnRefNumber = "A12345",
-                    AimSequenceNumber = 2,
                     AttributeName = "PriceEpisodeLSFCash",
                     Period_1 = 1m,
                     Period_2 = 1m,

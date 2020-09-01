@@ -6,13 +6,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model
     {
         public string LearnRefNumber { get; set; }
 
-        public int? AimSequenceNumber { get; set; }
-
         public string AttributeName { get; set; }
-
-        public string PriceEpisodeIdentifier { get; set; }
-
-        public string PriceEpisodeFundLineType { get; set; }
 
         public decimal? Period_1 { get; set; }
 

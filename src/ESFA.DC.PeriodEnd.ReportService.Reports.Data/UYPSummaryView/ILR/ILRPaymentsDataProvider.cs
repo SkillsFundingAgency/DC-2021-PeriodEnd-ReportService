@@ -24,12 +24,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.ILR
                                                                 FROM Rulebase.AEC_LearningDelivery LD INNER JOIN Rulebase.AEC_LearningDelivery_PeriodisedValues LDPV 
                                                                 ON LDPV.UKPRN = LD.UKPRN AND LDPV.LearnRefNumber = LD.LearnRefNumber AND LDPV.AimSeqNumber = LD.AimSeqNumber
                                                                 WHERE LD.Ukprn = @ukprn";
-        private readonly string priceEpisodeEarningsSql = @"SELECT PE.LearnRefNumber, PE.PriceEpisodeAimSeqNumber, PE.PriceEpisodeFundLineType, PEPV.AttributeName, PEPV.PriceEpisodeIdentifier, Period_1, Period_2, 
-                                                                    Period_3, Period_4, Period_5, Period_6, Period_7, Period_8, Period_9, Period_10, Period_11, Period_12
-                                                                FROM Rulebase.AEC_ApprenticeshipPriceEpisode PE INNER JOIN Rulebase.AEC_ApprenticeshipPriceEpisode_PeriodisedValues PEPV 
-                                                                ON PEPV.UKPRN = PE.UKPRN AND PEPV.LearnRefNumber = PE.LearnRefNumber 
-                                                                WHERE PE.Ukprn = @ukprn";
-        private readonly string coInvestmentInfoSql = $@"SELECT L.LearnRefNumber, LD.LearnAimRef, AFP.AFinDate, AFP.AFinType, AFP.AFinCode, AFP.AFinAmount
+        private readonly string priceEpisodeEarningsSql = @"SELECT DISTINCT LearnRefNumber, AttributeName, PriceEpisodeIdentifier, Period_1, Period_2, 
+                                                                   Period_3, Period_4, Period_5, Period_6, Period_7, Period_8, Period_9, Period_10, Period_11, Period_12
+                                                                FROM Rulebase.AEC_ApprenticeshipPriceEpisode_PeriodisedValues PEPV 
+                                                                WHERE PEPV.Ukprn = @ukprn";
+        private readonly string coInvestmentInfoSql = $@"SELECT DISTINCT L.LearnRefNumber, LD.LearnAimRef, AFP.AFinDate, AFP.AFinType, AFP.AFinCode, AFP.AFinAmount
                                                                 FROM Valid.Learner L INNER JOIN Valid.LearningDelivery LD ON L.LearnRefNumber = LD.LearnRefNumber
                                                                     INNER JOIN Valid.AppFinRecord AFP ON L.LearnRefNumber = AFP.LearnRefNumber
                                                                 WHERE L.Ukprn = @ukprn

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Linq;
 using ESFA.DC.DateTimeProvider.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
@@ -19,6 +20,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
 
         private const string lastSubmittedIlrFileDateStringFormat = "dd/MM/yyyy HH:mm:ss";
         private const string ilrFileNameDateTimeParseFormat = "yyyyMMdd-HHmmss";
+
+        private const string NA = "N/A";
 
         private const string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
@@ -507,14 +510,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private IDictionary<string, string> BuildHeaderData(IReportServiceContext reportServiceContext, IFundingSummaryDataModel fundingSummaryDataModel)
         {
             var organisationName = fundingSummaryDataModel.OrganisationName;
-            var easFileName = fundingSummaryDataModel.EasFileName;
-            var ilrFileName = fundingSummaryDataModel.IlrFileName;
+            var easFileName = ExtractFileName(fundingSummaryDataModel.EasFileName);
+            var ilrFileName = ExtractFileName(fundingSummaryDataModel.IlrFileName);
             var easLastUpdate = fundingSummaryDataModel.LastEasUpdate;
-            var ilrSubmittedDateTime = fundingSummaryDataModel.IlrSubmittedDateTime;
+            var ilrSubmittedDateTime = _dateTimeProvider.ConvertUtcToUk(fundingSummaryDataModel.IlrSubmittedDateTime);
 
-            var fileName = ExtractFileName(ilrFileName);
-
-            string easLastUpdateUk = "N/A";
+            string easLastUpdateUk = NA;
 
             if (easLastUpdate != null)
             {
@@ -525,7 +526,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             {
                 {SummaryPageConstants.ProviderName, organisationName},
                 {SummaryPageConstants.UKPRN, reportServiceContext.Ukprn.ToString()},
-                {SummaryPageConstants.ILRFile, fileName},
+                {SummaryPageConstants.ILRFile, ilrFileName},
                 {SummaryPageConstants.LastILRFileUpdate, ilrSubmittedDateTime.ToString(lastSubmittedIlrFileDateStringFormat)},
                 {SummaryPageConstants.EASFile, easFileName },
                 {SummaryPageConstants.LastEASUpdate, easLastUpdateUk},
@@ -546,12 +547,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             };
         }
 
-        private string ExtractFileName(string ilrFileName)
+        private string ExtractFileName(string fileName)
         {
-            var parts = ilrFileName.Split('/');
-            var ilrFilename = parts[parts.Length - 1];
+            var parts = fileName?.Split('/') ?? new string[]{};
+            if (parts.Any())
+            {
+                var returnFileName = parts[parts.Length - 1];
 
-            return ilrFilename;
+                return returnFileName;
+            }
+
+            return NA;
         }
     }
 }

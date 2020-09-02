@@ -10,7 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.FundingSummary.Reference
     public class ReferenceDataProvider : IReferenceDataProvider
     {
         private readonly string _orgSql = "SELECT Name FROM Org_Details WHERE UKPRN = @ukprn";
-        private readonly string _easSql = "SELECT FileName, UpdatedOn FROM EAS_Submission WHERE UKPRN = @ukprn";
+        private readonly string _easSql = "SELECT [FileName], [DateTime] FROM SourceFile WHERE UKPRN = @ukprn ORDER BY DateTime DESC";
         private readonly string _ilrSql = "SELECT Filename, SubmittedTime FROM FileDetails WHERE UKPRN = @ukprn ORDER BY SubmittedTime DESC";
 
         private readonly Func<SqlConnection> _orgSqlFunc;

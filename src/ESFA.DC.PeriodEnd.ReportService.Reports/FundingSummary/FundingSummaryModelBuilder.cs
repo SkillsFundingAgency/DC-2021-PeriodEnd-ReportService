@@ -21,6 +21,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
         private const string lastSubmittedIlrFileDateStringFormat = "dd/MM/yyyy HH:mm:ss";
         private const string ilrFileNameDateTimeParseFormat = "yyyyMMdd-HHmmss";
 
+        private const string NA = "N/A";
+
         private const string AdultEducationBudgetNote =
             "Please note that devolved adult education funding for learners who are funded through the Mayoral Combined Authorities or Greater London Authority is not included here.\nPlease refer to the separate Devolved Adult Education Funding Summary Report.";
 
@@ -513,7 +515,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             var easLastUpdate = fundingSummaryDataModel.LastEasUpdate;
             var ilrSubmittedDateTime = fundingSummaryDataModel.IlrSubmittedDateTime;
 
-            string easLastUpdateUk = "N/A";
+            string easLastUpdateUk = NA;
 
             if (easLastUpdate != null)
             {
@@ -555,7 +557,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
                 return returnFileName;
             }
 
-            return string.Empty;
+            return NA;
         }
     }
 }

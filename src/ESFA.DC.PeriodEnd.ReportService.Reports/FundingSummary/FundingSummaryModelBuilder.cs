@@ -513,7 +513,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.FundingSummary
             var easFileName = ExtractFileName(fundingSummaryDataModel.EasFileName);
             var ilrFileName = ExtractFileName(fundingSummaryDataModel.IlrFileName);
             var easLastUpdate = fundingSummaryDataModel.LastEasUpdate;
-            var ilrSubmittedDateTime = fundingSummaryDataModel.IlrSubmittedDateTime;
+            var ilrSubmittedDateTime = _dateTimeProvider.ConvertUtcToUk(fundingSummaryDataModel.IlrSubmittedDateTime);
 
             string easLastUpdateUk = NA;
 

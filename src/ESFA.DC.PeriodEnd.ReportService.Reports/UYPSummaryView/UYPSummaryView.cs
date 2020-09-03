@@ -178,7 +178,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             catch (Exception ex)
             {
                 _logger.LogError("Failed to Build Summary Json file", ex);
-                throw ex;
+                throw;
             }
         }
 

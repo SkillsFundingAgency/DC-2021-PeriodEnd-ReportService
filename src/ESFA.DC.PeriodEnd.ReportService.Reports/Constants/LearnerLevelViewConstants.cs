@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Constants
 {
-    public class LearnerLevelViewConstants
+    public static class LearnerLevelViewConstants
     {
         public const string ReasonForIssues_CompletionHoldbackPayment = "Completion Holdback";
         public const string ReasonForIssues_Clawback = "Clawback";

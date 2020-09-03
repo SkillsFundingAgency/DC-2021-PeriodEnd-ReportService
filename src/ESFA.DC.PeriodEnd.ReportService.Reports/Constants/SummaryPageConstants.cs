@@ -10,6 +10,8 @@
 
         public const string ILRFile = "ILR File:";
 
+        public const string EASFile = "EAS File:";
+
         public const string Year = "Year:";
 
         public const string LastILRFileUpdate = "Last ILR File Update:";

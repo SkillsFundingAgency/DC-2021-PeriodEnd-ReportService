@@ -45,7 +45,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
 
                     if (report == null)
                     {
-                        if (_reportServiceContext.Tasks.Any(x => x.CaseInsensitiveEquals("TaskClearPeriodEndDASZip")))
+                        if (taskItem.CaseInsensitiveEquals("TaskClearPeriodEndDASZip"))
                         {
                             await _reportZipService.RemoveZipAsync(_reportServiceContext, cancellationToken);
                         }
@@ -53,6 +53,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports
                         {
                             _logger.LogError($"Report with key {taskItem} not found");
                         }
+
+                        continue;
                     }
 
                     var fileName = await report.GenerateReport(_reportServiceContext, cancellationToken);

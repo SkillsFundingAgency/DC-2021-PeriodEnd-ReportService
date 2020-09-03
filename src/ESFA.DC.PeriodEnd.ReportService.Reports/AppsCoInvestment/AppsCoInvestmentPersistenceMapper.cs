@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
@@ -28,7 +29,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
                 StandardCode = record.RecordKey.StandardCode,
                 FrameworkCode = record.RecordKey.FrameworkCode,
                 ApprenticeshipPathway = record.RecordKey.PathwayCode,
-                SoftwareSupplierAimIdentifier = record.LearningDelivery.SWSupAimId,
+                SoftwareSupplierAimIdentifier = record.LearningDelivery?.SWSupAimId,
                 LearningDeliveryFAMTypeApprenticeshipContractType = record.ApprenticeshipContractType,
                 EmployerIdentifierAtStartOfLearning = record.EmployerIdentifierAtStartOfLearning,
                 EmployerNameFromApprenticeshipService = record.EmployerNameFromApprenticeshipService,
@@ -55,7 +56,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
                 CompletionEarningThisFundingYear = record.EarningsAndPayments.CompletionEarningThisFundingYear,
                 CompletionPaymentsThisFundingYear = record.EarningsAndPayments.CompletionPaymentsThisFundingYear,
                 EmployerCoInvestmentPercentage = record.EarningsAndPayments.EmployerCoInvestmentPercentage,
-                ApplicableProgrammeStartDate = record.LearningDelivery.AECLearningDelivery.AppAdjLearnStartDate
+                ApplicableProgrammeStartDate = record.LearningDelivery?.AECLearningDelivery?.AppAdjLearnStartDate
             });
         }
     }

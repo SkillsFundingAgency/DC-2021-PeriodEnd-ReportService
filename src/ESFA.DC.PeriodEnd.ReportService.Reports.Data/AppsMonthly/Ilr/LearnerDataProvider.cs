@@ -39,7 +39,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Ilr
                         LearningDeliveries = l.LearningDeliveries.Where(wld => wld.FundModel == ApprenticeshipsFundModel)
                             .Select(ld => new LearningDelivery
                             {
-                                LearnAimRef = ld.LearnRefNumber,
+                                LearnAimRef = ld.LearnAimRef,
                                 LearnStartDate = ld.LearnStartDate,
                                 ProgType = ld.ProgType ?? 0,
                                 StdCode = ld.StdCode ?? 0,

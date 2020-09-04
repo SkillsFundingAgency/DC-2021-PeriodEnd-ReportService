@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
         private readonly string GetLegalEntityNameSql = @"SELECT DISTINCT Id, 
                                                                 LegalEntityName 
                                                             FROM Payments2.Apprenticeship 
-                                                            WHERE Ukprn = @Ukprn AND Id IN @apprenticeshipIds";
+                                                            WHERE Ukprn = @Ukprn AND Id IN @pageApprenticeshipIds";
 
         public PaymentsDataProvider(Func<SqlConnection> sqlConnectionFunc)
         {
@@ -92,7 +92,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
 
                 for (var i = 0; i < count; i += pageSize)
                 {
-                    var pageApprenticeshipIds = uniqueApprenticeshipIds.Skip(i).Take(pageSize);
+                    IEnumerable<long> pageApprenticeshipIds = uniqueApprenticeshipIds.Skip(i).Take(pageSize).ToArray();
                     result.AddRange(await connection.QueryAsync<ApprenticeshipInfo>(GetLegalEntityNameSql, new { ukprn, pageApprenticeshipIds }));
                 }
 

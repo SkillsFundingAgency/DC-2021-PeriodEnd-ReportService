@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsAdditionalPayments
 
         public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
             {
-                var fileName = _fileNameService.GetFilename(reportServiceContext, $"{reportServiceContext.Ukprn} {ReportFileName}", OutputTypes.Csv);
+                var fileName = _fileNameService.GetFilename(reportServiceContext, ReportFileName, OutputTypes.Csv);
 
                 var paymentsTask = _appsAdditionalPaymentsDataProvider.GetPaymentsAsync(reportServiceContext, cancellationToken);
                 var learnersTask = _appsAdditionalPaymentsDataProvider.GetLearnersAsync(reportServiceContext, cancellationToken);

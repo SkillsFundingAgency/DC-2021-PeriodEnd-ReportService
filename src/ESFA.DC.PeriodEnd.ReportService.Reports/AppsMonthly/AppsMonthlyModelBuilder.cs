@@ -118,6 +118,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                         PaymentPeriods = paymentPeriods,
                     };
                 })
+                .OrderBy(r => r.Learner?.LearnRefNumber)
                 .ToList();
         }
 

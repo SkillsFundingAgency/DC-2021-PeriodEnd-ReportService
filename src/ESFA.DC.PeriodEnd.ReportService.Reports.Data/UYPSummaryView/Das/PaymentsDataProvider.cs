@@ -43,7 +43,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
         private readonly string GetLegalEntityNameSql = @"SELECT DISTINCT Id, 
                                                                 LegalEntityName 
                                                             FROM Payments2.Apprenticeship 
-                                                            WHERE Ukprn = @Ukprn AND Id IN @apprenticeshipIds";
+                                                            WHERE Ukprn = @Ukprn AND Id IN @pageApprenticeshipIds";
 
         public PaymentsDataProvider(Func<SqlConnection> sqlConnectionFunc)
         {
@@ -83,10 +83,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
         public async Task<IDictionary<long, string>> GetLegalEntityNameAsync(int ukprn, IEnumerable<long> apprenticeshipIds, CancellationToken cancellationToken)
         {
             var uniqueApprenticeshipIds = apprenticeshipIds.Distinct().OrderBy(a => a).ToArray();
+            var pageSize = 1000;
+            var count = uniqueApprenticeshipIds.Count();
 
             using (var connection = _sqlConnectionFunc())
             {
-                var result = await connection.QueryAsync<ApprenticeshipInfo>(GetLegalEntityNameSql, new { ukprn, apprenticeshipIds });
+                List<ApprenticeshipInfo> result = new List<ApprenticeshipInfo>();
+
+                for (var i = 0; i < count; i += pageSize)
+                {
+                    IEnumerable<long> pageApprenticeshipIds = uniqueApprenticeshipIds.Skip(i).Take(pageSize).ToArray();
+                    result.AddRange(await connection.QueryAsync<ApprenticeshipInfo>(GetLegalEntityNameSql, new { ukprn, pageApprenticeshipIds }));
+                }
 
                 return result.ToDictionary(a => a.Id, a => a.LegalEntityName);
             }

@@ -49,6 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
         {
             var ukprn = reportServiceContext.Ukprn;
             var collectionYear = reportServiceContext.CollectionYear;
+            var previousYearClosedReturnPeriod = reportServiceContext.PreviousYearClosedReturnPeriod;
 
             var fileName = _fileNameService.GetFilename(reportServiceContext, ReportFileName, OutputTypes.Csv);
             var paymentsTask = _appsCoInvestmentDataProvider.GetPaymentsAsync(ukprn, cancellationToken);
@@ -57,7 +58,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
 
             await Task.WhenAll(paymentsTask, learnersTask, priceEpisodePeriodisedValuesTask);
 
-            var appsCoInvestmentRecords = _appsCoInvestmentModelBuilder.Build(learnersTask.Result, paymentsTask.Result, priceEpisodePeriodisedValuesTask.Result, collectionYear).ToList();
+            var appsCoInvestmentRecords = _appsCoInvestmentModelBuilder.Build(learnersTask.Result, paymentsTask.Result, priceEpisodePeriodisedValuesTask.Result, collectionYear, previousYearClosedReturnPeriod).ToList();
 
             await _csvFileService.WriteAsync<AppsCoInvestmentRecord, AppsCoInvestmentClassMap>(appsCoInvestmentRecords, fileName, reportServiceContext.Container, cancellationToken);
 

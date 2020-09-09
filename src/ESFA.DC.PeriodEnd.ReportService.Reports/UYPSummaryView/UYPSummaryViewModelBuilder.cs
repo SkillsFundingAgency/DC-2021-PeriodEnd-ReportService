@@ -22,6 +22,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private readonly ILLVPaymentRecordKeyEqualityComparer _lLVPaymentRecordKeyEqualityComparer;
         private readonly ILLVPaymentRecordLRefOnlyKeyEqualityComparer _lLVPaymentRecordLRefOnlyKeyEqualityComparer;
 
+        private static readonly DataLockComparer _dataLockComparer = new DataLockComparer();
+
         private readonly HashSet<string> _peAttributeGroup = new HashSet<string>()
         {
             AttributeConstants.Fm36PriceEpisodeCompletionPaymentAttributeName,
@@ -79,7 +81,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
                 // Build dictionaries to allow quicker processing of the larger datasets
                 var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
-                var dataLockHashset = datalocks.ToImmutableHashSet(new DataLockComparer());
+                var dataLockHashset = datalocks.ToImmutableHashSet(_dataLockComparer);
 
                 // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(payments, ldEarnings, peEarnings);
@@ -114,26 +116,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     if (paymentValues.Any())
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, returnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(p, returnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(p, returnPeriod)).Sum(c => c.Amount);
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => p.CollectionPeriod <= returnPeriod && 
+                            (TotalESFAPlannedPaymentFSTypePredicate(p) ||
+                             TotalESFAPlannedPaymentsTTTypePredicate(p) ||
+                             TotalESFAPlannedPaymentsNonZPTypePredicate(p))).Sum(c => c.Amount);
 
-                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicate(p, returnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsTTTypePredicate(p, returnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsNonZPTypePredicate(p, returnPeriod)).Sum(c => c.Amount);
+                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => p.CollectionPeriod == returnPeriod &&
+                            (TotalESFAPlannedPaymentFSTypePredicate(p) ||
+                             TotalESFAPlannedPaymentsTTTypePredicate(p) ||
+                             TotalESFAPlannedPaymentsNonZPTypePredicate(p))).Sum(c => c.Amount);
 
-                        reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, returnPeriod)).Sum(c => c.Amount);
+                        reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => p.CollectionPeriod == returnPeriod &&
+                            TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(p)).Sum(c => c.Amount);
 
-                        // NOTE: Additional earigns calc required for this field
-                        reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, returnPeriod)).Sum(c => c.Amount);
+                        // NOTE: Additional earnings calc required for this field
+                        reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => p.CollectionPeriod <= returnPeriod &&
+                            TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(p)).Sum(c => c.Amount);
 
                         // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
                         var firstPaymentVal = paymentValues.First();
                         reportRecord.PaymentUniqueLearnerNumber = firstPaymentVal.LearnerUln;
 
                         // Extract company name
-                        string employerName;
-                        if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(firstPaymentVal.ApprenticeshipId, out employerName))
+                        if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(firstPaymentVal.ApprenticeshipId, out var employerName))
                         {
                             reportRecord.EmployerName = employerName;
                             if ((reportRecord.LearnerEmploymentStatusEmployerId != null) && !employerNamesToIDs.ContainsKey(reportRecord.LearnerEmploymentStatusEmployerId ?? 0))
@@ -294,71 +299,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             return filteredPaymentRecordsHashSet.ToList();
         }
 
-        /// <summary>
-        /// Returns true if the payment is an ESFA planned payment for a range of periods.
-        /// For funding source 1, 2, 5 and transaction type 1, 2, 3.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsFSTypePredicate(Payment payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalESFAPlannedPaymentFSTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is an ESFA planned payment for a range of periods.
-        /// For funding source 1, 2, 5 and transaction type 1, 2, 3.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(Payment payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalESFAPlannedPaymentFSTypePredicate(payment);
-
-            return result;
-        }
-
         private bool TotalESFAPlannedPaymentFSTypePredicate(Payment payment)
         {
             bool result = payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
                    LearnerLevelViewConstants.eSFAFundingSources.Contains(payment.FundingSource) &&
                    LearnerLevelViewConstants.eSFAFSTransactionTypes.Contains(payment.TransactionType);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is an ESFA planned payment for a range of periods.
-        /// For transaction type 4 -> 16. (With the exception of maths and english types - 13 and 14)
-        /// /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsTTTypePredicate(Payment payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalESFAPlannedPaymentsTTTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is an ESFA planned payment for a range of periods.
-        /// For transaction type 4 -> 16. (With the exception of maths and english types - 13 and 14)
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(Payment payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalESFAPlannedPaymentsTTTypePredicate(payment);
 
             return result;
         }
@@ -371,36 +316,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             return result;
         }
 
-        /// <summary>
-        /// Returns true if the payment is an ESFA planned payment for a range of periods.
-        /// For transaction type 4 -> 16.
-        /// /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsNonZPTypePredicate(Payment payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalESFAPlannedPaymentsNonZPTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payment is an ESFA planned payment for a range of periods.
-        /// For transaction type 4 -> 16.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a Levy payment, otherwise false.</returns>
-        private bool PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(Payment payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalESFAPlannedPaymentsNonZPTypePredicate(payment);
-
-            return result;
-        }
-
         private bool TotalESFAPlannedPaymentsNonZPTypePredicate(Payment payment)
         {
             bool result = !payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
@@ -409,39 +324,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             return result;
         }
 
-
         //------------------------------------------------------------------------------------------------------
         // CoInvestment Payments Due From Employer Payment Type Predicates
         //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payments is a CoInvestment payment due from the Employer.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a CoInvestment due from the employer payment, otherwise false.</returns>
-        private bool PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(
-            Payment payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(payment);
-
-            return result;
-        }
-
-        /// <summary>
-        /// Returns true if the payments is a CoInvestment payment due from the Employer for a range of periods.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="toPeriod">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a CoInvestment due from the employer payment, otherwise false.</returns>
-        private bool PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(Payment payment, int toPeriod)
-        {
-            bool result = payment.CollectionPeriod <= toPeriod &&
-                          TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(payment);
-
-            return result;
-        }
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(Payment payment)
         {

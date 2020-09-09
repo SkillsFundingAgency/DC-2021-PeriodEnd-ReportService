@@ -4,7 +4,7 @@ using System.Text;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model.Comparer
 {
-    public class DataLockComparer : IEqualityComparer<DataLock>, IDataLockComparer
+    public class DataLockComparer : IEqualityComparer<DataLock>
     {
         public bool Equals(DataLock x, DataLock y)
         {

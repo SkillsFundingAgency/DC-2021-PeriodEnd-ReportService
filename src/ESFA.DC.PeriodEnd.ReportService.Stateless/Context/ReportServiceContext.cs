@@ -38,6 +38,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
 
         public int ReturnPeriod => int.Parse(_jobContextMessage.KeyValuePairs[ILRContextKeys.ReturnPeriod].ToString());
 
+        public int PreviousYearClosedReturnPeriod
+        {
+            get
+            {
+                switch (ReturnPeriod)
+                {
+                    case 1:
+                        return 12;
+                    case 2:
+                        return 13;
+                    default:
+                        return 14;
+                }
+            }
+        }
+
         public string ReturnPeriodName => _jobContextMessage.KeyValuePairs[ILRContextKeys.ReturnPeriodName].ToString();
 
         public long JobId => _jobContextMessage.JobId;

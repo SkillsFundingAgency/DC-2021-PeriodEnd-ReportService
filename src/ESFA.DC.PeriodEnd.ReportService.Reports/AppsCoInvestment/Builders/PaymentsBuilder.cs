@@ -50,12 +50,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
             return Enumerable.Empty<Payment>();
         }
 
-        public EarningsAndPayments BuildEarningsAndPayments(IEnumerable<Payment> filteredPayments, IEnumerable<Payment> allPayments, LearningDelivery learningDelivery, ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues, int currentAcademicYear, DateTime academicYearStart, DateTime nextAcademicYearStart)
+        public EarningsAndPayments BuildEarningsAndPayments(
+            IEnumerable<Payment> filteredPayments,
+            IEnumerable<Payment> allPayments,
+            LearningDelivery learningDelivery,
+            ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues,
+            int currentAcademicYear,
+            DateTime academicYearStart,
+            DateTime nextAcademicYearStart,
+            int previousYearClosedReturnPeriod)
         {
             var filteredPaymentsList = filteredPayments.ToList();
             var totalsByPeriodDictionary = BuildCoInvestmentPaymentsPerPeriodDictionary(filteredPaymentsList, currentAcademicYear);
             var totalDueCurrentYear = totalsByPeriodDictionary.Sum(d => d.Value);
-            var totalDuePreviousYear = TotalCoInvestmentDueFromEmployerInPreviousFundingYears(filteredPaymentsList, currentAcademicYear);
+            var totalDuePreviousYear = TotalCoInvestmentDueFromEmployerInPreviousFundingYears(filteredPaymentsList, previousYearClosedReturnPeriod);
             var totalCollectedCurrentYear = GetTotalPmrBetweenDates(learningDelivery, academicYearStart, nextAcademicYearStart);
             var totalCollectedPreviousYear = GetTotalPmrBetweenDates(learningDelivery, null, academicYearStart);
 
@@ -121,9 +129,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders
             return paymentsList.Sum(r => r.Amount);
         }
 
-        public decimal TotalCoInvestmentDueFromEmployerInPreviousFundingYears(IEnumerable<Payment> payments, int currentAcademicYear)
+        public decimal TotalCoInvestmentDueFromEmployerInPreviousFundingYears(IEnumerable<Payment> payments, int previousYearClosedReturnPeriod)
         {
-            return payments.Where(p => p.AcademicYear < currentAcademicYear).Sum(p => p.Amount);
+            return payments.Where(p => (p.AcademicYear == DateConstants.PreviousFundingYear && p.CollectionPeriod <= previousYearClosedReturnPeriod) || 
+                                       (p.AcademicYear < DateConstants.PreviousFundingYear)).Sum(p => p.Amount);
+
         }
 
         public IDictionary<byte, decimal> BuildCoInvestmentPaymentsPerPeriodDictionary(IEnumerable<Payment> payments, int currentAcademicYear)

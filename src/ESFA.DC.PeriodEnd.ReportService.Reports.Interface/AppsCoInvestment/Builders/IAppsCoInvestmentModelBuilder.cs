@@ -11,7 +11,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Bui
             ICollection<Learner> learners,
             ICollection<Payment> payments,
             ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues,
-            int currentAcademicYear);
+            int currentAcademicYear,
+            int previousYearClosedReturnPeriod);
 
     }
 }

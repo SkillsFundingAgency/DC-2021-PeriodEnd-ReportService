@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.Immutable;
 using System.Globalization;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView.Interface;
@@ -13,23 +14,38 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 {
     public class UYPSummaryViewModelBuilder : IUYPSummaryViewModelBuilder
     {
-        private readonly HashSet<byte?> _fundingSourceLevyPayments = new HashSet<byte?>() { 1, 5 };
         private readonly HashSet<byte?> _fundingSourceCoInvestmentPayments = new HashSet<byte?>() { 2 };
-        private readonly HashSet<byte?> _fundingSourceCoInvestmentDueFromEmployer = new HashSet<byte?>() { 3 };
 
-        private readonly HashSet<byte?> _transactionTypesLevyPayments = new HashSet<byte?>() { 1, 2, 3 };
         private readonly HashSet<byte?> _transactionTypesCoInvestmentPayments = new HashSet<byte?>() { 1, 2, 3 };
-        private readonly HashSet<byte?> _transactionTypesCoInvestmentDueFromEmployer = new HashSet<byte?>() { 1, 2, 3 };
-        private readonly HashSet<byte?> _transactionTypesEmployerAdditionalPayments = new HashSet<byte?>() { 4, 6 };
-        private readonly HashSet<byte?> _transactionTypesProviderAdditionalPayments = new HashSet<byte?>() { 5, 7 };
-        private readonly HashSet<byte?> _transactionTypesApprenticeshipAdditionalPayments = new HashSet<byte?>() { 16 };
-        private readonly HashSet<byte?> _transactionTypesEnglishAndMathsPayments = new HashSet<byte?>() { 13, 14 };
-        private readonly HashSet<byte?> _transactionTypesLearningSupportPayments = new HashSet<byte?>() { 8, 9, 10, 11, 12, 15 };
         private readonly ILogger _logger;
-        private int _appsReturnPeriod;
 
         private readonly ILLVPaymentRecordKeyEqualityComparer _lLVPaymentRecordKeyEqualityComparer;
         private readonly ILLVPaymentRecordLRefOnlyKeyEqualityComparer _lLVPaymentRecordLRefOnlyKeyEqualityComparer;
+
+        private readonly HashSet<string> _peAttributeGroup = new HashSet<string>()
+        {
+            AttributeConstants.Fm36PriceEpisodeCompletionPaymentAttributeName,
+            AttributeConstants.Fm36PriceEpisodeOnProgPaymentAttributeName,
+            AttributeConstants.Fm3PriceEpisodeBalancePaymentAttributeName,
+            AttributeConstants.Fm36PriceEpisodeLSFCashAttributeName
+        };
+
+        private readonly HashSet<string> _ldAttributeGroup = new HashSet<string>()
+        {
+            AttributeConstants.Fm36MathEngOnProgPayment,
+            AttributeConstants.Fm36LearnSuppFundCash,
+            AttributeConstants.Fm36MathEngBalPayment,
+            AttributeConstants.Fm36DisadvFirstPayment,
+            AttributeConstants.Fm36DisadvSecondPayment,
+            AttributeConstants.Fm36LearnDelFirstEmp1618Pay,
+            AttributeConstants.Fm36LearnDelSecondEmp1618Pay,
+            AttributeConstants.Fm36LearnDelFirstProv1618Pay,
+            AttributeConstants.Fm36LearnDelSecondProv1618Pay,
+            AttributeConstants.Fm36LearnDelLearnAddPayment,
+            AttributeConstants.Fm36LDApplic1618FrameworkUpliftBalancingPayment,
+            AttributeConstants.Fm36LDApplic1618FrameworkUpliftCompletionPayment,
+            AttributeConstants.Fm36LDApplic1618FrameworkUpliftOnProgPayment
+        };
 
         public UYPSummaryViewModelBuilder(
             ILogger logger,
@@ -53,9 +69,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             int returnPeriod,
             int ukprn)
         {
-            // cache the passed in data for use in the private 'Get' methods
-            _appsReturnPeriod = returnPeriod;
-
             // this variable is the final report and is the return value of this method.
             List<LearnerLevelViewModel> learnerLevelViewModelList = null;
 
@@ -64,13 +77,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 // Lookup for employer IDs to employer name
                 IDictionary<int, string> employerNamesToIDs = new Dictionary<int, string>();
 
+                // Build dictionaries to allow quicker processing of the larger datasets
+                var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
+                var dataLockHashset = datalocks.ToImmutableHashSet(new DataLockComparer());
+
                 // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(payments, ldEarnings, peEarnings);
 
                 // Populate the learner list using the ILR query first
                 learnerLevelViewModelList = unionedKeys
-                .OrderBy(o => o.LearnerReferenceNumber)
-                    .ThenBy(o => o.PaymentFundingLineType)
                 .Select(record =>
                 {
                     var reportRecord = new LearnerLevelViewModel()
@@ -81,8 +96,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     };
 
                     // Extract ILR info
-                    var ilrRecord = learners.FirstOrDefault(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber);
-                    if (ilrRecord != null)
+                    if (ilrLearnersDict.TryGetValue(record.LearnerReferenceNumber, out var ilrRecord))
                     {
                         reportRecord.FamilyName = ilrRecord.FamilyName;
                         reportRecord.GivenNames = ilrRecord.GivenNames;
@@ -96,29 +110,30 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         }
                     }
 
-                    var paymentValues = payments.Where(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.ReportingAimFundingLineType == reportRecord.PaymentFundingLineType);
-                    if (paymentValues != null && paymentValues.Count() != 0)
+                    var paymentValues = payments.Where(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.ReportingAimFundingLineType == reportRecord.PaymentFundingLineType).ToList();
+                    if (paymentValues.Any())
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, _appsReturnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(p, _appsReturnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount);
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicateToPeriod(p, returnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsTTTypePredicateToPeriod(p, returnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsNonZPTypePredicateToPeriod(p, returnPeriod)).Sum(c => c.Amount);
 
-                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicate(p, _appsReturnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsTTTypePredicate(p, _appsReturnPeriod) ||
-                                                    PeriodESFAPlannedPaymentsNonZPTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount);
+                        reportRecord.ESFAPlannedPaymentsThisPeriod = paymentValues.Where(p => PeriodESFAPlannedPaymentsFSTypePredicate(p, returnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsTTTypePredicate(p, returnPeriod) ||
+                                                    PeriodESFAPlannedPaymentsNonZPTypePredicate(p, returnPeriod)).Sum(c => c.Amount);
 
-                        reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, _appsReturnPeriod)).Sum(c => c.Amount);
+                        reportRecord.CoInvestmentPaymentsToCollectThisPeriod = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicate(p, returnPeriod)).Sum(c => c.Amount);
 
                         // NOTE: Additional earigns calc required for this field
-                        reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, _appsReturnPeriod)).Sum(c => c.Amount);
+                        reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => PeriodCoInvestmentDueFromEmployerPaymentsTypePredicateToPeriod(p, returnPeriod)).Sum(c => c.Amount);
 
                         // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
-                        reportRecord.PaymentUniqueLearnerNumber = paymentValues.FirstOrDefault()?.LearnerUln;
+                        var firstPaymentVal = paymentValues.First();
+                        reportRecord.PaymentUniqueLearnerNumber = firstPaymentVal.LearnerUln;
 
                         // Extract company name
                         string employerName;
-                        if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(paymentValues.FirstOrDefault().ApprenticeshipId, out employerName))
+                        if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(firstPaymentVal.ApprenticeshipId, out employerName))
                         {
                             reportRecord.EmployerName = employerName;
                             if ((reportRecord.LearnerEmploymentStatusEmployerId != null) && !employerNamesToIDs.ContainsKey(reportRecord.LearnerEmploymentStatusEmployerId ?? 0))
@@ -132,13 +147,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         }
                     }
 
+                    // Extract coInvestmentInfo - NOTE: is possible to have duplicate LearnerRef numbers in this list
                     if (coInvestmentInfo != null)
                     {
-                        var learningDeliveries = coInvestmentInfo.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber &&
-                                                                        p.AFinDate >= DateConstants.BeginningOfYear &&
-                                                                        p.AFinDate <= DateConstants.EndOfYear &&
-                                                                        p.AFinType.CaseInsensitiveEquals(FinTypes.PMR));
-                        if ((learningDeliveries != null) && (learningDeliveries.Count() > 0))
+                        var learningDeliveries = coInvestmentInfo.Where(p => p.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
+
+                        if (learningDeliveries.Any())
                         {
                             reportRecord.TotalCoInvestmentCollectedToDate =
                                 learningDeliveries.Where(x => x.AFinCode == 1 || x.AFinCode == 2).Sum(x => x.AFinAmount) -
@@ -150,11 +164,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     var ldLearner = ldEarnings.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
                     var peLearner = peEarnings.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
 
-                    reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, _appsReturnPeriod, reportRecord) +
-                                                       CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, _appsReturnPeriod, reportRecord);
+                    reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
+                                                       CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);
 
-                    reportRecord.TotalEarningsForPeriod = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, _appsReturnPeriod, reportRecord) +
-                                                          CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, _appsReturnPeriod, reportRecord);
+                    reportRecord.TotalEarningsForPeriod = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, returnPeriod, reportRecord) +
+                                                          CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, returnPeriod, reportRecord);
 
                     // Default any null valued records
                     reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod == null ? 0 : reportRecord.ESFAPlannedPaymentsThisPeriod;
@@ -192,7 +206,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     if ((hbcpInfo != null) &&
                         hbcpInfo.Any(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
                                                             p.NonPaymentReason == 0 &&
-                                                            p.DeliveryPeriod == _appsReturnPeriod))
+                                                            p.DeliveryPeriod == returnPeriod))
                     {
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_CompletionHoldbackPayment;
                     }
@@ -203,7 +217,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_Clawback;
                     }
 
-                    // NOTE: As per WI93411, a level of rounding is required before the comparisions can be performed
+                    // NOTE: As per WI93411, a level of rounding is required before the comparisons can be performed
                     if ((reportRecord.TotalEarningsForPeriod > reportRecord.ESFAPlannedPaymentsThisPeriod +
                                                                reportRecord.CoInvestmentPaymentsToCollectThisPeriod)
                         && (decimal.Round(reportRecord.TotalEarningsToDate ?? 0, 2) == decimal.Round((reportRecord.PlannedPaymentsToYouToDate ?? 0) +
@@ -214,42 +228,43 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // If the reason for issue is datalock then we need to set the rule description
-                    if ((datalocks != null) && (datalocks.Count() > 0))
+                    if ((datalocks != null) && (datalocks.Any()))
                     {
-                        var datalock = datalocks.FirstOrDefault(x => x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
-                                                        x.DeliveryPeriod == _appsReturnPeriod);
+                        var datalock = dataLockHashset.First(x => x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
+                                                                           x.DeliveryPeriod == returnPeriod);
 
                         // Check to see if any records returned
                         if (datalock != null)
                         {
                             // Extract data lock info
-                            int datalock_rule_id = datalock.DataLockFailureId;
+                            int datalockRuleId = datalock.DataLockFailureId;
 
                             // calculate the rule description
-                            string datalockValue = LearnerLevelViewConstants.DLockErrorRuleNamePrefix + datalock_rule_id.ToString("00");
+                            string datalockValue = LearnerLevelViewConstants.DLockErrorRuleNamePrefix + datalockRuleId.ToString("00");
                             reportRecord.ReasonForIssues = datalockValue;
                             reportRecord.RuleDescription = DataLockValidationMessages.Validations.FirstOrDefault(x => x.RuleId.CaseInsensitiveEquals(datalockValue))?.ErrorMessage;
                         }
                     }
 
                     // Default any null calculated records
-                    reportRecord.IssuesAmount = reportRecord.IssuesAmount == null ? 0 : reportRecord.IssuesAmount;
-                    reportRecord.ReasonForIssues = reportRecord.ReasonForIssues == null ? string.Empty : reportRecord.ReasonForIssues;
-                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
+                    reportRecord.IssuesAmount = reportRecord.IssuesAmount ?? 0;
+                    reportRecord.ReasonForIssues = reportRecord.ReasonForIssues ?? string.Empty;
+                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0;
 
                     return reportRecord;
-                }).ToList();
 
-                // Remove the zeroed results
+                }).OrderBy(o => o.PaymentLearnerReferenceNumber)
+                    .ThenBy(o => o.PaymentFundingLineType).ToList();
+
+                // Remove the zeroed results - checked documentation and performance of this should be similar to a .Where
                 learnerLevelViewModelList.RemoveAll(p => p.TotalEarningsToDate == 0 && p.PlannedPaymentsToYouToDate == 0 && p.TotalCoInvestmentCollectedToDate == 0
                                                                        && p.CoInvestmentOutstandingFromEmplToDate == 0 && p.TotalEarningsForPeriod == 0 && p.ESFAPlannedPaymentsThisPeriod == 0
                                                                        && p.CoInvestmentPaymentsToCollectThisPeriod == 0 && p.IssuesAmount == 0);
 
                 // Set the missing employer names
-                foreach (var llvr in learnerLevelViewModelList.Where(w => w.EmployerName == string.Empty || w.EmployerName == null))
+                foreach (var llvr in learnerLevelViewModelList.Where(w => String.IsNullOrEmpty(w.EmployerName)))
                 {
-                    string employerName;
-                    if (employerNamesToIDs.TryGetValue(llvr.LearnerEmploymentStatusEmployerId ?? 0, out employerName))
+                    if (employerNamesToIDs.TryGetValue(llvr.LearnerEmploymentStatusEmployerId ?? 0, out var employerName))
                     {
                         llvr.EmployerName = employerName;
                     }
@@ -311,8 +326,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
         private bool TotalESFAPlannedPaymentFSTypePredicate(Payment payment)
         {
-            bool result = payment.AcademicYear == DateConstants.AcademicYear &&
-                   payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
+            bool result = payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
                    LearnerLevelViewConstants.eSFAFundingSources.Contains(payment.FundingSource) &&
                    LearnerLevelViewConstants.eSFAFSTransactionTypes.Contains(payment.TransactionType);
 
@@ -351,8 +365,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
         private bool TotalESFAPlannedPaymentsTTTypePredicate(Payment payment)
         {
-            bool result = payment.AcademicYear == DateConstants.AcademicYear &&
-                   payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
+            bool result = payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
                    LearnerLevelViewConstants.eSFATransactionTypes.Contains(payment.TransactionType);
 
             return result;
@@ -390,40 +403,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
         private bool TotalESFAPlannedPaymentsNonZPTypePredicate(Payment payment)
         {
-            bool result = payment.AcademicYear == DateConstants.AcademicYear &&
-                   !payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
+            bool result = !payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
                    LearnerLevelViewConstants.eSFANONZPTransactionTypes.Contains(payment.TransactionType);
 
             return result;
         }
 
-        //------------------------------------------------------------------------------------------------------
-        // CoInvestment Payments Type Predicates
-        //------------------------------------------------------------------------------------------------------
-
-        /// <summary>
-        /// Returns true if the payment is a CoInvestment payment.
-        /// </summary>
-        /// <param name="payment">Instance of type AppsMonthlyPaymentReportModel.</param>
-        /// <param name="period">Return period e.g. 1, 2, 3 etc.</param>
-        /// <returns>true if a CoInvestment payment, otherwise false.</returns>
-        private bool PeriodCoInvestmentPaymentsTypePredicate(Payment payment, int period)
-        {
-            bool result = payment.CollectionPeriod == period &&
-                          TotalCoInvestmentPaymentsTypePredicate(payment);
-
-            return result;
-        }
-
-        private bool TotalCoInvestmentPaymentsTypePredicate(Payment payment)
-        {
-            bool result = payment.AcademicYear == DateConstants.AcademicYear &&
-                          payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
-                          _fundingSourceCoInvestmentPayments.Contains(payment.FundingSource) &&
-                          _transactionTypesCoInvestmentPayments.Contains(payment.TransactionType);
-
-            return result;
-        }
 
         //------------------------------------------------------------------------------------------------------
         // CoInvestment Payments Due From Employer Payment Type Predicates
@@ -460,8 +445,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
         private bool TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(Payment payment)
         {
-            bool result = payment.AcademicYear == DateConstants.AcademicYear &&
-                   payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
+            bool result = payment.LearningAimReference.CaseInsensitiveEquals(LearnAimRefConstants.ZPROG001) &&
                    LearnerLevelViewConstants.coInvestmentundingSources.Contains(payment.FundingSource) &&
                    LearnerLevelViewConstants.coInvestmentTransactionTypes.Contains(payment.TransactionType);
 
@@ -481,14 +465,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 return 0;
             }
 
-            var peAttributeGroup = new List<string>()
-            {
-                AttributeConstants.Fm36PriceEpisodeCompletionPaymentAttributeName,
-                AttributeConstants.Fm36PriceEpisodeOnProgPaymentAttributeName,
-                AttributeConstants.Fm3PriceEpisodeBalancePaymentAttributeName,
-                AttributeConstants.Fm36PriceEpisodeLSFCashAttributeName
-            };
-
             decimal? sum = 0;
 
             // Build a list of records we don't need to calculate for
@@ -497,7 +473,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 LearnRefNumber = record.LearnRefNumber
             });
 
-            var peRecords = pelearnerRecords?.Where(pe => peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords, new PriceEpisodeEarningComparer());
+            var peRecords = pelearnerRecords?.Where(pe => _peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords, new PriceEpisodeEarningComparer());
 
             foreach (var pe in peRecords)
             {
@@ -540,25 +516,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 return 0;
             }
 
-            var ldAttributeGroup = new List<string>()
-            {
-                AttributeConstants.Fm36MathEngOnProgPayment,
-                AttributeConstants.Fm36LearnSuppFundCash,
-                AttributeConstants.Fm36MathEngBalPayment,
-                AttributeConstants.Fm36DisadvFirstPayment,
-                AttributeConstants.Fm36DisadvSecondPayment,
-                AttributeConstants.Fm36LearnDelFirstEmp1618Pay,
-                AttributeConstants.Fm36LearnDelSecondEmp1618Pay,
-                AttributeConstants.Fm36LearnDelFirstProv1618Pay,
-                AttributeConstants.Fm36LearnDelSecondProv1618Pay,
-                AttributeConstants.Fm36LearnDelLearnAddPayment,
-                AttributeConstants.Fm36LDApplic1618FrameworkUpliftBalancingPayment,
-                AttributeConstants.Fm36LDApplic1618FrameworkUpliftCompletionPayment,
-                AttributeConstants.Fm36LDApplic1618FrameworkUpliftOnProgPayment
-            };
-
             decimal? sum = 0;
-            var ldRecords = ldLearnerRecords?.Where(pe => ldAttributeGroup.Contains(pe.AttributeName));
+            var ldRecords = ldLearnerRecords?.Where(pe => _ldAttributeGroup.Contains(pe.AttributeName));
 
             foreach (var ld in ldRecords)
             {

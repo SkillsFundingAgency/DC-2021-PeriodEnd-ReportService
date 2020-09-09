@@ -67,8 +67,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             var collectionYear = reportServiceContext.CollectionYear;
 
             var baseFileName = _fileNameService.GetFilename(reportServiceContext, BaseReportFileName, OutputTypes.Csv, true, true);
-            var downloadFilename = _fileNameService.GetFilename(reportServiceContext, BaseReportFileName + " Download", OutputTypes.Csv, true, false);
-            var summaryFilename = _fileNameService.GetFilename(reportServiceContext, BaseReportFileName + " Summary", OutputTypes.Csv, true, false);
+            var downloadFilename = _fileNameService.GetFilename(reportServiceContext, BaseReportFileName + " Download", OutputTypes.Csv, false, true);
+            var summaryFilename = _fileNameService.GetFilename(reportServiceContext, BaseReportFileName + " Summary", OutputTypes.Json, false, true);
 
             _logger.LogInfo("UYP Summary Report Data Provider Start");
 
@@ -107,7 +107,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, baseFileName, reportServiceContext.Container, cancellationToken);
             await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, downloadFilename, reportServiceContext.Container, cancellationToken);
             string summaryFile = CreateSummary(uypSummaryViewRecords, cancellationToken);
-            await WriteAsync($"{summaryFilename}.json", summaryFile, reportServiceContext.Container, cancellationToken);
+            await WriteAsync(summaryFilename, summaryFile, reportServiceContext.Container, cancellationToken);
 
             // Persist data
             var persistModels = _uypSummaryViewPersistenceMapper.Map(reportServiceContext, uypSummaryViewRecords, cancellationToken);

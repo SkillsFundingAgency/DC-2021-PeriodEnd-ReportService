@@ -20,6 +20,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface
 
         int ReturnPeriod { get; }
 
+        int PreviousYearClosedReturnPeriod { get; }
+
         string ReturnPeriodName { get; }
 
         DateTime SubmissionDateTimeUtc { get; }

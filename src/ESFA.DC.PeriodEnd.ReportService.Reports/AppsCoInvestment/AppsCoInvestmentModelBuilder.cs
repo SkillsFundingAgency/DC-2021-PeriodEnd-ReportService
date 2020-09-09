@@ -41,7 +41,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
             ICollection<Learner> learners,
             ICollection<Payment> payments,
             ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues,
-            int currentAcademicYear)
+            int currentAcademicYear,
+            int previousYearClosedReturnPeriod)
         {
 
             var paymentsDictionary = _paymentsBuilder.BuildPaymentsLookupDictionary(payments);
@@ -75,7 +76,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment
                         EmployerIdentifierAtStartOfLearning = _learnersBuilder.GetEmploymentStatus(learner, record.LearningStartDate),
                         EmployerNameFromApprenticeshipService = earliestPaymentInfo?.LegalEntityName,
                         LDM356Or361 = _learningDeliveriesBuilder.HasLdm356Or361(learningDelivery) ? "Yes" : "No",
-                        EarningsAndPayments = _paymentsBuilder.BuildEarningsAndPayments(filteredPayments, allPayments, learningDelivery, aecPriceEpisodePeriodisedValues, currentAcademicYear, DateConstants.BeginningOfYear, DateConstants.EndOfYear)
+                        EarningsAndPayments = _paymentsBuilder.BuildEarningsAndPayments(filteredPayments, allPayments, learningDelivery, aecPriceEpisodePeriodisedValues, currentAcademicYear, DateConstants.BeginningOfYear, DateConstants.EndOfYear, previousYearClosedReturnPeriod)
                      };
 
                     return model;

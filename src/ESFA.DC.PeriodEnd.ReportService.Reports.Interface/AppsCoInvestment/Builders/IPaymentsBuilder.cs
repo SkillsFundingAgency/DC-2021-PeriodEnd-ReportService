@@ -29,7 +29,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Bui
 
         EarningsAndPayments BuildEarningsAndPayments(IEnumerable<Payment> filteredPayments, IEnumerable<Payment> allPayments, LearningDelivery learningDelivery,
             ICollection<AECApprenticeshipPriceEpisodePeriodisedValues> aecPriceEpisodePeriodisedValues,
-            int currentAcademicYear, DateTime academicYearStart, DateTime nextAcademicYearStart);
+            int currentAcademicYear, DateTime academicYearStart, DateTime nextAcademicYearStart, int previousYearClosedReturnPeriod);
 
         decimal? GetTotalPmrBetweenDates(LearningDelivery learningDelivery, DateTime? startDate, DateTime? endDate);
 

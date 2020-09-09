@@ -230,7 +230,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     // If the reason for issue is datalock then we need to set the rule description
                     if ((datalocks != null) && (datalocks.Any()))
                     {
-                        var datalock = dataLockHashset.First(x => x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
+                        var datalock = dataLockHashset.FirstOrDefault(x => x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
                                                                            x.DeliveryPeriod == returnPeriod);
 
                         // Check to see if any records returned

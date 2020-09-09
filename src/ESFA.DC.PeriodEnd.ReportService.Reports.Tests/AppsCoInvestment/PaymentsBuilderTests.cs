@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Reports.AppsCoInvestment.Builders;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsCoInvestment.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment.Builders;
 using FluentAssertions;
@@ -15,6 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
         private const int _currentAcademicYear = 2021;
         private readonly DateTime _academicYearStart = new DateTime(2020, 8, 1);
         private readonly DateTime _nextAcademicYearStart = new DateTime(2021, 8, 1);
+        private readonly int _previousYearClosedReturnPeriod = 14;
 
         [Fact]
         public void FilterByFundingSourceAndTransactionType_Test()
@@ -247,35 +249,36 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
         public void TotalCoInvestmentDueFromEmployerInPreviousFundingYears_Test()
         {
             var paymentOne = new PaymentBuilder()
-                .With<byte>(p => p.TransactionType, 1)
-                .With(p => p.Amount, 30)
-                .With<short>(p => p.AcademicYear, 2020)
-                .With<byte>(p => p.DeliveryPeriod, 2)
-                .With<byte>(p => p.CollectionPeriod, 1).Build();
+                .With(p => p.Amount, 10)
+                .With<short>(p => p.AcademicYear, 1819)
+                .With<byte>(p => p.CollectionPeriod, 6).Build();
 
             var paymentTwo = new PaymentBuilder()
-                .With<byte>(p => p.TransactionType, 3)
-                .With(p => p.Amount, 40)
-                .With<short>(p => p.AcademicYear, 2020)
-                .With<byte>(p => p.DeliveryPeriod, 2)
-                .With<byte>(p => p.CollectionPeriod, 2).Build();
+                .With(p => p.Amount, 20)
+                .With<short>(p => p.AcademicYear, 1920)
+                .With<byte>(p => p.CollectionPeriod, 10).Build();
 
             var paymentThree = new PaymentBuilder()
-                .With<byte>(p => p.TransactionType, 2)
-                .With(p => p.Amount, 50)
-                .With<short>(p => p.AcademicYear, 2021)
-                .With<byte>(p => p.DeliveryPeriod, 2)
-                .With<byte>(p => p.CollectionPeriod, 1).Build();
+                .With(p => p.Amount, 30)
+                .With<short>(p => p.AcademicYear, 1920)
+                .With<byte>(p => p.CollectionPeriod, 12).Build();
+
+            var paymentFourToBeExcluded = new PaymentBuilder()
+                .With<byte>(p => p.TransactionType, 3)
+                .With(p => p.Amount, 40)
+                .With<short>(p => p.AcademicYear, 1920)
+                .With<byte>(p => p.CollectionPeriod, 13).Build();
 
             var payments = new List<Payment>()
             {
                 paymentOne,
                 paymentTwo,
-                paymentThree
+                paymentThree,
+                paymentFourToBeExcluded
             };
 
-            var totalCoInvestmentDueFromEmployerInPreviousFundingYears = NewBuilder().TotalCoInvestmentDueFromEmployerInPreviousFundingYears(payments, 2021);
-            totalCoInvestmentDueFromEmployerInPreviousFundingYears.Should().Be(70);
+            var totalCoInvestmentDueFromEmployerInPreviousFundingYears = NewBuilder().TotalCoInvestmentDueFromEmployerInPreviousFundingYears(payments, 12);
+            totalCoInvestmentDueFromEmployerInPreviousFundingYears.Should().Be(60);
         }
 
 
@@ -332,7 +335,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
                                     .With<byte>(p=> p.FundingSource , 2)
                                     .With<byte>(p=> p.TransactionType, 3)
                                     .With(p => p.Amount, 10)
-                                    .With<short>(p => p.AcademicYear, 2020)
+                                    .With<short>(p => p.AcademicYear, 1920)
                                     .With<byte>(p => p.DeliveryPeriod, 1)
                                     .With<byte>(p => p.CollectionPeriod, 1).Build();
 
@@ -340,21 +343,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
                                     .With<byte>(p => p.FundingSource, 2)
                                     .With<byte>(p => p.TransactionType, 2)
                                     .With(p => p.Amount, 20)
-                                    .With<short>(p => p.AcademicYear, 2020)
+                                    .With<short>(p => p.AcademicYear, 1920)
                                     .With<byte>(p => p.DeliveryPeriod, 1)
                                     .With<byte>(p => p.CollectionPeriod, 1).Build();
 
             var paymentThree = new PaymentBuilder()
                                     .With<byte>(p => p.TransactionType, 1)
                                     .With(p => p.Amount, 30)
-                                    .With<short>(p => p.AcademicYear, 2020)
+                                    .With<short>(p => p.AcademicYear, 1920)
                                     .With<byte>(p => p.DeliveryPeriod, 2)
                                     .With<byte>(p => p.CollectionPeriod, 1).Build();
 
             var paymentFour = new PaymentBuilder()
                                     .With<byte>(p => p.TransactionType, 3)
                                     .With(p => p.Amount, 40)
-                                    .With<short>(p => p.AcademicYear, 2020)
+                                    .With<short>(p => p.AcademicYear, 1920)
                                     .With<byte>(p => p.DeliveryPeriod, 2)
                                     .With<byte>(p => p.CollectionPeriod, 2).Build();
 
@@ -426,7 +429,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsCoInvestment
                 .Build();
             
             var earningsAndPayments = NewBuilder().BuildEarningsAndPayments(filteredPayments, allPayments, learningDelivery,
-                aecPriceEpisodePeriodisedValues, _currentAcademicYear, _academicYearStart, _nextAcademicYearStart);
+                aecPriceEpisodePeriodisedValues, _currentAcademicYear, _academicYearStart, _nextAcademicYearStart, _previousYearClosedReturnPeriod);
 
             earningsAndPayments.CoInvestmentPaymentsDueFromEmployer.August.Should().Be(50);
             earningsAndPayments.CoInvestmentPaymentsDueFromEmployer.September.Should().Be(60);

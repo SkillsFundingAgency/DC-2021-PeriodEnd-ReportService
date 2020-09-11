@@ -43,6 +43,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             (1920, new [] { 9, 10, 11, 12 }),
         };
 
+        private readonly (int, int[]) _20211 = ( 2021, new[] { 1 } );
+        private readonly (int, int[]) _202112 = ( 2021, new[] { 1, 2 } );
+        private readonly (int, int[]) _2021123 = ( 2021, new[] { 1, 2, 3} );
+
         public CrossYearPaymentsRenderService(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
@@ -139,7 +143,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderR01Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
             var periods = _fsrProcuredBasePeriods;
-            periods.Add((2021, new[] { 1 }));
+            periods.Add(_20211);
 
             var columnNum = R01ColumnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
@@ -150,7 +154,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderR02Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
             var periods = _fsrProcuredBasePeriods;
-            periods.Add((2021, new[] { 1, 2 }));
+            periods.Add(_202112);
 
             var columnNum = R02ColumnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
@@ -161,7 +165,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderR03Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
             var periods = _fsrProcuredBasePeriods;
-            periods.Add((2021, new[] { 1, 2, 3 }));
+            periods.Add(_2021123);
 
             var columnNum = R03ColumnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
@@ -193,7 +197,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderR01Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
             var periods = _fsrEmployerBasePeriods;
-            periods.Add((2021, new[] { 1 }));
+            periods.Add(_20211);
 
             RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R01ColumnNumber + 1);
 
@@ -203,7 +207,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderR02Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
             var periods = _fsrEmployerBasePeriods;
-            periods.Add((2021, new[] { 1, 2 }));
+            periods.Add(_202112);
 
             RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R02ColumnNumber + 2);
 
@@ -213,7 +217,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderR03Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
             var periods = _fsrEmployerBasePeriods;
-            periods.Add((2021, new[] { 1, 2, 3 }));
+            periods.Add(_2021123);
 
             RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R03ColumnNumber + 1);
 

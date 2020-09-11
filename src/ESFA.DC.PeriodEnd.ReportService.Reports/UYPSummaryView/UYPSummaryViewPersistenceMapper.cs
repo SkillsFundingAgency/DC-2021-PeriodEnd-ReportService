@@ -32,7 +32,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 IssuesAmount = m.IssuesAmount,
                 ReasonForIssues = m.ReasonForIssues,
                 PaymentFundingLineType = m.PaymentFundingLineType,
-                RuleDescription = m.RuleDescription
+                RuleDescription = m.RuleDescription,
+                ReturnPeriod = reportServiceContext.ReturnPeriod
             });
         }
     }

@@ -59,12 +59,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             var deliveryDictionary = delivery?.PeriodDeliveries.ToDictionary(x => x.ReturnPeriod, x => x);
 
-            RenderR12Procured(worksheet, deliveryDictionary.GetValueOrDefault(R12), startRow);
-            RenderR13Procured(worksheet, deliveryDictionary.GetValueOrDefault(R13), startRow);
-            RenderR14Procured(worksheet, deliveryDictionary.GetValueOrDefault(R14), startRow);
-            RenderR01Procured(worksheet, deliveryDictionary.GetValueOrDefault(R01), startRow);
-            RenderR02Procured(worksheet, deliveryDictionary.GetValueOrDefault(R02), startRow);
-            RenderR03Procured(worksheet, deliveryDictionary.GetValueOrDefault(R03), startRow);
+            RenderR12Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R12), startRow);
+            RenderR13Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R13), startRow);
+            RenderR14Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R14), startRow);
+            RenderR01Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R01), startRow);
+            RenderR02Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R02), startRow);
+            RenderR03Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R03), startRow);
 
             return worksheet;
         }
@@ -81,12 +81,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             var deliveryDictionary = delivery?.PeriodDeliveries.ToDictionary(x => x.ReturnPeriod, x => x);
 
-            RenderR12Employers(worksheet, deliveryDictionary.GetValueOrDefault(R12).FSRValues, startRow);
-            RenderR13Employers(worksheet, deliveryDictionary.GetValueOrDefault(R13).FSRValues, startRow);
-            RenderR14Employers(worksheet, deliveryDictionary.GetValueOrDefault(R14).FSRValues, startRow);
-            RenderR01Employers(worksheet, deliveryDictionary.GetValueOrDefault(R01).FSRValues, startRow);
-            RenderR02Employers(worksheet, deliveryDictionary.GetValueOrDefault(R02).FSRValues, startRow);
-            RenderR03Employers(worksheet, deliveryDictionary.GetValueOrDefault(R03).FSRValues, startRow);
+            RenderR12Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R12).FSRValues, startRow);
+            RenderR13Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R13).FSRValues, startRow);
+            RenderR14Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R14).FSRValues, startRow);
+            RenderR01Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R01).FSRValues, startRow);
+            RenderR02Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R02).FSRValues, startRow);
+            RenderR03Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R03).FSRValues, startRow);
 
             return worksheet;
         }

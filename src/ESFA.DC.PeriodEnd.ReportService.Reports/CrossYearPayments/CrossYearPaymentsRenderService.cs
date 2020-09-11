@@ -27,6 +27,22 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private const string R02 = "R02";
         private const string R03 = "R03";
 
+        private readonly ICollection<(int, int[])> _fsrProcuredBasePeriods = new List<(int, int[])>
+        {
+            (1718, new[] {6, 7, 8}),
+            (1718, new[] {9, 10, 11, 12}),
+            (1819, new[] {1, 2, 3, 4, 5, 6, 7, 8}),
+            (1819, new[] {9, 10, 11, 12}),
+            (1920, new[] {1, 2, 3, 4, 5, 6, 7, 8}),
+            (1920, new[] {9, 10, 11, 12})
+        };
+
+        private readonly ICollection<(int, int[])> _fsrEmployerBasePeriods = new List<(int, int[])>
+        {
+            (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
+            (1920, new [] { 9, 10, 11, 12 }),
+        };
+
         public CrossYearPaymentsRenderService(IDateTimeProvider dateTimeProvider)
         {
             _dateTimeProvider = dateTimeProvider;
@@ -103,65 +119,27 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR12Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1718, new [] { 6, 7, 8 }),
-                (1718, new [] { 9, 10, 11, 12 }),
-                (1819, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1819, new [] { 9, 10, 11, 12 }),
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-            };
-
             var columnNum = 6;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
-            RenderFSRValues(worksheet, periodDelivery?.FSRValues, periods, row, columnNum);
+            RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, columnNum);
 
             return worksheet;
         }
 
         private Worksheet RenderR13Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1718, new [] { 6, 7, 8 }),
-                (1718, new [] { 9, 10, 11, 12 }),
-                (1819, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1819, new [] { 9, 10, 11, 12 }),
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-            };
-
-            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, periods, row, R13ColumnNumber);
+            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, R13ColumnNumber);
         }
 
         private Worksheet RenderR14Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1718, new [] { 6, 7, 8 }),
-                (1718, new [] { 9, 10, 11, 12 }),
-                (1819, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1819, new [] { 9, 10, 11, 12 }),
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-            };
-
-            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, periods, row, R14ColumnNumber);
+            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, R14ColumnNumber);
         }
 
         private Worksheet RenderR01Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1718, new [] { 6, 7, 8 }),
-                (1718, new [] { 9, 10, 11, 12 }),
-                (1819, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1819, new [] { 9, 10, 11, 12 }),
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-                (2021, new [] { 1 })
-            };
+            var periods = _fsrProcuredBasePeriods;
+            periods.Add((2021, new[] { 1 }));
 
             var columnNum = R01ColumnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
@@ -171,16 +149,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR02Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1718, new [] { 6, 7, 8 }),
-                (1718, new [] { 9, 10, 11, 12 }),
-                (1819, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1819, new [] { 9, 10, 11, 12 }),
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-                (2021, new [] { 1, 2 })
-            };
+            var periods = _fsrProcuredBasePeriods;
+            periods.Add((2021, new[] { 1, 2 }));
 
             var columnNum = R02ColumnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
@@ -190,16 +160,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR03Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1718, new [] { 6, 7, 8 }),
-                (1718, new [] { 9, 10, 11, 12 }),
-                (1819, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1819, new [] { 9, 10, 11, 12 }),
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-                (2021, new [] { 1, 2, 3 })
-            };
+            var periods = _fsrProcuredBasePeriods;
+            periods.Add((2021, new[] { 1, 2, 3 }));
 
             var columnNum = R03ColumnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
@@ -209,51 +171,29 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR12Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-            };
-
-            RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R12ColumnNumber + 1);
+            RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, R12ColumnNumber + 1);
 
             return worksheet;
         }
 
         private Worksheet RenderR13Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-            };
-
-            RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R13ColumnNumber);
+            RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, R13ColumnNumber);
 
             return worksheet;
         }
 
         private Worksheet RenderR14Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-            };
-
-            RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R14ColumnNumber);
+            RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, R14ColumnNumber);
 
             return worksheet;
         }
 
         private Worksheet RenderR01Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-                (2021, new [] { 1 })
-            };
+            var periods = _fsrEmployerBasePeriods;
+            periods.Add((2021, new[] { 1 }));
 
             RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R01ColumnNumber + 1);
 
@@ -262,12 +202,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR02Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-                (2021, new [] { 1, 2 })
-            };
+            var periods = _fsrEmployerBasePeriods;
+            periods.Add((2021, new[] { 1, 2 }));
 
             RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R02ColumnNumber + 2);
 
@@ -276,12 +212,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR03Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
         {
-            var periods = new List<(int, int[])>
-            {
-                (1920, new [] { 1, 2, 3, 4, 5, 6, 7, 8 }),
-                (1920, new [] { 9, 10, 11, 12 }),
-                (2021, new [] { 1, 2, 3 })
-            };
+            var periods = _fsrEmployerBasePeriods;
+            periods.Add((2021, new[] { 1, 2, 3 }));
 
             RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R03ColumnNumber + 1);
 

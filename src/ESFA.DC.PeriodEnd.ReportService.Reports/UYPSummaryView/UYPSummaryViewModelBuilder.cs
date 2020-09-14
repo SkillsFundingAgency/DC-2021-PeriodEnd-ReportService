@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
-using System.Globalization;
 using System.Linq;
 using ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model;
@@ -112,7 +111,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         }
                     }
 
-                    var paymentValues = payments.Where(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber && p.ReportingAimFundingLineType == reportRecord.PaymentFundingLineType).ToList();
+                    var paymentValues = payments.Where(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
                     if (paymentValues.Any())
                     {
                         // Assign the amounts
@@ -176,11 +175,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                                                           CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, returnPeriod, reportRecord);
 
                     // Default any null valued records
-                    reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod == null ? 0 : reportRecord.ESFAPlannedPaymentsThisPeriod;
-                    reportRecord.PlannedPaymentsToYouToDate = reportRecord.PlannedPaymentsToYouToDate == null ? 0 : reportRecord.PlannedPaymentsToYouToDate;
-                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate == null ? 0 : reportRecord.CoInvestmentOutstandingFromEmplToDate;
-                    reportRecord.CoInvestmentPaymentsToCollectThisPeriod = reportRecord.CoInvestmentPaymentsToCollectThisPeriod == null ? 0 : reportRecord.CoInvestmentPaymentsToCollectThisPeriod;
-                    reportRecord.TotalCoInvestmentCollectedToDate = reportRecord.TotalCoInvestmentCollectedToDate == null ? 0 : reportRecord.TotalCoInvestmentCollectedToDate;
+                    reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod ?? 0;
+                    reportRecord.PlannedPaymentsToYouToDate = reportRecord.PlannedPaymentsToYouToDate ?? 0;
+                    reportRecord.CoInvestmentOutstandingFromEmplToDate = reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0;
+                    reportRecord.CoInvestmentPaymentsToCollectThisPeriod = reportRecord.CoInvestmentPaymentsToCollectThisPeriod ?? 0;
+                    reportRecord.TotalCoInvestmentCollectedToDate = reportRecord.TotalCoInvestmentCollectedToDate ?? 0;
 
                     // Work out calculated fields
                     // Issues amount - how much the gap is between what the provider earnt and the payments the ESFA/Employer were planning to give them

@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
     {
         private readonly IDateTimeProvider _dateTimeProvider;
 
-        private const int R12ColumnNumber = 6;
+        private const int R12ColumnNumber = 7;
         private const int R13ColumnNumber = 14;
         private const int R14ColumnNumber = 19;
         private const int R01ColumnNumber = 10;
@@ -26,6 +26,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private const string R01 = "R01";
         private const string R02 = "R02";
         private const string R03 = "R03";
+
+        private const int ColumnNumber6 = 6;
+        private const int ColumnNumber7 = 7;
 
         private readonly ICollection<(int, int[])> _fsrProcuredBasePeriods = new List<(int, int[])>
         {
@@ -80,8 +83,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             var deliveryDictionary = delivery?.PeriodDeliveries.ToDictionary(x => x.ReturnPeriod, x => x);
 
             RenderR12Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R12), startRow);
-            RenderR13Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R13), startRow);
-            RenderR14Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R14), startRow);
+            RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R13), startRow, R13ColumnNumber);
+            RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R14), startRow, R14ColumnNumber);
             RenderR01Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R01), startRow);
             RenderR02Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R02), startRow);
             RenderR03Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R03), startRow);
@@ -101,12 +104,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             var deliveryDictionary = delivery?.PeriodDeliveries.ToDictionary(x => x.ReturnPeriod, x => x);
 
-            RenderR12Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R12).FSRValues, startRow);
-            RenderR13Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R13).FSRValues, startRow);
-            RenderR14Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R14).FSRValues, startRow);
-            RenderR01Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R01).FSRValues, startRow);
-            RenderR02Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R02).FSRValues, startRow);
-            RenderR03Employers(worksheet, deliveryDictionary?.GetValueOrDefault(R03).FSRValues, startRow);
+            RenderEmployersColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R12).FSRValues, startRow, R12ColumnNumber);
+            RenderEmployersColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R13).FSRValues, startRow, R13ColumnNumber);
+            RenderEmployersColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R14).FSRValues, startRow, R14ColumnNumber);
+            RenderEmployersColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R01).FSRValues, startRow, R01ColumnNumber + 1, _20211);
+            RenderEmployersColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R02).FSRValues, startRow, R02ColumnNumber + 1, _202112);
+            RenderEmployersColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R03).FSRValues, startRow, R03ColumnNumber + 1, _2021123);
 
             return worksheet;
         }
@@ -123,21 +126,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderR12Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
         {
-            var columnNum = 6;
-            RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
-            RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, columnNum);
+            RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, ColumnNumber6);
+            RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, ColumnNumber7);
 
             return worksheet;
         }
 
-        private Worksheet RenderR13Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
+        private Worksheet RenderProcuredColumn(Worksheet worksheet, PeriodDelivery periodDelivery, int row, int columnNumber)
         {
-            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, R13ColumnNumber);
-        }
-
-        private Worksheet RenderR14Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
-        {
-            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, R14ColumnNumber);
+            return RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, columnNumber);
         }
 
         private Worksheet RenderR01Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
@@ -173,55 +170,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return worksheet;
         }
 
-        private Worksheet RenderR12Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
-        {
-            RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, R12ColumnNumber + 1);
-
-            return worksheet;
-        }
-
-        private Worksheet RenderR13Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
-        {
-            RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, R13ColumnNumber);
-
-            return worksheet;
-        }
-
-        private Worksheet RenderR14Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
-        {
-            RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, R14ColumnNumber);
-
-            return worksheet;
-        }
-
-        private Worksheet RenderR01Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
+        private Worksheet RenderEmployersColumn(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum, int columnNumber, (int, int[])additionalPeriods)
         {
             var periods = _fsrEmployerBasePeriods;
-            periods.Add(_20211);
+            periods.Add(additionalPeriods);
 
-            RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R01ColumnNumber + 1);
-
-            return worksheet;
+            return RenderFSRValues(worksheet, fsrValues, periods, startRowNum, columnNumber);
         }
 
-        private Worksheet RenderR02Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
+        private Worksheet RenderEmployersColumn(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum, int columnNumber)
         {
-            var periods = _fsrEmployerBasePeriods;
-            periods.Add(_202112);
-
-            RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R02ColumnNumber + 2);
-
-            return worksheet;
-        }
-
-        private Worksheet RenderR03Employers(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum)
-        {
-            var periods = _fsrEmployerBasePeriods;
-            periods.Add(_2021123);
-
-            RenderFSRValues(worksheet, fsrValues, periods, startRowNum, R03ColumnNumber + 1);
-
-            return worksheet;
+            return RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, columnNumber);
         }
 
         //        private Worksheet RenderContractAndFsrValues(Worksheet worksheet, PeriodDelivery periodDelivery, int startColumn, int startRow)

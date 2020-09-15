@@ -162,21 +162,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, columnNumber);
         }
 
-        //        private Worksheet RenderContractAndFsrValues(Worksheet worksheet, PeriodDelivery periodDelivery, int startColumn, int startRow)
-        //        {
-        //            var summaryRow = startRow + 7;
-        //
-        //            RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, startRow, startColumn);
-        //
-        //            RenderFSRValuesColumn(worksheet, periodDelivery?.FSRValues, startRow, startColumn + 1);
-        //
-        //            //worksheet.Cells[summaryRow, startColumn + 1].Value = periodDelivery?.FSRSubtotal ?? 0m;
-        //            //worksheet.Cells[summaryRow, startColumn + 2].Value = periodDelivery?.FSRReconciliationSubtotal ?? 0m;
-        //            //worksheet.Cells[startRow + 7, startColumn + 3].Value = periodDelivery?.CappingSubtotal ?? 0m;
-        //
-        //            return worksheet;
-        //        }
-
         private Worksheet RenderContractValuesColumn(Worksheet worksheet, ICollection<ContractValue> contractValues, int startRowNum, int columnNum)
         {
             RenderValueCell(worksheet, contractValues, new int[] { 201801, 201802, 201803 }, startRowNum, columnNum);

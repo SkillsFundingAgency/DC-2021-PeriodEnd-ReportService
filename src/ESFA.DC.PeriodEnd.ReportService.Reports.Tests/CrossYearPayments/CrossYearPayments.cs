@@ -19,6 +19,47 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
     public class CrossYearPayments
     {
         [Fact]
+        public async Task GenerateReportEmptyModel()
+        {
+            var cancellationToken = CancellationToken.None;
+            var academicYear = 2021;
+            var returnPeriod = 1;
+            var ukprn = 123456;
+            var fileName = "FileName.xlsx";
+            var container = "";
+
+            var crossYearPaymentsModel = new CrossYearPaymentsModel();
+            var reportServiceContext = new Mock<IReportServiceContext>();
+
+            var dataModel = new CrossYearDataModel();
+
+            reportServiceContext.SetupGet(c => c.Ukprn).Returns(ukprn);
+            reportServiceContext.SetupGet(c => c.CollectionYear).Returns(academicYear);
+            reportServiceContext.SetupGet(c => c.Container).Returns(container);
+            reportServiceContext.SetupGet(c => c.ReturnPeriod).Returns(returnPeriod);
+
+            var excelFileServiceMock = new Mock<IExcelFileService>();
+            var fileNameServiceMock = new Mock<IFileNameService>();
+            var modelBuilderMock = new Mock<ICrossYearModelBuilder>();
+            var renderServiceMock = new Mock<ICrossYearRenderService>();
+            var dataProviderMock = new Mock<ICrossYearDataProvider>();
+            var dateTimeProviderMock = new Mock<IDateTimeProvider>();
+
+            var excelService = GetExcelFileService(excelFileServiceMock, false);
+            var renderService = GetRenderService(renderServiceMock, dateTimeProviderMock, false);
+
+            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Cross Year Indicative Payments Report", OutputTypes.Excel, true, true)).Returns(fileName);
+
+            dataProviderMock.Setup(b => b.ProvideAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(dataModel);
+
+            modelBuilderMock.Setup(b => b.Build(dataModel, reportServiceContext.Object)).Returns(crossYearPaymentsModel);
+
+            var report = NewReport(excelService, fileNameServiceMock.Object, modelBuilderMock.Object, renderService, dataProviderMock.Object);
+
+            await report.GenerateReport(reportServiceContext.Object, cancellationToken);
+        }
+
+        [Fact]
         public async Task GenerateReport()
         {
             var cancellationToken = CancellationToken.None;

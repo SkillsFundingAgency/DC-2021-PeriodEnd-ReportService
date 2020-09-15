@@ -57,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         public Worksheet Render(CrossYearPaymentsModel model, Worksheet worksheet, Workbook workbook)
         {
-            var modelDictionary = model.Deliveries.ToDictionary(x => x.DeliveryName, x => x);
+            var modelDictionary = model.Deliveries?.ToDictionary(x => x.DeliveryName, x => x) ?? new Dictionary<string, Delivery>();
 
             Render1618NonLevyContractedApprenticeshipsProcuredDelivery(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.NonLevy1618ContractedApprenticeshipsProcuredDelivery));
 
@@ -85,9 +85,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             RenderR12Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R12), startRow);
             RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R13), startRow, R13ColumnNumber);
             RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R14), startRow, R14ColumnNumber);
-            RenderR01Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R01), startRow);
-            RenderR02Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R02), startRow);
-            RenderR03Procured(worksheet, deliveryDictionary?.GetValueOrDefault(R03), startRow);
+            RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R01), startRow, R01ColumnNumber, _20211);
+            RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R02), startRow, R02ColumnNumber, _202112);
+            RenderProcuredColumn(worksheet, deliveryDictionary?.GetValueOrDefault(R03), startRow, R03ColumnNumber, _2021123);
 
             return worksheet;
         }
@@ -137,34 +137,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return RenderFSRValues(worksheet, periodDelivery?.FSRValues, _fsrProcuredBasePeriods, row, columnNumber);
         }
 
-        private Worksheet RenderR01Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
+        private Worksheet RenderProcuredColumn(Worksheet worksheet, PeriodDelivery periodDelivery, int row, int columnNumber,
+            (int, int[]) additionalPeriods)
         {
             var periods = _fsrProcuredBasePeriods;
-            periods.Add(_20211);
+            periods.Add(additionalPeriods);
 
-            var columnNum = R01ColumnNumber;
-            RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
-            RenderFSRValues(worksheet, periodDelivery?.FSRValues, periods, row, columnNum);
-            return worksheet;
-        }
-
-        private Worksheet RenderR02Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
-        {
-            var periods = _fsrProcuredBasePeriods;
-            periods.Add(_202112);
-
-            var columnNum = R02ColumnNumber;
-            RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
-            RenderFSRValues(worksheet, periodDelivery?.FSRValues, periods, row, columnNum);
-            return worksheet;
-        }
-
-        private Worksheet RenderR03Procured(Worksheet worksheet, PeriodDelivery periodDelivery, int row)
-        {
-            var periods = _fsrProcuredBasePeriods;
-            periods.Add(_2021123);
-
-            var columnNum = R03ColumnNumber;
+            var columnNum = columnNumber;
             RenderContractValuesColumn(worksheet, periodDelivery?.ContractValues, row, columnNum++);
             RenderFSRValues(worksheet, periodDelivery?.FSRValues, periods, row, columnNum);
             return worksheet;

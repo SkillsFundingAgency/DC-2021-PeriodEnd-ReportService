@@ -370,7 +370,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Reports.FundingSummaryReport
                 .WithFundLine($"ILR {ageRange} {description} Disadvantage Payments (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.First_Disadvantage_Payment, Constants.DASPayments.TransactionType.Second_Disadvantage_Payment })
                 .WithFundLine($"ILR {ageRange} {description} Additional Payments for Providers (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.First_16To18_Provider_Incentive, Constants.DASPayments.TransactionType.Second_16To18_Provider_Incentive })
                 .WithFundLine($"ILR {ageRange} {description} Additional Payments for Employers (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.First_16To18_Employer_Incentive, Constants.DASPayments.TransactionType.Second_16To18_Employer_Incentive })
-                .WithFundLine($"ILR {ageRange} {description} Additional Payments for Apprenticeships (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.Apprenticeship })
+                .WithFundLine($"ILR {ageRange} {description} Additional Payments for Apprentices (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.Apprenticeship })
                 .WithFundLine($"ILR {ageRange} {description} Learning Support (£)", new[] { Constants.DASPayments.FundingSource.Fully_Funded_SFA }, new[] { Constants.DASPayments.TransactionType.Learning_Support });
 
             return fundLineGroup;

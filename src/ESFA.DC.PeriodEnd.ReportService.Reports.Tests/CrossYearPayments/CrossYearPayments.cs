@@ -9,6 +9,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Data;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 using Moq;
@@ -46,9 +47,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
             var dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
             var excelService = GetExcelFileService(excelFileServiceMock, false);
-            var renderService = GetRenderService(renderServiceMock, dateTimeProviderMock, false);
+            var renderService = GetRenderService(renderServiceMock, false);
 
-            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Cross Year Indicative Payments Report", OutputTypes.Excel, true, true)).Returns(fileName);
+            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Beta Cross Year Indicative Payments Report", OutputTypes.Excel, true, true)).Returns(fileName);
 
             dataProviderMock.Setup(b => b.ProvideAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(dataModel);
 
@@ -64,7 +65,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
         {
             var cancellationToken = CancellationToken.None;
             var academicYear = 2021;
-            var returnPeriod = 1;
+            var returnPeriod = 2;
             var ukprn = 123456;
             var fileName = "FileName.xlsx";
             var container = "";
@@ -76,51 +77,65 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
                     ProviderName = "Test Provider",
                     UKPRN = 12345678
                 },
+                FooterInfo = new FooterInfo
+                {
+                    ReportGeneratedAt = "Report generated at 13:34:52 08/11/20"
+                },
                 Deliveries = new List<Delivery>
                 {
                     new Delivery
                     {
                         ContractNumber = "Contract 1",
                         DeliveryName = "16-18 Non-Levy Contracted Apprenticeships - Procured delivery",
-                        PeriodDeliveries = new List<PeriodDelivery>
+                        ContractValues = new List<ContractValue>
                         {
-                            new PeriodDelivery
+                            new ContractValue
                             {
-                                ReturnPeriod = "R12",
-                                ContractValues = new List<ContractValue>
-                                {
-                                    new ContractValue
-                                    {
-                                        Period = 201801,
-                                        Value = 12000m
-                                    },
-                                    new ContractValue
-                                    {
-                                        Period = 201804,
-                                        Value = 22000m
-                                    },
-                                    new ContractValue
-                                    {
-                                        Period = 201904,
-                                        Value = 32000m
-                                    }
-                                },
-                                FSRValues = new List<FSRValue>
-                                {
-                                    new FSRValue
-                                    {
-                                        AcademicYear = 1718,
-                                        Period = 6,
-                                        Value = 1m
-                                    },
-                                    new FSRValue
-                                    {
-                                        AcademicYear = 1819,
-                                        Period = 6,
-                                        Value = 1m
-                                    },
-                                }
+                                DeliveryPeriod = 201801,
+                                Value = 12000m
+                            },
+                            new ContractValue
+                            {
+                                DeliveryPeriod = 201804,
+                                Value = 22000m
+                            },
+                            new ContractValue
+                            {
+                                DeliveryPeriod = 201904,
+                                Value = 32000m
                             }
+                        },
+                        FSRValues = new List<FSRValue>
+                        {
+                            new FSRValue
+                            {
+                                AcademicYear = 1718,
+                                DeliveryPeriod = 6,
+                                CollectionPeriod = 14,
+                                Value = 1m
+                            },
+                            new FSRValue
+                            {
+                                AcademicYear = 1819,
+                                DeliveryPeriod = 6,
+                                CollectionPeriod = 14,
+                                Value = 1m
+                            }
+                        }
+                    },
+                    new Delivery
+                    {
+                        ContractNumber = "Contract2",
+                        DeliveryName = "Adult Non-Levy Contracted Apprenticeships - Procured delivery",
+                        FSRValues = new List<FSRValue>
+                        {
+                            new FSRValue
+                            {
+                                AcademicYear = 1718,
+                                DeliveryPeriod = 6,
+                                CollectionPeriod = 14,
+                                Value = 1m
+                            },
                         }
                     }
                 }
@@ -139,12 +154,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
             var modelBuilderMock = new Mock<ICrossYearModelBuilder>();
             var renderServiceMock = new Mock<ICrossYearRenderService>();
             var dataProviderMock = new Mock<ICrossYearDataProvider>();
-            var dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
             var excelService = GetExcelFileService(excelFileServiceMock, false);
-            var renderService = GetRenderService(renderServiceMock, dateTimeProviderMock, false);
+            var renderService = GetRenderService(renderServiceMock, false);
 
-            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Cross Year Indicative Payments Report", OutputTypes.Excel, true, true)).Returns(fileName);
+            fileNameServiceMock.Setup(s => s.GetFilename(reportServiceContext.Object, "Beta Cross Year Indicative Payments Report", OutputTypes.Excel, true, true)).Returns(fileName);
 
             dataProviderMock.Setup(b => b.ProvideAsync(reportServiceContext.Object, cancellationToken)).ReturnsAsync(dataModel);
 
@@ -170,10 +184,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
             return useMock ? excelFileServiceMock.Object : new ExcelFileService(new FileSystemFileService());
         }
 
-        private ICrossYearRenderService GetRenderService(Mock<ICrossYearRenderService> crossYearRenderService, Mock<IDateTimeProvider> dateTimeProviderMock, 
-            bool useMock = true)
+        private ICrossYearRenderService GetRenderService(Mock<ICrossYearRenderService> crossYearRenderService, bool useMock = true)
         {
-            return useMock ? crossYearRenderService.Object : new CrossYearPaymentsRenderService(dateTimeProviderMock.Object);
+            return useMock ? crossYearRenderService.Object : new CrossYearPaymentsRenderService();
         }
     }
 }

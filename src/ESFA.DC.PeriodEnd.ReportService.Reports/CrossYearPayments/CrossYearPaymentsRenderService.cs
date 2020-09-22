@@ -57,7 +57,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             (1920, new [] { 9, 10, 11, 12 }),
         };
 
-        private readonly IDictionary<int, IDictionary<int,int>> _fsrCollectionPeriodConfiguration = new Dictionary<int, IDictionary<int, int>>
+        private readonly IDictionary<int, IDictionary<int,int>> _collectionPeriodConfiguration = new Dictionary<int, IDictionary<int, int>>
         {
             { 12, new Dictionary<int, int> { {1718, 14}, {1819, 14}, {1920, 12}} },
             { 13, new Dictionary<int, int> { {1718, 14}, {1819, 14}, {1920, 13}} },
@@ -114,14 +114,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, _fsrCollectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14PreviousYearColumnNumber, _fsrR14PreviousYearPeriods);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14PreviousYearColumnNumber, _fsrR14PreviousYearPeriods);
 
-            RenderR12Procured(worksheet, delivery?.FSRValues, delivery?.ContractValues, R12ContractApprovalDateTime, startRow);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, _fsrCollectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, _fsrCollectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _fsrCollectionPeriodConfiguration.GetValueOrDefault(R01), R01ContractApprovalDateTime, startRow, R01ColumnNumber, _20211);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _fsrCollectionPeriodConfiguration.GetValueOrDefault(R02), R02ContractApprovalDateTime, startRow, R02ColumnNumber, _202112);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _fsrCollectionPeriodConfiguration.GetValueOrDefault(R03), R03ContractApprovalDateTime, startRow, R03ColumnNumber, _2021123);
+            RenderR12Procured(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), R12ContractApprovalDateTime, startRow);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R01), R01ContractApprovalDateTime, startRow, R01ColumnNumber, _20211);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R02), R02ContractApprovalDateTime, startRow, R02ColumnNumber, _202112);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R03), R03ContractApprovalDateTime, startRow, R03ColumnNumber, _2021123);
 
             return worksheet;
         }
@@ -136,14 +136,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
-            var fsrPeriodDictionary = delivery?.FSRValues.GroupBy(x => x.CollectionPeriod).ToDictionary(x => x.Key, x => x);
-
-            RenderEmployersColumn(worksheet, fsrPeriodDictionary?.GetValueOrDefault(12)?.ToList(), startRow, R12ColumnNumber);
-            RenderEmployersColumn(worksheet, fsrPeriodDictionary?.GetValueOrDefault(13)?.ToList(), startRow, R13ColumnNumber);
-            RenderEmployersColumn(worksheet, fsrPeriodDictionary?.GetValueOrDefault(14)?.ToList(), startRow, R14ColumnNumber);
-            RenderEmployersColumn(worksheet, fsrPeriodDictionary?.GetValueOrDefault(01)?.ToList(), startRow, R01ColumnNumber + 1, _20211);
-            RenderEmployersColumn(worksheet, fsrPeriodDictionary?.GetValueOrDefault(02)?.ToList(), startRow, R02ColumnNumber + 1, _202112);
-            RenderEmployersColumn(worksheet, fsrPeriodDictionary?.GetValueOrDefault(03)?.ToList(), startRow, R03ColumnNumber + 1, _2021123);
+            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), startRow, R12ColumnNumber);
+            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
+            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
+            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R01), startRow, R01ColumnNumber + 1, _20211);
+            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R02), startRow, R02ColumnNumber + 1, _202112);
+            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R03), startRow, R03ColumnNumber + 1, _2021123);
 
             return worksheet;
         }
@@ -158,10 +156,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return worksheet;
         }
 
-        private Worksheet RenderR12Procured(Worksheet worksheet, ICollection<FSRValue> fsrValues, ICollection<ContractValue> contractValues, DateTime contractApprovalDateTime, int row)
+        private Worksheet RenderR12Procured(Worksheet worksheet, ICollection<FSRValue> fsrValues, ICollection<ContractValue> contractValues, IDictionary<int, int> collectionPeriodConfiguration, DateTime contractApprovalDateTime, int row)
         {
             RenderContractValuesColumn(worksheet, contractValues, contractApprovalDateTime, row, ColumnNumber6);
-            RenderFSRValues(worksheet, fsrValues, _fsrProcuredBasePeriods, row, ColumnNumber7);
+            RenderFSRValues(worksheet, fsrValues, _fsrProcuredBasePeriods, collectionPeriodConfiguration, row, ColumnNumber7);
 
             return worksheet;
         }
@@ -186,16 +184,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return worksheet;
         }
 
-        private Worksheet RenderEmployersColumn(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum, int columnNumber, (int, int[])additionalPeriods)
+        private Worksheet RenderEmployersColumn(Worksheet worksheet, ICollection<FSRValue> fsrValues, IDictionary<int, int> collectionPeriodConfiguration, int startRowNum, int columnNumber, (int, int[])additionalPeriods)
         {
             var periods = new List<(int collectionYear, int[] deliveryPeriods)>(_fsrEmployerBasePeriods) {additionalPeriods};
 
-            return RenderFSRValues(worksheet, fsrValues, periods, startRowNum, columnNumber);
+            return RenderFSRValues(worksheet, fsrValues, periods, collectionPeriodConfiguration, startRowNum, columnNumber);
         }
 
-        private Worksheet RenderEmployersColumn(Worksheet worksheet, ICollection<FSRValue> fsrValues, int startRowNum, int columnNumber)
+        private Worksheet RenderEmployersColumn(Worksheet worksheet, ICollection<FSRValue> fsrValues, IDictionary<int, int> collectionPeriodConfiguration, int startRowNum, int columnNumber)
         {
-            return RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, startRowNum, columnNumber);
+            return RenderFSRValues(worksheet, fsrValues, _fsrEmployerBasePeriods, collectionPeriodConfiguration, startRowNum, columnNumber);
         }
 
         private Worksheet RenderContractValuesColumn(Worksheet worksheet, ICollection<ContractValue> contractValues, DateTime contractApprovalDateTime, int startRowNum, int columnNum)
@@ -204,16 +202,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             RenderValueCell(worksheet, contractValues, contractApprovalDateTime, new int[] { 201804, 201805, 201806, 201807, 201808, 201809, 201810, 201811, 201812, 201901, 201902, 201903 }, startRowNum + 1, columnNum);
             RenderValueCell(worksheet, contractValues, contractApprovalDateTime, new int[] { 201904, 201905, 201906, 201907, 201908, 201909, 201910, 201911, 201912, 202001, 202002, 202003 }, startRowNum + 3, columnNum);
             RenderValueCell(worksheet, contractValues, contractApprovalDateTime, new int[] { 202004, 202005, 202006, 202007, 202008, 202009, 202010, 202011, 202012, 202101, 202102, 202103 }, startRowNum + 5, columnNum);
-
-            return worksheet;
-        }
-
-        private Worksheet RenderFSRValues(Worksheet worksheet, ICollection<FSRValue> fsrValues, ICollection<(int collectionYear, int[] deliveryPeriods)> configurations, int startRowNum, int columnNum)
-        {
-            foreach (var item in configurations)
-            {
-                RenderValueCell(worksheet, fsrValues, item.deliveryPeriods, item.collectionYear, startRowNum++, columnNum);
-            }
 
             return worksheet;
         }
@@ -232,13 +220,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderValueCell(Worksheet worksheet, ICollection<FSRValue> values, int[] periods, int academicYear, int collectionPeriod, int rowNum, int columnNum)
         {
             worksheet.Cells[rowNum, columnNum].PutValue(values?.Where(x => x.AcademicYear == academicYear && x.CollectionPeriod == collectionPeriod && periods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
-
-            return worksheet;
-        }
-
-        private Worksheet RenderValueCell(Worksheet worksheet, ICollection<FSRValue> values, int[] periods, int academicYear, int rowNum, int columnNum)
-        {
-            worksheet.Cells[rowNum, columnNum].PutValue(values?.Where(x => x.AcademicYear == academicYear && periods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
 
             return worksheet;
         }

@@ -21,7 +21,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         public string ReportTaskName => "TaskGenerateCrossYearPaymentsReport";
 
-        public bool IncludeInZip => true;
+        public bool IncludeInZip { get; private set; } = true;
 
         private const string TemplateName = "CrossYearPaymentsReportTemplate.xlsx";
         private const string ReportName = "Beta Cross Year Indicative Payments Report";
@@ -44,6 +44,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             {
                 return string.Empty;
             }
+
+            IncludeInZip = reportServiceContext.PublishReportToZip;
 
             var fileName = _fileNameService.GetFilename(reportServiceContext, ReportName, OutputTypes.Excel);
 

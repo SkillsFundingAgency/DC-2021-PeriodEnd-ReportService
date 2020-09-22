@@ -4,6 +4,7 @@ using System.Linq;
 using Aspose.Cells;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Data;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Model;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
@@ -17,6 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private const int R02ColumnNumber = 15;
         private const int R03ColumnNumber = 20;
         private const int R14PreviousYearColumnNumber = 4;
+        private const int PaymentsUpToR11 = 5;
 
         private const int R12 = 12;
         private const int R13 = 13;
@@ -65,6 +67,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             { 1, new Dictionary<int, int> { {1718, 14}, {1819, 14}, {1920, 12}, {2021, 1}} },
             { 2, new Dictionary<int, int> { {1718, 14}, {1819, 14}, {1920, 13}, {2021, 2}} },
             { 3, new Dictionary<int, int> { {1718, 14}, {1819, 14}, {1920, 14}, {2021, 3}} },
+        };
+
+        private readonly int[] _procuredPaymentsPeriod = new[]
+        {
+            201801, 201802, 201803, 201804, 201805, 201806, 201807, 201808, 201809, 201810, 201811, 201812, 201901,
+            201902, 201903, 201904, 201905, 201906, 201907, 201908, 201909, 201910, 201911, 201912, 202001, 202002,
+            202003, 202004, 202005, 202006
+        };
+
+        private readonly int[] _employersPaymentsPeriod = new[]
+        {
+            201908, 201909, 201910, 201911, 201912, 202001, 202002,
+            202003, 202004, 202005, 202006
         };
 
         private readonly (int, int[]) _20211 = ( 2021, new[] { 1 } );
@@ -117,6 +132,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14PreviousYearColumnNumber, _fsrR14PreviousYearPeriods);
 
+            RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _procuredPaymentsPeriod, startRow + 7, PaymentsUpToR11);
+
             RenderR12Procured(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), R12ContractApprovalDateTime, startRow);
             RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
             RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
@@ -137,6 +154,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
+            RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _employersPaymentsPeriod, startRow + 3, PaymentsUpToR11);
+
             RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), startRow, R12ColumnNumber);
             RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
             RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
@@ -153,6 +172,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             {
                 worksheet.Cells[i, 0].Value = contractNumber;
             }
+
+            return worksheet;
+        }
+
+        private Worksheet RenderPaymentsUpToR11(Worksheet worksheet, ICollection<FcsPayment> values, int[] periods, int rowNum, int columnNum)
+        {
+            worksheet.Cells[rowNum, columnNum].PutValue(values?.Where(x => periods.Contains(x.Period)).Sum(x => x.Value) ?? 0m);
 
             return worksheet;
         }

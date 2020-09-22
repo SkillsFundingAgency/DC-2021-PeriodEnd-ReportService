@@ -88,11 +88,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             ICollection<Payment> payments = BuildDasPaymentsModel(ukPrn, academicYear);
             uypSummaryViewDataProviderMock.Setup(x => x.GetDASPaymentsAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(payments);
 
-            ICollection<DataLock> dataLocks = new DataLock[1] { new DataLock() { DataLockFailureId = 1, DeliveryPeriod = 1, LearnerReferenceNumber = "A12345" } };
-            uypSummaryViewDataProviderMock.Setup(x => x.GetDASDataLockAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(dataLocks);
+            ICollection<DataLock> dataLocks = new DataLock[1] { new DataLock() { DataLockFailureId = 1, CollectionPeriod = 1, LearnerReferenceNumber = "A12345" } };
+            uypSummaryViewDataProviderMock.Setup(x => x.GetDASDataLockAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(dataLocks);
 
-            ICollection<HBCPInfo> hbcpInfo = new HBCPInfo[1] { new HBCPInfo() { LearnerReferenceNumber = "A12345", DeliveryPeriod = 1, NonPaymentReason = 1 } };
-            uypSummaryViewDataProviderMock.Setup(x => x.GetHBCPInfoAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(hbcpInfo);
+            ICollection<HBCPInfo> hbcpInfo = new HBCPInfo[1] { new HBCPInfo() { LearnerReferenceNumber = "A12345", CollectionPeriod = 1, NonPaymentReason = 1 } };
+            uypSummaryViewDataProviderMock.Setup(x => x.GetHBCPInfoAsync(It.IsAny<int>(), It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(hbcpInfo);
 
             ICollection<Learner> learners = BuildILRModel(ukPrn);
             uypSummaryViewDataProviderMock.Setup(x => x.GetILRLearnerInfoAsync(It.IsAny<int>(), It.IsAny<CancellationToken>())).ReturnsAsync(learners);

@@ -7,7 +7,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model
     {
         public string LearnerReferenceNumber { get; set; }
 
-        public byte DeliveryPeriod { get; set; }
+        public byte CollectionPeriod { get; set; }
 
         public byte DataLockFailureId { get; set; }
     }

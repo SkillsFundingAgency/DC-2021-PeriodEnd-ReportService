@@ -46,14 +46,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView
             return await _ilrPaymentsDataPRovider.GetCoinvestmentsAsync(ukprn, cancellationToken);
         }
 
-        public async Task<ICollection<DataLock>> GetDASDataLockAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<DataLock>> GetDASDataLockAsync(int ukprn, int academicYear, CancellationToken cancellationToken)
         {
-            return await _paymentsDataProvider.GetDASDataLockAsync(ukprn, cancellationToken);
+            return await _paymentsDataProvider.GetDASDataLockAsync(ukprn, academicYear, cancellationToken);
         }
 
-        public async Task<ICollection<HBCPInfo>> GetHBCPInfoAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<HBCPInfo>> GetHBCPInfoAsync(int ukprn, int academicYear, CancellationToken cancellationToken)
         {
-            return await _paymentsDataProvider.GetHBCPInfoAsync(ukprn, cancellationToken);
+            return await _paymentsDataProvider.GetHBCPInfoAsync(ukprn, academicYear, cancellationToken);
         }
 
         public async Task<IDictionary<long, string>> GetLegalEntityNameAsync(int ukprn, IEnumerable<long> apprenticeshipIds, CancellationToken cancellationToken)

@@ -210,7 +210,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     if ((hbcpInfo != null) &&
                         hbcpInfo.Any(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
                                                             p.NonPaymentReason == 0 &&
-                                                            p.DeliveryPeriod == returnPeriod))
+                                                            p.CollectionPeriod == returnPeriod))
                     {
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_CompletionHoldbackPayment;
                     }
@@ -235,7 +235,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     if ((datalocks != null) && (datalocks.Any()))
                     {
                         var datalock = dataLockHashset.FirstOrDefault(x => x.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
-                                                                           x.DeliveryPeriod == returnPeriod);
+                                                                           x.CollectionPeriod == returnPeriod);
 
                         // Check to see if any records returned
                         if (datalock != null)

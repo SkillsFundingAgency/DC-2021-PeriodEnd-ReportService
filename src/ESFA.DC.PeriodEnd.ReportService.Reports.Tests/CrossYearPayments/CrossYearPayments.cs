@@ -44,7 +44,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
             var modelBuilderMock = new Mock<ICrossYearModelBuilder>();
             var renderServiceMock = new Mock<ICrossYearRenderService>();
             var dataProviderMock = new Mock<ICrossYearDataProvider>();
-            var dateTimeProviderMock = new Mock<IDateTimeProvider>();
 
             var excelService = GetExcelFileService(excelFileServiceMock, false);
             var renderService = GetRenderService(renderServiceMock, false);
@@ -119,6 +118,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.CrossYearPayments
                                 AcademicYear = 1819,
                                 DeliveryPeriod = 6,
                                 CollectionPeriod = 14,
+                                Value = 1m
+                            },
+                            new FSRValue
+                            {
+                                AcademicYear = 2021,
+                                DeliveryPeriod = 1,
+                                CollectionPeriod = 3,
+                                Value = 1m
+                            },
+                            new FSRValue
+                            {
+                                AcademicYear = 2021,
+                                DeliveryPeriod = 2,
+                                CollectionPeriod = 3,
                                 Value = 1m
                             }
                         }

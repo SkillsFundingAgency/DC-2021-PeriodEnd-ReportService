@@ -87,6 +87,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             RenderFooter(worksheet, model.FooterInfo);
 
+            workbook.CalculateFormula();
             return worksheet;
         }
 

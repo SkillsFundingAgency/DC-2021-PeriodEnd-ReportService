@@ -2,7 +2,7 @@
 {
     public interface IValue
     {
-        int Period { get; }
+        int DeliveryPeriod { get; }
 
         decimal Value { get; }
     }

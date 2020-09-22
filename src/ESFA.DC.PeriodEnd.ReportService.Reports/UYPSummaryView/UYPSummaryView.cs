@@ -77,8 +77,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             var learnerDeliveryEarningsTask = _uypSummaryViewDataProvider.GetLearnerDeliveryEarningsAsync(ukprn, cancellationToken);
             var priceEpisodeEarningsTask = _uypSummaryViewDataProvider.GetPriceEpisodeEarningsAsync(ukprn, cancellationToken);
             var coInvestmentsTask = _uypSummaryViewDataProvider.GetCoinvestmentsAsync(ukprn, cancellationToken);
-            var dataLockTask = _uypSummaryViewDataProvider.GetDASDataLockAsync(ukprn, cancellationToken);
-            var hbcTask = _uypSummaryViewDataProvider.GetHBCPInfoAsync(ukprn, cancellationToken);
+            var dataLockTask = _uypSummaryViewDataProvider.GetDASDataLockAsync(ukprn, collectionYear, cancellationToken);
+            var hbcTask = _uypSummaryViewDataProvider.GetHBCPInfoAsync(ukprn, collectionYear, cancellationToken);
 
             await Task.WhenAll(dasPaymentsTask, ilrLearnerInfoTask, learnerDeliveryEarningsTask, priceEpisodeEarningsTask, coInvestmentsTask, dataLockTask, hbcTask);
 

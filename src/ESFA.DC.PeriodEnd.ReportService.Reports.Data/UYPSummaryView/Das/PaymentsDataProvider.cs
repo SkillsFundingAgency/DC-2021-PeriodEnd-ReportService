@@ -30,15 +30,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
 
         private readonly string dataLockSql = @"SELECT DISTINCT LearnerReferenceNumber, 
                                                     DataLockFailureId, 
-                                                    DeliveryPeriod 
+                                                    CollectionPeriod, 
                                                 FROM Payments2.DataMatchReport WITH (NOLOCK) 
-                                                WHERE Ukprn = @Ukprn";
+                                                WHERE Ukprn = @Ukprn and AcademicYear = @academicYear ";
 
         private readonly string HBCPInfoSql = @"SELECT DISTINCT LearnerReferenceNumber, 
-                                                    DeliveryPeriod, 
+                                                    CollectionPeriod, 
                                                     NonPaymentReason 
                                                 FROM Payments2.RequiredPaymentEvent 
-                                                WHERE Ukprn = @Ukprn";
+                                                WHERE Ukprn = @Ukprn and AcademicYear = @academicYear ";
 
         private readonly string GetLegalEntityNameSql = @"SELECT DISTINCT Id, 
                                                                 LegalEntityName 
@@ -60,21 +60,21 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
             }
         }
 
-        public async Task<ICollection<DataLock>> GetDASDataLockAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<DataLock>> GetDASDataLockAsync(int ukprn, int academicYear, CancellationToken cancellationToken)
         {
             using (var connection = _sqlConnectionFunc())
             {
-                var result = await connection.QueryAsync<DataLock>(dataLockSql, new { ukprn });
+                var result = await connection.QueryAsync<DataLock>(dataLockSql, new { ukprn, academicYear });
 
                 return result.ToList();
             }
         }
 
-        public async Task<ICollection<HBCPInfo>> GetHBCPInfoAsync(int ukprn, CancellationToken cancellationToken)
+        public async Task<ICollection<HBCPInfo>> GetHBCPInfoAsync(int ukprn, int academicYear, CancellationToken cancellationToken)
         {
             using (var connection = _sqlConnectionFunc())
             {
-                var result = await connection.QueryAsync<HBCPInfo>(HBCPInfoSql, new { ukprn });
+                var result = await connection.QueryAsync<HBCPInfo>(HBCPInfoSql, new { ukprn, academicYear });
 
                 return result.ToList();
             }

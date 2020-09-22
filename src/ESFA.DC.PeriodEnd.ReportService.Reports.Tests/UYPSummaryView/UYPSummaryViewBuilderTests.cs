@@ -54,8 +54,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                 BuildLDEarningsModel(ukPrn),
                 BuildPEEarningsModel(ukPrn),
                 new CoInvestmentInfo[1] { BuildILRCoInvestModel(ukPrn) },
-                new DataLock[1] { new DataLock() { DataLockFailureId = 1, DeliveryPeriod = 1, LearnerReferenceNumber = "A12345" } },
-                new HBCPInfo[1] { new HBCPInfo() { LearnerReferenceNumber = "A12345", DeliveryPeriod = 1, NonPaymentReason = 1 } },
+                new DataLock[1] { new DataLock() { DataLockFailureId = 1, CollectionPeriod = 1, LearnerReferenceNumber = "A12345" } },
+                new HBCPInfo[1] { new HBCPInfo() { LearnerReferenceNumber = "A12345", CollectionPeriod = 1, NonPaymentReason = 1 } },
                 BuildLegalEntityNames(),
                 returnPeriod,
                 ukPrn);

@@ -9,5 +9,27 @@
         public const string EmployersOnApprenticeshipServiceLevy = "Employers on Apprenticeship Service - Levy";
 
         public const string EmployersOnApprenticeshipServiceNonLevy = "Employers on Apprenticeship Service - Non-Levy";
+
+
+        public const string Apprenticeship1618NonLevyProcuredFundLine = "16-18 Apprenticeship Non-Levy Contract (procured)";
+
+        public const string Apprenticeship19PlusNonLevyContractFundLine = "19+ Apprenticeship Non-Levy Contract (procured)";
+
+        public const string Apprenticeship1618EmployerOnAppServiceLevyFundLine = "16-18 Apprenticeship (Employer on App Service) Levy funding";
+
+        public const string Apprenticeship19PlusEmployerOnAppServiceLevyFundLine = "19+ Apprenticeship (Employer on App Service) Levy funding";
+
+        public const string Apprenticeship1618EmployerOnAppServiceNonLevyFundLine = "16-18 Apprenticeship (Employer on App Service) Non-Levy funding";
+
+        public const string Apprenticeship19PlusEmployerOnAppServiceNonLevyFundLine = "19+ Apprenticeship (Employer on App Service) Non-Levy funding";
+
+
+        public const string NLAP16182018 = "16-18NLAP2018";
+
+        public const string ANLAP2018 = "ANLAP2018";
+
+        public const string LEVY1799 = "LEVY1799";
+
+        public const string NONLEVY2019 = "NONLEVY2019";
     }
 }

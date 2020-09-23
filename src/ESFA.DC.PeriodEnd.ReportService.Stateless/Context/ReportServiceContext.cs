@@ -7,6 +7,7 @@ using ESFA.DC.JobContext.Interface;
 using ESFA.DC.JobContextManager.Model.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Legacy.Constants;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Stateless.Configuration;
 using ESFA.DC.Serialization.Interfaces;
@@ -75,6 +76,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Stateless.Context
         public string ReportDataConnectionString => _dataPersistConfiguration.ReportDataConnectionString;
 
         public bool DataPersistFeatureEnabled => Convert.ToBoolean(_dataPersistConfiguration.DataPersistFeatureEnabled);
+
+        public bool PublishReportToZip => Convert.ToBoolean(_jobContextMessage.KeyValuePairs.GetValueOrDefault("PublishReportToZip")?.ToString() ?? "false");
 
         public IEnumerable<ReturnPeriod> GetReturnPeriodsWithAdjustedEndTimes(IEnumerable<ReturnPeriod> returnPeriods)
         {

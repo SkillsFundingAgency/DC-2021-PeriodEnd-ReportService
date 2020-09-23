@@ -41,5 +41,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface
         string ReportDataConnectionString { get; }
 
         bool DataPersistFeatureEnabled { get; }
+
+        bool PublishReportToZip { get; }
     }
 }

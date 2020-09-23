@@ -46,11 +46,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             var headerInfo = BuildHeader(dataModel, reportServiceContext);
             var footerInfo = BuildFooter();
+            var deliveries = BuildDeliveries(dataModel);
 
             return new CrossYearPaymentsModel
             {
                 HeaderInfo = headerInfo,
                 FooterInfo = footerInfo,
+                Deliveries = deliveries
             };
         }
 
@@ -58,12 +60,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             var deliveries = new List<Delivery>();
 
+            var contractDictionary = dataModel.FcsContracts
+                .GroupBy(x => x.FundingStreamPeriodCode, StringComparer.OrdinalIgnoreCase)
+                .ToDictionary(x => x.Key, x => x.Select(y => y.ContractAllocationNumber).ToList(), StringComparer.OrdinalIgnoreCase);
+
             foreach (var section in ReportSectionGroupDictionary)
             {
                 var fsp = FspLookup.GetValueOrDefault(section.Key);
                 var paymentTypes = ReportSectionPaymentTypeLookup.GetValueOrDefault(section.Key);
 
-                var contractNumbers = string.Join(";", dataModel.FcsContracts.GetValueOrDefault(fsp));
+                var contracts = contractDictionary?.GetValueOrDefault(fsp);
+                var contractNumbers = string.Join(";", contractDictionary.GetValueOrDefault(fsp));
 
                 var payments = dataModel.Payments.Where(p => section.Value.Contains(p.FundingLineType));
                 var adjustmentPayments = dataModel.AdjustmentPayments.Where(p => paymentTypes.Contains(p.PaymentType));
@@ -103,7 +110,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
                     ContractNumber = contractNumbers,
                     FSRValues = values.ToList(),
                     ContractValues = contractValues.ToList(),
-                    FcsPayments = dataModel.FcsPayments.Where(x => x.FspCode.Equals(fsp, StringComparison.OrdinalIgnoreCase)).ToList()
+                    FcsPayments = dataModel.FcsPayments.Where(x => x.FspCode.Equals(fsp, StringComparison.OrdinalIgnoreCase) && contracts.Contains(x.ContractAllocationNumber)).ToList()
                 });
             }
 

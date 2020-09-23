@@ -10,6 +10,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Da
 
         Task<ICollection<FcsAllocation>> ProvideAllocationsAsync(long ukprn);
 
-        Task<IDictionary<string, List<string>>> ProviderContractsAsync(long ukprn);
+        Task<ICollection<FcsContractAllocation>> ProviderContractsAsync(long ukprn);
     }
 }

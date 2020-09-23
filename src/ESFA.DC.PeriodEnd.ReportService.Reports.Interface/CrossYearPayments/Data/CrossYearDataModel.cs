@@ -14,6 +14,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Da
 
         public ICollection<FcsPayment> FcsPayments { get; set; }
 
-        public IDictionary<string, List<string>> FcsContracts { get; set; }
+        public ICollection<FcsContractAllocation> FcsContracts { get; set; }
     }
 }

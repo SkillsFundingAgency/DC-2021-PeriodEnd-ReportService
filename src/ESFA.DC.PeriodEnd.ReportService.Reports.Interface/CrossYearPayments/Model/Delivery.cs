@@ -9,8 +9,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Mo
 
         public string DeliveryName { get; set; }
 
-        //public ICollection<PeriodDelivery> PeriodDeliveries { get; set; }
-
         public ICollection<ContractValue> ContractValues { get; set; }
 
         public ICollection<FSRValue> FSRValues { get; set; }

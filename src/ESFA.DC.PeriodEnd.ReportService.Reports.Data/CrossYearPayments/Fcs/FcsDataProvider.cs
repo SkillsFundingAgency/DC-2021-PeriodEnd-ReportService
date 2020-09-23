@@ -57,13 +57,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CrossYearPayments.Fcs
             }
         }
 
-        public async Task<IDictionary<string, List<string>>> ProviderContractsAsync(long ukprn)
+        public async Task<ICollection<FcsContractAllocation>> ProviderContractsAsync(long ukprn)
         {
             using (var connection = _sqlConnectionFunc())
             {
-                return (await connection.QueryAsync<(string ContractAllocationNumber, string FundingStreamPeriodCode)>(ContractSql, new {ukprn}))
-                    .GroupBy(x => x.FundingStreamPeriodCode)
-                    .ToDictionary(x => x.Key, x => x.Select(y => y.ContractAllocationNumber).ToList(), StringComparer.OrdinalIgnoreCase);
+                return (await connection.QueryAsync<FcsContractAllocation>(ContractSql, new {ukprn})).ToList();
             }
         }
     }

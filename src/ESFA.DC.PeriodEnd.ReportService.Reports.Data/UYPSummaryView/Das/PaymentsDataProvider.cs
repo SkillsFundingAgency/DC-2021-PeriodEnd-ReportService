@@ -30,9 +30,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
 
         private readonly string dataLockSql = @"SELECT DISTINCT LearnerReferenceNumber, 
                                                     DataLockFailureId, 
-                                                    CollectionPeriod, 
+                                                    CollectionPeriod 
                                                 FROM Payments2.DataMatchReport WITH (NOLOCK) 
-                                                WHERE Ukprn = @Ukprn and AcademicYear = @academicYear ";
+                                                WHERE Ukprn = @Ukprn and Academicyear = @academicYear 
+                                                OPTION (RECOMPILE) ";
 
         private readonly string HBCPInfoSql = @"SELECT DISTINCT LearnerReferenceNumber, 
                                                     CollectionPeriod, 

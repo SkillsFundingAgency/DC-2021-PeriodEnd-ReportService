@@ -6,6 +6,7 @@ using System.Threading.Tasks;
 using ESFA.DC.ExcelService.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.DataProvider;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.Enums;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
@@ -20,11 +21,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         public string ReportTaskName => "TaskGenerateCrossYearPaymentsReport";
 
-        public bool IncludeInZip => true;
+        public bool IncludeInZip { get; private set; } = true;
 
         private const string TemplateName = "CrossYearPaymentsReportTemplate.xlsx";
-        private const string ReportName = "Cross Year Indicative Payments Report";
+        private const string ReportName = "Beta Cross Year Indicative Payments Report";
         private const string WorksheetName = "Sheet1";
+
+        private readonly int[] _reportGenerationPeriods = new[] { 2, 3 };
 
         public CrossYearPayments(IExcelFileService excelFileService, IFileNameService fileNameService, ICrossYearModelBuilder crossYearModelBuilder, ICrossYearDataProvider crossYearDataProvider, ICrossYearRenderService crossYearRenderService)
         {
@@ -37,6 +40,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         public async Task<string> GenerateReport(IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
+            if (!_reportGenerationPeriods.Contains(reportServiceContext.ReturnPeriod))
+            {
+                return string.Empty;
+            }
+
+            IncludeInZip = reportServiceContext.PublishReportToZip;
+
             var fileName = _fileNameService.GetFilename(reportServiceContext, ReportName, OutputTypes.Excel);
 
             var data = await _crossYearDataProvider.ProvideAsync(reportServiceContext, cancellationToken);

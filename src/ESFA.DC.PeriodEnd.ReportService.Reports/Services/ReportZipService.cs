@@ -68,7 +68,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
 
         private string PrepareFileName(string fileName)
         {
-            return fileName.Split('/').Last().Substring(9);
+            return fileName.Split('/').Last();
         }
 
         private async Task<Stream> GetStreamAsync(string reportZipFileKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)

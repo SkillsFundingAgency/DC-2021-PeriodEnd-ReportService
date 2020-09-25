@@ -9,6 +9,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model
 
         public byte CollectionPeriod { get; set; }
 
-        public byte NonPaymentReason { get; set; }
+        public byte? NonPaymentReason { get; set; }
     }
 }

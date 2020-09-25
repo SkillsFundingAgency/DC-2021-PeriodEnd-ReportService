@@ -34,7 +34,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CrossYearPayments.Fcs
         private const string ContractSql = @"SELECT [ContractAllocationNumber]
                                                   ,[FundingStreamPeriodCode]
                                               FROM [dbo].[ContractAllocation]
-                                              WHERE DeliveryUKPRN = @ukprn";
+                                              WHERE DeliveryUKPRN = @ukprn
+                                              ORDER BY [ContractAllocationNumber] DESC";
 
         public FcsDataProvider(Func<SqlConnection> sqlConnectionFunc)
         {

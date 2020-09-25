@@ -192,7 +192,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     {
                         reportRecord.IssuesAmount = (decimal.Round((reportRecord.TotalEarningsForPeriod ?? 0)
                                                      - (reportRecord.CoInvestmentPaymentsToCollectThisPeriod ?? 0)
-                                                     - (reportRecord.ESFAPlannedPaymentsThisPeriod ?? 0), 2)) * -1;
+                                                     - (reportRecord.ESFAPlannedPaymentsThisPeriod ?? 0), LearnerLevelViewConstants.LLVRoundingAccuracy)) * -1;
                     }
 
                     // Work out what is remaining from employer by subtracting what they a have paid so far from their calculated payments.
@@ -226,7 +226,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                          && (decimal.Round((reportRecord.TotalEarningsToDate ?? 0) 
                                            - (reportRecord.PlannedPaymentsToYouToDate ?? 0)
                                            - (reportRecord.TotalCoInvestmentCollectedToDate ?? 0)
-                                           - (reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0), 2) == 0))
+                                           - (reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0), LearnerLevelViewConstants.LLVRoundingAccuracy) == 0))
                     {
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_Clawback;
                     }

@@ -10,6 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Constants
         public const string ReasonForIssues_Clawback = "Clawback";
         public const string ReasonForIssues_Other = "Other Issue";
         public const string DLockErrorRuleNamePrefix = "DLOCK_";
+        public const int LLVRoundingAccuracy = 2;
 
         // Transaction and funding types for LLV report
         public static readonly List<byte?> eSFATransactionTypes = new List<byte?> { 4, 5, 6, 7, 8, 9, 10, 11, 12, 15, 16 };

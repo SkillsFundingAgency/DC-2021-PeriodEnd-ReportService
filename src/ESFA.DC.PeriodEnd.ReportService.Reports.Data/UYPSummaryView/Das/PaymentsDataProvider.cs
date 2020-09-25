@@ -32,8 +32,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
                                                     DataLockFailureId, 
                                                     CollectionPeriod 
                                                 FROM Payments2.DataMatchReport WITH (NOLOCK) 
-                                                WHERE Ukprn = @Ukprn and Academicyear = @academicYear 
-                                                OPTION (RECOMPILE) ";
+                                                WHERE Ukprn = @Ukprn and Academicyear = @academicYear";
 
         private readonly string HBCPInfoSql = @"SELECT DISTINCT LearnerReferenceNumber, 
                                                     CollectionPeriod, 

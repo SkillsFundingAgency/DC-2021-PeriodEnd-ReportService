@@ -190,9 +190,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
                     else
                     {
-                        reportRecord.IssuesAmount = (reportRecord.TotalEarningsForPeriod
-                                                    - reportRecord.ESFAPlannedPaymentsThisPeriod
-                                                    - reportRecord.CoInvestmentPaymentsToCollectThisPeriod) * -1;
+                        reportRecord.IssuesAmount = (decimal.Round((reportRecord.TotalEarningsForPeriod ?? 0)
+                                                     - (reportRecord.CoInvestmentPaymentsToCollectThisPeriod ?? 0)
+                                                     - (reportRecord.ESFAPlannedPaymentsThisPeriod ?? 0), LearnerLevelViewConstants.LLVRoundingAccuracy)) * -1;
                     }
 
                     // Work out what is remaining from employer by subtracting what they a have paid so far from their calculated payments.
@@ -200,8 +200,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
                     // Issues for non-payment - worked out in order of priority.
                     // Work out issues (Other) (NOTE: Do this first as lowest priority)
-                    if (reportRecord.TotalEarningsForPeriod > reportRecord.CoInvestmentPaymentsToCollectThisPeriod +
-                                                              reportRecord.ESFAPlannedPaymentsThisPeriod)
+                    // Include rounding in calculation
+                    if (reportRecord.IssuesAmount != 0)
                     {
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_Other;
                     }
@@ -209,7 +209,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     // Work out issues (HBCP)
                     if ((hbcpInfo != null) &&
                         hbcpInfo.Any(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber &&
-                                                            p.NonPaymentReason == 0 &&
+                                                            p.NonPaymentReason != null &&
                                                             p.CollectionPeriod == returnPeriod))
                     {
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_CompletionHoldbackPayment;
@@ -222,11 +222,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // NOTE: As per WI93411, a level of rounding is required before the comparisons can be performed
-                    if ((reportRecord.TotalEarningsForPeriod > reportRecord.ESFAPlannedPaymentsThisPeriod +
-                                                               reportRecord.CoInvestmentPaymentsToCollectThisPeriod)
-                        && (decimal.Round(reportRecord.TotalEarningsToDate ?? 0, 2) == decimal.Round((reportRecord.PlannedPaymentsToYouToDate ?? 0) +
-                                                                (reportRecord.TotalCoInvestmentCollectedToDate ?? 0) +
-                                                                (reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0), 2)))
+                    if ((reportRecord.IssuesAmount != 0)
+                         && (decimal.Round((reportRecord.TotalEarningsToDate ?? 0) 
+                                           - (reportRecord.PlannedPaymentsToYouToDate ?? 0)
+                                           - (reportRecord.TotalCoInvestmentCollectedToDate ?? 0)
+                                           - (reportRecord.CoInvestmentOutstandingFromEmplToDate ?? 0), LearnerLevelViewConstants.LLVRoundingAccuracy) == 0))
                     {
                         reportRecord.ReasonForIssues = LearnerLevelViewConstants.ReasonForIssues_Clawback;
                     }

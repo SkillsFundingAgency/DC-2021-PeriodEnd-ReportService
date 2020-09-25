@@ -276,7 +276,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
             using (IDASPaymentsContext context = _dasPaymentsContextFactory())
             {
                 return await context.Payments
-                    .Where(p => p.Ukprn == ukprn)
+                    .Where(p => p.Ukprn == ukprn
+                                && p.AcademicYear <= Generics.AcademicYear)
                     .GroupBy(p =>
                     new
                     {
@@ -315,6 +316,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Legacy.Provider
                     await context.Payments
                     .Where(p =>
                         p.Ukprn == ukPrn
+                        && p.AcademicYear <= Generics.AcademicYear
                         && (p.FundingSource == AppsCoInvestmentFundingType
                         || _appsCoInvestmentTransactionTypes.Contains(p.TransactionType)))
                     .Select(payment =>

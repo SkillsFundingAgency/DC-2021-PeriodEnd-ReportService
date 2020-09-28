@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Aspose.Cells;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
+using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Data;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.CrossYearPayments.Model;
@@ -86,19 +87,26 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private readonly (int, int[]) _202112 = ( 2021, new[] { 1, 2 } );
         private readonly (int, int[]) _2021123 = ( 2021, new[] { 1, 2, 3} );
 
-        public Worksheet Render(CrossYearPaymentsModel model, Worksheet worksheet, Workbook workbook)
+        private readonly IDictionary<int, ICollection<int>> _displayPeriodConfiguration = new Dictionary<int, ICollection<int>>
+        {
+            { 1, new List<int> { R01 } },
+            { 2, new List<int> { R01, R13, R02 } },
+            { 3, new List<int> { R01, R13, R02, R14, R03 } },
+        };
+
+        public Worksheet Render(IReportServiceContext reportServiceContext, CrossYearPaymentsModel model, Worksheet worksheet, Workbook workbook)
         {
             RenderHeader(worksheet, model.HeaderInfo);
 
             var modelDictionary = model.Deliveries?.ToDictionary(x => x.DeliveryName, x => x) ?? new Dictionary<string, Delivery>();
 
-            Render1618NonLevyContractedApprenticeshipsProcuredDelivery(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.NonLevy1618ContractedApprenticeshipsProcuredDelivery));
+            Render1618NonLevyContractedApprenticeshipsProcuredDelivery(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.NonLevy1618ContractedApprenticeshipsProcuredDelivery), reportServiceContext.ReturnPeriod);
 
-            RenderAdultNonLevyContractedApprenticeshipsProcuredDelivery(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.AdultNonLevyContractedApprenticeshipsProcuredDelivery));
+            RenderAdultNonLevyContractedApprenticeshipsProcuredDelivery(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.AdultNonLevyContractedApprenticeshipsProcuredDelivery), reportServiceContext.ReturnPeriod);
 
-            RenderEmployersOnApprenticeshipServiceLevy(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceLevy));
+            RenderEmployersOnApprenticeshipServiceLevy(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceLevy), reportServiceContext.ReturnPeriod);
 
-            RenderEmployersOnApprenticeshipServiceNonLevy(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceNonLevy));
+            RenderEmployersOnApprenticeshipServiceNonLevy(worksheet, modelDictionary.GetValueOrDefault(Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceNonLevy), reportServiceContext.ReturnPeriod);
 
             RenderFooter(worksheet, model.FooterInfo);
 
@@ -120,13 +128,25 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return worksheet;
         }
 
-        private Worksheet Render1618NonLevyContractedApprenticeshipsProcuredDelivery(Worksheet worksheet, Delivery delivery)
-            => RenderProcuredDelivery(worksheet, delivery, 7, 15);
+        private ICollection<T> FilterForDisplayPeriod<T>(ICollection<T> values, int returnPeriod, int returnPeriodToDisplay)
+        {
+            var periodConfiguration = _displayPeriodConfiguration.GetValueOrDefault(returnPeriod);
 
-        private Worksheet RenderAdultNonLevyContractedApprenticeshipsProcuredDelivery(Worksheet worksheet, Delivery delivery)
-            => RenderProcuredDelivery(worksheet, delivery, 18, 26);
+            if (periodConfiguration?.Contains(returnPeriodToDisplay) ?? false)
+            {
+                return values;
+            }
 
-        private Worksheet RenderProcuredDelivery(Worksheet worksheet, Delivery delivery, int startRow, int endRow)
+            return Enumerable.Empty<T>().ToList();
+        }
+
+        private Worksheet Render1618NonLevyContractedApprenticeshipsProcuredDelivery(Worksheet worksheet, Delivery delivery, int returnPeriod)
+            => RenderProcuredDelivery(worksheet, delivery, returnPeriod, 7, 15);
+
+        private Worksheet RenderAdultNonLevyContractedApprenticeshipsProcuredDelivery(Worksheet worksheet, Delivery delivery, int returnPeriod)
+            => RenderProcuredDelivery(worksheet, delivery, returnPeriod, 18, 26);
+
+        private Worksheet RenderProcuredDelivery(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
         {
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
@@ -135,33 +155,38 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _procuredPaymentsPeriod, startRow + 7, PaymentsUpToR11);
 
             RenderR12Procured(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), R12ContractApprovalDateTime, startRow);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R01), R01ContractApprovalDateTime, startRow, R01ColumnNumber, _20211);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R02), R02ContractApprovalDateTime, startRow, R02ColumnNumber, _202112);
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R03), R03ContractApprovalDateTime, startRow, R03ColumnNumber, _2021123);
+
+            RenderProcuredColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R14), _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
+
+            RenderProcuredColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R01), FilterForDisplayPeriod(delivery?.ContractValues, returnPeriod, R01), _collectionPeriodConfiguration.GetValueOrDefault(R01), R01ContractApprovalDateTime, startRow, R01ColumnNumber, _20211);
+
+            RenderProcuredColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R13), _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
+
+            RenderProcuredColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R02), FilterForDisplayPeriod(delivery?.ContractValues, returnPeriod, R02), _collectionPeriodConfiguration.GetValueOrDefault(R02), R02ContractApprovalDateTime, startRow, R02ColumnNumber, _202112);
+
+            RenderProcuredColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R03), FilterForDisplayPeriod(delivery?.ContractValues, returnPeriod, R03), _collectionPeriodConfiguration.GetValueOrDefault(R03), R03ContractApprovalDateTime, startRow, R03ColumnNumber, _2021123);
 
             return worksheet;
         }
 
-        private Worksheet RenderEmployersOnApprenticeshipServiceLevy(Worksheet worksheet, Delivery delivery)
-            => RenderEmployers(worksheet, delivery, 29, 33);
+        private Worksheet RenderEmployersOnApprenticeshipServiceLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
+            => RenderEmployers(worksheet, delivery, returnPeriod, 29, 33);
 
-        private Worksheet RenderEmployersOnApprenticeshipServiceNonLevy(Worksheet worksheet, Delivery delivery)
-            => RenderEmployers(worksheet, delivery, 36, 40);
+        private Worksheet RenderEmployersOnApprenticeshipServiceNonLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
+            => RenderEmployers(worksheet, delivery, returnPeriod, 36, 40);
 
-        private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int startRow, int endRow)
+        private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
         {
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
             RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _employersPaymentsPeriod, startRow + 3, PaymentsUpToR11);
 
             RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), startRow, R12ColumnNumber);
-            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
-            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
-            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R01), startRow, R01ColumnNumber + 1, _20211);
-            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R02), startRow, R02ColumnNumber + 1, _202112);
-            RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R03), startRow, R03ColumnNumber + 1, _2021123);
+            RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R13), _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
+            RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R14), _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14ColumnNumber);
+            RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R01), _collectionPeriodConfiguration.GetValueOrDefault(R01), startRow, R01ColumnNumber + 1, _20211);
+            RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R02), _collectionPeriodConfiguration.GetValueOrDefault(R02), startRow, R02ColumnNumber + 1, _202112);
+            RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R03), _collectionPeriodConfiguration.GetValueOrDefault(R03), startRow, R03ColumnNumber + 1, _2021123);
 
             return worksheet;
         }
@@ -237,7 +262,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             foreach (var item in configurations)
             {
-                
                 RenderValueCell(worksheet, fsrValues, item.deliveryPeriods, item.collectionYear, collectionPeriodConfiguration.GetValueOrDefault(item.collectionYear), startRowNum++, columnNum);
             }
 

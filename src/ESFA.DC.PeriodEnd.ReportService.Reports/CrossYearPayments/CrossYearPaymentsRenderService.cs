@@ -137,7 +137,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
                 return values;
             }
 
-            return Enumerable.Empty<T>().ToList();
+            return Array.Empty<T>();
         }
 
         private Worksheet Render1618NonLevyContractedApprenticeshipsProcuredDelivery(Worksheet worksheet, Delivery delivery, int returnPeriod)

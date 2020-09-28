@@ -61,7 +61,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             {
                 var worksheet = _excelFileService.GetWorksheetFromWorkbook(workbook, WorksheetName);
 
-                _crossYearRenderService.Render(model, worksheet, workbook);
+                _crossYearRenderService.Render(reportServiceContext, model, worksheet, workbook);
 
                 await _excelFileService.SaveWorkbookAsync(workbook, fileName, reportServiceContext.Container, cancellationToken);
             }

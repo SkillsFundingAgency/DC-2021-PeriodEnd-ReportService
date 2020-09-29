@@ -148,11 +148,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderProcuredDelivery(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
         {
+            var subTotalRow = startRow + 7;
+
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
             RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14PreviousYearColumnNumber, _fsrR14PreviousYearPeriods);
 
-            RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _procuredPaymentsPeriod, startRow + 7, PaymentsUpToR11);
+            RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _procuredPaymentsPeriod, subTotalRow, PaymentsUpToR11);
 
             RenderR12Procured(worksheet, delivery?.FSRValues, delivery?.ContractValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), R12ContractApprovalDateTime, startRow);
 
@@ -166,6 +168,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             RenderProcuredColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R03), FilterForDisplayPeriod(delivery?.ContractValues, returnPeriod, R03), _collectionPeriodConfiguration.GetValueOrDefault(R03), R03ContractApprovalDateTime, startRow, R03ColumnNumber, _2021123);
 
+            ClearReconciliationColumn(worksheet, returnPeriod, R02, subTotalRow, R02ColumnNumber + 2);
+            ClearReconciliationColumn(worksheet, returnPeriod, R03, subTotalRow, R03ColumnNumber + 2);
+
             return worksheet;
         }
 
@@ -177,9 +182,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
         {
+            var subTotalRow = startRow + 3;
+
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
-            RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _employersPaymentsPeriod, startRow + 3, PaymentsUpToR11);
+            RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _employersPaymentsPeriod, subTotalRow, PaymentsUpToR11);
 
             RenderEmployersColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R12), startRow, R12ColumnNumber);
             RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R13), _collectionPeriodConfiguration.GetValueOrDefault(R13), startRow, R13ColumnNumber);
@@ -187,6 +194,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R01), _collectionPeriodConfiguration.GetValueOrDefault(R01), startRow, R01ColumnNumber + 1, _20211);
             RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R02), _collectionPeriodConfiguration.GetValueOrDefault(R02), startRow, R02ColumnNumber + 1, _202112);
             RenderEmployersColumn(worksheet, FilterForDisplayPeriod(delivery?.FSRValues, returnPeriod, R03), _collectionPeriodConfiguration.GetValueOrDefault(R03), startRow, R03ColumnNumber + 1, _2021123);
+
+            ClearReconciliationColumn(worksheet, returnPeriod, R02, subTotalRow, R02ColumnNumber + 2);
+            ClearReconciliationColumn(worksheet, returnPeriod, R03, subTotalRow, R03ColumnNumber + 2);
 
             return worksheet;
         }
@@ -204,6 +214,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private Worksheet RenderPaymentsUpToR11(Worksheet worksheet, ICollection<FcsPayment> values, int[] periods, int rowNum, int columnNum)
         {
             worksheet.Cells[rowNum, columnNum].PutValue(values?.Where(x => periods.Contains(x.Period)).Sum(x => x.Value) ?? 0m);
+
+            return worksheet;
+        }
+
+        private Worksheet ClearReconciliationColumn(Worksheet worksheet, int returnPeriod, int returnPeriodToDisplay,  int rowNum, int columnNum)
+        {
+            var periodConfiguration = _displayPeriodConfiguration.GetValueOrDefault(returnPeriod);
+
+            if (!periodConfiguration?.Contains(returnPeriodToDisplay) ?? true)
+            {
+                worksheet.Cells[rowNum, columnNum].Value = 0m;
+            }
 
             return worksheet;
         }

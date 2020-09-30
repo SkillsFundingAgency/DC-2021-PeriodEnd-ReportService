@@ -19,7 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars
         private readonly string sql = @"SELECT  
                                          L.[LearnAimRef]
                                         ,[LearnAimRefTitle]
-                                    FROM OPENJSON(@learnAimRefs) 
+                                    FROM OPENJSON(@learnAimRefsSerialized) 
                                     WITH (LearnAimRef nvarchar(8) '$') J 
                                     INNER JOIN [Core].[LARS_LearningDelivery] L
                                     ON L.[LearnAimRef] = J.[LearnAimRef]";
@@ -32,11 +32,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.AppsMonthly.Lars
 
         public async Task<ICollection<LarsLearningDelivery>> GetLarsLearningDeliveriesAsync(ICollection<Learner> learners, CancellationToken cancellationToken)
         {
+            var learnAimRefs = new HashSet<string>(learners.SelectMany(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)), StringComparer.OrdinalIgnoreCase);
+
             using (var connection = _sqlConnectionFunc())
             {
-                var learnAimRefs = _jsonSerializationService.Serialize(learners.SelectMany(l => l.LearningDeliveries.Select(ld => ld.LearnAimRef)).Distinct());
+                var learnAimRefsSerialized = _jsonSerializationService.Serialize(learnAimRefs.ToList());
 
-                var commandDefinition = new CommandDefinition(sql, new { learnAimRefs }, cancellationToken: cancellationToken);
+                var commandDefinition = new CommandDefinition(sql, new { learnAimRefsSerialized }, cancellationToken: cancellationToken);
 
                 var result = await connection.QueryAsync<LarsLearningDelivery>(commandDefinition);
 

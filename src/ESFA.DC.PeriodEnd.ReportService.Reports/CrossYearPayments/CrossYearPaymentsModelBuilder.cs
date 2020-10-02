@@ -70,7 +70,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
                 var paymentTypes = ReportSectionPaymentTypeLookup.GetValueOrDefault(section.Key);
 
                 var contracts = contractDictionary?.GetValueOrDefault(fsp);
-                var contractNumbers = string.Join(";", contractDictionary.GetValueOrDefault(fsp));
+                var contractNumbers = string.Join(";", contractDictionary?.GetValueOrDefault(fsp) ?? Enumerable.Empty<string>());
 
                 var payments = dataModel.Payments.Where(p => section.Value.Contains(p.FundingLineType));
                 var adjustmentPayments = dataModel.AdjustmentPayments.Where(p => paymentTypes.Contains(p.PaymentType));

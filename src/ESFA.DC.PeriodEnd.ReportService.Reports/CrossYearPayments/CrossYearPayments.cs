@@ -25,7 +25,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private const string TemplateName = "CrossYearPaymentsReportTemplate.xlsx";
         private const string ReportName = "Beta Cross Year Indicative Payments Report";
-        private const string WorksheetName = "Sheet1";
+        private const string WorksheetName = "BetaCrossYearIndicativePayments";
 
         private readonly int[] _reportGenerationPeriods = new[] { 2, 3 };
 

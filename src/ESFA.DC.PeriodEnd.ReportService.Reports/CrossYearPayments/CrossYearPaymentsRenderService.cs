@@ -299,7 +299,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderValueCell(Worksheet worksheet, ICollection<ContractValue> values, DateTime contractApprovalDateTime, int[] periods, int rowNum, int columnNum)
         {
-            var value = values?.Where(x => periods.Contains(x.DeliveryPeriod) && x.ApprovalTimestamp <= contractApprovalDateTime).GroupBy(x => x.ApprovalTimestamp).OrderByDescending(x => x.Key).FirstOrDefault()?.Sum(x => x.Value) ?? 0m;
+            var value = values?.Where(x => periods.Contains(x.DeliveryPeriod) && x.ApprovalTimestamp.Date <= contractApprovalDateTime.Date).GroupBy(x => x.ApprovalTimestamp).OrderByDescending(x => x.Key).FirstOrDefault()?.Sum(x => x.Value) ?? 0m;
 
             worksheet.Cells[rowNum, columnNum].PutValue(value);
 

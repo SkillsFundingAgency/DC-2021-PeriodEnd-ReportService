@@ -10,7 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model
 
         public string GivenNames { get; set; }
 
-        public long UniqueLearnerNumber { get; set; }
+        public long ULN { get; set; }
 
         public List<LearnerEmploymentStatus> LearnerEmploymentStatuses { get; set; }
     }

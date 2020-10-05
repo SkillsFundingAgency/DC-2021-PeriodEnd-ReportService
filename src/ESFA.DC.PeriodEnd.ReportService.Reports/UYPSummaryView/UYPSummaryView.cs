@@ -105,7 +105,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             _logger.LogInfo("UYP Summary Report Model Build End");
 
             await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, baseFileName, reportServiceContext.Container, cancellationToken);
-            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, downloadFilename, reportServiceContext.Container, cancellationToken);
+            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords.Where(p=>p.IssuesAmount < 0), downloadFilename, reportServiceContext.Container, cancellationToken);
             string summaryFile = CreateSummary(uypSummaryViewRecords, cancellationToken);
             await WriteAsync(summaryFilename, summaryFile, reportServiceContext.Container, cancellationToken);
 

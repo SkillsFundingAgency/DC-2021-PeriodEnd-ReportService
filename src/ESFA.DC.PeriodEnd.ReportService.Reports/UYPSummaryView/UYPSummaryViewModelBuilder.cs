@@ -101,7 +101,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     {
                         reportRecord.FamilyName = ilrRecord.FamilyName;
                         reportRecord.GivenNames = ilrRecord.GivenNames;
-                        reportRecord.PaymentUniqueLearnerNumber = ilrRecord.UniqueLearnerNumber;
+                        reportRecord.PaymentUniqueLearnerNumber = ilrRecord.ULN;
                         if ((ilrRecord.LearnerEmploymentStatuses != null) && (ilrRecord.LearnerEmploymentStatuses.Count > 0))
                         {
                             reportRecord.LearnerEmploymentStatusEmployerId = ilrRecord.LearnerEmploymentStatuses.Where(les => les.LearnRefNumber.CaseInsensitiveEquals(reportRecord.PaymentLearnerReferenceNumber) &&
@@ -132,9 +132,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => p.CollectionPeriod <= returnPeriod &&
                             TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(p)).Sum(c => c.Amount);
 
-                        // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
                         var firstPaymentVal = paymentValues.First();
-                        reportRecord.PaymentUniqueLearnerNumber = firstPaymentVal.LearnerUln;
+
+                        // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
+                        if (reportRecord.PaymentUniqueLearnerNumber == null)
+                        {
+                            reportRecord.PaymentUniqueLearnerNumber = firstPaymentVal.LearnerUln;
+                        }
 
                         // Extract company name
                         if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(firstPaymentVal.ApprenticeshipId, out var employerName))

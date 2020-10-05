@@ -105,7 +105,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                     LearnRefNumber = "A12345",
                     FamilyName = "Banner",
                     GivenNames = "Bruce",
-                    UniqueLearnerNumber = 12345,
+                    ULN = 12345,
                     LearnerEmploymentStatuses = new List<LearnerEmploymentStatus>()
                        { new LearnerEmploymentStatus() { LearnRefNumber = "A12345", EmpId = 56789, EmpStat = 10, DateEmpStatApp = new DateTime(2020, 09, 26) } }
                 },
@@ -114,7 +114,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                     LearnRefNumber = "B12345",
                     FamilyName = "Peter",
                     GivenNames = "Parker",
-                    UniqueLearnerNumber = 54321,
+                    ULN = 54321,
                     LearnerEmploymentStatuses = new List<LearnerEmploymentStatus>()
                        { new LearnerEmploymentStatus() { LearnRefNumber = "A12345", EmpId = 10, EmpStat = 56789, DateEmpStatApp = new DateTime(2020, 09, 26) } }
                 }

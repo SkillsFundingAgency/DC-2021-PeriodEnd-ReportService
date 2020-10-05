@@ -104,14 +104,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
             _logger.LogInfo("UYP Summary Report Model Build End");
 
+            // Full data set used for summary and data persist
             await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, baseFileName, reportServiceContext.Container, cancellationToken);
-            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, downloadFilename, reportServiceContext.Container, cancellationToken);
             string summaryFile = CreateSummary(uypSummaryViewRecords, cancellationToken);
             await WriteAsync(summaryFilename, summaryFile, reportServiceContext.Container, cancellationToken);
 
             // Persist data
             var persistModels = _uypSummaryViewPersistenceMapper.Map(reportServiceContext, uypSummaryViewRecords, cancellationToken);
             await _reportDataPersistanceService.PersistAsync(reportServiceContext, persistModels, cancellationToken);
+
+            // Only learners with issues are made available for the provider to download as a report
+            var uypSummaryViewRecordsWithIssues = uypSummaryViewRecords.Where(p => p.IssuesAmount < 0);
+            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecordsWithIssues, downloadFilename, reportServiceContext.Container, cancellationToken);
 
             return baseFileName;
         }

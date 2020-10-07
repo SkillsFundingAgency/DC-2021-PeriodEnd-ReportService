@@ -8,6 +8,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Constants;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Extensions;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model.Comparer;
 using ESFA.DC.Logging.Interfaces;
+using System.Diagnostics;
 
 namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 {
@@ -22,6 +23,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private readonly ILLVPaymentRecordLRefOnlyKeyEqualityComparer _lLVPaymentRecordLRefOnlyKeyEqualityComparer;
 
         private static readonly DataLockComparer _dataLockComparer = new DataLockComparer();
+        private static readonly LearningDeliveryEarningComparer _ldEarningComparer = new LearningDeliveryEarningComparer();
+        private static readonly PriceEpisodeEarningComparer _peEarningComparer = new PriceEpisodeEarningComparer();
+
 
         private readonly HashSet<string> _peAttributeGroup = new HashSet<string>()
         {
@@ -81,6 +85,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 // Build dictionaries to allow quicker processing of the larger datasets
                 var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
                 var dataLockHashset = datalocks.ToImmutableHashSet(_dataLockComparer);
+                //var ldEarningsHashset = ldEarnings.ToImmutableHashSet(_ldEarningComparer);
+                //var peEarningsHashset = peEarnings.ToImmutableHashSet(_peEarningComparer);
+                var ldEarningsHashset = ldEarnings.ToImmutableHashSet();
+                var peEarningsHashset = peEarnings.ToImmutableHashSet();
+
+                var ldEarningLearners = ldEarnings.Select(p => p.LearnRefNumber).Distinct().ToList();
+                var ldEarningGroups = ldEarningLearners.Select(record =>
+                {
+                    return ldEarnings.Where(p => p.LearnRefNumber == record);
+                });
+
+                // var ldEarningGroupsDict = ldEarningGroups.ToDictionary(t => t.FirstOrDefault().LearnRefNumber, t => t);
 
                 // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(payments, ldEarnings, peEarnings);
@@ -169,8 +185,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // Work out total earnings
-                    var ldLearner = ldEarnings.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    var peLearner = peEarnings.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
+                    Stopwatch timer = new Stopwatch();
+                    timer.Start();
+                    var ldLearner = ldEarningsHashset.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
+                    timer.Stop();
+                    Debug.Print("LDHashset: " + timer.ElapsedMilliseconds);
+
+                    timer = new Stopwatch();
+                    timer.Start();
+                    ldLearner = ldEarnings.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
+                    timer.Stop();
+                    Debug.Print("LDList: " + timer.ElapsedMilliseconds);
+
+                    var peLearner = peEarningsHashset.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
+                    peLearner.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
 
                     reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
                                                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);
@@ -361,7 +389,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 LearnRefNumber = record.LearnRefNumber
             });
 
-            var peRecords = pelearnerRecords?.Where(pe => _peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords, new PriceEpisodeEarningComparer());
+            var peRecords = pelearnerRecords?.Where(pe => _peAttributeGroup.Contains(pe.AttributeName)).Except(mathEngRecords, _peEarningComparer);
 
             foreach (var pe in peRecords)
             {

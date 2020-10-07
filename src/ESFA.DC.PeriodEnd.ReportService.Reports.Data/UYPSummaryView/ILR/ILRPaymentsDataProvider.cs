@@ -22,15 +22,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.ILR
         private readonly string learnerDeliveryEarningsSql = @"SELECT LD.LearnRefNumber, LD.LearnDelMathEng, LD.AimSeqNumber, LDPV.AttributeName, Period_1, Period_2, Period_3,
                                                                     Period_4, Period_5, Period_6, Period_7, Period_8, Period_9, Period_10, Period_11, Period_12
                                                                 FROM Rulebase.AEC_LearningDelivery LD INNER JOIN Rulebase.AEC_LearningDelivery_PeriodisedValues LDPV 
-                                                                ON LDPV.UKPRN = LD.UKPRN AND LDPV.LearnRefNumber = LD.LearnRefNumber AND LDPV.AimSeqNumber = LD.AimSeqNumber
+                                                                ON LDPV.UKPRN = LD.UKPRN AND LDPV.LearnRefNumber = LD.LearnRefNumber AND LDPV.AimSeqNumber = LD.AimSeqNumber 
                                                                 WHERE LD.Ukprn = @ukprn";
+
         private readonly string priceEpisodeEarningsSql = @"SELECT DISTINCT LearnRefNumber, AttributeName, PriceEpisodeIdentifier, Period_1, Period_2, 
                                                                    Period_3, Period_4, Period_5, Period_6, Period_7, Period_8, Period_9, Period_10, Period_11, Period_12
                                                                 FROM Rulebase.AEC_ApprenticeshipPriceEpisode_PeriodisedValues PEPV 
                                                                 WHERE PEPV.Ukprn = @ukprn";
+
         private readonly string coInvestmentInfoSql = $@"SELECT DISTINCT L.LearnRefNumber, LD.LearnAimRef, AFP.AFinDate, AFP.AFinType, AFP.AFinCode, AFP.AFinAmount
-                                                                FROM Valid.Learner L INNER JOIN Valid.LearningDelivery LD ON L.LearnRefNumber = LD.LearnRefNumber
-                                                                    INNER JOIN Valid.AppFinRecord AFP ON L.LearnRefNumber = AFP.LearnRefNumber
+                                                                FROM Valid.Learner L INNER JOIN Valid.LearningDelivery LD ON L.LearnRefNumber = LD.LearnRefNumber AND L.UKPRN = LD.UKPRN
+                                                                    INNER JOIN Valid.AppFinRecord AFP ON L.LearnRefNumber = AFP.LearnRefNumber AND L.UKPRN = AFP.UKPRN
                                                                 WHERE L.Ukprn = @ukprn
                                                                     AND LD.LearnAimRef = 'ZPROG001'
                                                                     AND AFP.AFinDate >= '{DateConstants.BeginningOfYear}'

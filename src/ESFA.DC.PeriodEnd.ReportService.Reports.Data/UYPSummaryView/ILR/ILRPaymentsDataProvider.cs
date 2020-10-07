@@ -22,7 +22,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.ILR
         private readonly string learnerDeliveryEarningsSql = @"SELECT LD.LearnRefNumber, LD.LearnDelMathEng, LD.AimSeqNumber, LDPV.AttributeName, Period_1, Period_2, Period_3,
                                                                     Period_4, Period_5, Period_6, Period_7, Period_8, Period_9, Period_10, Period_11, Period_12
                                                                 FROM Rulebase.AEC_LearningDelivery LD INNER JOIN Rulebase.AEC_LearningDelivery_PeriodisedValues LDPV 
-                                                                ON LDPV.UKPRN = LD.UKPRN AND LDPV.LearnRefNumber = LD.LearnRefNumber AND LDPV.AimSeqNumber = LD.AimSeqNumber AND LD.UKPRN = LDPV.UKPRN
+                                                                ON LDPV.UKPRN = LD.UKPRN AND LDPV.LearnRefNumber = LD.LearnRefNumber AND LDPV.AimSeqNumber = LD.AimSeqNumber 
                                                                 WHERE LD.Ukprn = @ukprn";
 
         private readonly string priceEpisodeEarningsSql = @"SELECT DISTINCT LearnRefNumber, AttributeName, PriceEpisodeIdentifier, Period_1, Period_2, 

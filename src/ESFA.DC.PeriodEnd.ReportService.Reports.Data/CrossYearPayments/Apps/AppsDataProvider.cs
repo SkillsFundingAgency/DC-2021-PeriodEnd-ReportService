@@ -16,7 +16,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CrossYearPayments.Apps
         private const string PaymentsSql = @"SELECT
                                         [AcademicYear],
                                         [CollectionPeriod],
-                                        [ReportingAimFundingLineType] AS FundingLineType,
+										CASE
+											WHEN [AcademicYear] < 1920 THEN [LearningAimFundingLineType]
+											ELSE [ReportingAimFundingLineType]
+										END AS FundingLineType,
                                         [DeliveryPeriod],
                                         [Amount]
                                     FROM [Payments2].[Payment]

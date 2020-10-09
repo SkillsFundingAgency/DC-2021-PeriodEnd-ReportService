@@ -15,7 +15,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.UYPSummaryView.Das
     {
         private readonly Func<SqlConnection> _sqlConnectionFunc;
 
-        private readonly string paymentsSql = @"SELECT DISTINCT AcademicYear, 
+        private readonly string paymentsSql = @"SELECT AcademicYear, 
                                                         LearnerReferenceNumber, 
                                                         LearnerUln, 
                                                         LearningAimReference, 

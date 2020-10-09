@@ -85,8 +85,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 // Build dictionaries to allow quicker processing of the larger datasets
                 var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
                 var dataLockHashset = datalocks.ToImmutableHashSet(_dataLockComparer);
-                //var ldEarningsHashset = ldEarnings.ToImmutableHashSet(_ldEarningComparer);
-                //var peEarningsHashset = peEarnings.ToImmutableHashSet(_peEarningComparer);
                 var ldEarningsHashset = ldEarnings.ToImmutableHashSet();
                 var peEarningsHashset = peEarnings.ToImmutableHashSet();
 
@@ -96,7 +94,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     return ldEarnings.Where(p => p.LearnRefNumber == record);
                 });
 
-                // var ldEarningGroupsDict = ldEarningGroups.ToDictionary(t => t.FirstOrDefault().LearnRefNumber, t => t);
+                // TODO: Groups needs to be a dictionary
+
 
                 // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(payments, ldEarnings, peEarnings);
@@ -196,6 +195,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     ldLearner = ldEarnings.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
                     timer.Stop();
                     Debug.Print("LDList: " + timer.ElapsedMilliseconds);
+
+                    timer = new Stopwatch();
+                    timer.Start();
+                    ldLearner = ldEarningGroups.First(ld => Enumerable.First<LearningDeliveryEarning>(ld).LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
+                    timer.Stop();
+                    Debug.Print("LDListGroup: " + timer.ElapsedMilliseconds);
+
+                    timer = new Stopwatch();
+                    timer.Start();
+                    var ilrRec = ilrLearnersDict.Select(ld => ld.Key == reportRecord.PaymentLearnerReferenceNumber).ToList();
+                    timer.Stop();
+                    Debug.Print("LDListGroup: " + timer.ElapsedMilliseconds);
+
 
                     var peLearner = peEarningsHashset.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
                     peLearner.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();

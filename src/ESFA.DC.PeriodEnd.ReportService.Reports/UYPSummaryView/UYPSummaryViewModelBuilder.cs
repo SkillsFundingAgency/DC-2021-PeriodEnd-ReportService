@@ -459,22 +459,4 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             }
         }
     }
-
-    public class LearnerStore
-    {
-        public LearnerStore()
-        {
-            learnerRefNumber = "";
-            ldEarnings = null;
-        }
-
-        public LearnerStore(string newlr, IEnumerable<LearningDeliveryEarning> newldearnings )
-        {
-            learnerRefNumber = newlr;
-            ldEarnings = newldearnings;
-        }
-
-        public string learnerRefNumber;
-        public IEnumerable<LearningDeliveryEarning> ldEarnings;
-    }
 }

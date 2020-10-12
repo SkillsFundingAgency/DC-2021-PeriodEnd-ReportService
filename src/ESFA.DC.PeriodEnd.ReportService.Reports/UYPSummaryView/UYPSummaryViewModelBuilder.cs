@@ -23,7 +23,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private readonly ILLVPaymentRecordLRefOnlyKeyEqualityComparer _lLVPaymentRecordLRefOnlyKeyEqualityComparer;
 
         private static readonly DataLockComparer _dataLockComparer = new DataLockComparer();
-        private static readonly LearningDeliveryEarningComparer _ldEarningComparer = new LearningDeliveryEarningComparer();
         private static readonly PriceEpisodeEarningComparer _peEarningComparer = new PriceEpisodeEarningComparer();
 
 

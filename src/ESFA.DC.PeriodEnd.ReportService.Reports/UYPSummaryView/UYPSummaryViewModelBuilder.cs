@@ -84,7 +84,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 // Build dictionaries to allow quicker processing of the larger datasets
                 var paymentsDictionary = payments.GroupBy(e => e.LearnerReferenceNumber, StringComparer.OrdinalIgnoreCase)
                     .ToDictionary(e => e.Key, e => e.ToList());
-
+                
                 var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
 
                 var newLdEarningsDictionary = ldEarnings.GroupBy(e => e.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
@@ -181,16 +181,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // Work out total earnings
-                    if (newLdEarningsDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out var ldLearner) &&
-                        newPeEarningsDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out var peLearner))
-                    {
+                    var ldLearner = newLdEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, new List<LearningDeliveryEarning>());
+                    var peLearner = newPeEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, new List<PriceEpisodeEarning>());
 
-                        reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
-                                                           CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);
+                    reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
+                                                        CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);
 
-                        reportRecord.TotalEarningsForPeriod = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, returnPeriod, reportRecord) +
-                                                              CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, returnPeriod, reportRecord);
-                    }
+                    reportRecord.TotalEarningsForPeriod = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, returnPeriod, reportRecord) +
+                                                            CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, returnPeriod, reportRecord);
 
                     // Default any null valued records
                     reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod ?? 0;

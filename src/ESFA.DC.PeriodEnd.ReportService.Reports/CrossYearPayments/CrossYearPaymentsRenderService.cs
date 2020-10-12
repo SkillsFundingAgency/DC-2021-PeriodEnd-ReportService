@@ -292,7 +292,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
         private Worksheet RenderValueCell(Worksheet worksheet, ICollection<FSRValue> values, int[] periods, int academicYear, int collectionPeriod, int rowNum, int columnNum)
         {
-            worksheet.Cells[rowNum, columnNum].PutValue(values?.Where(x => x.AcademicYear == academicYear && x.CollectionPeriod == collectionPeriod && periods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
+            worksheet.Cells[rowNum, columnNum].PutValue(values?.Where(x => x.AcademicYear == academicYear && x.CollectionPeriod <= collectionPeriod && periods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
 
             return worksheet;
         }

@@ -83,19 +83,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 IDictionary<int, string> employerNamesToIDs = new Dictionary<int, string>();
 
                 // Build dictionaries to allow quicker processing of the larger datasets
+                var paymentsDictionary = payments.GroupBy(e => e.LearnerReferenceNumber, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(e => e.Key, e => e.ToList());
+
                 var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
+
+                var newLdEarningsDictionary = ldEarnings.GroupBy(e => e.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(e => e.Key, e => e.ToList());
+
+                var newPeEarningsDictionary = peEarnings.GroupBy(e => e.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
+                    .ToDictionary(e => e.Key, e => e.ToList());
+
                 var dataLockHashset = datalocks.ToImmutableHashSet(_dataLockComparer);
-                var ldEarningsHashset = ldEarnings.ToImmutableHashSet();
-                var peEarningsHashset = peEarnings.ToImmutableHashSet();
-
-                var ldEarningLearners = ldEarnings.Select(p => p.LearnRefNumber).Distinct().ToList();
-                var ldEarningGroups = ldEarningLearners.Select(record =>
-                {
-                    return ldEarnings.Where(p => p.LearnRefNumber == record);
-                });
-
-                // TODO: Groups needs to be a dictionary
-
 
                 // Union the keys from the datasets being used to source the report
                 var unionedKeys = UnionKeys(payments, ldEarnings, peEarnings);
@@ -126,11 +125,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         }
                     }
 
-                    var paymentValues = payments.Where(p => p.LearnerReferenceNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    if (paymentValues.Any())
+                    if (paymentsDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out var paymentValues))
                     {
                         // Assign the amounts
-                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => p.CollectionPeriod <= returnPeriod && 
+                        reportRecord.PlannedPaymentsToYouToDate = paymentValues.Where(p => p.CollectionPeriod <= returnPeriod &&
                             (TotalESFAPlannedPaymentFSTypePredicate(p) ||
                              TotalESFAPlannedPaymentsTTTypePredicate(p) ||
                              TotalESFAPlannedPaymentsNonZPTypePredicate(p))).Sum(c => c.Amount);
@@ -184,39 +182,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // Work out total earnings
-                    Stopwatch timer = new Stopwatch();
-                    timer.Start();
-                    var ldLearner = ldEarningsHashset.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    timer.Stop();
-                    Debug.Print("LDHashset: " + timer.ElapsedMilliseconds);
+                    if (newLdEarningsDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out var ldLearner) &&
+                        newPeEarningsDictionary.TryGetValue(reportRecord.PaymentLearnerReferenceNumber, out var peLearner))
+                    {
 
-                    timer = new Stopwatch();
-                    timer.Start();
-                    ldLearner = ldEarnings.Where(ld => ld.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    timer.Stop();
-                    Debug.Print("LDList: " + timer.ElapsedMilliseconds);
+                        reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
+                                                           CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);
 
-                    timer = new Stopwatch();
-                    timer.Start();
-                    ldLearner = ldEarningGroups.First(ld => Enumerable.First<LearningDeliveryEarning>(ld).LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    timer.Stop();
-                    Debug.Print("LDListGroup: " + timer.ElapsedMilliseconds);
-
-                    timer = new Stopwatch();
-                    timer.Start();
-                    var ilrRec = ilrLearnersDict.Select(ld => ld.Key == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    timer.Stop();
-                    Debug.Print("LDListGroup: " + timer.ElapsedMilliseconds);
-
-
-                    var peLearner = peEarningsHashset.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-                    peLearner.Where(pe => pe.LearnRefNumber == reportRecord.PaymentLearnerReferenceNumber).ToList();
-
-                    reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
-                                                       CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);
-
-                    reportRecord.TotalEarningsForPeriod = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, returnPeriod, reportRecord) +
-                                                          CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, returnPeriod, reportRecord);
+                        reportRecord.TotalEarningsForPeriod = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, false, returnPeriod, reportRecord) +
+                                                              CalculateLearningDeliveryEarningsToPeriod(ldLearner, false, returnPeriod, reportRecord);
+                    }
 
                     // Default any null valued records
                     reportRecord.ESFAPlannedPaymentsThisPeriod = reportRecord.ESFAPlannedPaymentsThisPeriod ?? 0;
@@ -484,5 +459,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                 default: return 0;
             }
         }
+    }
+
+    public class LearnerStore
+    {
+        public LearnerStore()
+        {
+            learnerRefNumber = "";
+            ldEarnings = null;
+        }
+
+        public LearnerStore(string newlr, IEnumerable<LearningDeliveryEarning> newldearnings )
+        {
+            learnerRefNumber = newlr;
+            ldEarnings = newldearnings;
+        }
+
+        public string learnerRefNumber;
+        public IEnumerable<LearningDeliveryEarning> ldEarnings;
     }
 }

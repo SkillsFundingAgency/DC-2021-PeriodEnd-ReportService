@@ -25,6 +25,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private static readonly DataLockComparer _dataLockComparer = new DataLockComparer();
         private static readonly PriceEpisodeEarningComparer _peEarningComparer = new PriceEpisodeEarningComparer();
 
+        private static readonly List<PriceEpisodeEarning> _emptyPriceEpisodeList = new List<PriceEpisodeEarning>();
+        private static readonly List<LearningDeliveryEarning> _emptyLearningDeliveryList = new List<LearningDeliveryEarning>();
 
         private readonly HashSet<string> _peAttributeGroup = new HashSet<string>()
         {
@@ -83,15 +85,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
                 // Build dictionaries to allow quicker processing of the larger datasets
                 var paymentsDictionary = payments.GroupBy(e => e.LearnerReferenceNumber, StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(e => e.Key, e => e.ToList());
+                    .ToDictionary(e => e.Key, e => e.ToList(), StringComparer.OrdinalIgnoreCase);
                 
-                var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber);
+                var ilrLearnersDict = learners.ToDictionary(t => t.LearnRefNumber, StringComparer.OrdinalIgnoreCase);
 
                 var newLdEarningsDictionary = ldEarnings.GroupBy(e => e.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(e => e.Key, e => e.ToList());
+                    .ToDictionary(e => e.Key, e => e.ToList(), StringComparer.OrdinalIgnoreCase);
 
                 var newPeEarningsDictionary = peEarnings.GroupBy(e => e.LearnRefNumber, StringComparer.OrdinalIgnoreCase)
-                    .ToDictionary(e => e.Key, e => e.ToList());
+                    .ToDictionary(e => e.Key, e => e.ToList(), StringComparer.OrdinalIgnoreCase);
 
                 var dataLockHashset = datalocks.ToImmutableHashSet(_dataLockComparer);
 
@@ -181,8 +183,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // Work out total earnings
-                    var ldLearner = newLdEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, new List<LearningDeliveryEarning>());
-                    var peLearner = newPeEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, new List<PriceEpisodeEarning>());
+                    var ldLearner = newLdEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, _emptyLearningDeliveryList);
+                    var peLearner = newPeEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, _emptyPriceEpisodeList);
 
                     reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
                                                         CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);

@@ -25,9 +25,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private static readonly DataLockComparer _dataLockComparer = new DataLockComparer();
         private static readonly PriceEpisodeEarningComparer _peEarningComparer = new PriceEpisodeEarningComparer();
 
-        private static readonly List<PriceEpisodeEarning> _emptyPriceEpisodeList = new List<PriceEpisodeEarning>();
-        private static readonly List<LearningDeliveryEarning> _emptyLearningDeliveryList = new List<LearningDeliveryEarning>();
-
         private readonly HashSet<string> _peAttributeGroup = new HashSet<string>()
         {
             AttributeConstants.Fm36PriceEpisodeCompletionPaymentAttributeName,
@@ -183,8 +180,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     }
 
                     // Work out total earnings
-                    var ldLearner = newLdEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, _emptyLearningDeliveryList);
-                    var peLearner = newPeEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, _emptyPriceEpisodeList);
+                    var ldLearner = newLdEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, Enumerable.Empty<LearningDeliveryEarning>().ToList());
+                    var peLearner = newPeEarningsDictionary.GetValueOrDefault(reportRecord.PaymentLearnerReferenceNumber, Enumerable.Empty<PriceEpisodeEarning>().ToList());
 
                     reportRecord.TotalEarningsToDate = CalculatePriceEpisodeEarningsToPeriod(ldLearner, peLearner, true, returnPeriod, reportRecord) +
                                                         CalculateLearningDeliveryEarningsToPeriod(ldLearner, true, returnPeriod, reportRecord);

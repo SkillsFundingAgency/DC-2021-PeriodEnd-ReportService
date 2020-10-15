@@ -92,7 +92,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.AppsAdditionalPayments
             var payment = new Payment
             {
                 ContractType = contractType, TransactionType = transactionType,
-                ApprenticeshipLegalEntityName = "AppEntityName"
+                LegalEntityName = "AppEntityName"
             };
 
             var result = formatter.GetApprenticeshipLegalEntityName(payment);

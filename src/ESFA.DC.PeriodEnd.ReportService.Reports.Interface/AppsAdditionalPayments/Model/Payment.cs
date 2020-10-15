@@ -30,7 +30,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.AppsAdditionalPaymen
 
         public byte TransactionType { get; set; }
 
-        public string ApprenticeshipLegalEntityName { get; set; }
+        public string LegalEntityName { get; set; }
 
         public decimal Amount { get; set; }
     }

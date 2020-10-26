@@ -174,11 +174,13 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return worksheet;
         }
 
-        private Worksheet RenderEmployersOnApprenticeshipServiceLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
-            => RenderEmployers(worksheet, delivery, returnPeriod, 29, 33);
+        private Worksheet RenderEmployersOnApprenticeshipServiceLevy(Worksheet worksheet, Delivery delivery,int returnPeriod)
+        {
+            return RenderEmployers(worksheet, delivery, returnPeriod, 30, 34);
+        }
 
         private Worksheet RenderEmployersOnApprenticeshipServiceNonLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
-            => RenderEmployers(worksheet, delivery, returnPeriod, 36, 40);
+            => RenderEmployers(worksheet, delivery, returnPeriod, 37, 41);
 
         private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
         {

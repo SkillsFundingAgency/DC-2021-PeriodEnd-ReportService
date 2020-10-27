@@ -23,7 +23,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Data.CrossYearPayments.Apps
                                         [DeliveryPeriod],
                                         [Amount]
                                     FROM [Payments2].[Payment]
-                                    WHERE Ukprn = @ukprn";
+                                    WHERE [Ukprn] = @ukprn AND [FundingSource] <> 3";
 
         private const string AdjustmentPaymentsSql = @"SELECT
                                                             [CollectionPeriodName],

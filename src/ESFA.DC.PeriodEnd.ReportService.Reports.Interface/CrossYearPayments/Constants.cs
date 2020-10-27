@@ -23,6 +23,10 @@
 
         public const string Apprenticeship19PlusEmployerOnAppServiceNonLevyFundLine = "19+ Apprenticeship (Employer on App Service) Non-Levy funding";
 
+        public const string Apprenticeships1618FromMay2017LevyContract = "16-18 Apprenticeship (From May 2017) Levy Contract";
+
+        public const string Apprenticeships19PlusFromMay2017LevyContract = "19+ Apprenticeship (From May 2017) Levy Contract";
+
 
         public const string NLAP16182018 = "16-18NLAP2018";
 

@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             { Interface.CrossYearPayments.Constants.NonLevy1618ContractedApprenticeshipsProcuredDelivery, new List<string> { Interface.CrossYearPayments.Constants.Apprenticeship1618NonLevyProcuredFundLine } },
             { Interface.CrossYearPayments.Constants.AdultNonLevyContractedApprenticeshipsProcuredDelivery, new List<string> { Interface.CrossYearPayments.Constants.Apprenticeship19PlusNonLevyContractFundLine } },
-            { Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceLevy, new List<string> { Interface.CrossYearPayments.Constants.Apprenticeship1618EmployerOnAppServiceLevyFundLine, Interface.CrossYearPayments.Constants.Apprenticeship19PlusEmployerOnAppServiceLevyFundLine } },
+            { Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceLevy, new List<string> { Interface.CrossYearPayments.Constants.Apprenticeship1618EmployerOnAppServiceLevyFundLine, Interface.CrossYearPayments.Constants.Apprenticeship19PlusEmployerOnAppServiceLevyFundLine, Interface.CrossYearPayments.Constants.Apprenticeships1618FromMay2017LevyContract, Interface.CrossYearPayments.Constants.Apprenticeships19PlusFromMay2017LevyContract } },
             { Interface.CrossYearPayments.Constants.EmployersOnApprenticeshipServiceNonLevy, new List<string> { Interface.CrossYearPayments.Constants.Apprenticeship1618EmployerOnAppServiceNonLevyFundLine, Interface.CrossYearPayments.Constants.Apprenticeship19PlusEmployerOnAppServiceNonLevyFundLine } }
         };
         private IDictionary<string, string> FspLookup => new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase)

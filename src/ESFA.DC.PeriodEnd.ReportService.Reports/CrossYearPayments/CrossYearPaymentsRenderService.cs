@@ -18,7 +18,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         private const int R01ColumnNumber = 10;
         private const int R02ColumnNumber = 15;
         private const int R03ColumnNumber = 20;
-        private const int R14PreviousYearColumnNumber = 4;
+        private const int FsrValuePreviousYearColumnNumber = 4;
         private const int PaymentsUpToR11 = 5;
 
         private const int R12 = 12;
@@ -94,6 +94,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             { 3, new List<int> { R01, R13, R02, R14, R03 } },
         };
 
+        private readonly int[] _levyPreviousYearCollectionPeriods = { 13, 14 };
+        private readonly int[] _levyPreviousYearDeliveryPeriods = { 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 };
+
         public Worksheet Render(IReportServiceContext reportServiceContext, CrossYearPaymentsModel model, Worksheet worksheet, Workbook workbook)
         {
             RenderHeader(worksheet, model.HeaderInfo);
@@ -152,7 +155,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
 
             RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
 
-            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, R14PreviousYearColumnNumber, _fsrR14PreviousYearPeriods);
+            RenderProcuredColumn(worksheet, delivery?.FSRValues, _collectionPeriodConfiguration.GetValueOrDefault(R14), startRow, FsrValuePreviousYearColumnNumber, _fsrR14PreviousYearPeriods);
 
             RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _procuredPaymentsPeriod, subTotalRow, PaymentsUpToR11);
 
@@ -174,11 +177,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
             return worksheet;
         }
 
-        private Worksheet RenderEmployersOnApprenticeshipServiceLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
-            => RenderEmployers(worksheet, delivery, returnPeriod, 29, 33);
+        private Worksheet RenderEmployersOnApprenticeshipServiceLevy(Worksheet worksheet, Delivery delivery,int returnPeriod)
+        {
+            var row = 29;
+
+            worksheet.Cells[row++, FsrValuePreviousYearColumnNumber].PutValue(delivery?.FSRValues?.Where(x => x.AcademicYear == 1819 && _levyPreviousYearCollectionPeriods.Contains(x.CollectionPeriod) && _levyPreviousYearDeliveryPeriods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
+
+            return RenderEmployers(worksheet, delivery, returnPeriod, row, 34);
+        }
 
         private Worksheet RenderEmployersOnApprenticeshipServiceNonLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
-            => RenderEmployers(worksheet, delivery, returnPeriod, 36, 40);
+            => RenderEmployers(worksheet, delivery, returnPeriod, 37, 41);
 
         private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
         {

@@ -181,19 +181,19 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.CrossYearPayments
         {
             var row = 29;
 
-            worksheet.Cells[row++, FsrValuePreviousYearColumnNumber].PutValue(delivery?.FSRValues?.Where(x => x.AcademicYear == 1819 && _levyPreviousYearCollectionPeriods.Contains(x.CollectionPeriod) && _levyPreviousYearDeliveryPeriods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
+            worksheet.Cells[row, FsrValuePreviousYearColumnNumber].PutValue(delivery?.FSRValues?.Where(x => x.AcademicYear == 1819 && _levyPreviousYearCollectionPeriods.Contains(x.CollectionPeriod) && _levyPreviousYearDeliveryPeriods.Contains(x.DeliveryPeriod)).Sum(x => x.Value) ?? 0m);
 
-            return RenderEmployers(worksheet, delivery, returnPeriod, row, 34);
+            return RenderEmployers(worksheet, delivery, returnPeriod, row + 1, 34, row);
         }
 
         private Worksheet RenderEmployersOnApprenticeshipServiceNonLevy(Worksheet worksheet, Delivery delivery, int returnPeriod)
             => RenderEmployers(worksheet, delivery, returnPeriod, 37, 41);
 
-        private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow)
+        private Worksheet RenderEmployers(Worksheet worksheet, Delivery delivery, int returnPeriod, int startRow, int endRow, int? contractStartRow = null)
         {
             var subTotalRow = startRow + 3;
 
-            RenderContractNumber(worksheet, startRow, endRow, delivery?.ContractNumber);
+            RenderContractNumber(worksheet, contractStartRow ?? startRow, endRow, delivery?.ContractNumber);
 
             RenderPaymentsUpToR11(worksheet, delivery?.FcsPayments, _employersPaymentsPeriod, subTotalRow, PaymentsUpToR11);
 

@@ -24,7 +24,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
     {
         public bool IncludeInZip => false;
 
-        private const string ReportZipFileName = "{0}-LLVSample.zip";
+        private const string ReportZipFileName = "{0}-LLVSample";
 
         private readonly ICsvFileService _csvFileService;
         private readonly IFileNameService _fileNameService;

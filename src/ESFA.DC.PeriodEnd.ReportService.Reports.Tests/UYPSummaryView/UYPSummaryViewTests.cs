@@ -55,14 +55,16 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                 new Mock<IReportDataPersistanceService<LearnerLevelViewReport>>();
             Mock<IUYPSummaryViewPersistenceMapper> uypSummaryViewPersistenceMapper = new Mock<IUYPSummaryViewPersistenceMapper>();
 
+            var zipServiceMock = new Mock<IReportZipService>();
+
             uypSummaryViewPersistenceMapper.Setup(x => x.Map(
                 It.IsAny<IReportServiceContext>(), 
                 It.IsAny<IEnumerable<LearnerLevelViewModel>>(), 
                 It.IsAny<CancellationToken>())).Returns(new List<LearnerLevelViewReport>());
 
             reportDataPersistanceServiceMock.Setup(x => x.PersistAsync(
-                It.IsAny<IReportServiceContext>(), 
-                It.IsAny<IEnumerable<LearnerLevelViewReport>>(), 
+                It.IsAny<IReportServiceContext>(),
+                It.IsAny<IEnumerable<LearnerLevelViewReport>>(),
                 It.IsAny<CancellationToken>()));
 
             jsonSerializationServiceMock.Setup(x => x.Serialize<IEnumerable<LearnerLevelViewSummaryModel>>(
@@ -141,11 +143,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                                                             It.IsAny<int>())).Returns(results);
 
             // Create and invoke the view
-            ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView.UYPSummaryView report
-                = new ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView.UYPSummaryView(
-                    csvFileServiceMock.Object, fileNameServiceMock.Object, uypSummaryViewDataProviderMock.Object,
-                    uypSummaryViewModelBuilderMock.Object, jsonSerializationService,
-                    fileServiceMock.Object, reportDataPersistanceServiceMock.Object, uypSummaryViewPersistenceMapper.Object, 
+            Reports.UYPSummaryView.UYPSummaryView report
+                = new Reports.UYPSummaryView.UYPSummaryView(
+                    csvFileServiceMock.Object,
+                    fileNameServiceMock.Object,
+                    uypSummaryViewDataProviderMock.Object,
+                    uypSummaryViewModelBuilderMock.Object,
+                    jsonSerializationService,
+                    fileServiceMock.Object,
+                    zipServiceMock.Object,
+                    reportDataPersistanceServiceMock.Object,
+                    uypSummaryViewPersistenceMapper.Object, 
                     loggerMock.Object);
             await report.GenerateReport(reportServiceContextMock.Object, CancellationToken.None);
 

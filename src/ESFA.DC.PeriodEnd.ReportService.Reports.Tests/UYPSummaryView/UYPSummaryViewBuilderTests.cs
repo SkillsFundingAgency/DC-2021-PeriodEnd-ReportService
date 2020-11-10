@@ -68,7 +68,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             learnerResult.GivenNames.Should().Be("Bruce");
             learnerResult.IssuesAmount.Should().Be(0);
             learnerResult.LearnerEmploymentStatusEmployerId.Should().Be(56789);
-            learnerResult.PaymentFundingLineType.Should().Be("16-18 Apprenticeship Non-Levy Contract (procured)");
             learnerResult.ESFAPlannedPaymentsThisPeriod.Should().Be(189);
             learnerResult.PlannedPaymentsToYouToDate.Should().Be(189);
             learnerResult.TotalCoInvestmentCollectedToDate.Should().Be(100);

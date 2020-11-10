@@ -23,8 +23,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
             MapIndex(m => m.ReasonForIssues).Name("Reasons for issues");
             MapIndex(m => m.RuleDescription).Name("Data lock description");
-
-            MapIndex(m => m.PaymentFundingLineType).Name("Funding line type");
         }
     }
 }

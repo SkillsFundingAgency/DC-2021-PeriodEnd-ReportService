@@ -15,7 +15,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             MapIndex(m => m.PaymentLearnerReferenceNumber).Name("Learner reference number");
             MapIndex(m => m.PaymentUniqueLearnerNumbers).Name("Unique learner number");
 
-            MapIndex(m => m.PaymentFundingLineType).Name("Funding line type");
             MapIndex(m => m.LearnerEmploymentStatusEmployerId).Name("Employer identifier on employment status date");
             MapIndex(m => m.EmployerName).Name("Latest employer name");
 

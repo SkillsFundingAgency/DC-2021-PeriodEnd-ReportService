@@ -179,8 +179,8 @@
     <Reference Include="ESFA.DC.ReferenceData.LARS.Model, Version=0.2.210.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.ReferenceData.LARS.Model.0.2.210\lib\netstandard2.0\ESFA.DC.ReferenceData.LARS.Model.dll</HintPath>
     </Reference>
-    <Reference Include="ESFA.DC.ReportData.Model, Version=0.1.8.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\ESFA.DC.ReportData.2021.Model.0.1.8-beta.1\lib\netstandard2.0\ESFA.DC.ReportData.Model.dll</HintPath>
+    <Reference Include="ESFA.DC.ReportData.Model, Version=0.1.10.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\ESFA.DC.ReportData.2021.Model.0.1.10-beta.1\lib\netstandard2.0\ESFA.DC.ReportData.Model.dll</HintPath>
     </Reference>
     <Reference Include="ESFA.DC.Serialization.Interfaces, Version=0.1.39.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\ESFA.DC.Serialization.Interfaces.0.1.39-beta0001\lib\netstandard2.0\ESFA.DC.Serialization.Interfaces.dll</HintPath>

@@ -24,6 +24,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
     {
         public bool IncludeInZip => false;
 
+        private const string ReportZipFileName = "{0}-LLVSample";
+
         private readonly ICsvFileService _csvFileService;
         private readonly IFileNameService _fileNameService;
         private readonly IUYPSummaryViewDataProvider _uypSummaryViewDataProvider;
@@ -33,6 +35,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private readonly IUYPSummaryViewPersistenceMapper _uypSummaryViewPersistenceMapper;
         private readonly IJsonSerializationService _jsonSerializationService;
         private readonly IFileService _fileService;
+        private readonly IReportZipService _reportZipService;
         private readonly UTF8Encoding _encoding = new UTF8Encoding(true, true);
 
         public string ReportTaskName => "TaskLearnerLevelViewReport";
@@ -46,6 +49,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             IUYPSummaryViewModelBuilder uypSummaryViewModelBuilder,
             IJsonSerializationService jsonSerializationService,
             IFileService fileService,
+            IReportZipService reportZipService,
             IReportDataPersistanceService<LearnerLevelViewReport> reportDataPersistanceService,
             IUYPSummaryViewPersistenceMapper uypSummaryViewPersistenceMapper,
             ILogger logger)
@@ -56,6 +60,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             _uypSummaryViewModelBuilder = uypSummaryViewModelBuilder;
             _jsonSerializationService = jsonSerializationService;
             _fileService = fileService;
+            _reportZipService = reportZipService;
             _reportDataPersistanceService = reportDataPersistanceService;
             _uypSummaryViewPersistenceMapper = uypSummaryViewPersistenceMapper;
             _logger = logger;
@@ -105,7 +110,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             _logger.LogInfo("UYP Summary Report Model Build End");
 
             // Full data set used for summary and data persist
-            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecords, baseFileName, reportServiceContext.Container, cancellationToken);
+            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewClassMap>(uypSummaryViewRecords, baseFileName, reportServiceContext.Container, cancellationToken);
             string summaryFile = CreateSummary(uypSummaryViewRecords, cancellationToken);
             await WriteAsync(summaryFilename, summaryFile, reportServiceContext.Container, cancellationToken);
 
@@ -115,7 +120,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
             // Only learners with issues are made available for the provider to download as a report
             var uypSummaryViewRecordsWithIssues = uypSummaryViewRecords.Where(p => p.IssuesAmount < 0);
-            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>((IEnumerable<LearnerLevelViewModel>)uypSummaryViewRecordsWithIssues, downloadFilename, reportServiceContext.Container, cancellationToken);
+            await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewDownloadClassMap>(uypSummaryViewRecordsWithIssues, downloadFilename, reportServiceContext.Container, cancellationToken);
+
+            if (SampleProviders.SampleReportProviderUkPrns.Contains(ukprn))
+            {
+                var zipName = string.Format(ReportZipFileName, ukprn);
+                await _reportZipService.CreateOrUpdateZipWithReportAsync(zipName, baseFileName, reportServiceContext, cancellationToken);
+                await _reportZipService.CreateOrUpdateZipWithReportAsync(zipName, summaryFilename, reportServiceContext, cancellationToken);
+                await _reportZipService.CreateOrUpdateZipWithReportAsync(zipName, downloadFilename, reportServiceContext, cancellationToken);
+            }
 
             return baseFileName;
         }

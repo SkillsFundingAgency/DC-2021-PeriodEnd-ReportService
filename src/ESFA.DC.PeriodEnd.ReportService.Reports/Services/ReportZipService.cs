@@ -36,14 +36,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
             }
         }
 
-        public async Task CreateOrUpdateZipWithReportAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        public async Task CreateOrUpdateZipWithReportAsync(string zipName, string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
         {
             if (string.IsNullOrEmpty(reportFileNameKey))
             {
                 return;
             }
 
-            var reportZipFileKey = _fileNameService.GetFilename(reportServiceContext, ReportsZipName, OutputTypes.Zip, false, false);
+            var reportZipFileKey = _fileNameService.GetFilename(reportServiceContext, zipName, OutputTypes.Zip, false, false);
 
             using (var memoryStream = new MemoryStream())
             using (var zipSteam = await GetStreamAsync(reportZipFileKey, reportServiceContext, cancellationToken))
@@ -64,6 +64,11 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Services
                     await memoryStream.CopyToAsync(writeStream, BufferSize, cancellationToken);
                 }
             }
+        }
+
+        public async Task CreateOrUpdateZipWithReportAsync(string reportFileNameKey, IReportServiceContext reportServiceContext, CancellationToken cancellationToken)
+        {
+            await CreateOrUpdateZipWithReportAsync(ReportsZipName, reportFileNameKey, reportServiceContext, cancellationToken);
         }
 
         private string PrepareFileName(string fileName)

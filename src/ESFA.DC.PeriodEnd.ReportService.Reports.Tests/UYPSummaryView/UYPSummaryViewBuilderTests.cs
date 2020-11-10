@@ -40,14 +40,10 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
 
             Mock<ILogger> loggerMock = new Mock<ILogger>();
 
-            LLVPaymentRecordKeyEqualityComparer lLVPaymentRecordKeyEqualityComparer = new LLVPaymentRecordKeyEqualityComparer();
-            LLVPaymentRecordLRefOnlyKeyEqualityComparer lLVPaymentRecordLRefOnlyKeyEqualityComparer = new LLVPaymentRecordLRefOnlyKeyEqualityComparer();
 
             // Create and invoke the builder
             IUYPSummaryViewModelBuilder uypSummaryViewModelBuilder = new UYPSummaryViewModelBuilder(
-                loggerMock.Object,
-                lLVPaymentRecordKeyEqualityComparer,
-                lLVPaymentRecordLRefOnlyKeyEqualityComparer);
+                loggerMock.Object);
             var result = uypSummaryViewModelBuilder.Build(
                 BuildDasPaymentsModel(ukPrn, academicYear),
                 BuildILRModel(ukPrn),
@@ -66,7 +62,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             var learnerResult = result.FirstOrDefault(x =>x.PaymentLearnerReferenceNumber == "A12345");
 
             learnerResult.PaymentLearnerReferenceNumber.Should().Be("A12345");
-            learnerResult.PaymentUniqueLearnerNumber.Should().Be(12345);
+            learnerResult.PaymentUniqueLearnerNumbers.Should().Be("12345");
             learnerResult.LearnerEmploymentStatusEmployerId.Should().Be(56789);
             learnerResult.FamilyName.Should().Be("Banner");
             learnerResult.GivenNames.Should().Be("Bruce");

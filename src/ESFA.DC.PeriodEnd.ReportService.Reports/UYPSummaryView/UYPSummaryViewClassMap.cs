@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         public UYPSummaryViewClassMap()
         {
             MapIndex(m => m.PaymentLearnerReferenceNumber).Name("Learner reference number");
-            MapIndex(m => m.PaymentUniqueLearnerNumber).Name("Unique learner number");
+            MapIndex(m => m.PaymentUniqueLearnerNumbers).Name("Unique learner number");
 
             MapIndex(m => m.PaymentFundingLineType).Name("Funding line type");
             MapIndex(m => m.LearnerEmploymentStatusEmployerId).Name("Employer identifier on employment status date");

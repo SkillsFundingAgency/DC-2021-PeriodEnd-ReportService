@@ -19,9 +19,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private readonly HashSet<byte?> _transactionTypesCoInvestmentPayments = new HashSet<byte?>() { 1, 2, 3 };
         private readonly ILogger _logger;
 
-        private readonly ILLVPaymentRecordKeyEqualityComparer _lLVPaymentRecordKeyEqualityComparer;
-        private readonly ILLVPaymentRecordLRefOnlyKeyEqualityComparer _lLVPaymentRecordLRefOnlyKeyEqualityComparer;
-
         private static readonly DataLockComparer _dataLockComparer = new DataLockComparer();
         private static readonly PriceEpisodeEarningComparer _peEarningComparer = new PriceEpisodeEarningComparer();
 
@@ -51,13 +48,9 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         };
 
         public UYPSummaryViewModelBuilder(
-            ILogger logger,
-            ILLVPaymentRecordKeyEqualityComparer lLVPaymentRecordKeyEqualityComparer,
-            ILLVPaymentRecordLRefOnlyKeyEqualityComparer lLVPaymentRecordLRefOnlyKeyEqualityComparer)
+            ILogger logger)
         {
             _logger = logger;
-            _lLVPaymentRecordKeyEqualityComparer = lLVPaymentRecordKeyEqualityComparer;
-            _lLVPaymentRecordLRefOnlyKeyEqualityComparer = lLVPaymentRecordLRefOnlyKeyEqualityComparer;
         }
 
         public ICollection<LearnerLevelViewModel> Build(
@@ -104,16 +97,15 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                     var reportRecord = new LearnerLevelViewModel()
                     {
                         Ukprn = ukprn,
-                        PaymentLearnerReferenceNumber = record.LearnerReferenceNumber,
-                        PaymentFundingLineType = record.PaymentFundingLineType
+                        PaymentLearnerReferenceNumber = record
                     };
 
                     // Extract ILR info
-                    if (ilrLearnersDict.TryGetValue(record.LearnerReferenceNumber, out var ilrRecord))
+                    if (ilrLearnersDict.TryGetValue(record, out var ilrRecord))
                     {
                         reportRecord.FamilyName = ilrRecord.FamilyName;
                         reportRecord.GivenNames = ilrRecord.GivenNames;
-                        reportRecord.PaymentUniqueLearnerNumber = ilrRecord.ULN;
+                        reportRecord.PaymentUniqueLearnerNumbers = ilrRecord.ULN.ToString();
                         if ((ilrRecord.LearnerEmploymentStatuses != null) && (ilrRecord.LearnerEmploymentStatuses.Count > 0))
                         {
                             reportRecord.LearnerEmploymentStatusEmployerId = ilrRecord.LearnerEmploymentStatuses.Where(les => les.LearnRefNumber.CaseInsensitiveEquals(reportRecord.PaymentLearnerReferenceNumber) &&
@@ -143,12 +135,20 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         reportRecord.CoInvestmentOutstandingFromEmplToDate = paymentValues.Where(p => p.CollectionPeriod <= returnPeriod &&
                             TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(p)).Sum(c => c.Amount);
 
+                        // Add any further ULNs found
                         var firstPaymentVal = paymentValues.First();
 
                         // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
-                        if (reportRecord.PaymentUniqueLearnerNumber == null)
+                        if (reportRecord.PaymentUniqueLearnerNumbers == null)
                         {
-                            reportRecord.PaymentUniqueLearnerNumber = firstPaymentVal.LearnerUln;
+                            reportRecord.PaymentUniqueLearnerNumbers = firstPaymentVal.LearnerUln.ToString();
+                        }
+                        else
+                        {
+                            if (firstPaymentVal.LearnerUln != long.Parse(reportRecord.PaymentUniqueLearnerNumbers))
+                            {
+                                reportRecord.PaymentUniqueLearnerNumbers += ";" + firstPaymentVal.LearnerUln.ToString();
+                            }
                         }
 
                         // Extract company name
@@ -298,14 +298,14 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             return learnerLevelViewModelList;
         }
 
-        private IEnumerable<LearnerLevelViewPaymentsKey> UnionKeys(
+        private IEnumerable<string> UnionKeys(
                         ICollection<Payment> payments,
                         ICollection<LearningDeliveryEarning> ldEarnings,
                         ICollection<PriceEpisodeEarning> peEarnings)
         {
-            var filteredPaymentRecordsHashSet = new HashSet<LearnerLevelViewPaymentsKey>(payments.Select(r => new LearnerLevelViewPaymentsKey(r.LearnerReferenceNumber, r.ReportingAimFundingLineType)), _lLVPaymentRecordKeyEqualityComparer);
-            var filteredPriceEpisodeRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(peEarnings.Select(r => new LearnerLevelViewPaymentsKey(r.LearnRefNumber, string.Empty)), _lLVPaymentRecordLRefOnlyKeyEqualityComparer);
-            var filteredLearningDeliveryRecordHashset = new HashSet<LearnerLevelViewPaymentsKey>(ldEarnings.Select(r => new LearnerLevelViewPaymentsKey(r.LearnRefNumber, string.Empty)), _lLVPaymentRecordLRefOnlyKeyEqualityComparer);
+            var filteredPaymentRecordsHashSet = new HashSet<string>(payments.Select(r => r.LearnerReferenceNumber));
+            var filteredPriceEpisodeRecordHashset = new HashSet<string>(peEarnings.Select(r => r.LearnRefNumber));
+            var filteredLearningDeliveryRecordHashset = new HashSet<string>(ldEarnings.Select(r => r.LearnRefNumber));
 
             filteredPaymentRecordsHashSet.UnionWith(filteredPriceEpisodeRecordHashset);
             filteredPaymentRecordsHashSet.UnionWith(filteredLearningDeliveryRecordHashset);

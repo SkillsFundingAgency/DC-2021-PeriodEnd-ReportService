@@ -10,7 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model
 
         public string PaymentLearnerReferenceNumber { get; set; }
 
-        public long? PaymentUniqueLearnerNumber { get; set; }
+        public string PaymentUniqueLearnerNumbers { get; set; }
 
         public string FamilyName { get; set; }
 

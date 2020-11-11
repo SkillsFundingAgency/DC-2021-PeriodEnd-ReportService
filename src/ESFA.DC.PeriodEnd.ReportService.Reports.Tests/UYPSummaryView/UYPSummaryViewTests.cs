@@ -122,7 +122,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                     {
                         Ukprn = ukPrn,
                         PaymentLearnerReferenceNumber = "A12345",
-                        PaymentUniqueLearnerNumber = 12345,
+                        PaymentUniqueLearnerNumbers = "12345",
                         FamilyName = "Banner",
                         GivenNames = "Bruce",
                         LearnerEmploymentStatusEmployerId = 1,
@@ -448,7 +448,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             int i = 0;
 
             Map(m => m.PaymentLearnerReferenceNumber).Index(i++).Name("Learner reference number");
-            Map(m => m.PaymentUniqueLearnerNumber).Index(i++).Name("Unique learner number");
+            Map(m => m.PaymentUniqueLearnerNumbers).Index(i++).Name("Unique learner number");
 
             Map(m => m.PaymentFundingLineType).Index(i++).Name("Funding line type");
             Map(m => m.LearnerEmploymentStatusEmployerId).Index(i++).Name("Employer identifier on employment status date");

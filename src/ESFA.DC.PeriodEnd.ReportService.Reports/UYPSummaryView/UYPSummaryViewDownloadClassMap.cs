@@ -13,7 +13,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         public UYPSummaryViewDownloadClassMap()
         {
             MapIndex(m => m.PaymentLearnerReferenceNumber).Name("Learner reference number");
-            MapIndex(m => m.PaymentUniqueLearnerNumber).Name("Unique learner number");
+            MapIndex(m => m.PaymentUniqueLearnerNumbers).Name("Unique learner number");
 
             MapIndex(m => m.FamilyName).Name("Family Name");
             MapIndex(m => m.GivenNames).Name("Given Names");
@@ -23,8 +23,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
             MapIndex(m => m.ReasonForIssues).Name("Reasons for issues");
             MapIndex(m => m.RuleDescription).Name("Data lock description");
-
-            MapIndex(m => m.PaymentFundingLineType).Name("Funding line type");
         }
     }
 }

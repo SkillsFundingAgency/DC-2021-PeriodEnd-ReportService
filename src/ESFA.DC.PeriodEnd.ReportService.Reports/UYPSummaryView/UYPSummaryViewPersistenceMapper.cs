@@ -16,7 +16,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             {
                 Ukprn = reportServiceContext.Ukprn,
                 PaymentLearnerReferenceNumber = m.PaymentLearnerReferenceNumber,
-                PaymentUniqueLearnerNumber = m.PaymentUniqueLearnerNumber,
+                PaymentUniqueLearnerNumber = long.Parse(m.PaymentUniqueLearnerNumbers.Split(';')[0]),
                 FamilyName = m.FamilyName,
                 GivenNames = m.GivenNames,
                 LearnerEmploymentStatusEmployerId = m.LearnerEmploymentStatusEmployerId,

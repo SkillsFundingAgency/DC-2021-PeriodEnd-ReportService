@@ -61,8 +61,6 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
 
         protected override void RegisterServices(ContainerBuilder builder)
         {
-            builder.RegisterType<LLVPaymentRecordKeyEqualityComparer>().As<ILLVPaymentRecordKeyEqualityComparer>().InstancePerLifetimeScope();
-            builder.RegisterType<LLVPaymentRecordLRefOnlyKeyEqualityComparer>().As<ILLVPaymentRecordLRefOnlyKeyEqualityComparer>().InstancePerLifetimeScope();
         }
 
         protected override void RegisterPersistenceService(ContainerBuilder builder)

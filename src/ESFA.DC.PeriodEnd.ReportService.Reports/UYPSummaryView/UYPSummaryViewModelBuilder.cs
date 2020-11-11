@@ -145,7 +145,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                         }
                         else
                         {
-                            if (firstPaymentVal.LearnerUln != long.Parse(reportRecord.PaymentUniqueLearnerNumbers))
+                            if (!reportRecord.PaymentUniqueLearnerNumbers.Split(';').Contains(firstPaymentVal.LearnerUln.ToString()))
                             {
                                 reportRecord.PaymentUniqueLearnerNumbers += ";" + firstPaymentVal.LearnerUln.ToString();
                             }

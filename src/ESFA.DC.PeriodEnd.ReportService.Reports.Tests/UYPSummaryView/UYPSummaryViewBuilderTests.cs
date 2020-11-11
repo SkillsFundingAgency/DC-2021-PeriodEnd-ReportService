@@ -30,7 +30,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
     public class UYPSummaryViewBuilderTests
     {
         [Fact]
-        public void GenerateReport()
+        public void GenerateReportOneULN()
         {
             DateTime dateTime = DateTime.UtcNow;
             int ukPrn = 10036143;
@@ -45,8 +45,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             IUYPSummaryViewModelBuilder uypSummaryViewModelBuilder = new UYPSummaryViewModelBuilder(
                 loggerMock.Object);
             var result = uypSummaryViewModelBuilder.Build(
-                BuildDasPaymentsModel(ukPrn, academicYear),
-                BuildILRModel(ukPrn),
+                BuildDasPaymentsModel(ukPrn, academicYear, 12345),
+                BuildILRModel(ukPrn, 12345),
                 BuildLDEarningsModel(ukPrn),
                 BuildPEEarningsModel(ukPrn),
                 new CoInvestmentInfo[1] { BuildILRCoInvestModel(ukPrn) },
@@ -74,6 +74,96 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             learnerResult.CoInvestmentOutstandingFromEmplToDate.Should().Be(-74);
         }
 
+        [Fact]
+        public void GenerateReportTwoULN()
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            int ukPrn = 10036143;
+            string filename = $"R01_10036143_10036143 Learner Level View Report {dateTime:yyyyMMdd-HHmmss}";
+            int academicYear = 2021;
+            int returnPeriod = 1;
+
+            Mock<ILogger> loggerMock = new Mock<ILogger>();
+
+
+            // Create and invoke the builder
+            IUYPSummaryViewModelBuilder uypSummaryViewModelBuilder = new UYPSummaryViewModelBuilder(
+                loggerMock.Object);
+            var result = uypSummaryViewModelBuilder.Build(
+                BuildDasPaymentsModel(ukPrn, academicYear, 12345),
+                BuildILRModel(ukPrn, 67890),
+                BuildLDEarningsModel(ukPrn),
+                BuildPEEarningsModel(ukPrn),
+                new CoInvestmentInfo[1] { BuildILRCoInvestModel(ukPrn) },
+                new DataLock[1] { new DataLock() { DataLockFailureId = 1, CollectionPeriod = 1, LearnerReferenceNumber = "A12345" } },
+                new HBCPInfo[1] { new HBCPInfo() { LearnerReferenceNumber = "A12345", CollectionPeriod = 1, NonPaymentReason = 1 } },
+                BuildLegalEntityNames(),
+                returnPeriod,
+                ukPrn);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Count().Should().Be(2);
+
+            var learnerResult = result.FirstOrDefault(x => x.PaymentLearnerReferenceNumber == "A12345");
+
+            learnerResult.PaymentLearnerReferenceNumber.Should().Be("A12345");
+            learnerResult.PaymentUniqueLearnerNumbers.Should().Be("67890;12345");
+            learnerResult.LearnerEmploymentStatusEmployerId.Should().Be(56789);
+            learnerResult.FamilyName.Should().Be("Banner");
+            learnerResult.GivenNames.Should().Be("Bruce");
+            learnerResult.IssuesAmount.Should().Be(0);
+            learnerResult.LearnerEmploymentStatusEmployerId.Should().Be(56789);
+            learnerResult.ESFAPlannedPaymentsThisPeriod.Should().Be(189);
+            learnerResult.PlannedPaymentsToYouToDate.Should().Be(189);
+            learnerResult.TotalCoInvestmentCollectedToDate.Should().Be(100);
+            learnerResult.CoInvestmentOutstandingFromEmplToDate.Should().Be(-74);
+        }
+
+        [Fact]
+        public void GenerateReportThreeULN()
+        {
+            DateTime dateTime = DateTime.UtcNow;
+            int ukPrn = 10036143;
+            string filename = $"R01_10036143_10036143 Learner Level View Report {dateTime:yyyyMMdd-HHmmss}";
+            int academicYear = 2021;
+            int returnPeriod = 1;
+
+            Mock<ILogger> loggerMock = new Mock<ILogger>();
+
+
+            // Create and invoke the builder
+            IUYPSummaryViewModelBuilder uypSummaryViewModelBuilder = new UYPSummaryViewModelBuilder(
+                loggerMock.Object);
+            var result = uypSummaryViewModelBuilder.Build(
+                BuildDasPaymentsModel(ukPrn, academicYear, 12345, true),
+                BuildILRModel(ukPrn, 67890),
+                BuildLDEarningsModel(ukPrn),
+                BuildPEEarningsModel(ukPrn),
+                new CoInvestmentInfo[1] { BuildILRCoInvestModel(ukPrn) },
+                new DataLock[1] { new DataLock() { DataLockFailureId = 1, CollectionPeriod = 1, LearnerReferenceNumber = "A12345" } },
+                new HBCPInfo[1] { new HBCPInfo() { LearnerReferenceNumber = "A12345", CollectionPeriod = 1, NonPaymentReason = 1 } },
+                BuildLegalEntityNames(),
+                returnPeriod,
+                ukPrn);
+
+            result.Should().NotBeNullOrEmpty();
+            result.Count().Should().Be(2);
+
+            var learnerResult = result.FirstOrDefault(x => x.PaymentLearnerReferenceNumber == "A12345");
+
+            learnerResult.PaymentLearnerReferenceNumber.Should().Be("A12345");
+            learnerResult.PaymentUniqueLearnerNumbers.Should().Be("67890;12345;12346");
+            learnerResult.LearnerEmploymentStatusEmployerId.Should().Be(56789);
+            learnerResult.FamilyName.Should().Be("Banner");
+            learnerResult.GivenNames.Should().Be("Bruce");
+            learnerResult.IssuesAmount.Should().Be(0);
+            learnerResult.LearnerEmploymentStatusEmployerId.Should().Be(56789);
+            learnerResult.ESFAPlannedPaymentsThisPeriod.Should().Be(361);
+            learnerResult.PlannedPaymentsToYouToDate.Should().Be(361);
+            learnerResult.TotalCoInvestmentCollectedToDate.Should().Be(100);
+            learnerResult.CoInvestmentOutstandingFromEmplToDate.Should().Be(-48);
+        }
+
         private IDictionary<long, string> BuildLegalEntityNames()
         {
             return new Dictionary<long, string>() { { 1, "Employer Name" } };
@@ -92,7 +182,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             };
         }
 
-        private ICollection<Learner> BuildILRModel(int ukPrn)
+        private ICollection<Learner> BuildILRModel(int ukPrn, int firstLearnerULN)
         {
             return new List<Learner>() {
                 new Learner()
@@ -100,7 +190,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                     LearnRefNumber = "A12345",
                     FamilyName = "Banner",
                     GivenNames = "Bruce",
-                    ULN = 12345,
+                    ULN = firstLearnerULN,
                     LearnerEmploymentStatuses = new List<LearnerEmploymentStatus>()
                        { new LearnerEmploymentStatus() { LearnRefNumber = "A12345", EmpId = 56789, EmpStat = 10, DateEmpStatApp = new DateTime(2020, 09, 26) } }
                 },
@@ -314,13 +404,17 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
             }
         }
 
-        private Payment[] BuildDasPaymentsModel(int ukPrn, int academicYear)
+        private Payment[] BuildDasPaymentsModel(int ukPrn, int academicYear, int firstLearnerULN, bool secondULN = false)
         {
             var payments = new List<Payment>();
 
             // Learner 1
-            AddPayments(ref payments, ukPrn, academicYear, "50117889", 11m, 1m, "A12345", 12345);
-            AddPayments(ref payments, ukPrn, academicYear, "ZPROG001", 22m, 2m, "A12345", 12345);
+            AddPayments(ref payments, ukPrn, academicYear, "50117889", 11m, 1m, "A12345", firstLearnerULN);
+            AddPayments(ref payments, ukPrn, academicYear, "ZPROG001", 22m, 2m, "A12345", firstLearnerULN);
+            if ( secondULN)
+            {
+                AddPayments(ref payments, ukPrn, academicYear, "ZPROG001", 22m, 2m, "A12345", firstLearnerULN + 1);
+            }
 
             // Learner 2
             AddPayments(ref payments, ukPrn, academicYear, "50117889", 11m, 1m, "B12345", 54321);

@@ -136,23 +136,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
                             TotalCoInvestmentPaymentsDueFromEmployerTypePredicate(p)).Sum(c => c.Amount);
 
                         // Add any further ULNs found
-                        var firstPaymentVal = paymentValues.First();
-
-                        // Pull across the ULN if it's not already there (we can pick the first record as the set is matched on learner ref so all ULNs in it will be the same)
-                        if (reportRecord.PaymentUniqueLearnerNumbers == null)
+                        var otherULNs = paymentValues.Select(x=>x.LearnerUln.ToString()).Distinct().ToList();
+                        var existingULNS = reportRecord.PaymentUniqueLearnerNumbers.Split(';');
+                        foreach (string ULN in otherULNs)
                         {
-                            reportRecord.PaymentUniqueLearnerNumbers = firstPaymentVal.LearnerUln.ToString();
-                        }
-                        else
-                        {
-                            if (!reportRecord.PaymentUniqueLearnerNumbers.Split(';').Contains(firstPaymentVal.LearnerUln.ToString()))
+                            if (!existingULNS.Contains(ULN))
                             {
-                                reportRecord.PaymentUniqueLearnerNumbers += ";" + firstPaymentVal.LearnerUln.ToString();
+                                reportRecord.PaymentUniqueLearnerNumbers = (reportRecord.PaymentUniqueLearnerNumbers == null ? ULN: reportRecord.PaymentUniqueLearnerNumbers + ";" + ULN);
                             }
                         }
 
                         // Extract company name
-                        if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(firstPaymentVal.ApprenticeshipId, out var employerName))
+                        if ((legalEntityNameDictionary != null) && legalEntityNameDictionary.TryGetValue(paymentValues.First().ApprenticeshipId, out var employerName))
                         {
                             reportRecord.EmployerName = employerName;
                             if ((reportRecord.LearnerEmploymentStatusEmployerId != null) && !employerNamesToIDs.ContainsKey(reportRecord.LearnerEmploymentStatusEmployerId ?? 0))

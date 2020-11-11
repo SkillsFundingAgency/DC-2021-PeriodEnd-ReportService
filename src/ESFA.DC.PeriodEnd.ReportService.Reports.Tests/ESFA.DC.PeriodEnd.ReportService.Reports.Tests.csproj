@@ -7,7 +7,7 @@
 
   <ItemGroup>
     <PackageReference Include="CsvHelper" Version="12.1.3" />
-    <PackageReference Include="ESFA.DC.ReportData.2021.Model" Version="0.1.8-beta.1" />
+    <PackageReference Include="ESFA.DC.ReportData.2021.Model" Version="0.1.10-beta.1" />
     <PackageReference Include="FluentAssertions" Version="5.10.3" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.6.1" />
     <PackageReference Include="moq" Version="4.14.3" />
@@ -19,6 +19,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Interface\ESFA.DC.PeriodEnd.ReportService.Interface.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Reports.Data\ESFA.DC.PeriodEnd.ReportService.Reports.Data.csproj" />
     <ProjectReference Include="..\ESFA.DC.Periodend.ReportService.Reports.Interface\ESFA.DC.PeriodEnd.ReportService.Reports.Interface.csproj" />
     <ProjectReference Include="..\ESFA.DC.PeriodEnd.ReportService.Reports\ESFA.DC.PeriodEnd.ReportService.Reports.csproj" />

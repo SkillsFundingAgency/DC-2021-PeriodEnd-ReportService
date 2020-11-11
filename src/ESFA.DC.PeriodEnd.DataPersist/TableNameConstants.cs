@@ -7,5 +7,7 @@
         public const string FundingSummaryReport = "FundingSummaryReport";
         public const string AppsAdditionalPayments = "AppsAdditionalPayments";
         public const string LearnerLevelViewReport = "LearnerLevelViewReport";
+        public const string UYPSummaryViewReport = "UYPSummaryViewReport";
+
     }
 }

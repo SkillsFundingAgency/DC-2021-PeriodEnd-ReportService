@@ -66,6 +66,12 @@ namespace ESFA.DC.PeriodEnd.ReportService.Modules
         }
 
         protected override void RegisterPersistenceService(ContainerBuilder builder)
-            => RegisterPersistenceService<UYPSummaryViewPersistenceMapper, IUYPSummaryViewPersistenceMapper, LearnerLevelViewReport>(builder, TableNameConstants.LearnerLevelViewReport);
+        {
+            RegisterPersistenceService<UYPSummaryViewPersistenceMapper, IUYPSummaryViewPersistenceMapper,
+                LearnerLevelViewReport>(builder, TableNameConstants.LearnerLevelViewReport);
+
+            RegisterPersistenceService<UYPSummaryViewPersistenceMapper, IUYPSummaryViewPersistenceMapper,
+                UYPSummaryViewReport>(builder, TableNameConstants.UYPSummaryViewReport);
+        }
     }
-}
+}   

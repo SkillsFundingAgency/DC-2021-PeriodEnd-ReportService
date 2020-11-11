@@ -55,6 +55,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                 new Mock<IReportDataPersistanceService<LearnerLevelViewReport>>();
             Mock<IUYPSummaryViewPersistenceMapper> uypSummaryViewPersistenceMapper = new Mock<IUYPSummaryViewPersistenceMapper>();
 
+            var summaryReportDataPersistanceServiceMock = new Mock<IReportDataPersistanceService<UYPSummaryViewReport>>();
             var zipServiceMock = new Mock<IReportZipService>();
 
             uypSummaryViewPersistenceMapper.Setup(x => x.Map(
@@ -62,9 +63,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                 It.IsAny<IEnumerable<LearnerLevelViewModel>>(), 
                 It.IsAny<CancellationToken>())).Returns(new List<LearnerLevelViewReport>());
 
+            uypSummaryViewPersistenceMapper.Setup(x => x.Map(
+                It.IsAny<IReportServiceContext>(),
+                It.IsAny<IEnumerable<LearnerLevelViewSummaryModel>>())).Returns(new List<UYPSummaryViewReport>());
+
             reportDataPersistanceServiceMock.Setup(x => x.PersistAsync(
                 It.IsAny<IReportServiceContext>(),
                 It.IsAny<IEnumerable<LearnerLevelViewReport>>(),
+                It.IsAny<CancellationToken>()));
+
+            summaryReportDataPersistanceServiceMock.Setup(x => x.PersistAsync(
+                It.IsAny<IReportServiceContext>(),
+                It.IsAny<IEnumerable<UYPSummaryViewReport>>(),
                 It.IsAny<CancellationToken>()));
 
             jsonSerializationServiceMock.Setup(x => x.Serialize<IEnumerable<LearnerLevelViewSummaryModel>>(
@@ -153,6 +163,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Tests.UYPSummaryView
                     fileServiceMock.Object,
                     zipServiceMock.Object,
                     reportDataPersistanceServiceMock.Object,
+                    summaryReportDataPersistanceServiceMock.Object,
                     uypSummaryViewPersistenceMapper.Object, 
                     loggerMock.Object);
             await report.GenerateReport(reportServiceContextMock.Object, CancellationToken.None);

@@ -31,7 +31,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
         private readonly IUYPSummaryViewDataProvider _uypSummaryViewDataProvider;
         private readonly IUYPSummaryViewModelBuilder _uypSummaryViewModelBuilder;
         private readonly ILogger _logger;
-        private readonly IReportDataPersistanceService<LearnerLevelViewReport> _reportDataPersistanceService;
+        private readonly IReportDataPersistanceService<LearnerLevelViewReport> _learnerLevelReportDataPersistanceService;
+        private readonly IReportDataPersistanceService<UYPSummaryViewReport> _summaryReportDataPersistanceService;
         private readonly IUYPSummaryViewPersistenceMapper _uypSummaryViewPersistenceMapper;
         private readonly IJsonSerializationService _jsonSerializationService;
         private readonly IFileService _fileService;
@@ -50,7 +51,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             IJsonSerializationService jsonSerializationService,
             IFileService fileService,
             IReportZipService reportZipService,
-            IReportDataPersistanceService<LearnerLevelViewReport> reportDataPersistanceService,
+            IReportDataPersistanceService<LearnerLevelViewReport> learnerLevelReportDataPersistanceService,
+            IReportDataPersistanceService<UYPSummaryViewReport> summaryReportDataPersistanceService,
             IUYPSummaryViewPersistenceMapper uypSummaryViewPersistenceMapper,
             ILogger logger)
         {
@@ -61,7 +63,8 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             _jsonSerializationService = jsonSerializationService;
             _fileService = fileService;
             _reportZipService = reportZipService;
-            _reportDataPersistanceService = reportDataPersistanceService;
+            _learnerLevelReportDataPersistanceService = learnerLevelReportDataPersistanceService;
+            _summaryReportDataPersistanceService = summaryReportDataPersistanceService;
             _uypSummaryViewPersistenceMapper = uypSummaryViewPersistenceMapper;
             _logger = logger;
         }
@@ -111,12 +114,18 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
             // Full data set used for summary and data persist
             await _csvFileService.WriteAsync<LearnerLevelViewModel, UYPSummaryViewClassMap>(uypSummaryViewRecords, baseFileName, reportServiceContext.Container, cancellationToken);
-            string summaryFile = CreateSummary(uypSummaryViewRecords, cancellationToken);
+            var summaryViewData = CreateSummary(uypSummaryViewRecords, cancellationToken);
+            string summaryFile = GetJson(summaryViewData, cancellationToken);
+
             await WriteAsync(summaryFilename, summaryFile, reportServiceContext.Container, cancellationToken);
 
-            // Persist data
+            // Persist data for leaner level
             var persistModels = _uypSummaryViewPersistenceMapper.Map(reportServiceContext, uypSummaryViewRecords, cancellationToken);
-            await _reportDataPersistanceService.PersistAsync(reportServiceContext, persistModels, cancellationToken);
+            await _learnerLevelReportDataPersistanceService.PersistAsync(reportServiceContext, persistModels, cancellationToken);
+
+            //persist data for summary view
+            var summaryPersistModels = _uypSummaryViewPersistenceMapper.Map(reportServiceContext, summaryViewData);
+            await _summaryReportDataPersistanceService.PersistAsync(reportServiceContext, summaryPersistModels, cancellationToken);
 
             // Only learners with issues are made available for the provider to download as a report
             var uypSummaryViewRecordsWithIssues = uypSummaryViewRecords.Where(p => p.IssuesAmount < 0);
@@ -124,6 +133,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
             if (SampleProviders.SampleReportProviderUkPrns.Contains(ukprn))
             {
+
                 var zipName = string.Format(ReportZipFileName, ukprn);
                 await _reportZipService.CreateOrUpdateZipWithReportAsync(zipName, baseFileName, reportServiceContext, cancellationToken);
                 await _reportZipService.CreateOrUpdateZipWithReportAsync(zipName, summaryFilename, reportServiceContext, cancellationToken);
@@ -144,7 +154,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
             }
         }
 
-        private string CreateSummary(List<LearnerLevelViewModel> learnerLevelView, CancellationToken cancellationToken)
+        private List<LearnerLevelViewSummaryModel> CreateSummary(List<LearnerLevelViewModel> learnerLevelView, CancellationToken cancellationToken)
         {
             cancellationToken.ThrowIfCancellationRequested();
 
@@ -190,7 +200,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 
                 learnerLevelViewSummaryModels.Add(learnerLevelViewSummary);
 
-                return GetJson(learnerLevelViewSummaryModels, cancellationToken);
+                return learnerLevelViewSummaryModels;
             }
             catch (Exception ex)
             {

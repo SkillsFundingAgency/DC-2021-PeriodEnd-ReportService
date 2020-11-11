@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
 using System.Threading;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface;
@@ -7,7 +6,7 @@ using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Model;
 using ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Persistence;
 using ESFA.DC.ReportData.Model;
 
-namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
+namespace ESFA.DC.PeriodEnd.ReportService.Reports.UYPSummaryView
 {
     public class UYPSummaryViewPersistenceMapper : IUYPSummaryViewPersistenceMapper
     {
@@ -34,6 +33,34 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.AppsMonthly
                 PaymentFundingLineType = m.PaymentFundingLineType,
                 RuleDescription = m.RuleDescription,
                 ReturnPeriod = reportServiceContext.ReturnPeriod
+            });
+        }
+
+        public IEnumerable<UYPSummaryViewReport> Map(IReportServiceContext reportServiceContext, IEnumerable<LearnerLevelViewSummaryModel> summaryModels)
+        {
+            return summaryModels.Select(m => new UYPSummaryViewReport
+            {
+                Ukprn = reportServiceContext.Ukprn,
+                ReturnPeriod = reportServiceContext.ReturnPeriod,
+                CoInvestmentPaymentsToCollectForThisPeriod = m.CoInvestmentPaymentsToCollectForThisPeriod,
+                ESFAPlannedPaymentsForThisPeriod = m.ESFAPlannedPaymentsForThisPeriod,
+                EarningsReleased = m.EarningsReleased,
+                NumberofClawbacks = m.NumberofClawbacks,
+                NumberofCoInvestmentsToCollect = m.NumberofCoInvestmentsToCollect,
+                NumberofDatalocks = m.NumberofDatalocks,
+                NumberofEarningsReleased = m.NumberofEarningsReleased,
+                NumberofHBCP = m.NumberofHBCP,
+                NumberofLearners = m.NumberofLearners,
+                NumberofOthers = m.NumberofOthers,
+                TotalCoInvestmentCollectedToDate = m.TotalCoInvestmentCollectedToDate,
+                TotalCostOfDataLocksForThisPeriod = m.TotalCostOfDataLocksForThisPeriod,
+                TotalCostOfHBCPForThisPeriod = m.TotalCostOfHBCPForThisPeriod,
+                TotalCostofClawbackForThisPeriod = m.TotalCostofClawbackForThisPeriod,
+                TotalCostofOthersForThisPeriod = m.TotalCostofOthersForThisPeriod,
+                TotalEarningsForThisPeriod = m.TotalEarningsForThisPeriod,
+                TotalEarningsToDate = m.TotalEarningsToDate,
+                TotalPaymentsToDate = m.TotalPaymentsToDate,
+                SummaryTotal = m.CoInvestmentPaymentsToCollectForThisPeriod.GetValueOrDefault()  + m.ESFAPlannedPaymentsForThisPeriod.GetValueOrDefault()
             });
         }
     }

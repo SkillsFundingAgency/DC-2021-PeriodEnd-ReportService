@@ -10,5 +10,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Interface.UYPSummaryView.Persi
     public interface IUYPSummaryViewPersistenceMapper
     {
         IEnumerable<LearnerLevelViewReport> Map(IReportServiceContext reportServiceContext, IEnumerable<LearnerLevelViewModel> appsMonthlyRecords, CancellationToken cancellationToken);
+
+        IEnumerable<UYPSummaryViewReport> Map(IReportServiceContext reportServiceContext, IEnumerable<LearnerLevelViewSummaryModel> summaryModels);
     }
 }

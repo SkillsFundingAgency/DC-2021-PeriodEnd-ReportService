@@ -19,6 +19,7 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Persist
         private readonly string _tableName;
 
         private const string CleanUpSql = "DELETE FROM {0} WHERE Ukprn = @ukprn AND ReturnPeriod = @returnPeriod";
+        private const string ExistsSql = "SELECT TOP 1 1 FROM {0}  WITH (NOLOCK) WHERE Ukprn = @ukprn AND ReturnPeriod = @returnPeriod";
 
         public ReportDataPersistanceService(string tableName, IBulkInsert bulkInsert, Func<SqlConnection> sqlConnectionFunc, ILogger logger)
         {
@@ -38,12 +39,23 @@ namespace ESFA.DC.PeriodEnd.ReportService.Reports.Persist
             using (var connection = _sqlConnectionFunc())
             {
                 await connection.OpenAsync(cancellationToken);
+
+                //check if anything exists to be deleted
+                var dataExists = await connection.ExecuteScalarAsync<bool>(string.Format(ExistsSql, _tableName), new { reportServiceContext.Ukprn, reportServiceContext.ReturnPeriod });
+
                 using (var transaction = connection.BeginTransaction())
                 {
                     try
                     {
-                        _logger.LogInfo($"Clean up previous data in {_tableName}");
-                        await connection.ExecuteAsync(string.Format(CleanUpSql, _tableName), new { reportServiceContext.Ukprn, reportServiceContext.ReturnPeriod }, transaction);
+                        if (dataExists)
+                        {
+                            _logger.LogInfo($"Clean up previous data in {_tableName} for ukprn {reportServiceContext.Ukprn}");
+                            await connection.ExecuteAsync(string.Format(CleanUpSql, _tableName), new {reportServiceContext.Ukprn, reportServiceContext.ReturnPeriod}, transaction);
+                        }
+                        else
+                        {
+                            _logger.LogInfo($"No existing data found for {reportServiceContext.Ukprn} in {_tableName}, no cleanup needed");
+                        }
 
                         _logger.LogInfo($"Persisting report data into {_tableName}");
                         await _bulkInsert.Insert(_tableName, reportModels, connection, transaction, cancellationToken);
